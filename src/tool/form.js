@@ -1,5 +1,5 @@
-import { CPNT } from "@/const/form";
-import { OP_TYPE } from "@/const/op";
+import { CPNT } from "../const/form";
+import { OP_TYPE } from "../const/op";
 
 export function transCMapToCondition(map) {
     try {

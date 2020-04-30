@@ -122,7 +122,7 @@ import WfStage from "./stage";
 import WfPanelEl from "./panelEl";
 import wfTableEditor from "./tableEditor/tableEditor";
 
-import FreeDrag from "@/mixin/freeDrag";
+import FreeDrag from "@/mixin/free-drag";
 import NodeType from "./nodeType";
 import AuthEditor from "@/components/common/authEditor";
 import { selectionMixin } from "@/mixin/common";

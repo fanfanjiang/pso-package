@@ -14,12 +14,9 @@ module.exports = {
         ],
     },
     devServer: {
-        port: 9000
+        port: 9009
     },
     chainWebpack: config => {
-        config.resolve.alias
-            .set('@', resolve('example'));
-
         config.plugins.delete('prefetch');
         config.plugins.delete('preload');
 

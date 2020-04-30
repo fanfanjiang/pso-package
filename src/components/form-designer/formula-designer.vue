@@ -77,8 +77,8 @@
   </div>
 </template>
 <script>
-import { FORMULA, FORMULA_LIST } from "@/const/formula";
-import { CPNT } from "@/const/form";
+import { FORMULA, FORMULA_LIST } from "../../const/formula";
+import { CPNT } from "../../const/form";
 import { codemirror } from "vue-codemirror";
 import CodeMirror from "codemirror/lib/codemirror.js";
 import "codemirror/lib/codemirror.css";

@@ -65,7 +65,7 @@
 import FormStore from "./model/store.js";
 import DesignerCpnt from "./designer-cpnt";
 import DesignerPanel from "./designer-panel";
-import { CPNT } from "@/const/form";
+import { CPNT } from "../../const/form";
 
 import DragAndDrop from "./drag-drop/index";
 import { isMenu, isRoot, getRoot, getDropableByFid, getDragableByFid, getComponentParams } from "./helper/dom.js";

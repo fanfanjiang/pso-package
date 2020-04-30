@@ -103,14 +103,14 @@
   </div>
 </template>
 <script>
-import DesignerBody from "@/components/form-designer/designer-body";
-import PsoHeader from "@/components/common/psoHeader";
-import AuthEditor from "@/components/common/authEditor";
-import { selectionMixin } from "@/mixin/common";
+import DesignerBody from "./designer-body";
+import PsoHeader from "../header";
+import AuthEditor from "../auth-editor";
+import { pickerMixin } from "../../mixin/common";
 import shortid from "shortid";
 
 export default {
-  mixins: [selectionMixin({ baseObjName: "resource", dataListName: "list", typeName: "type", idName: "node_id" })],
+  mixins: [pickerMixin({ baseObjName: "resource", dataListName: "list", typeName: "type", idName: "node_id" })],
   props: {
     params: {
       type: Object,

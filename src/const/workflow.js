@@ -1,0 +1,149 @@
+export const REVIEW_TYPE = {
+    tag: {
+        name: '快速标签审批',
+        id: "tag"
+    },
+    opinion: {
+        name: '意见审批',
+        id: "opinion"
+    },
+    sign: {
+        name: '会签审批',
+        id: "sign"
+    },
+    form: {
+        name: '表单',
+        id: "form"
+    }
+}
+
+export const REVIEW_OP_TYPE = {
+    save: {
+        name: '暂存',
+        id: "save",
+        type: 'save',
+        value: 1
+    },
+    confirm: {
+        name: '确认',
+        id: "confirm",
+        type: 'next',
+        value: 2
+    },
+    end: {
+        name: '结束',
+        id: "end",
+        type: 'over',
+        value: 4
+    },
+    rollback: {
+        name: '回退',
+        id: "rollback",
+        type: 'back',
+        value: 8
+    },
+    reject: {
+        name: '打回',
+        id: "reject",
+        type: 'return',
+        value: 16
+    },
+    pickreject: {
+        name: '指定',
+        id: "pickreject",
+        type: 'appoint',
+        value: 32
+    },
+    Copy: {
+        name: '抄送',
+        id: "Copy",
+        type: 'append',
+        value: 64
+    },
+    Distribute: {
+        name: '分发',
+        id: "Distribute",
+        type: 'append',
+        value: 128
+    },
+    AddSign: {
+        name: '加签',
+        id: "AddSign",
+        type: 'append',
+        value: 256
+    }
+}
+export const REVIEW_OP_APPEND = 'append';
+
+export const REVIEW_OP_USER = [REVIEW_OP_TYPE.Copy, REVIEW_OP_TYPE.Distribute, REVIEW_OP_TYPE.AddSign];
+
+export const REVIEW_AUTH_TYPE = {
+    anybody: {
+        name: '指定用户任一',
+        id: "anybody",
+        value: 0,
+        idName: 'user_id',
+        opaId: 'uid',
+        opaName: 'user_name'
+    },
+    one: {
+        name: '指定用户',
+        id: "one",
+        value: 1,
+        idName: 'user_id',
+        opaId: 'uid',
+        opaName: 'user_name'
+    },
+    anyPosition: {
+        name: '指定职位任一',
+        id: "anyPosition",
+        value: 2,
+        idName: 'duty_id',
+        opaId: 'did',
+        opaName: 'duty_name'
+    },
+    position: {
+        name: '指定职位',
+        id: "position",
+        value: 3,
+        idName: 'duty_id',
+        opaId: 'did',
+        opaName: 'duty_name'
+    },
+    anyJob: {
+        name: '指定岗位任一',
+        id: "anyJob",
+        value: 4,
+        idName: 'post_id',
+        opaId: 'pid',
+        opaName: 'post_name'
+    },
+    job: {
+        name: '指定岗位',
+        id: "job",
+        value: 5,
+        idName: 'post_id',
+        opaId: 'pid',
+        opaName: 'post_name'
+
+    }
+}
+
+export const WF_IMPORTANCE = ['普通', '重要', '非常重要'];
+export const WF_SECTRE = ['普通', '秘密', '机密', '绝密'];
+export const WF_URGENT = ['普通', '急件', '加急', '特急'];
+
+export const WF_TAG_TEXT_PASS = ['通过', '同意', '没问题'];
+export const WF_TAG_TEXT_REJECT = ['不同意', '请完善'];
+
+
+export const UPDATE_TYPE = [{
+    include: ['time'],
+    type: 'date'
+}]
+
+export const REVIEW_LOG_FORMAT = [
+    { name: "审核人", id: "#man#" },
+    { name: "审核时间", id: "#time#" },
+    { name: "审核意见", id: "#content#" }
+]

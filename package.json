@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "vue-cli-service serve example/main.js",
+    "build:exam": "vue-cli-service build example/main.js",
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
@@ -17,13 +17,17 @@
     "jquery": "^3.4.1",
     "js-beautify": "^1.10.2",
     "muse-ui": "^3.0.2",
+    "normalize.css": "^8.0.1",
     "qs": "^6.9.1",
+    "shortid": "^2.2.15",
     "signature_pad": "^3.0.0-beta.3",
     "throttle-debounce": "^1.0.1",
+    "vue-codemirror": "^4.0.6",
+    "vue-video-player": "^5.0.2",
     "vuebar": "^0.0.20",
     "vuedraggable": "^2.23.2",
-    "vue-codemirror": "^4.0.6",
-    "x2js": "^3.4.0"
+    "x2js": "^3.4.0",
+    "xlsx": "^0.15.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",
@@ -32,13 +36,15 @@
     "@vue/cli-service": "~4.3.0",
     "@vue/test-utils": "1.0.0-beta.31",
     "babel-plugin-import": "^1.13.0",
-    "core-js": "^3.6.4",
-    "vue": "^2.6.11",
     "chai": "^4.1.2",
+    "core-js": "^3.6.4",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-router": "^3.0.3",
+    "vue-template-compiler": "^2.6.11",
+    "webpack-bundle-analyzer": "^3.7.0"
   }
 }

@@ -36,7 +36,7 @@ import WfController from "./controller";
 import WfNodeStart from "./node/nodeStart";
 import WfNodeEl from "./nodeEl";
 
-import FreeDrag from "@/mixin/freeDrag";
+import FreeDrag from "@/mixin/free-drag";
 
 export default {
   components: { WfNodeEl, WfNodeStart, WfController },
