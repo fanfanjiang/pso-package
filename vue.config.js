@@ -3,9 +3,6 @@ const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
-    publicPath: '/static/app',
-    indexPath: path.resolve(__dirname, 'app/view/app.njk'),
-    outputDir: path.resolve(__dirname, 'app/public/app/'),
     configureWebpack: {
         externals: {
             'vue': 'Vue',
@@ -20,6 +17,8 @@ module.exports = {
         port: 9000
     },
     chainWebpack: config => {
+        config.resolve.alias
+            .set('@', resolve('example'));
 
         config.plugins.delete('prefetch');
         config.plugins.delete('preload');
@@ -31,7 +30,7 @@ module.exports = {
             }]);
         config.plugin('html')
             .tap(args => {
-                args[0].template = path.join(__dirname, 'src/app.html')
+                args[0].template = path.join(__dirname, 'example/app.html')
                 return args
             })
     },

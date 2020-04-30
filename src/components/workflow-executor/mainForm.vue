@@ -1,0 +1,95 @@
+<template>
+  <div class="pso-wf-mainform">
+    <el-form
+      :rules="rules"
+      :model="wfExecutor.data"
+      label-width="80px"
+      label-position="top"
+      size="medium"
+    >
+      <!-- <el-form-item label="流程名称" prop="name">
+        <el-input v-model.trim="wfExecutor.data.name" :disabled="readMode"></el-input>
+      </el-form-item> -->
+      <div class="pso-wf-mainform__item">
+        <el-form-item label="发文编号" prop="filetype">
+          <el-select v-model="wfExecutor.data.filetype" :disabled="readMode">
+            <el-option
+              v-for="type in wfExecutor.cfg.selectedFileTypes"
+              :key="type.wf_code"
+              :label="type.wf_filetype"
+              :value="type.wf_filetype"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="重要等级" prop="import">
+          <el-select v-model="wfExecutor.data.import" :disabled="readMode">
+            <el-option v-for="val in important" :key="val" :label="val" :value="val"></el-option>
+          </el-select>
+        </el-form-item>
+      </div>
+      <div class="pso-wf-mainform__item">
+        <el-form-item label="秘密等级" prop="secret">
+          <el-select v-model="wfExecutor.data.secret" :disabled="readMode">
+            <el-option v-for="val in secret" :key="val" :label="val" :value="val"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="加急程度" prop="urgent">
+          <el-select v-model="wfExecutor.data.urgent" :disabled="readMode">
+            <el-option v-for="val in urgent" :key="val" :label="val" :value="val"></el-option>
+          </el-select>
+        </el-form-item>
+      </div>
+    </el-form>
+  </div>
+</template>  
+<script>
+import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
+import { WF_IMPORTANCE, WF_SECTRE, WF_URGENT } from "@/const/workflow";
+export default {
+  computed: {
+    ...mapState(["wfExecutor"]),
+    readMode() {
+      return this.wfExecutor.curStep && this.wfExecutor.curStep.atype !== "form";
+    }
+  },
+  data() {
+    return {
+      important: WF_IMPORTANCE,
+      secret: WF_SECTRE,
+      urgent: WF_URGENT,
+      rules: {
+        name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+        import: [{ required: true, message: "请选择", trigger: "change" }],
+        secret: [{ required: true, message: "请选择", trigger: "change" }],
+        urgent: [{ required: true, message: "请选择", trigger: "change" }],
+        filetype: [{ required: true, message: "请选择", trigger: "change" }]
+      }
+    };
+  }
+};
+</script>
+<style lang="less">
+.pso-wf-mainform {
+  margin-bottom: 20px;
+  .pso-wf-mainform__item {
+    display: flex;
+    > div {
+      flex: 1;
+      width: 100%;
+      margin-bottom: 10px;
+      & + div {
+        margin-left: 15px;
+      }
+    }
+  }
+  .el-form-item {
+    margin-bottom: 10px;
+  }
+  .el-form-item__label {
+    padding-bottom: 0;
+  }
+  .el-select {
+    width: 100%;
+  }
+}
+</style>
