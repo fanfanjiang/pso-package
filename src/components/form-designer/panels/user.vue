@@ -29,13 +29,12 @@
   </common-panel>
 </template>
 <script>
-import { mapState } from "vuex";
 import commonPanel from "../common/common-panel";
-import { selectionMixin } from "@/mixin/common";
+import { pickerMixin } from "../../../mixin/picker";
 
 export default {
   props: ["cpnt"],
-  mixins: [selectionMixin({ baseObjName: "proxy", dataListName: "defaultList", typeName: "type" })],
+  mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "defaultList", typeName: "type" })],
   components: {
     commonPanel
   },

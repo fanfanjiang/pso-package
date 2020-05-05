@@ -108,17 +108,17 @@
   </el-form-item>
 </template> 
 <script>
-import PsoFormTable from "@/components/formTable/index";
-import { selectionMixin } from "@/mixin/common";
+import PsoFormTable from "../../form-table";
+import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
-import FormStore from "@/components/form-designer/model/store.js";
+import FormStore from "../../form-designer/model/store.js";
 import shortid from "shortid";
 
 export default {
   components: { PsoFormInterpreter: () => import("../index"), PsoFormTable },
   mixins: [
     cpntMixin,
-    selectionMixin({
+    pickerMixin({
       baseObjName: "proxy",
       showName: "showTable",
       dataListName: "valList",

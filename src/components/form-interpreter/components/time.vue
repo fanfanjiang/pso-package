@@ -19,7 +19,7 @@
 </template>
 <script>
 import cpntMixin from "../mixin";
-import { DATE_OPTION } from "@/const/form";
+import { DATE_OPTION } from "../../../const/form";
 import dayjs from "dayjs";
 
 export default {

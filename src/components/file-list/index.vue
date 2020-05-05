@@ -35,7 +35,7 @@
   </div>
 </template>
 <script>
-import FileViewer from "@/components/fileViewer/index";
+import FileViewer from "../file-viewer";
 export default {
   components: { FileViewer },
   props: ["files"],

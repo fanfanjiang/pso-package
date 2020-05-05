@@ -1,6 +1,6 @@
 import Component from './cpnt'
 import { setSelectedActor } from "../helper/dom.js";
-import { CPNT } from "@/const/form";
+import { CPNT } from "../../../const/form";
 import Vue from 'vue';
 
 export default class FormStore {

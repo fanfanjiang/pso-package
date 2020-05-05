@@ -1,6 +1,6 @@
 
 import { genComponentData } from '../helper';
-import { CPNT } from "@/const/form";
+import { CPNT } from "../../../const/form";
 import Vue from 'vue';
 
 export default class Component {

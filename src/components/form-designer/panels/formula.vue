@@ -33,7 +33,7 @@
 <script>
 import commonPanel from "../common/common-panel";
 import { common } from "../mixin";
-import formulaDesigner from "@/components/form-designer/formula-designer";
+import formulaDesigner from "../../form-designer/formula-designer";
 
 export default {
   props: ["cpnt"],

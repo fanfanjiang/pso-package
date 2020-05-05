@@ -33,7 +33,7 @@
 </template>
 <script>
 import commonPanel from "../common/common-panel";
-import { DATE_OPTION } from "@/const/form";
+import { DATE_OPTION } from "../../../const/form";
 
 export default {
   props: ["cpnt"],

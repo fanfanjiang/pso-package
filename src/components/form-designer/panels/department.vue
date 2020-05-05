@@ -30,11 +30,11 @@
 </template>
 <script>
 import commonPanel from "../common/common-panel";
-import { selectionMixin } from "@/mixin/common";
+import { pickerMixin } from "../../../mixin/picker";
 
 export default {
   props: ["cpnt"],
-  mixins: [selectionMixin({ baseObjName: "proxy", dataListName: "defaultList", typeName: "type", idName: "node_id" })],
+  mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "defaultList", typeName: "type", idName: "node_id" })],
   components: {
     commonPanel
   },

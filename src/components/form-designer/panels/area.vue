@@ -10,7 +10,7 @@
 </template>
 <script>
 import commonPanel from "../common/common-panel";
-import FormArea from "@/components/form-interpreter/components/area";
+import FormArea from "../../form-interpreter/components/area";
 import { genComponentData } from "../helper";
 
 export default {

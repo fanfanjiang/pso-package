@@ -1,4 +1,4 @@
-import Storge from '@/utils/storage';
+import Storge from '../utils/storage';
 
 export default class Auth {
     static isLoggedin() {

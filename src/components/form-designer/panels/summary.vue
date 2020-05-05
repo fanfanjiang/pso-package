@@ -35,8 +35,8 @@
 </template>
 <script>
 import commonPanel from "../common/common-panel";
-import { SUMMARY_OP } from "@/const/form";
-import FormStore from "@/components/form-designer/model/store.js";
+import { SUMMARY_OP } from "../../../const/form";
+import FormStore from "../../form-designer/model/store.js";
 
 export default {
   props: ["cpnt"],

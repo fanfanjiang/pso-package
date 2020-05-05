@@ -48,7 +48,7 @@
   </div>
 </template>
 <script>
-import FreeDrag from "../mixin/free-drag";
+import FreeDrag from "../../mixin/free-drag";
 export default {
   props: ["file"],
   mixins: [FreeDrag()],

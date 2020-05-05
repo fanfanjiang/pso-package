@@ -1,0 +1,235 @@
+.pso-chartDesigner {
+    height: 100%;
+
+    .pso-chartDesigner-header {
+        height: 50px;
+        background-color: #fff;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+    }
+
+    .pso-chartDesigner-body {
+        height: 100%;
+        padding-top: 50px;
+        display: flex;
+
+        .pso-chartDesigner-body__left {
+            width: 200px;
+            background-color: #F8F8F8;
+        }
+
+        .pso-chartDesigner-body__center {
+            flex: 1;
+            background-color: #f1f2f3;
+        }
+
+        .pso-chartDesigner-body__right {
+            width: 340px;
+            background-color: #F8F8F8;
+
+            .el-divider__text {
+                background: #F8F8F8 !important;
+            }
+        }
+    }
+
+    .pso-cd-vbar {
+        padding: 15px;
+    }
+
+    .pso-cd-title {
+        padding-bottom: 30px;
+        border-bottom: 2px solid #FD8647;
+
+        h4 {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .pso-cd-chart {
+        margin-top: 20px;
+        background: transparent;
+        height: calc(100vh - 188px);
+    }
+
+    .pso-cd-source {
+        h4 {
+            margin-bottom: 10px;
+        }
+
+        .pso-cd-drag__source {
+            .pso-cd-source__item {
+                cursor: grab;
+                padding: 8px;
+                margin-bottom: 5px;
+                background-color: #F9F9FA;
+
+                &:hover {
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+                    transition: all 0.2s ease-in;
+                }
+
+                >i {
+                    font-size: 16px;
+                    width: 25px;
+                    text-align: left;
+                    color: #FD8647;
+                }
+
+                >span {
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+
+    .pso-cd-option {
+        display: flex;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid #FD8647;
+        min-height: 40px;
+
+        h4 {
+            font-size: 13px;
+            margin: 0 10px 0 0;
+            font-weight: normal;
+
+        }
+
+        .pso-cd-drag {
+            display: flex;
+            flex: 1;
+        }
+    }
+
+    .pso-cd-drag__item-ghost,
+    .pso-cd-drag__item {
+        background-color: #fff;
+        color: #666;
+        font-size: 12px;
+        padding: 0 10px;
+        line-height: 30px;
+        height: 30px;
+        cursor: grab;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+        position: relative;
+
+        &+.pso-cd-drag__item {
+            margin-left: 10px;
+        }
+
+        &:hover {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease-in;
+
+            .pso-cd-drag__item-del {
+                display: block;
+            }
+        }
+
+        .pso-cd-drag__item-del {
+            position: absolute;
+            text-align: center;
+            background: #949494;
+            color: #fff;
+            border-radius: 100%;
+            font-size: 12px;
+            height: 16px;
+            width: 16px;
+            line-height: 16px;
+            top: -8px;
+            right: -8px;
+            cursor: pointer;
+            display: none;
+        }
+
+        >i {
+            font-size: 16px;
+            width: 25px;
+            text-align: left;
+            color: #999;
+        }
+
+        >span {
+            font-size: 12px;
+        }
+    }
+
+    .pso-cd-choose {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        margin-top: 15px;
+        flex-wrap: wrap;
+
+        >li {
+            width: 20%;
+            list-style: none;
+            text-align: center;
+            cursor: pointer;
+            padding: 8px 0;
+
+            &.disabled {
+                cursor: default;
+
+                svg {
+                    path {
+                        fill: #E1E0E0;
+                    }
+                }
+            }
+
+            &.choose,
+            &:hover {
+                svg {
+                    path {
+                        fill: #FD8647;
+                    }
+                }
+            }
+
+            svg,
+            img {
+                height: 26px;
+                width: 26px;
+            }
+
+            svg {
+                path {
+                    fill: #999;
+                }
+            }
+        }
+    }
+
+    .pso-cd-datalimit {
+        .pso-cd-datalimit__body {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+
+            .el-checkbox {
+                margin-right: 10px;
+            }
+
+            .el-select {
+                width: 60px;
+            }
+
+            .el-input-number {
+                flex: 1;
+                margin: 0 5px;
+            }
+        }
+    }
+}

@@ -5,7 +5,7 @@
 </template>
 <script>
 import cpntMixin from "../mixin";
-import { FORMULA_OP, FORMULA_NUM_TYPE, FORMULA_DATE_TYPE, FORMULA_OP_LIST } from "@/const/form";
+import { FORMULA_OP, FORMULA_NUM_TYPE, FORMULA_DATE_TYPE, FORMULA_OP_LIST } from "../../../const/form";
 const formulajs = require("@handsontable/formulajs");
 
 export default {

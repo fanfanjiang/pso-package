@@ -63,9 +63,9 @@
   </div>
 </template> 
 <script>
-import PsoFileList from "@/components/common/psoFileList";
+import PsoFileList from "../../file-list/index.vue";
 import cpntMixin from "../mixin";
-import FormStore from "@/components/form-designer/model/store.js";
+import FormStore from "../../form-designer/model/store.js";
 
 export default {
   name: "pso-form-table",

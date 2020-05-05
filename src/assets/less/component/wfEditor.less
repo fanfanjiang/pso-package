@@ -1,0 +1,337 @@
+@import "~@/assets/less/variable";
+@import "~@/assets/less/mixins/gradients.less";
+
+@wf-bg-color: #F8F8F8;
+
+.centerLine() {
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        width: 2px;
+        height: 100%;
+        background-color: rgb(223, 222, 222);
+    }
+}
+
+.clearBorder() {
+    content: "";
+    position: absolute;
+    width: calc(50% - 1px);
+    background: @wf-bg-color;
+    height: 3px;
+}
+
+.pso-wf {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+
+    .pso-wf-header {
+        height: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        background-color: #fff;
+    }
+}
+
+.pso-wf-stage-wrapper {
+    background-color: @wf-bg-color;
+    height: 100%;
+    padding-top: 50px;
+    position: relative;
+
+    .pso-wf-stage-body {
+        height: 100%;
+
+        .pso-wf-stage-scroll {
+            height: 100%;
+            overflow: scroll !important;
+        }
+    }
+
+    .pso-wf-stage__controller {
+        position: absolute;
+        top: 80px;
+        left: 20px;
+        z-index: 2;
+    }
+}
+
+.pso-wf-stage {
+    background-color: @wf-bg-color;
+    padding: 20px 0;
+    display: inline-flex !important;
+    position: absolute;
+    left: 30%;
+    top: 20px;
+    user-select: none !important;
+}
+
+.pso-wf-container {
+    display: block;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+}
+
+.pso-wf-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.pso-wf-branch {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    background-color: @wf-bg-color;
+
+    .pso-wf-branch__add {
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-color: #409eff;
+            transform: rotate(45deg);
+            z-index: 1;
+        }
+
+        >span {
+            color: #fff;
+            z-index: 4;
+            font-size: 20px;
+            position: relative;
+        }
+
+        user-select: none;
+        position: absolute;
+        left: 50%;
+        width: 24px;
+        height: 24px;
+        margin-left: -12px;
+        margin-top: -11px;
+        line-height: 22px;
+        border: none;
+        z-index: 3;
+        text-align: center;
+        color: #fff;
+        cursor: pointer;
+
+    }
+
+    .pso-wf-container {
+        .centerLine();
+        border-top: 2px solid rgb(223, 222, 222);
+        border-bottom: 2px solid rgb(223, 222, 222);
+
+        // .pso-wf-item:first-child {
+        //     >.pso-wf-linebox {}
+        // }
+    }
+
+    &~.pso-wf-plus {
+        .centerLine()
+    }
+
+    .pso-wf-clb,
+    .pso-wf-crb {
+        position: absolute;
+        top: -2px;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+    }
+
+    .pso-wf-clb {
+        &::before {
+            left: 0;
+            bottom: 0px;
+            .clearBorder();
+        }
+
+        &::after {
+            left: 0;
+            top: 0px;
+            .clearBorder();
+        }
+    }
+
+    .pso-wf-crb {
+        &::before {
+            right: 0;
+            bottom: 0px;
+            .clearBorder();
+        }
+
+        &::after {
+            right: 0;
+            top: 0px;
+            .clearBorder();
+        }
+
+    }
+}
+
+.pso-wf-linebox {
+    position: relative;
+    display: block;
+    padding: 0 20px;
+    .centerLine();
+
+    >div {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+.pso-wf-plus {
+    padding: 30px 0;
+    position: relative;
+    text-align: center;
+    z-index: 1;
+
+    >button {
+        z-index: 1;
+        position: relative;
+    }
+}
+
+.pso-wf-node {
+    min-height: 100px;
+    width: 240px;
+    background-color: #fff;
+    box-shadow: 0 1px 4px 0 rgba(25, 30, 40, .2);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+
+    &:hover {
+        .pso-wf-node__del {
+            display: block;
+        }
+    }
+
+    &.pso-wf-node__selected {
+        transition: all 0.2s ease-out;
+        box-shadow: 0 2px 6px rgba(33, 150, 243, .4), 0 6px 24px rgba(33, 150, 243, .4) !important;
+    }
+
+    &.pso-wf-node__click {
+        transition: all 0.2s ease-out;
+        box-shadow: 0 2px 6px rgba(243, 135, 33, 0.4), 0 6px 24px rgba(243, 229, 33, 0.4);
+    }
+
+    &.pso-wf-node__excuting {
+        transition: all 0.2s ease-out;
+        box-shadow: 0 2px 6px rgba(243, 135, 33, 0.4), 0 6px 24px rgba(243, 229, 33, 0.4);
+    }
+
+
+    &.pso-wf-node__done {
+        transition: all 0.2s ease-out;
+    }
+
+    &.pso-wf-node__read {
+        .wf-node-review__header {
+            #gradient.horizontal(#BEBEBE, #F4F4F4);
+        }
+    }
+
+    &.pso-wf-node__start {
+        .pso-wf-node__del {
+            display: none;
+        }
+    }
+
+    .pso-wf-node__del {
+        position: absolute;
+        right: -12px;
+        top: -12px;
+        font-size: 24px;
+        display: none;
+        color: #999;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            color: #EB624E;
+            transition: all 0.2s ease-in-out;
+        }
+    }
+}
+
+.pso-wf-node-end {
+    height: 50px;
+    width: 50px;
+    line-height: 50px;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 14px;
+    user-select: none;
+    letter-spacing: 1px;
+    color: #fff;
+    background: linear-gradient(-120deg, #dfdfe8 1%, #afafb8 100%);
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, .2);
+}
+
+.pso-wf-panel-drawer {
+
+    &.withoutmodel {
+        &.el-drawer__wrapper {
+            left: auto;
+            width: 420px !important;
+            overflow: visible;
+        }
+    }
+
+    .el-drawer__header {
+        display: none !important;
+    }
+}
+
+//节点菜单
+.pso-wf-panel-menu {
+    padding: 20px;
+
+    .pso-wf-panel-menu__item {
+        margin-bottom: 30px;
+
+        .pso-wf-panel-menu__title {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+    }
+
+    .pso-wf-panel-menu__body {
+        height: 80px;
+        width: 100%;
+        color: #409eff;
+        background-color: #fff;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        box-shadow: 0 1px 4px 0 rgba(25, 30, 40, 0.2);
+        cursor: pointer;
+
+        >i {
+            font-size: 28px;
+            margin: 10px;
+        }
+    }
+}

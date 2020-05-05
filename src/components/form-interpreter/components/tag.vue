@@ -22,11 +22,11 @@
   </el-form-item>
 </template>
 <script>
-import { selectionMixin } from "@/mixin/common";
+import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
 
 export default {
-  mixins: [selectionMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" }), cpntMixin],
+  mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" }), cpntMixin],
   data() {
     return {
       loading: false,

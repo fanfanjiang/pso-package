@@ -5,7 +5,7 @@
 </template>
 <script>
 import cpntMixin from "../mixin";
-import { SUMMARY_OP_TYPE } from "@/const/form";
+import { SUMMARY_OP_TYPE } from "../../../const/form";
 import Big from "big.js/big.mjs";
 
 export default {

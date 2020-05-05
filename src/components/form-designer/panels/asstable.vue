@@ -56,9 +56,9 @@
 </template>
 <script>
 import commonPanel from "../common/common-panel";
-import FormAsstable from "@/components/form-interpreter/components/asstable";
+import FormAsstable from "../../form-interpreter/components/asstable";
 import { genComponentData } from "../helper";
-import FormStore from "@/components/form-designer/model/store.js";
+import FormStore from "../../form-designer/model/store.js";
 
 export default {
   props: ["cpnt"],

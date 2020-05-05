@@ -52,8 +52,8 @@
         <el-button
           class="pso-upload__footer-cancel"
           size="small"
-          type="text"
-          @click="$emit('close')"
+          type="text" 
+          @click="$emit('close')" 
         >取消</el-button>
         <el-button
           class="pso-upload__footer-confirm"
@@ -66,9 +66,9 @@
   </div>
 </template>
 <script>
-import Auth from "../tool/auth";
-import PsoFileList from "@/components/common/psoFileList";
-import { makeFiles } from "../tool/file";
+import Auth from "../../tool/auth";
+import PsoFileList from "../file-list";
+import { makeFiles } from "../../tool/file";
 
 export default {
   components: { PsoFileList },

@@ -106,7 +106,7 @@
 import DesignerBody from "./designer-body";
 import PsoHeader from "../header";
 import AuthEditor from "../auth-editor";
-import { pickerMixin } from "../../mixin/common";
+import { pickerMixin } from "../../mixin/picker";
 import shortid from "shortid";
 
 export default {

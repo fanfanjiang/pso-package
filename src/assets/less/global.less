@@ -1,0 +1,185 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    position: relative;
+    font-variant: tabular-nums;
+    font-feature-settings: "tnum";
+    color: #2b3441;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+        Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-variant: tabular-nums;
+}
+
+div,
+select,
+input,
+textarea,
+textarea:focus,
+input:hover,
+input:focus,
+input:checked,
+input:active,
+a:focus,
+a:hover,
+div:focus {
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-row-reverse {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row-center {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.flex-row-center-between {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pso-container {
+    margin-right: auto;
+    margin-left: auto;
+    position: relative;
+    .clearfix();
+
+    @media (min-width: @screen-sm-min) {
+        width: @container-sm;
+    }
+
+    @media (min-width: @screen-md-min) {
+        width: @container-md;
+    }
+
+    @media (min-width: @screen-lg-min) {
+        width: @container-lg;
+    }
+}
+
+.el-dialog {
+    background: transparent !important;
+    border-radius: 8px !important;
+
+    .el-dialog__header {
+        padding: 15px 20px;
+        background-color: @main-color;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+
+        .el-dialog__headerbtn {
+            top: 15px;
+
+            >i {
+                color: #fff;
+            }
+        }
+    }
+
+    .el-dialog__body {
+        background-color: #fff;
+    }
+
+    .el-dialog__footer {
+        background-color: #fff;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    .el-dialog__title {
+        font-size: 14px;
+        color: #fff;
+    }
+}
+
+.el-table__header-wrapper {
+    tr {
+        th:first-child {
+            .cell {
+                >label {
+                    padding-left: 4px;
+                }
+            }
+        }
+    }
+}
+
+.el-tree {
+    background-color: transparent;
+}
+
+.el-tabs__item:focus.is-active.is-focus:not(:active) {
+    box-shadow: none !important;
+}
+
+.el-tabs__nav-wrap::after {
+    background-color: transparent !important;
+}
+
+.el-button [class*="fa"]+span {
+    margin-left: 7px;
+}
+
+
+.el-table-column--selection {
+    >.cell {
+        padding: 0 0 0 0 !important;
+        display: flex !important;
+        justify-content: center;
+
+        .el-checkbox {
+            padding: 0 0 0 0 !important;
+        }
+    }
+}
+
+/* 表单只读模式 */
+.el-select {
+    .is-disabled {
+        .el-input__suffix {
+            display: none;
+        }
+    }
+}
+
+.is-disabled {
+    .el-input__inner {
+        background-color: #fff !important;
+        border: none;
+        color: #666 !important;
+        cursor: auto !important;
+    }
+}
+
+/* 表单只读模式 */

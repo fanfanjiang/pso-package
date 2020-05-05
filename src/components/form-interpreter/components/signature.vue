@@ -15,7 +15,7 @@
   </el-form-item>
 </template>
 <script>
-import PsoSignature from "@/components/common/pso-signature";
+import PsoSignature from "../../signature";
 import cpntMixin from "../mixin";
 
 export default {

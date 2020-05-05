@@ -25,9 +25,9 @@
   </el-form-item>
 </template>
 <script>
-import PsoUpload from "@/components/common/psoUpload";
-import PsoFileList from "@/components/common/psoFileList";
-import { makeFiles } from "@/tool/file";
+import PsoUpload from "../../upload/index.vue";
+import PsoFileList from "../../file-list/index.vue";
+import { makeFiles } from "../../../tool/file";
 import cpntMixin from "../mixin";
 
 export default {

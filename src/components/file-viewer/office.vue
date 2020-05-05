@@ -2,7 +2,7 @@
   <pso-iframe :src="src"></pso-iframe>
 </template>
 <script>
-import PsoIframe from "@/components/common/psoIframe";
+import PsoIframe from "./iframe";
 export default {
   components: { PsoIframe },
   props: ["file"],

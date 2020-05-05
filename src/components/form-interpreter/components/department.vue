@@ -20,12 +20,11 @@
   </el-form-item>
 </template>
 <script>
-import { selectionMixin } from "@/mixin/common";
+import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
-import { mapState } from "vuex";
 
 export default {
-  mixins: [selectionMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type", idName: "node_id" }), cpntMixin],
+  mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type", idName: "node_id" }), cpntMixin],
   data() {
     return {
       loading: false,
@@ -34,9 +33,6 @@ export default {
         type: this.cpnt.data._type
       }
     };
-  },
-  computed: {
-    ...mapState(["platform"])
   },
   watch: {
     "proxy.list"(val) {
@@ -57,9 +53,7 @@ export default {
       }
       this.loading = false;
     } else if (this.cpnt.data._defaultValType === "current") {
-      if (this.platform.user) {
-       
-      }
+
     }
     this.dispatch("PsoformInterpreter", "cpnt-dept-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   }

@@ -1,4 +1,4 @@
-import { CPNT } from "@/const/form";
+import { CPNT } from "../../../const/form";
 import shortid from 'shortid';
 import Vue from 'vue';
 

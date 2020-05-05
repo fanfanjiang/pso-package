@@ -14,21 +14,18 @@ import Element from 'element-ui';
 import API from './service/api';
 import createPDF from './utils/create-pdf';
 
-
+import PsoDrawer from "./components/drawer";
  
-
 const install = function (Vue, { apiUrl, defaultAppId = '3' }) {
 
-    // components.forEach(component => {
-    //     Vue.component(component.name, component);
-    // });
+    Vue.component('PsoDrawer', PsoDrawer);
 
     Vue.use(Vuebar);
     Vue.use(TextField);
     Vue.use(VCharts);
     Vue.use(Element);
 
-    Vue.prototype.$$createPDF = createPDF;
+    Vue.prototype.createPDF = createPDF;
 
     Vue.prototype.APIURL = apiUrl;
     Vue.prototype.API = API;

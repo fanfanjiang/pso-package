@@ -9,11 +9,11 @@
   </div>
 </template>
 <script>
-import { CPNT } from "@/const/form";
+import { CPNT } from "../../const/form";
 import PsoFormComponent from "./cpnt";
-import FormStore from "@/components/form-designer/model/store.js";
+import FormStore from "../form-designer/model/store.js";
 import shortid from "shortid";
-import emitter from "@/mixin/emitter";
+import emitter from "../../mixin/emitter";
 
 export default {
   name: "pso-form-interpreter",
