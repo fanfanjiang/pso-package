@@ -1,7 +1,6 @@
 {
   "name": "pso-packege",
   "version": "1.0.0",
-  "private": true,
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
     "build:exam": "vue-cli-service build example/main.js",
