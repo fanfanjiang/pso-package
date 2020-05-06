@@ -22,7 +22,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@deep: ~">>>";
 .pso-form-actor__table-plus {
   text-align: center;
   color: #999;

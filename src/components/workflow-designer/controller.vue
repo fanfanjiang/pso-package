@@ -4,7 +4,7 @@
       <i class="el-icon-download"></i>
     </div>
     <el-slider
-      v-model="workflowEditor.stageScale"
+      v-model="wfDesigner.stageScale"
       :max="1"
       :min="0.1"
       :step="0.1"
@@ -15,24 +15,24 @@
 </template>
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { WF_STAGE_SET } from "@/store/mutation-types";
+import { WF_STAGE_SET } from "../../store/mutation-types";
 import html2canvas from "html2canvas";
 
 export default {
   computed: {
-    ...mapState(["workflowEditor"]),
+    ...mapState(["wfDesigner"]),
     scaleText() {
-      return parseInt(this.workflowEditor.stageScale * 100) + "%";
+      return parseInt(this.wfDesigner.stageScale * 100) + "%";
     }
   },
   methods: {
     ...mapMutations([WF_STAGE_SET]),
     plus() {
-      this[WF_STAGE_SET](this.workflowEditor.stageScale + 0.1);
+      this[WF_STAGE_SET](this.wfDesigner.stageScale + 0.1);
     },
     minus() {
-      if (this.workflowEditor.stageScale < 0.2) return;
-      this[WF_STAGE_SET](this.workflowEditor.stageScale - 0.1);
+      if (this.wfDesigner.stageScale < 0.2) return;
+      this[WF_STAGE_SET](this.wfDesigner.stageScale - 0.1);
     },
     download(node) {
       html2canvas(node).then(canvas => {

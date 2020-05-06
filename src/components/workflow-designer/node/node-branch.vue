@@ -11,7 +11,7 @@
 </template>
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { WF_BRANCH_ADD } from "@/store/mutation-types";
+import { WF_BRANCH_ADD } from "../../../store/mutation-types";
 
 import WfPlus from "../common/plus";
 

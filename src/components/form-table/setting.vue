@@ -42,9 +42,9 @@
   </pso-drawer>
 </template>
 <script>
-import PsoDatafilter from "@/components/dataFilter/index";
-import { listToTree } from "@/utils/util";
-import FormStore from "@/components/form-designer/model/store.js";
+import PsoDatafilter from "../data-filter/index";
+import { listToTree } from "../../utils/util";
+import FormStore from "../form-designer/model/store.js";
 
 export default {
   components: { PsoDatafilter },

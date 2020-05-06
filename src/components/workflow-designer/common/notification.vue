@@ -28,11 +28,11 @@
   </div>
 </template>
 <script>
-import { selectionMixin } from "@/mixin/common";
+import { pickerMixin } from "../../../mixin/picker";
 
 export default {
   props: ["node"],
-  mixins: [selectionMixin({ baseObjName: "node.notification", dataListName: "list", typeName: "pattern" })],
+  mixins: [pickerMixin({ baseObjName: "node.notification", dataListName: "list", typeName: "pattern" })],
   data() {
     return {
       showUserSelector: false

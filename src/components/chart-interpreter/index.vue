@@ -17,13 +17,13 @@
   </div>
 </template>
 <script>
-import VeTable from "@/components/chartViewer/table";
-import VeCard from "@/components/chartViewer/card";
-import { CHART, FIGER_OP, DIMEN_OP, SORT_VAL } from "@/const/chart";
-import moment from "moment";
-import { transCMapToCondition } from "@/tool/form";
+import VeTable from "./table";
+import VeCard from "./card";
+import { CHART, FIGER_OP, DIMEN_OP, SORT_VAL } from "../../const/chart";
+import dayjs from "dayjs";
+import { transCMapToCondition } from "../../tool/form";
 import shortid from "shortid";
-import FormStore from "@/components/form-designer/model/store.js";
+import FormStore from "../form-designer/model/store.js";
 
 export default {
   components: { VeTable, VeCard },
@@ -221,19 +221,19 @@ export default {
             if (dim.op) {
               switch (dim.op) {
                 case DIMEN_OP.YEAR:
-                  d[dim._fieldValue] = moment(d[dim._fieldValue]).format("YYYY");
+                  d[dim._fieldValue] = dayjs(d[dim._fieldValue]).format("YYYY");
                   break;
                 case DIMEN_OP.QUARTER:
-                  d[dim._fieldValue] = moment(d[dim._fieldValue]).format("YYYY年第Q季度");
+                  d[dim._fieldValue] = dayjs(d[dim._fieldValue]).format("YYYY年第Q季度");
                   break;
                 case DIMEN_OP.MONTH:
-                  d[dim._fieldValue] = moment(d[dim._fieldValue]).format("YYYY年MM月");
+                  d[dim._fieldValue] = dayjs(d[dim._fieldValue]).format("YYYY年MM月");
                   break;
                 case DIMEN_OP.DAY:
-                  d[dim._fieldValue] = moment(d[dim._fieldValue]).format("YYYY年MM月DD");
+                  d[dim._fieldValue] = dayjs(d[dim._fieldValue]).format("YYYY年MM月DD");
                   break;
                 case DIMEN_OP.WEAK:
-                  d[dim._fieldValue] = moment(d[dim._fieldValue]).format("gggg年第ww周");
+                  d[dim._fieldValue] = dayjs(d[dim._fieldValue]).format("gggg年第ww周");
                   break;
               }
             }
@@ -348,5 +348,5 @@ export default {
 };
 </script>
 <style lang="less">
-@import "~@/assets/less/component/chart.less";
+@import "../../assets/less/component/chart.less";
 </style>

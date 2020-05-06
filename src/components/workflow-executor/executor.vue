@@ -1,5 +1,9 @@
 <template>
-  <div class="pso-wf-executor" v-loading="wfExecutor.loading||wfExecutor.steping">
+  <div
+    class="pso-wf-executor"
+    :class="executorClass"
+    v-loading="wfExecutor.loading||wfExecutor.steping"
+  >
     <transition name="el-zoom-in-top">
       <div class="pso-wf-executor__body" v-show="showBody">
         <div class="pso-wf-executor__main" v-bar>
@@ -8,6 +12,7 @@
               <pso-wf-overview></pso-wf-overview>
             </div>
             <div
+              v-if="!isMobile"
               ref="wfTable"
               class="pso-wf-executor__main-content"
               id="executorMain"
@@ -67,7 +72,7 @@
               <i class="el-icon-more"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <template v-if="superable">
+              <template v-if="superable&&wfExecutor.curStep">
                 <el-dropdown-item command="copy">抄送</el-dropdown-item>
                 <el-dropdown-item command="distribute">分发</el-dropdown-item>
                 <el-dropdown-item command="addSign">加签</el-dropdown-item>
@@ -98,7 +103,7 @@
               v-if="wfExecutor.cfg.wf_table_id"
               :key="wfExecutor.cfg.wf_table_id"
               :form-id="wfExecutor.cfg.wf_table_id"
-              :data-id="wfExecutor.data.instanceId"
+              :data-id="instanceId"
               :editable="isFormWriteable"
             ></pso-form-view>
           </div>
@@ -153,6 +158,8 @@
   </div>
 </template>
 <script>
+import shortid from "shortid";
+
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 import {
   WFINS_DATA_RESET,
@@ -160,17 +167,18 @@ import {
   WFINS_INSTANCE_GET,
   WFINS_INSTANCE_SET,
   WFINS_NEXTSETP,
-  WFINS_SAVE
-} from "@/store/mutation-types";
-import { REVIEW_OP_TYPE, REVIEW_OP_APPEND } from "@/const/workflow";
+  WFINS_SAVE 
+} from "../../store/mutation-types";
+import { REVIEW_OP_TYPE, REVIEW_OP_APPEND } from "../../const/workflow";
 
-import PsoFormView from "@/components/form-interpreter/index";
-import PsoWfForm from "@/components/workflowExecutor/mainForm";
-import PsoWfStage from "@/components/workflowEditor/stage";
-import PsoFormAttach from "@/components/form-interpreter/components/attachment";
-import PsoWfop from "@/components/workflowExecutor/op/index";
-import PsoWfopUser from "@/components/workflowExecutor/op/user";
-import PsoWfOverview from "@/components/workflowExecutor/overview";
+import PsoFormView from "../../form-interpreter/index";
+import PsoWfForm from "./main-form";
+import PsoWfStage from "../components/workflow-designer/stage";
+import PsoFormAttach from "../form-interpreter/components/attachment";
+import PsoWfop from "./op/index";
+import PsoWfopUser from "./op/user";
+import PsoWfOverview from "./overview";
+const UAParser = require("../../share/util/u-agent"); 
 
 export default {
   components: { PsoFormView, PsoWfForm, PsoWfStage, PsoFormAttach, PsoWfop, PsoWfopUser, PsoWfOverview },
@@ -185,7 +193,8 @@ export default {
       REVIEW_OP_TYPE: REVIEW_OP_TYPE,
       showBody: true,
       showUserOp: false,
-      formStore: null
+      formStore: null,
+      isMobile: false
     };
   },
   computed: {
@@ -195,12 +204,20 @@ export default {
         "pso-wf-executor__extend__expend": !this.showBody
       };
     },
+    executorClass() {
+      return {
+        "pso-wf-executor__m": this.isMobile
+      };
+    },
     isFormWriteable() {
       return this.wfExecutor.curStep && this.wfExecutor.curStep.atype === "form";
     },
     superable() {
       //只有分发才隐藏
       return this.wfExecutor.data.msg_tag === 1 ? false : true;
+    },
+    instanceId() {
+      return this.wfExecutor.data.instanceId || (this.params.copy && this.params.instance && this.params.instance.instanceId);
     }
   },
   watch: {
@@ -258,6 +275,10 @@ export default {
         }
       }
     }
+  },
+  created() {
+    const parser = new UAParser();
+    this.isMobile = parser.getResult().device.type === "mobile";
   },
   destroyed() {
     //重新初始化state
@@ -355,7 +376,11 @@ export default {
     },
     async getFormData() {
       try {
-        return await this.$refs.formImage.makeData();
+        const formData = await this.$refs.formImage.makeData();
+        if (wfExecutor.copy && formData) {
+          formData.dataArr[0].leaf_id = shortid.generate();
+        }
+        return formData;
       } catch (error) {
         return null;
       }
@@ -422,7 +447,7 @@ export default {
 };
 </script>
 <style lang="less">
-@import "~@/assets/less/component/wfExecutor.less";
+@import "../../assets/less/component/wfExecutor.less";
 </style>
 <style lang="less" scoped>
 .pso-wf-logs {

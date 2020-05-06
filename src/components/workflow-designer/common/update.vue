@@ -68,8 +68,8 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import PsoFormComponent from "@/components/form-interpreter/cpnt";
-import FormStore from "@/components/form-designer/model/store.js";
+import PsoFormComponent from "../../form-interpreter/cpnt";
+import FormStore from "../../form-designer/model/store.js";
 
 export default {
   props: ["node"],
@@ -80,9 +80,9 @@ export default {
     };
   },
   computed: {
-    ...mapState(["workflowEditor"]),
+    ...mapState(["wfDesigner"]),
     options() {
-      return this.workflowEditor.formStore.search({
+      return this.wfDesigner.formStore.search({
         onlyData: true,
         options: { db: true },
         beforePush: item => {
@@ -107,10 +107,10 @@ export default {
       this.node.update.splice(index, 1);
     },
     getCpnt(updateItem) {
-      return this.workflowEditor.formStore.search({ options: { fid: updateItem.fid } });
+      return this.wfDesigner.formStore.search({ options: { fid: updateItem.fid } });
     },
     makeCpnt(updateItem, data) {
-      this.$set(updateItem, "store", new FormStore(this.workflowEditor.formStore.getBaseInfo()));
+      this.$set(updateItem, "store", new FormStore(this.wfDesigner.formStore.getBaseInfo()));
       updateItem.store.updateInstance(data);
       const cpnt = updateItem.store.search({ options: { fid: updateItem.fid } });
       cpnt.data._hideForever = false;
@@ -136,7 +136,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@deep: ~">>>";
 
 .pso-wf-update {
   display: flex;

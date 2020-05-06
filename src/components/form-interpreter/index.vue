@@ -191,7 +191,7 @@ export default {
 };
 </script>
 <style lang="less">
-@import "~@/assets/less/component/form.less";
+@import "../../assets/less/component/form.less";
 </style>
 <style lang="less" scoped>
 @deep: ~">>>";

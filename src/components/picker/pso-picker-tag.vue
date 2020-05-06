@@ -274,7 +274,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@import "../../assets/less/variable";
 .pso-picker {
   &.pso-picker__l__wider {
     .pso-picker__body-l {

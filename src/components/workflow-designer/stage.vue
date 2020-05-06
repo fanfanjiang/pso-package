@@ -29,14 +29,14 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { WF_NODE_PANEL_SET, WF_CONDITION_MAKE, WF_SAVE } from "@/store/mutation-types";
+import { WF_NODE_PANEL_SET, WF_CONDITION_MAKE, WF_SAVE } from "../../store/mutation-types";
 
 import WfController from "./controller";
 
-import WfNodeStart from "./node/nodeStart";
-import WfNodeEl from "./nodeEl";
+import WfNodeStart from "./node/node-start";
+import WfNodeEl from "./node-el";
 
-import FreeDrag from "@/mixin/free-drag";
+import FreeDrag from "../../mixin/free-drag";
 
 export default {
   components: { WfNodeEl, WfNodeStart, WfController },
@@ -49,15 +49,15 @@ export default {
     }
   },
   computed: {
-    ...mapState(["workflowEditor"]),
+    ...mapState(["wfDesigner"]),
     stageStyle() {
       return {
-        transform: `scale(${this.workflowEditor.stageScale})`
+        transform: `scale(${this.wfDesigner.stageScale})`
       };
     },
     workflowImage() {
       //workflowImage是流程图数据集，为了方便图例展示，如果传入workflowData，则不使用vuex，直接使用传入的参数workflowData
-      return this.workflowData || this.workflowEditor;
+      return this.workflowData || this.wfDesigner;
     }
   },
   methods: {
@@ -68,5 +68,5 @@ export default {
 };
 </script>
 <style lang="less">
-@import "~@/assets/less/component/wfEditor.less";
+@import "../../assets/less/component/wfEditor.less";
 </style>

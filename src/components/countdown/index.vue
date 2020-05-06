@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import { raf, cancelRaf } from "@/utils/raf";
+import { raf, cancelRaf } from "../../utils/raf";
 import dayjs from "dayjs";
 export default {
   props: {

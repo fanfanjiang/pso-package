@@ -16,7 +16,7 @@
           <branch-picker
             :key="getKey(orIndex,andIndex)"
             :pick="andCondition"
-            :fieldsOptions="workflowEditor.fieldsOptions"
+            :fieldsOptions="wfDesigner.fieldsOptions"
           ></branch-picker>
           <i
             class="wf-panel-branchitem__del el-icon-delete-solid"
@@ -47,15 +47,15 @@
 </template>
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { WF_CONDITION_ADD, WF_CONDITION_DEL } from "@/store/mutation-types";
+import { WF_CONDITION_ADD, WF_CONDITION_DEL } from "../../../store/mutation-types";
 
-import branchPicker from "../common/branchPicker";
+import branchPicker from "../common/branch-picker";
 
 export default {
   props: ["node"],
   components: { branchPicker },
   computed: {
-    ...mapState(["workflowEditor"])
+    ...mapState(["wfDesigner"])
   },
   methods: {
     ...mapMutations([WF_CONDITION_ADD, WF_CONDITION_DEL]),

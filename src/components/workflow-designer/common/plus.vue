@@ -21,8 +21,8 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 
-import nodeMenu from "../nodeMenu";
-import { WF_NODE_ADD } from "@/store/mutation-types";
+import nodeMenu from "../node-menu";
+import { WF_NODE_ADD } from "../../../store/mutation-types";
 
 export default {
   props: ["node", "pnode", "readMode"],
@@ -34,7 +34,7 @@ export default {
   },
   created() {},
   computed: {
-    ...mapState(["workflowEditor"])
+    ...mapState(["wfDesigner"])
   },
   methods: {
     ...mapMutations([WF_NODE_ADD]),
@@ -44,7 +44,7 @@ export default {
     },
     openPanel() {
       if (this.readMode) return;
-      if (!this.workflowEditor.formId) {
+      if (!this.wfDesigner.formId) {
         return this.$message({ message: "请选择工作表", type: "warning" });
       }
       this.showPanel = true;
@@ -52,5 +52,3 @@ export default {
   }
 };
 </script>
-<style lang="less" scoped>
-</style>

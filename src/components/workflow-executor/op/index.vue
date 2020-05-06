@@ -45,7 +45,7 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { WF_TAG_TEXT_PASS, WF_TAG_TEXT_REJECT } from "@/const/workflow";
+import { WF_TAG_TEXT_PASS, WF_TAG_TEXT_REJECT } from "../../../const/workflow";
 
 export default {
   props: {

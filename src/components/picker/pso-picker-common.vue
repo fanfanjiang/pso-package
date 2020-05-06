@@ -100,7 +100,7 @@
   </el-popover>
 </template>
 <script>
-import PsoTypebar from "@/components/common/pso-typebar";
+import PsoTypebar from "../pso-typebar";
 import debounce from "throttle-debounce/debounce";
 
 export default {
@@ -263,7 +263,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@import "../../assets/less/variable";
 .pso-picker {
   &.pso-picker__l__wider {
     .pso-picker__body-l {

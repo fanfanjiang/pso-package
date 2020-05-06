@@ -56,7 +56,7 @@
   </div>
 </template>
 <script>
-import { CPNT } from "@/const/form";
+import { CPNT } from "../../../const/form";
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -68,9 +68,9 @@ export default {
     };
   },
   computed: {
-    ...mapState(["workflowEditor"]),
+    ...mapState(["wfDesigner"]),
     options() {
-      const formStore = this.workflowEditor.formStore;
+      const formStore = this.wfDesigner.formStore;
       let list = [];
       if (formStore && formStore.search) {
         const formRet = formStore.search({
@@ -117,7 +117,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@deep: ~">>>";
 .branch-picker {
   .branch-picker__body {
     display: flex;

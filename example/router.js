@@ -6,7 +6,7 @@ import Auth from '@/tool/auth';
 Vue.use(Router);
 
 const organizeParams = (route) => ({ params: Object.assign(route.query, route.params) });
- 
+
 const router = new Router({
   mode: 'history',
   routes: [
@@ -14,6 +14,12 @@ const router = new Router({
       path: '/form-designer',
       name: 'formDesigner',
       component: () => import('./views/form-designer'),
+      props: organizeParams
+    },
+    {
+      path: '/wf-designer',
+      name: 'wfDesigner',
+      component: () => import('./views/wf-designer'),
       props: organizeParams
     }
   ]

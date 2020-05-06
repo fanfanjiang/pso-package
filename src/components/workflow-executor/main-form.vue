@@ -7,9 +7,6 @@
       label-position="top"
       size="medium"
     >
-      <!-- <el-form-item label="流程名称" prop="name">
-        <el-input v-model.trim="wfExecutor.data.name" :disabled="readMode"></el-input>
-      </el-form-item> -->
       <div class="pso-wf-mainform__item">
         <el-form-item label="发文编号" prop="filetype">
           <el-select v-model="wfExecutor.data.filetype" :disabled="readMode">
@@ -44,7 +41,7 @@
 </template>  
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { WF_IMPORTANCE, WF_SECTRE, WF_URGENT } from "@/const/workflow";
+import { WF_IMPORTANCE, WF_SECTRE, WF_URGENT } from "../../const/workflow";
 export default {
   computed: {
     ...mapState(["wfExecutor"]),

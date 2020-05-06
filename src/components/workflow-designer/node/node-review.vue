@@ -34,7 +34,7 @@
 </template>
 <script>
 import CommonNode from "../common/node";
-import { REVIEW_TYPE, REVIEW_OP_TYPE, REVIEW_AUTH_TYPE } from "@/const/workflow";
+import { REVIEW_TYPE, REVIEW_OP_TYPE, REVIEW_AUTH_TYPE } from "../../../const/workflow";
 
 export default {
   props: ["node", "pnode", "readMode", "workflowImage"],
@@ -58,8 +58,8 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
-@import "~@/assets/less/mixins/gradients.less";
+@import "../../../assets/less/variable";
+@import "../../../assets/less/mixins/gradients.less";
 .wf-node-review {
   min-height: 100px;
   .wf-node-review__header {

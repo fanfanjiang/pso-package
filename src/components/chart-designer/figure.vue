@@ -51,11 +51,11 @@
 </template>
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import { CD_FIGURE_SET } from "@/store/mutation-types";
-import { FIGER_OP_LIST, SORT } from "@/const/chart";
+import { CD_FIGURE_SET } from "../../store/mutation-types";
+import { FIGER_OP_LIST, SORT } from "../../const/chart";
 
-import PsoCdAlias from "@/components/chartDesigner/alias";
-import PsoCdUnit from "@/components/chartDesigner/unit";
+import PsoCdAlias from "./alias";
+import PsoCdUnit from "./unit";
 
 import draggable from "vuedraggable";
 

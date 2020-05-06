@@ -19,7 +19,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@deep: ~">>>";
 @{deep}.el-form-item__label {
   line-height: 20px;
   color: #000;

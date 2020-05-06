@@ -42,7 +42,7 @@
 </template>
 <script>
 import CommonNode from "../common/node";
-import { OP_TYPE } from "@/const/op";
+import { OP_TYPE } from "../../../const/op";
 
 export default {
   props: ["node", "pnode", "readMode", "workflowImage"],
@@ -59,7 +59,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@import "../../../assets/less/variable";
 
 .pso-wf-branch-item {
   padding-top: 30px;

@@ -83,7 +83,7 @@
   </div>
 </template>
 <script>
-import { TreeMixin } from "@/mixin/tree";
+import { TreeMixin } from "../../mixin/tree";
 
 export default {
   mixins: [TreeMixin()],
@@ -96,7 +96,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@import "../../assets/less/variable";
 .pso-tree {
   width: 100%;
   padding: 15px;

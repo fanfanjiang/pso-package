@@ -1,6 +1,6 @@
 import { Node } from 'tiptap'
 import { TextSelection } from 'prosemirror-state';
-import emitter from "@/mixin/emitter";
+import emitter from "../../../mixin/emitter";
 
 export default class FieldNode extends Node {
 

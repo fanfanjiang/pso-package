@@ -82,7 +82,7 @@ export default {
 };
 </script>
 <style lang="less">
-@import "~@/assets/less/variable";
+@deep: ~">>>";
 .pso-form-upload {
   position: relative;
   .pso-form-upload__trigger {

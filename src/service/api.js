@@ -1,5 +1,45 @@
+import { Message } from 'element-ui';
+import Qs from 'qs';
+import axios from 'axios';
+import Auth from '../tool/auth';
+
+//请求拦截器
+axios.interceptors.request.use((config) => {
+    //添加token
+    var token = Auth.getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
 
 export default class API {
+
+    URL_PREFIX = ''
+
+    static async  request(url, { method = 'post', data = {} }) {
+        url = `${this.URL_PREFIX}${url}`;
+        if (method === 'get') {
+            url += `?${Qs.stringify(data)}`;
+        }
+        try {
+            if (method === 'delete') data = { data: data };
+            const ret = await axios({ method, url, data: trueData });
+            const message = ret.msg || ret.message;
+            if (!ret.success && message) {
+                Message({ showClose: true, message, type: 'warning' });
+            }
+            return ret;
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                Message({ showClose: true, message: '登录过期，请重新登录', type: 'warning' });
+            } else {
+                Message({ showClose: true, message: '数据请求失败，请稍后再试', type: 'error' })
+            }
+        }
+    }
 
     static async RESTful(url, { method = 'get', data, idField = 'id' }) {
         let id = data[idField];

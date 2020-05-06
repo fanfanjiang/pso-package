@@ -42,7 +42,7 @@
     <el-form-item label="主体权限项">
       <el-select :multiple="true" v-model="node.bodyitemsList" placeholder="请选择">
         <el-option
-          v-for="item in workflowEditor.permissionEntries"
+          v-for="item in wfDesigner.permissionEntries"
           :key="item.body_id"
           :label="item.body_name"
           :value="item.body_id"
@@ -52,7 +52,7 @@
     <el-form-item v-if="node.atype==='form'" label="表单权限项">
       <el-select :multiple="true" v-model="node.authitemsList" placeholder="请选择">
         <el-option
-          v-for="item in workflowEditor.formAuthOptions"
+          v-for="item in wfDesigner.formAuthOptions"
           :key="item.body_id"
           :label="item.body_name"
           :value="item.body_id"
@@ -63,12 +63,12 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { REVIEW_AUTH_TYPE } from "@/const/workflow";
-import { selectionMixin } from "@/mixin/common";
+import { REVIEW_AUTH_TYPE } from "../../../const/workflow";
+import { pickerMixin } from "../../../mixin/picker";
 
 export default {
   props: ["node"],
-  mixins: [selectionMixin({ baseObjName: "node", dataListName: "opaitems", typeName: "_type" })],
+  mixins: [pickerMixin({ baseObjName: "node", dataListName: "opaitems", typeName: "_type" })],
   data() {
     return {
       showSelector: false,
@@ -76,7 +76,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["workflowEditor"]),
+    ...mapState(["wfDesigner"]),
     authType() {
       return Object.values(this.REVIEW_AUTH_TYPE);
     }

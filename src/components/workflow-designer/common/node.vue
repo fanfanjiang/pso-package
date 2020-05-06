@@ -12,7 +12,7 @@
 <script>
 import WfPlus from "./plus";
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { WF_NODE_DEL, WF_SET_SELECTED } from "@/store/mutation-types";
+import { WF_NODE_DEL, WF_SET_SELECTED } from "../../../store/mutation-types";
 
 export default {
   components: { WfPlus },
@@ -49,5 +49,4 @@ export default {
   }
 };
 </script>
-<style lang="less" scoped>
-</style>
+

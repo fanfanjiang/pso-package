@@ -1,4 +1,4 @@
-import NodeType from "./nodeType";
+import NodeType from "./node-type";
 
 export default [
     {

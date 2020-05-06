@@ -22,17 +22,17 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { REVIEW_TYPE, REVIEW_OP_TYPE, REVIEW_AUTH_TYPE } from "@/const/workflow";
+import { REVIEW_TYPE, REVIEW_OP_TYPE, REVIEW_AUTH_TYPE } from "../../../const/workflow";
 
-import PsoCommonReview from "@/components/workflowEditor/common/commonReview";
-import PsoWfUpdate from "@/components/workflowEditor/common/update";
-import PsoWfNotification from "@/components/workflowEditor/common/notification";
+import PsoCommonReview from "../../workflow-designer/common/common-review";
+import PsoWfUpdate from "../../workflow-designer/common/update";
+import PsoWfNotification from "../../workflow-designer/common/notification";
 
 export default {
   components: { PsoCommonReview, PsoWfUpdate, PsoWfNotification },
   props: ["node"],
   computed: {
-    ...mapState(["workflowEditor"]),
+    ...mapState(["wfDesigner"]),
     reviewType() {
       return Object.values(REVIEW_TYPE);
     },
@@ -43,7 +43,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@import "../../../assets/less/variable";
 @{deep} {
   .el-form-item__label {
     line-height: 20px;

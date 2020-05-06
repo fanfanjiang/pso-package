@@ -1,6 +1,6 @@
 <template>
   <div class="pso-wf-wrapper">
-    <div class="pso-wf" v-if="!workflowEditor.initializing" v-loading="workflowEditor.loading">
+    <div class="pso-wf" v-if="!wfDesigner.initializing" v-loading="wfDesigner.loading">
       <div class="pso-wf-header">
         <pso-header @back="$emit('back')" @save="saveWorkflow" title="流程设计">
           <div class="pso-wf-tab">
@@ -11,7 +11,7 @@
           </div>
           <template v-slot:btn>
             <el-popconfirm
-              v-if="workflowEditor.node_id||workflowEditor.pid"
+              v-if="wfDesigner.node_id||wfDesigner.pid"
               title="你确定要发布吗？"
               @onConfirm="saveWorkflow"
             >
@@ -30,7 +30,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="auth">添加权限项</el-dropdown-item>
                 <el-dropdown-item command="saveTemp">保存为模板</el-dropdown-item>
-                <el-dropdown-item command="updateTemp" v-if="workflowEditor.templateId">更新模板</el-dropdown-item>
+                <el-dropdown-item command="updateTemp" v-if="wfDesigner.templateId">更新模板</el-dropdown-item>
                 <el-dropdown-item>
                   <pso-picker-resource
                     @confirm="handleTempSelection"
@@ -56,7 +56,7 @@
       <pso-drawer
         size="100%"
         :modal="false"
-        :visible="workflowEditor.nodePanelVisible"
+        :visible="wfDesigner.nodePanelVisible"
         :title="panelName"
         :icon="panelIcon"
         :destroy="true"
@@ -113,23 +113,23 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { WF_NODE_PANEL_SET, WF_INIT, WF_CONDITION_MAKE, WF_SAVE, WF_RESET, WF_FORM_SELECT } from "@/store/mutation-types";
-
-import PsoHeader from "@/components/common/psoHeader";
+import { WF_NODE_PANEL_SET, WF_INIT, WF_CONDITION_MAKE, WF_SAVE, WF_RESET, WF_FORM_SELECT } from "../../store/mutation-types";
+ 
+import PsoHeader from "../header";
 
 import WfStage from "./stage";
 
-import WfPanelEl from "./panelEl";
-import wfTableEditor from "./tableEditor/tableEditor";
+import WfPanelEl from "./panel-el";
+import wfTableEditor from "./table-editor";
 
-import FreeDrag from "@/mixin/free-drag";
-import NodeType from "./nodeType";
-import AuthEditor from "@/components/common/authEditor";
-import { selectionMixin } from "@/mixin/common";
+import FreeDrag from "../../mixin/free-drag";
+import NodeType from "./node-type";
+import AuthEditor from "../auth-editor";
+import { pickerMixin } from "../../mixin/picker";
 import shortid from "shortid";
 
 export default {
-  mixins: [selectionMixin({ baseObjName: "resource", dataListName: "list", typeName: "type", idName: "node_id" })],
+  mixins: [pickerMixin({ baseObjName: "resource", dataListName: "list", typeName: "type", idName: "node_id" })],
   components: { AuthEditor, wfTableEditor, WfStage, PsoHeader, WfPanelEl },
   props: {
     params: {
@@ -164,12 +164,12 @@ export default {
     };
   },
   computed: {
-    ...mapState(["workflowEditor"]),
+    ...mapState(["wfDesigner"]),
     panelName() {
-      return this.workflowEditor.selectedNode ? NodeType[this.workflowEditor.selectedNode.tid].name : "";
+      return this.wfDesigner.selectedNode ? NodeType[this.wfDesigner.selectedNode.tid].name : "";
     },
     panelIcon() {
-      return this.workflowEditor.selectedNode ? NodeType[this.workflowEditor.selectedNode.tid].icon : "";
+      return this.wfDesigner.selectedNode ? NodeType[this.wfDesigner.selectedNode.tid].icon : "";
     }
   },
   created() {
@@ -178,8 +178,8 @@ export default {
   watch: {
     activeTab(tab) {
       if (tab === "page") {
-        this.workflowEditor.nodePanelVisible = false;
-        this.workflowEditor.selectedNode = null;
+        this.wfDesigner.nodePanelVisible = false;
+        this.wfDesigner.selectedNode = null;
       }
     }
   },
@@ -196,21 +196,21 @@ export default {
       if (!data) return;
       const ret = await this.API.workflowcfg({ data, method: data.node_id ? "put" : "post" });
       if (ret.success) this.$notify({ title: "保存成功", type: "success" });
-      this.workflowEditor.loading = false;
+      this.wfDesigner.loading = false;
     },
     savedAuth(data) {
       this.authEditorKey++;
       this.showAuthEditor = false;
-      this.workflowEditor.permissionEntries.push(data);
+      this.wfDesigner.permissionEntries.push(data);
     },
     async handleCommand(command) {
       if (command === "auth") {
         this.showAuthEditor = true;
       } else if (command === "saveTemp") {
-        this.tempName = this.tempName || this.workflowEditor.wfName;
+        this.tempName = this.tempName || this.wfDesigner.wfName;
         this.showTempPop = true;
       } else if (command === "updateTemp") {
-        this.tempSaveHandler({ leaf_id: this.workflowEditor.templateId });
+        this.tempSaveHandler({ leaf_id: this.wfDesigner.templateId });
       }
     },
     async prepareData() {
@@ -231,7 +231,7 @@ export default {
       this.tempSaveHandler({ node_id: this.resource.list[0].node_id, r_name: this.tempName });
     },
     async tempSaveHandler(data) {
-      data.r_name = data.r_name || this.workflowEditor.wfName;
+      data.r_name = data.r_name || this.wfDesigner.wfName;
       if (!data.r_name) {
         return this.$message({ message: "请输入模板名称", type: "warning" });
       }
@@ -252,7 +252,7 @@ export default {
     },
     async handleTempSelection(data) {
       if (!data.length) return;
-      this.$store.dispatch(WF_INIT, { templateId: data[0].leaf_id, node_id: this.workflowEditor.node_id, pid: this.workflowEditor.pid });
+      this.$store.dispatch(WF_INIT, { templateId: data[0].leaf_id, node_id: this.wfDesigner.node_id, pid: this.wfDesigner.pid });
     },
     newTempFilter(nodes) {
       return nodes.filter(node => node.is_leaf);
@@ -261,10 +261,10 @@ export default {
 };
 </script>
 <style lang="less">
-@import "~@/assets/less/component/wfEditor.less";
+@import "../../assets/less/component/wfEditor.less";
 </style>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@import "../../assets/less/variable";
 .tag-list {
   margin-bottom: 5px;
 }

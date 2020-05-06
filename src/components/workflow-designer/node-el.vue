@@ -19,9 +19,9 @@
   </component>
 </template>
 <script>
-import WfNodeBranch from "./node/nodeBranch";
-import WfNodeReview from "./node/nodeReview";
-import WfNodeBranchitem from "./node/nodeBranchItem";
+import WfNodeBranch from "./node/node-branch";
+import WfNodeReview from "./node/node-review";
+import WfNodeBranchitem from "./node/node-branchitem";
 
 export default {
   name: "wfNodeEl",

@@ -55,7 +55,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@import "../../assets/less/variable";
 .pso-upload__list {
   position: relative;
   width: 100%;

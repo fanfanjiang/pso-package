@@ -32,8 +32,8 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
-@import "~@/assets/less/mixins/gradients.less";
+@import "../../../assets/less/variable";
+@import "../../../assets/less/mixins/gradients.less";
 .wf-node-review {
   min-height: 100px;
   .wf-node-review__header {

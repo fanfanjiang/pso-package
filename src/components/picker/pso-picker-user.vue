@@ -258,7 +258,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@import "../../assets/less/variable.less";
 .pso-picker__body {
   display: flex;
   height: 330px;

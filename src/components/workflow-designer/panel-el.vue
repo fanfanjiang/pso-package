@@ -1,7 +1,7 @@
 <template>
   <div class="pso-wf-panel-node">
     <template v-for="node in nodesMap">
-      <div :key="node.nid" v-show="workflowEditor.selectedNode.nid===node.nid">
+      <div :key="node.nid" v-show="wfDesigner.selectedNode.nid===node.nid">
         <panel-header
           :icon="getPanelType(node).icon"
           :info="getPanelType(node).tip"
@@ -14,20 +14,20 @@
 </template>
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { WF_NODE_PANEL_SET, WF_FIND_NODE } from "@/store/mutation-types";
+import { WF_NODE_PANEL_SET, WF_FIND_NODE } from "../../store/mutation-types";
 
-import NODE_TYPE from "./nodeType";
+import NODE_TYPE from "./node-type";
 
-import panelHeader from "@/components/form-designer/common/panel-header";
+import panelHeader from "../form-designer/common/panel-header";
 
-import WfPanelStart from "./panel/panelStart";
-import WfPanelReview from "./panel/panelReview";
-import WfPanelBranchitem from "./panel/panelBranchitem";
+import WfPanelStart from "./panel/panel-start";
+import WfPanelReview from "./panel/panel-review";
+import WfPanelBranchitem from "./panel/panel-branchitem";
 
 export default {
   components: { panelHeader, WfPanelStart, WfPanelReview, WfPanelBranchitem },
   computed: {
-    ...mapState(["workflowEditor"]),
+    ...mapState(["wfDesigner"]),
     nodesMap() {
       const map = {};
       this.$store.getters[WF_FIND_NODE]({ cb: item => (map[item.nid] = item) });

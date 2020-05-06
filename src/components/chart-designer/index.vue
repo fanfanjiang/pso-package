@@ -115,14 +115,14 @@
 </template>
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import { CD_SOURCE_GET, CD_INIT, CD_DIMENSION_SET } from "@/store/mutation-types";
-import { CHART } from "@/const/chart";
+import { CD_SOURCE_GET, CD_INIT, CD_DIMENSION_SET } from "../../store/mutation-types";
+import { CHART } from "../../const/chart";
 
-import PsoHeader from "@/components/common/psoHeader";
-import PsoCdSource from "@/components/chartDesigner/source";
-import PsoCdDimension from "@/components/chartDesigner/dimension";
-import PsoCdFigure from "@/components/chartDesigner/figure";
-import PsoDatafilter from "@/components/dataFilter/index";
+import PsoHeader from "../header";
+import PsoCdSource from "./source";
+import PsoCdDimension from "./dimension";
+import PsoCdFigure from "./figure";
+import PsoDatafilter from "../data-filter/index";
 
 const SVGInjector = require("svg-injector");
 
@@ -266,7 +266,7 @@ export default {
 };
 </script>
 <style lang="less">
-@import "~@/assets/less/component/chartDesigner.less";
+@import "../../assets/less/component/chartDesigner.less";
 .pso-formTable__filter {
   position: relative;
   .pso-formTable__filter-body {

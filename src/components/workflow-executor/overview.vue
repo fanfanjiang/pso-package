@@ -35,7 +35,7 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 import dayjs from "dayjs";
-import { raf, cancelRaf } from "@/utils/raf";
+import { raf, cancelRaf } from "../../utils/raf";
 
 export default {
   data() {

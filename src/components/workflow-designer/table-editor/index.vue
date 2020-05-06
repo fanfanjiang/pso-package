@@ -31,7 +31,7 @@
             @focus="selectedOp='插入权限项'"
           >
             <el-option
-              v-for="item in workflowEditor.permissionEntries"
+              v-for="item in wfDesigner.permissionEntries"
               :key="item.body_id"
               :label="item.body_name"
               :value="item.body_id"
@@ -69,7 +69,7 @@
         </div>
       </editor-menu-bar>
     </div>
-    <div class="wf-table-editor__save" v-if="workflowEditor.wfCode">
+    <div class="wf-table-editor__save" v-if="wfDesigner.wfCode">
       <el-button type="primary" size="mini" round :loading="saving" @click="saveHandler">保存主体</el-button>
     </div>
     <div class="wf-table-editor__content" :style="contentStyle">
@@ -99,9 +99,9 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { genComponentData } from "@/components/form-designer/helper/index.js";
-import { WF_FIND_NODE } from "@/store/mutation-types";
-import { REVIEW_LOG_FORMAT } from "@/const/workflow";
+import { genComponentData } from "../../form-designer/helper/index.js";
+import { WF_FIND_NODE } from "../../../store/mutation-types";
+import { REVIEW_LOG_FORMAT } from "../../../const/workflow";
 
 import { codemirror } from "vue-codemirror";
 import "codemirror/lib/codemirror.css";
@@ -130,11 +130,11 @@ import {
   TableRow
 } from "tiptap-extensions";
 
-import FieldNode from "./fieldNode";
+import FieldNode from "./field-node";
 import Align from "./align";
-import PermissionEntries from "./permissionEntries";
+import PermissionEntries from "./permission-entries";
 
-import EditorMenuItem from "./menuItem";
+import EditorMenuItem from "./menu-item";
 
 export default {
   components: { EditorMenuItem, EditorContent, EditorMenuBar, EditorFloatingMenu, codemirror },
@@ -286,21 +286,21 @@ export default {
     };
   },
   computed: {
-    ...mapState(["workflowEditor"]),
+    ...mapState(["wfDesigner"]),
     contentStyle() {
       return {
         "margin-top": this.fieldNode ? "140px" : "0px"
       };
     },
     reviewList() {
-      const formStore = this.workflowEditor.formStore;
+      const formStore = this.wfDesigner.formStore;
       if (formStore && formStore.search) {
         return this.$store.getters[WF_FIND_NODE]({ options: { tid: "review" } });
       }
       return [];
     },
     options() {
-      const formStore = this.workflowEditor.formStore;
+      const formStore = this.wfDesigner.formStore;
       let list = [];
       if (formStore && formStore.search) {
         const formRet = formStore.search({
@@ -361,7 +361,7 @@ export default {
         new Align(),
         new PermissionEntries()
       ],
-      content: this.workflowEditor.tableContent
+      content: this.wfDesigner.tableContent
     });
   },
   created() {
@@ -392,7 +392,7 @@ export default {
     },
     setPermission(commands) {
       commands.createPermission({
-        name: _.find(this.workflowEditor.permissionEntries, { body_id: this.perEntryVal }).body_name,
+        name: _.find(this.wfDesigner.permissionEntries, { body_id: this.perEntryVal }).body_name,
         value: this.perEntryVal
       });
       this.perEntryVal = "";
@@ -452,7 +452,7 @@ export default {
     },
     async saveHandler() {
       this.saving = true;
-      const ret = await this.API.updateWfTable({ wf_code: this.workflowEditor.wfCode, wf_body_tp: this.exportHtml() });
+      const ret = await this.API.updateWfTable({ wf_code: this.wfDesigner.wfCode, wf_body_tp: this.exportHtml() });
       this.saving = false;
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
     }
@@ -463,8 +463,8 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
-@import "~@/assets/less/mixins/mixins";
+@import "../../../assets/less/variable";
+@import "../../../assets/less/mixins/mixins";
 
 .wf-table-editor {
   position: relative;

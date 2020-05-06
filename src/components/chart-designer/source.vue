@@ -15,7 +15,7 @@
 </template>
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import { CD_SOURCE_SET } from "@/store/mutation-types";
+import { CD_SOURCE_SET } from "../../store/mutation-types";
 
 import draggable from "vuedraggable";
 

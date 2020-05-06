@@ -141,8 +141,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
-
+@deep: ~">>>";
 .pso-upload {
   background-color: #fff;
   height: 260px;

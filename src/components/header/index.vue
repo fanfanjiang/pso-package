@@ -25,7 +25,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
+@import "../../assets/less/variable";
 .pso-common-header {
   height: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);

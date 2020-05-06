@@ -116,8 +116,8 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "~@/assets/less/variable";
-@import "~@/assets/less/mixins/gradients.less";
+@import "../../assets/less/variable";
+@import "../../assets/less/mixins/gradients.less";
 .pso-drawer {
   height: 100vh;
   position: relative;
