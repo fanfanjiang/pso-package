@@ -266,7 +266,7 @@ export default {
 };
 </script>
 <style lang="less">
-@import "../../assets/less/component/chartDesigner.less";
+@import "../../assets/less/component/chart-designer.less";
 .pso-formTable__filter {
   position: relative;
   .pso-formTable__filter-body {

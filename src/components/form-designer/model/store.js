@@ -30,6 +30,8 @@ export default class FormStore {
             }
         }
 
+        this.data_config = this.data_config || this.data_design;
+
         if (this.data_config && typeof this.data_config === 'string') {
             this.data_config = JSON.parse(this.data_config);
         }
@@ -60,10 +62,6 @@ export default class FormStore {
         if (this.forceInsertSys) {
             const sysName = this.search({ options: { componentid: "text" }, dataOptions: { _fieldValue: 'd_name' } });
             const sysTag = this.search({ options: { componentid: "tag" }, dataOptions: { _fieldValue: 'd_tag' } });
-            // const sysStatus = this.search({ options: { componentid: "tag" }, dataOptions: { _fieldValue: 'd_status' } });
-            // if (!sysStatus.length) {
-            //     this.append({ newIndex: 0, to: { fid: '0' }, target: { componentid: 'text', _fieldValue: "d_status", _deletable: false, _fvEditable: false } });
-            // }
             if (!sysTag.length) {
                 this.append({ newIndex: 0, to: { fid: '0' }, target: { componentid: 'tag', _fieldValue: "d_tag", _deletable: false, _fvEditable: false } });
             }

@@ -261,10 +261,10 @@ export default {
 };
 </script>
 <style lang="less">
-@import "../../assets/less/component/wfEditor.less";
+@import "../../assets/less/component/wf-designer.less";
 </style>
 <style lang="less" scoped>
-@import "../../assets/less/variable";
+@import "../../assets/less/variable"; 
 .tag-list {
   margin-bottom: 5px;
 }

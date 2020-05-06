@@ -3,10 +3,12 @@ import shortid from 'shortid';
 import Vue from 'vue';
 
 const defalutCpntData = [
-    { n: '_fieldType', v: 'String' }, { n: '_deletable', v: true }, { n: '_fvEditable', v: true }, { n: '_fieldRealType', v: 'string' }, { n: '_defaultValue', v: '' }, { n: '_fieldValue', v: '' },
+    { n: '_fieldType', v: 'String' }, { n: '_deletable', v: true }, { n: '_fvEditable', v: true },
+    { n: '_fieldRealType', v: 'string' }, { n: '_defaultValue', v: '' }, { n: '_fieldValue', v: '' },
     { n: '_fieldLen', v: 300 }, { n: '_required', v: false }, { n: '_read', v: false },
-    { n: '_hideOnNew', v: false }, { n: '_hideForever', v: false }, { n: '_placeholder', v: '' }, { n: '_fieldInfo', v: '' },
-    { n: '_unique', v: false }, { n: '_auth', v: [] }
+    { n: '_hideOnNew', v: false }, { n: '_hideForever', v: false }, { n: '_placeholder', v: '' },
+    { n: '_fieldInfo', v: '' }, { n: '_unique', v: false }, { n: '_auth', v: [] },
+    { n: '_fieldFormat', v: 'common' }, { n: '_outputFormat', v: '' }, { n: '_transFields', v: '' }
 ]
 
 export function genComponentData(target) {
@@ -30,7 +32,6 @@ export function genComponentData(target) {
     }
 
     Vue.set(target, '_fieldName', target._fieldName || target.name);
-
 
     if (_CPNT.data) {
         _CPNT.data.forEach(field => {

@@ -8,7 +8,6 @@ export default {
   components: { PsoFormDesigner },
   methods: {
     backHandler() {
-      this.$router.go(-1);
     }
   }
 }; 

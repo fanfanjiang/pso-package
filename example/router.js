@@ -11,6 +11,11 @@ const router = new Router({
   mode: 'history',
   routes: [
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('./views/login')
+    },
+    {
       path: '/form-designer',
       name: 'formDesigner',
       component: () => import('./views/form-designer'),

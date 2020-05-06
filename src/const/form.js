@@ -97,4 +97,40 @@ export const DATE_OPTION = {
     ]
 }
 
+export const FIELD_FORMAT = {
+    common: {
+        label: '常规字段',
+        value: 'common'
+    },
+    common_x: {
+        label: '常规字段',
+        value: 'common_x'
+    },
+    user: {
+        label: '用户字段',
+        value: 'user'
+    },
+    dept: {
+        label: '部门字段',
+        value: 'dept'
+    },
+    tag: {
+        label: '标签字段',
+        value: 'tag'
+    },
+    calculate: {
+        label: '计算字段',
+        value: 'calculate'
+    },
+    table: {
+        label: '子表',
+        value: 'table'
+    },
+    alert: {
+        label: '日期',
+        value: 'alert'
+    }
+}
+
+
 export const CPNT = require('../../share/const/form');

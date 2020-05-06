@@ -49,8 +49,8 @@ import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import { CD_DIMENSION_SET } from "../../store/mutation-types";
 import { DIMEN_OP_LIST, SORT } from "../../const/chart";
 import PsoCdAlias from "./alias";
-
-import draggable from "vuedraggable";
+ 
+import draggable from "vuedraggable"; 
 
 export default {
   components: { draggable, PsoCdAlias },

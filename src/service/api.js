@@ -26,13 +26,14 @@ export default class API {
         }
         try {
             if (method === 'delete') data = { data: data };
-            const ret = await axios({ method, url, data: trueData });
+            const ret = await axios({ method, url, data });
             const message = ret.msg || ret.message;
             if (!ret.success && message) {
                 Message({ showClose: true, message, type: 'warning' });
             }
             return ret;
         } catch (error) {
+            console.log(error);
             if (error.response && error.response.status === 401) {
                 Message({ showClose: true, message: '登录过期，请重新登录', type: 'warning' });
             } else {

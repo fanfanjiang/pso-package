@@ -20,13 +20,22 @@
             @click="()=>formStore.redo()"
           ></el-button>
           <el-button
+            v-if="params.id"
+            type="primary"
+            size="small"
+            icon="fa fa-floppy-o"
+            :loading="saving"
+            :disabled="saving"
+            @click="formSaveHandler('1')"
+          >发布</el-button>
+          <el-button
             v-if="params.id||params.pid"
             type="primary"
             size="small"
             icon="fa fa-floppy-o"
             :loading="saving"
             :disabled="saving"
-            @click="formSaveHandler"
+            @click="formSaveHandler('0')"
           >保存</el-button>
           <el-dropdown
             class="pso-form-designer__more"
@@ -165,13 +174,14 @@ export default {
     }
   },
   methods: {
-    async formSaveHandler() {
+    async formSaveHandler(is_pub = "0") {
       this.saving = true;
       const store = this.formStore;
       const ret = await this.API.formsCfg({
         data: {
           ...this.params,
           data_code: store.data_code,
+          is_pub, 
           formName: store.data_name,
           children: store.root.data.children,
           dataMaps: store.cpntsDataMps,
@@ -187,7 +197,7 @@ export default {
       this.loading = true;
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
       if (ret.success) {
-        ret.data.data_config = JSON.parse(ret.data.data_config);
+        ret.data.data_config = JSON.parse(ret.data.data_design);
         ret.data.data_id = id;
         this.formCfg = ret.data;
       }

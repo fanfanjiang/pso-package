@@ -25,6 +25,22 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="字段格式">
+        <el-select v-model="cpnt.data._fieldFormat" placeholder="请选择">
+          <el-option
+            v-for="item in FIELD_FORMAT"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="输出格式">
+        <el-input :clearable="true" type="textarea" v-model.trim="cpnt.data._outputFormat"></el-input>
+      </el-form-item>
+      <el-form-item label="转换字段集">
+        <el-input :clearable="true" type="textarea" v-model.trim="cpnt.data._transFields"></el-input>
+      </el-form-item>
       <slot></slot>
       <el-form-item label="验证">
         <el-checkbox v-model="cpnt.data._required" :true-label="true" :false-label="false">必填</el-checkbox>
@@ -80,6 +96,8 @@
 </template>
 <script>
 import panelHeader from "../common/panel-header";
+import { FIELD_FORMAT } from "../../../const/form";
+
 export default {
   props: {
     cpnt: {
@@ -108,6 +126,11 @@ export default {
   },
   components: {
     panelHeader
+  },
+  data() {
+    return {
+      FIELD_FORMAT: FIELD_FORMAT
+    };
   }
 };
 </script>

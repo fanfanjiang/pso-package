@@ -84,7 +84,6 @@ export default {
         this.store.updateInstance();
       }
       this.loading = false;
-      console.log(this.dataId);
       this.$emit("data-loaded", this.store);
     },
     async getFormCfg() {
@@ -95,7 +94,7 @@ export default {
       } else if (this.formId) {
         this.loading = true;
         const ret = await this.API.formsCfg({ data: { id: this.formId } });
-        ret.data.data_config = JSON.parse(ret.data.data_config);
+        ret.data.data_config = JSON.parse(ret.data.data_design);
         this.store = new FormStore(ret.data);
       }
       this.store.editable = this.editable;
@@ -114,16 +113,18 @@ export default {
       const cpnts = this.store.cpntsMap;
 
       //主表数据
-      const mainData = { d_status: 1, optype: this.dataId ? 1 : 0, leaf_id: this.dataId || shortid.generate() };
-
+      const mainData = { d_status: 1, optype: this.dataId ? 1 : 0 };
+      if (this.dataId) {
+        mainData.leaf_id = this.dataId;
+      }
+      
       //最终组合的数据
       const data = {
         data_name: this.store.data_name,
         node_id: this.store.node_id,
-        datacode: this.store.data_code,
+        data_code: this.store.data_code,
         children: [],
-        dataArr: [mainData],
-        _main_field: []
+        dataArr: [mainData]
       };
 
       try {
@@ -135,10 +136,6 @@ export default {
               dataArr: cpntData._val.dataArr.filter(subItem => subItem.optype !== 3)
             });
           } else if (cpnt.CPNT.db && !cpnt.parent.CPNT.host_db) {
-            if (cpnt.CPNT.ass_db) {
-              data._main_field.push(cpnt.data._fieldValue);
-            }
-
             //空值检查
             if (cpntData._required && (typeof cpntData._val === "undefined" || cpntData._val === "")) {
               throw new Error(`${cpntData._fieldName}不能为空`);
@@ -183,8 +180,6 @@ export default {
         this.$message({ message: error.message, type: "warning" });
         throw error;
       }
-
-      data._main_field = data._main_field.join(",");
       return data;
     }
   }

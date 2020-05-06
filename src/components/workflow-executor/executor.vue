@@ -447,7 +447,7 @@ export default {
 };
 </script>
 <style lang="less">
-@import "../../assets/less/component/wfExecutor.less";
+@import "../../assets/less/component/wf-executor.less";
 </style>
 <style lang="less" scoped>
 .pso-wf-logs {

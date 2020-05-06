@@ -68,5 +68,5 @@ export default {
 };
 </script>
 <style lang="less">
-@import "../../assets/less/component/wfEditor.less";
+@import "../../assets/less/component/wf-designer.less";
 </style>
