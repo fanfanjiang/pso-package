@@ -26,6 +26,12 @@ const router = new Router({
       name: 'wfDesigner',
       component: () => import('./views/wf-designer'),
       props: organizeParams
+    },
+    {
+      path: '/data-mgt',
+      name: 'dataMgt',
+      component: () => import('./views/data-mgt'),
+      props: organizeParams
     }
   ]
 });

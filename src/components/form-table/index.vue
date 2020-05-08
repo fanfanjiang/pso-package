@@ -197,7 +197,7 @@ export default {
       showFormViewer: false,
       cfg: {
         data_code: "",
-        data_config: []
+        data_design: []
       },
       showFields: [],
       formData: [],
@@ -240,6 +240,9 @@ export default {
       handler() {
         this.getFormData();
       }
+    },
+    cfgId() {
+      this.getFormCfg();
     }
   },
   created() {
@@ -251,7 +254,6 @@ export default {
       const ret = await this.API.formsCfg({ data: { id: this.cfgId }, method: "get" });
       if (!ret.success) return;
       this.store = new FormStore(ret.data);
-      ret.data.data_config = JSON.parse(ret.data.data_design);
       this.cfg = Object.assign({}, this.cfg, ret.data);
       this.initializing = false;
       this.conditionOptions = this.store.search({
@@ -419,7 +421,7 @@ export default {
   }
 }
 .pso-formTable {
-  padding: 10px;
+  padding: 5px;
   height: 100%;
   width: 100%;
   background-color: #f7f7f7;

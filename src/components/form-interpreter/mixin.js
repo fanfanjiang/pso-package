@@ -1,4 +1,4 @@
-import emitter from "@/mixin/emitter";
+import emitter from "../../mixin/emitter";
 
 export default {
     mixins: [emitter],

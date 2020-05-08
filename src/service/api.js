@@ -3,18 +3,6 @@ import Qs from 'qs';
 import axios from 'axios';
 import Auth from '../tool/auth';
 
-//请求拦截器
-axios.interceptors.request.use((config) => {
-    //添加token
-    var token = Auth.getToken();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-}, (error) => {
-    return Promise.reject(error);
-});
-
 export default class API {
 
     URL_PREFIX = ''
@@ -306,3 +294,28 @@ export default class API {
         }
     }
 }
+
+//请求拦截器
+axios.interceptors.request.use((config) => {
+    //添加token
+    var token = Auth.getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
+axios.interceptors.response.use((response) => {
+    if (response.status === 200) {
+        return Promise.resolve(response.data);
+    } else {
+        return Promise.reject(response);
+    }
+}, (error) => {
+    if (error.response && error.response.status === 401) {
+        API.handleAuthError && API.handleAuthError();
+    }
+    return Promise.reject(error);
+});

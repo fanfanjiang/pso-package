@@ -1,12 +1,13 @@
 {
-  "name": "pso-packege",
-  "version": "1.0.0",
-  "main": "src/index.js",
-  "scripts": {
+  "name": "pbpm",
+  "version": "0.0.1", 
+  "main": "src/index.js", 
+  "scripts": { 
     "serve": "vue-cli-service serve example/main.js",
+    "build": "vue-cli-service build --target lib --name pbpm src/index.js",
     "build:exam": "vue-cli-service build example/main.js",
     "test:unit": "vue-cli-service test:unit"
-  },
+  }, 
   "dependencies": {
     "axios": "^0.19.0",
     "big.js": "^5.2.2",
@@ -50,5 +51,7 @@
     "vue-router": "^3.0.3",
     "vue-template-compiler": "^2.6.11",
     "webpack-bundle-analyzer": "^3.7.0"
-  }
+  },
+  "author": "pso",
+  "license": "MIT"
 }

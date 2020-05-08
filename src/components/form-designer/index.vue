@@ -181,7 +181,7 @@ export default {
         data: {
           ...this.params,
           data_code: store.data_code,
-          is_pub, 
+          is_pub,
           formName: store.data_name,
           children: store.root.data.children,
           dataMaps: store.cpntsDataMps,
@@ -197,7 +197,6 @@ export default {
       this.loading = true;
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
       if (ret.success) {
-        ret.data.data_config = JSON.parse(ret.data.data_design);
         ret.data.data_id = id;
         this.formCfg = ret.data;
       }
@@ -230,7 +229,7 @@ export default {
         data: {
           ...data,
           r_data: {
-            data_config: this.formStore.root.data.children,
+            data_design: this.formStore.root.data.children,
             permissionEntries: this.formStore.permissionEntries
           }
         },
@@ -263,7 +262,7 @@ export default {
 
       this.formCfg = {
         templateId: leaf_id,
-        data_config: template.data_config || [],
+        data_design: template.data_design || [],
         permissionEntries: template.permissionEntries || [],
         data_name: r_name,
         data_id: this.formStore.data_id,

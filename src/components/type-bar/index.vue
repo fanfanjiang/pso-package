@@ -4,7 +4,7 @@
     <div v-else class="pso-typebar-wrapper">
       <el-tabs v-model="selectedType" @tab-click="typeClickHandler">
         <el-tab-pane
-          :label="getTabName(typeItem)"
+          :label="getTabName(typeItem)||'未命名'"
           :name="typeItem.feildname"
           v-for="typeItem of types"
           :key="typeItem.feildvalue"

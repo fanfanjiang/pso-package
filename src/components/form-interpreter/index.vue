@@ -94,7 +94,6 @@ export default {
       } else if (this.formId) {
         this.loading = true;
         const ret = await this.API.formsCfg({ data: { id: this.formId } });
-        ret.data.data_config = JSON.parse(ret.data.data_design);
         this.store = new FormStore(ret.data);
       }
       this.store.editable = this.editable;
