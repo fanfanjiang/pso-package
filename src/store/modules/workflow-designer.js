@@ -4,6 +4,7 @@ import nodeField from "../../components/workflow-designer/node-field";
 import API from "../../service/api.js";
 import { transCMapToCondition } from "../../tool/form";
 import FormStore from "../../components/form-designer/model/store.js";
+import { WF_AUTH_TYPE } from "../../const/workflow";
 
 export function genNode(tid) {
     let newNode = Object.assign({ tid, nid: shortid.generate(), children: [] }, _.cloneDeep(nodeField.default));
@@ -19,6 +20,7 @@ const STATE = {
     wfName: '工作流名称',
     wfCode: '',
     wfFiletype: [], //发文编号
+    wfAuthType: WF_AUTH_TYPE[0].v,
     formId: '',
     formName: '',
     tableContent: '',
@@ -174,11 +176,11 @@ export default {
                 pid: state.pid,
                 node_id: state.node_id,
                 wf_name: state.wfName,
-                wf_table_id: state.formId,
+                map_data_code: state.formId,
                 wf_list_column: '',
-                wf_list_data: "",
                 wf_code: state.wfCode || shortid.generate(),
                 wf_map_tp: node,
+                wf_auth_type: state.wfAuthType,
                 wf_filetype: state.wfFiletype.join(','),
                 permissionEntries: state.permissionEntries
             }
@@ -187,7 +189,7 @@ export default {
         async [MUT_TYPES.WF_INIT]({ state, getters, commit, dispatch }, params) {
 
             //获取表单列表
-            const formTreeRet = await API.trees({ data: { node_id: '3', appid: '3', node_dimen: "nodedimen03" } });
+            const formTreeRet = await API.getFormTree();
             state.formsList = formTreeRet.data.filter(node => node.data_type === "form" && node.is_leaf);
 
             //获取发文类型
@@ -214,8 +216,9 @@ export default {
                 params.node = typeof data.wf_map_tp === 'string' ? JSON.parse(data.wf_map_tp) : data.wf_map_tp;
                 params.node[0].children = params.node.splice(1);
                 state.wfName = data.wf_name;
-                state.formId = data.wf_table_id;
+                state.formId = data.map_data_code;
                 state.tableContent = data.wf_body_tp;
+                state.wfAuthType = data.wf_auth_type;
                 await dispatch(MUT_TYPES.WF_FORM_SELECT, { id: state.formId, reset: false });
             }
 
@@ -225,7 +228,7 @@ export default {
         },
         async [MUT_TYPES.WF_FORM_SELECT]({ state, getters, commit }, { id, reset = true }) {
 
-            state.formName = _.find(state.formsList, { node_id: id }).node_name;
+            state.formName = _.find(state.formsList, { data_code: id }).node_name;
             state.loading = true;
 
             if (reset) {

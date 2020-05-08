@@ -1,7 +1,7 @@
 import 'normalize.css/normalize.css';
 import 'font-awesome/css/font-awesome.min.css';
 
-import './assets/less/main.less'; 
+import './assets/less/main.less';
 
 import Vuebar from 'vuebar';
 import 'muse-ui/lib/styles/base.less';
@@ -29,7 +29,6 @@ import PsoTreeCommon from "./components/tree";
 import PsoSkeleton from "./components/skeleton";
 //全局注册
 
- 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3' }) {
 
     Vue.component('PsoSkeleton', PsoSkeleton);
@@ -49,12 +48,12 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.use(Element);
 
     Vue.prototype.createPDF = createPDF;
- 
+
     Vue.prototype.APIURL = apiUrl;
     Vue.prototype.API = API || BASEAPI;
     Vue.prototype.API.URL_PREFIX = apiPrefix;
 
     Vue.prototype.DEFAULT_APP_ID = defaultAppId;
-}; 
+};
 
 export default { install, store, BASEAPI }

@@ -44,7 +44,7 @@ const STATE = {
     wf_map_tp: "",
     wf_body_tp: "",
     wf_status: "",
-    wf_table_id: "",
+    map_data_code: "",
     selectedFileTypes: []
   }
 }

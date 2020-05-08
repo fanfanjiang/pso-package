@@ -293,6 +293,14 @@ export default class API {
             throw error;
         }
     }
+
+    static async getFormTree() {
+        try {
+            return await this.trees({ data: { node_id: '3', appid: '3', node_dimen: "nodedimen03", searchtype: 'Data', data_type: 'form' } });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

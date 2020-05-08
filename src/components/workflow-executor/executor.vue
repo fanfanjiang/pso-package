@@ -100,9 +100,9 @@
               @value-change="formChangeHandler"
               @data-loaded="handleFormDataLoaded"
               ref="formImage"
-              v-if="wfExecutor.cfg.wf_table_id"
-              :key="wfExecutor.cfg.wf_table_id"
-              :form-id="wfExecutor.cfg.wf_table_id"
+              v-if="wfExecutor.cfg.map_data_code"
+              :key="wfExecutor.cfg.map_data_code"
+              :form-id="wfExecutor.cfg.map_data_code"
               :data-id="instanceId"
               :editable="isFormWriteable"
             ></pso-form-view>

@@ -8,10 +8,15 @@
         <el-select v-model="wfDesigner.formId" placeholder="请选择">
           <el-option
             v-for="item in wfDesigner.formsList"
-            :key="item.node_id"
+            :key="item.data_code"
             :label="item.node_name"
-            :value="item.node_id"
+            :value="item.data_code"
           ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="审批类型">
+        <el-select v-model="wfDesigner.wfAuthType" placeholder="请选择">
+          <el-option v-for="item in authType" :key="item.v" :label="item.n" :value="item.v"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="发文编号">
@@ -31,6 +36,7 @@
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { WF_FORM_SELECT } from "../../../store/mutation-types";
+import { WF_AUTH_TYPE } from "../../../const/workflow";
 
 import PsoCommonReview from "../common/common-review";
 
@@ -40,7 +46,8 @@ export default {
   data() {
     return {
       loading: false,
-      fileTypes: []
+      fileTypes: [],
+      authType: WF_AUTH_TYPE
     };
   },
   computed: {

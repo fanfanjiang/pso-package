@@ -34,10 +34,9 @@
 <script>
 import ScriptOutput from "./output";
 import VueMaker from "./vue-maker";
-import MonacoEditor from "vue-monaco";
 
 export default {
-  components: { ScriptOutput, MonacoEditor },
+  components: { ScriptOutput },
   props: ["cpnts", "code"],
   data() {
     return {
@@ -61,7 +60,6 @@ export default {
         cssCode: maker.getCss()
       };
     }
-    console.log(code);
     this.store = Object.assign({ htmlCode: "", cssCode: "", jsCode: "" }, code);
   }
 };

@@ -32,6 +32,30 @@ const router = new Router({
       name: 'dataMgt',
       component: () => import('./views/data-mgt'),
       props: organizeParams
+    },
+    {
+      path: '/element-mgt',
+      name: 'elementMgt',
+      component: () => import('./views/element-mgt'),
+      props: organizeParams
+    },
+    {
+      path: '/templete-mgt',
+      name: 'templeteMgt',
+      component: () => import('./views/templete-mgt'),
+      props: organizeParams
+    },
+    {
+      path: '/view-designer',
+      name: 'viewDesigner',
+      component: () => import('./views/view-designer'),
+      props: organizeParams
+    },
+    {
+      path: '/workflow-mgt',
+      name: 'workflowMgt',
+      component: () => import('./views/workflow-mgt'),
+      props: organizeParams
     }
   ]
 });

@@ -10,6 +10,7 @@
   }, 
   "dependencies": {
     "axios": "^0.19.0",
+    "babel-preset-vue": "^2.0.2",
     "big.js": "^5.2.2",
     "dayjs": "^1.8.17",
     "font-awesome": "^4.7.0",
