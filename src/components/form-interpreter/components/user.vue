@@ -52,7 +52,6 @@ export default {
       }
       this.loading = false;
     } else if (this.cpnt.data._defaultValType === "current") {
-
     }
     this.dispatch("PsoformInterpreter", "cpnt-user-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   },

@@ -13,10 +13,11 @@
             <el-popconfirm
               v-if="wfDesigner.node_id||wfDesigner.pid"
               title="你确定要发布吗？"
-              @onConfirm="saveWorkflow"
+              @onConfirm="saveWorkflow('1')"
             >
               <el-button slot="reference" type="primary" size="small">发布流程</el-button>
             </el-popconfirm>
+            <el-button slot="reference" type="text" size="small" @click="saveWorkflow('0')">保存</el-button>
             <el-dropdown
               class="pso-wf__more"
               trigger="click"
@@ -114,7 +115,7 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 import { WF_NODE_PANEL_SET, WF_INIT, WF_CONDITION_MAKE, WF_SAVE, WF_RESET, WF_FORM_SELECT } from "../../store/mutation-types";
- 
+
 import PsoHeader from "../header";
 
 import WfStage from "./stage";
@@ -191,9 +192,10 @@ export default {
     closePanel() {
       this[WF_NODE_PANEL_SET](false);
     },
-    async saveWorkflow() {
+    async saveWorkflow(is_pub = "0") {
       const data = await this.prepareData();
       if (!data) return;
+      data.is_pub = is_pub;
       const ret = await this.API.workflowcfg({ data, method: data.node_id ? "put" : "post" });
       if (ret.success) this.$notify({ title: "保存成功", type: "success" });
       this.wfDesigner.loading = false;
@@ -264,12 +266,19 @@ export default {
 @import "../../assets/less/component/wf-designer.less";
 </style>
 <style lang="less" scoped>
-@import "../../assets/less/variable"; 
+@import "../../assets/less/variable";
 .tag-list {
   margin-bottom: 5px;
 }
 .pso-wf-loading {
   padding: 20px;
+}
+.pso-wf-header {
+  @{deep} {
+    .el-button {
+      margin-left: 10px;
+    }
+  }
 }
 @{deep} {
   .el-tabs__header {

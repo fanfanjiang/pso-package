@@ -228,7 +228,7 @@ export default {
         },
         async [MUT_TYPES.WF_FORM_SELECT]({ state, getters, commit }, { id, reset = true }) {
 
-            state.formName = _.find(state.formsList, { data_code: id }).node_name;
+            state.formName = _.find(state.formsList, { data_code: id }).node_display;
             state.loading = true;
 
             if (reset) {

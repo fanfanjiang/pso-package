@@ -96,7 +96,7 @@
         <div>
           <div class="pso-wf-executor__content" v-show="wfExecutor.activeExtendTab==='data'">
             <pso-wf-form></pso-wf-form>
-            <pso-form-view
+            <pso-form-interpreter
               @value-change="formChangeHandler"
               @data-loaded="handleFormDataLoaded"
               ref="formImage"
@@ -105,7 +105,7 @@
               :form-id="wfExecutor.cfg.map_data_code"
               :data-id="instanceId"
               :editable="isFormWriteable"
-            ></pso-form-view>
+            ></pso-form-interpreter>
           </div>
           <div class="pso-wf-executor__attach" v-show="wfExecutor.activeExtendTab==='attach'">
             <el-form label-width="80px" size="medium">
@@ -167,21 +167,21 @@ import {
   WFINS_INSTANCE_GET,
   WFINS_INSTANCE_SET,
   WFINS_NEXTSETP,
-  WFINS_SAVE 
+  WFINS_SAVE
 } from "../../store/mutation-types";
 import { REVIEW_OP_TYPE, REVIEW_OP_APPEND } from "../../const/workflow";
 
-import PsoFormView from "../../form-interpreter/index";
+import PsoFormInterpreter from "../form-interpreter";
 import PsoWfForm from "./main-form";
-import PsoWfStage from "../components/workflow-designer/stage";
+import PsoWfStage from "../workflow-designer/stage";
 import PsoFormAttach from "../form-interpreter/components/attachment";
 import PsoWfop from "./op/index";
 import PsoWfopUser from "./op/user";
 import PsoWfOverview from "./overview";
-const UAParser = require("../../share/util/u-agent"); 
+const UAParser = require("../../../share/util/u-agent");
 
 export default {
-  components: { PsoFormView, PsoWfForm, PsoWfStage, PsoFormAttach, PsoWfop, PsoWfopUser, PsoWfOverview },
+  components: { PsoFormInterpreter, PsoWfForm, PsoWfStage, PsoFormAttach, PsoWfop, PsoWfopUser, PsoWfOverview },
   props: {
     params: {
       type: Object,

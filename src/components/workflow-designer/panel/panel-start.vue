@@ -9,7 +9,7 @@
           <el-option
             v-for="item in wfDesigner.formsList"
             :key="item.data_code"
-            :label="item.node_name"
+            :label="item.node_display"
             :value="item.data_code"
           ></el-option>
         </el-select>

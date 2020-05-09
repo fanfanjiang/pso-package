@@ -1,10 +1,8 @@
 <template>
-  <workflow :params="params"></workflow>
+  <pso-workflow-designer :params="params"></pso-workflow-designer>
 </template>
 <script>
-import Workflow from "@/components/workflow-designer/index";
 export default {
-  props: ["params"],
-  components: { Workflow }
+  props: ["params"]
 };
 </script>

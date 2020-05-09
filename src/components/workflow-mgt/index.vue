@@ -14,6 +14,7 @@
             @before-node-new="handleNewNode"
             @before-node-edit="nodeEditHandler"
             @node-click="nodeClickHandler"
+            @before-node-delete-submit="handleNodeDelete"
           ></pso-tree-common>
         </div>
       </div>
@@ -51,7 +52,8 @@ export default {
       return {
         node_id: this.typeVal.feildvalue,
         data_type: this.typeVal.data_type,
-        node_dimen: this.typeVal.node_dimen
+        node_dimen: this.typeVal.node_dimen,
+        searchtype: "Flow"
       };
     },
     defaultNodeData() {
@@ -65,6 +67,9 @@ export default {
     }
   },
   methods: {
+    handleNodeDelete({ subData, data }) {
+      subData.wf_code = data.wf_code;
+    },
     nodeClickHandler(nodeData) {
       if (nodeData.is_leaf) {
         this.currentNode = nodeData;

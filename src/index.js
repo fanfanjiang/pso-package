@@ -1,6 +1,3 @@
-import 'normalize.css/normalize.css';
-import 'font-awesome/css/font-awesome.min.css';
-
 import './assets/less/main.less';
 
 import Vuebar from 'vuebar';
@@ -16,7 +13,8 @@ import createPDF from './utils/create-pdf';
 //store
 import store from './store';
 
-//全局注册
+//组件
+import PsoSkeleton from "./components/skeleton";
 import PsoDrawer from "./components/drawer";
 import PsoPickerTag from "./components/picker/pso-picker-tag";
 import PsoPickerDept from "./components/picker/pso-picker-dept";
@@ -26,21 +24,66 @@ import PsoPickerResource from "./components/picker/pso-picker-resource";
 import PsoPickerTree from "./components/picker/pso-picker-tree";
 import PsoPickerUser from "./components/picker/pso-picker-user";
 import PsoTreeCommon from "./components/tree";
-import PsoSkeleton from "./components/skeleton";
-//全局注册
+import PsoTypebar from "./components/type-bar";
+import PsoCountDown from "./components/countdown";
 
-const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3' }) {
+import PsoFormTable from "./components/form-table";
+import PsoFormDesigner from "./components/form-designer";
+import PsoFormInterpreter from "./components/form-interpreter";
 
-    Vue.component('PsoSkeleton', PsoSkeleton);
-    Vue.component('PsoDrawer', PsoDrawer);
-    Vue.component('PsoPickerTag', PsoPickerTag);
-    Vue.component('PsoPickerDept', PsoPickerDept);
-    Vue.component('PsoPickerPosition', PsoPickerPosition);
-    Vue.component('PsoPickerPost', PsoPickerPost);
-    Vue.component('PsoPickerResource', PsoPickerResource);
-    Vue.component('PsoPickerTree', PsoPickerTree);
-    Vue.component('PsoPickerUser', PsoPickerUser);
-    Vue.component('PsoTreeCommon', PsoTreeCommon);
+import PsoSriptDesigner from "./components/script-designer";
+
+import PsoWfDesigner from "./components/workflow-designer";
+import PsoWfStage from "./components/workflow-designer/stage";
+import PsoWfExecutor from "./components/workflow-executor";
+
+import PsoWorkflowMgt from "./components/workflow-mgt";
+import PsoElementMgt from "./components/element-mgt";
+import PsoTempleteMgt from "./components/templete-mgt";
+import PsoDataMgt from "./components/data-mgt";
+
+import PsoViewDesigner from "./components/view-designer";
+
+import PsoScriptOut from "./components/script-designer/output";
+
+import PsoUpload from "./components/upload";
+
+import PsoChartDesigner from "./components/chart-designer";
+
+const components = {
+    PsoSkeleton,
+    PsoDrawer,
+    PsoPickerTag,
+    PsoPickerDept,
+    PsoPickerPosition,
+    PsoPickerPost,
+    PsoPickerResource,
+    PsoPickerTree,
+    PsoPickerUser,
+    PsoTreeCommon,
+    PsoFormTable,
+    PsoFormDesigner,
+    PsoFormInterpreter,
+    PsoTypebar,
+    PsoSriptDesigner,
+    PsoCountDown,
+    PsoWfDesigner,
+    PsoWfStage,
+    PsoWfExecutor,
+    PsoWorkflowMgt,
+    PsoElementMgt,
+    PsoTempleteMgt,
+    PsoDataMgt,
+    PsoChartDesigner,
+    PsoViewDesigner,
+    PsoScriptOut,
+    PsoUpload
+}
+
+const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3' } = {}) {
+    Object.keys(components).map(key => {
+        Vue.component(key, components[key]);
+    })
 
     Vue.use(Vuebar);
     Vue.use(TextField);
@@ -56,4 +99,13 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.DEFAULT_APP_ID = defaultAppId;
 };
 
-export default { install, store, BASEAPI }
+// auto install
+if (typeof window !== 'undefined' && window.Vue) {
+    install(window.Vue);
+}
+
+export { BASEAPI, store }
+
+export default {
+    install
+};

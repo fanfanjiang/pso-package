@@ -32,7 +32,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 type: Object,
                 default: () => ({
                     children: "children",
-                    label: "node_name",
+                    label: "node_display",
                     isLeaf: (data) => data.is_leaf === 1
                 })
             },
@@ -93,7 +93,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             searchable: {
                 type: Boolean,
                 default: true
-            }
+            },
         },
         data() {
             return {
@@ -285,12 +285,14 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 this.nodePayload.formTitle = node.node_id ? '编辑' : '新增';
             },
             async deleteNode(data) {
-                const { node_id, children } = data;
+                const { node_id, children, node_dimen, data_code } = data;
                 if (typeof node_id === "undefined") return;
                 if (children && children.length) return this.$message({ message: "此节点有子节点，不能删除", type: "warning" });
 
                 this.loading = true;
-                const ret = await this.API.trees({ data: { node_id }, method: "delete" });
+                const subData = { node_id, node_dimen, data_code };
+                this.$emit("before-node-delete-submit", { subData, data });
+                const ret = await this.API.trees({ data: subData, method: "delete" });
                 this.loading = false;
 
                 if (!ret.success) return;

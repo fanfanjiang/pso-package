@@ -301,6 +301,14 @@ export default class API {
             throw error;
         }
     }
+
+    static async getFlowTrash(data = {}) {
+        try {
+            return await this.request('/api/workflow/trash', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

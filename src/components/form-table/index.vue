@@ -144,7 +144,7 @@ import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
 
 export default {
-  components: { PsoFormView: () => import("../form-interpreter/index"), PsoDatafilter },
+  components: { PsoFormView: () => import("../form-interpreter"), PsoDatafilter },
   props: {
     cfgId: String,
     autoSubmit: {
