@@ -6,7 +6,7 @@
     :readMode="readMode"
     :workflowImage="workflowImage"
   >
-    <div class="wf-node-review">
+    <div class="wf-node-review" v-if="!wfDesigner.displaySmall">
       <div class="wf-node-review__header">
         <span>{{node.name}}</span>
         <i class="el-icon-edit-outline"></i>
@@ -30,16 +30,21 @@
         </div>
       </div>
     </div>
+    <el-tooltip v-else :open-delay="600" effect="dark" :content="node.name" placement="top-start">
+      <div class="wf-node__small wf-node__small__review">{{smallName}}</div>
+    </el-tooltip>
   </common-node>
 </template>
 <script>
 import CommonNode from "../common/node";
 import { REVIEW_TYPE, REVIEW_OP_TYPE, REVIEW_AUTH_TYPE } from "../../../const/workflow";
+import { mapState } from "vuex";
 
 export default {
   props: ["node", "pnode", "readMode", "workflowImage"],
   components: { CommonNode },
   computed: {
+    ...mapState(["wfDesigner"]),
     reviewType() {
       return this.node.atype ? _.find(Object.values(REVIEW_TYPE), { id: this.node.atype }).name : "";
     },
@@ -48,6 +53,9 @@ export default {
     },
     authType() {
       return Object.values(REVIEW_AUTH_TYPE);
+    },
+    smallName() {
+      return this.node.name.slice(0, 5);
     }
   },
   methods: {

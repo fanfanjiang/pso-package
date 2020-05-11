@@ -9,7 +9,7 @@
       :readMode="readMode"
       :workflowImage="workflowImage"
     >
-      <div class="wf-branchitem-node">
+      <div class="wf-branchitem-node" v-if="!wfDesigner.displaySmall">
         <div class="wf-branchitem-node__body">
           <div class="wf-branchitem-node__empty" v-if="!node.conditionMap.length">所有数据可进入该分支</div>
           <div
@@ -36,6 +36,7 @@
           <el-button type="text" size="small">设置筛选条件</el-button>
         </div>
       </div>
+      <div v-else class="wf-node__small">分</div>
     </common-node>
     <slot></slot>
   </div>
@@ -43,10 +44,14 @@
 <script>
 import CommonNode from "../common/node";
 import { OP_TYPE } from "../../../const/op";
+import { mapState } from "vuex";
 
 export default {
   props: ["node", "pnode", "readMode", "workflowImage"],
   components: { CommonNode },
+  computed: {
+    ...mapState(["wfDesigner"])
+  },
   methods: {
     getOpName(opid) {
       return OP_TYPE[opid].name;

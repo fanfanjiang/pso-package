@@ -67,6 +67,7 @@ export default {
       }
 
       state.loading = true;
+
       let ret = await API.workflowcfg({ data: { node_id: cfgId } });
       if (ret.success && ret.data) {
 

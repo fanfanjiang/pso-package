@@ -35,7 +35,8 @@ const STATE = {
     fileTypes: [], //发文编号缓存
     loading: false,
     initializing: true,
-    formStore: {}
+    formStore: {},
+    displaySmall: false
 }
 
 export default {

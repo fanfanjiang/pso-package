@@ -58,14 +58,14 @@
       <el-dialog
         v-loading="nodePayload.loading"
         width="30%"
-        :append-to-body="true"
+        :append-to-body="true" 
         :close-on-click-modal="false"
         :title="nodePayload.formTitle"
         :visible.sync="nodePayload.showForm"
       >
         <el-form v-if="nodePayload.node" :model="nodePayload.node.data" label-width="80px">
           <el-form-item :label="nodePayload.nameLable">
-            <el-input v-model="nodePayload.node.data.node_name" autocomplete="off"></el-input>
+            <el-input v-model="nodePayload.node.data.node_display" autocomplete="off"></el-input>
           </el-form-item>
           <slot v-bind:node="nodePayload.node.data"></slot>
         </el-form>

@@ -1,5 +1,5 @@
 <template>
-  <pso-workflow-designer :params="params"></pso-workflow-designer>
+  <pso-wf-designer :params="params"></pso-wf-designer>
 </template>
 <script>
 export default {

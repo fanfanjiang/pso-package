@@ -75,6 +75,37 @@
     left: 30%;
     top: 20px;
     user-select: none !important;
+
+    &.pso-wf-stage__small {
+
+        .pso-wf-node {
+            min-height: 50px;
+            width: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pso-wf-node-end {
+            transform: rotate(90deg);
+        }
+    }
+}
+
+.wf-node__small {
+    text-align: center;
+    line-height: 50px;
+    transform: rotate(90deg);
+    font-size: 16px;
+    font-weight: bold;
+    color: #666;
+
+    &.wf-node__small__review {
+        font-size: 12px;
+        line-height: 20px;
+        font-weight: normal;
+        overflow: hidden;
+    }
 }
 
 .pso-wf-container {

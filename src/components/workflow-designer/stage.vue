@@ -2,7 +2,12 @@
   <div class="pso-wf-stage-wrapper">
     <div class="pso-wf-stage-body" v-bar>
       <div class="pso-wf-stage-scroll" ref="wfStageScroll">
-        <div class="pso-wf-stage pso-wf-container" ref="wfStage" :style="stageStyle">
+        <div
+          class="pso-wf-stage pso-wf-container"
+          ref="wfStage"
+          :style="stageStyle"
+          :class="stageClass"
+        >
           <wf-node-start
             @clickNode="$emit('clickNode',$event)"
             :readMode="readMode"
@@ -52,7 +57,12 @@ export default {
     ...mapState(["wfDesigner"]),
     stageStyle() {
       return {
-        transform: `scale(${this.wfDesigner.stageScale})`
+        transform: `scale(${this.wfDesigner.stageScale}) ${this.wfDesigner.displaySmall ? "rotateZ(-90deg)" : ""}`
+      };
+    },
+    stageClass() {
+      return {
+        "pso-wf-stage__small": this.wfDesigner.displaySmall
       };
     },
     workflowImage() {

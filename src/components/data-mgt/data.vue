@@ -30,7 +30,7 @@
           </div>
           <div class="pso-dd-body">
             <div v-if="curTab==='preview'">
-              <pso-form-table :cfg-id="curNode.node_id" :auto-submit="false" :read-only="true"></pso-form-table>
+              <pso-form-table :cfg-id="curNode.data_code" :auto-submit="true" :read-only="false"></pso-form-table>
             </div>
             <div v-if="curTab==='field'">
               <el-table v-loading="tableLoading" :data="tableData" style="width: 100%">
@@ -121,7 +121,7 @@ export default {
       this.showWorksheetSelector = false;
     },
     handleEditForm() {
-      this.goForm({ id: this.curNode.node_id });
+      this.goForm({ id: this.curNode.data_code });
     },
     goForm({ pid = "", id = "" }) {
       this.$router.push({ name: "formDesigner", query: { pid, id, appid: this.appid } });

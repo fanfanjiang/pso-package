@@ -1,6 +1,6 @@
 {
   "name": "pbpm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/pbpm.umd.min.js",
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
@@ -29,8 +29,7 @@
     "vue-video-player": "^5.0.2",
     "vuebar": "^0.0.20",
     "vuedraggable": "^2.23.2",
-    "x2js": "^3.4.0",
-    "xlsx": "^0.15.4"
+    "x2js": "^3.4.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",
@@ -42,7 +41,6 @@
     "chai": "^4.1.2",
     "core-js": "^3.6.4",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.4.1",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "node-sass": "^4.12.0",
