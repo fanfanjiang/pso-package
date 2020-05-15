@@ -46,6 +46,11 @@ const STATE = {
     wf_status: "",
     map_data_code: "",
     selectedFileTypes: []
+  },
+  show: {
+    showImport: true,
+    showSecret: true,
+    showUrgent: true
   }
 }
 
@@ -110,19 +115,26 @@ export default {
         //设置基本实例参数
         await dispatch(MUT_TYPES.WFINS_INSTANCE_SET, instanceRet.data.instance);
 
-        //设置步骤参数
-        if (instanceRet.data.steps.length) {
-          state.cfg.wf_map_tp.executingNodes = instanceRet.data.steps;
-        }
+        let target;
+        //设置步骤参数   
+        if (instanceRet.data.instance.instance_status === 0) {
+          target = state.cfg.wf_map_tp.node[0];
+        } else {
+          if (instanceRet.data.steps.length) {
+            state.cfg.wf_map_tp.executingNodes = instanceRet.data.steps;
+          }
 
-        const { target } = getters[MUT_TYPES.WFINS_NODE_GET]({
-          nid: state.data.step, cb: tiem => tiem.done = true
-        })
+          const ret = getters[MUT_TYPES.WFINS_NODE_GET]({
+            nid: state.data.step, cb: tiem => tiem.done = true
+          })
+          target = ret.target;
+        }
 
         if (target) {
           state.curStep = target;
           state.cfg.wf_map_tp.selectedNode = state.curStep;
         }
+
 
         //设置附件
         if (instanceRet.data.file && instanceRet.data.file.length) {
@@ -165,6 +177,7 @@ export default {
 
         const data = {
           ...state.extend,
+          wf_code: state.cfg.wf_code,
           instanceId: state.data.instanceId,
           note: state.data.opinion,
           stepid: state.curStep.nid,
@@ -239,12 +252,13 @@ export default {
     async  [MUT_TYPES.WFINS_ADD]({ state, getters, commit }, { nextStep = false, formData }) {
       //生成流程
       if (!state.data.filetype) throw new Error('请选择文号');
-      if (!state.data.urgent) throw new Error('请选择紧急程度');
-      if (!state.data.import) throw new Error('请选择重要等级');
-      if (!state.data.secret) throw new Error('请选择秘密等级');
+      if (state.show.showUrgent && !state.data.urgent) throw new Error('请选择紧急程度');
+      if (state.show.showImport && !state.data.import) throw new Error('请选择重要等级');
+      if (state.show.showSecret && !state.data.secret) throw new Error('请选择秘密等级');
 
       const data = {
         filetype: state.data.filetype,
+        wf_code: state.cfg.wf_code,
         wfid: state.cfg.wf_code,
         name: state.data.name,
         urgent: state.data.urgent,

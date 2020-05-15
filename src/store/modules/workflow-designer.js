@@ -30,7 +30,6 @@ const STATE = {
     node: [],
     fields: [],
     formsList: [],
-    formAuthOptions: [],
     permissionEntries: [],
     fileTypes: [], //发文编号缓存
     loading: false,
@@ -139,7 +138,6 @@ export default {
                             throw new Error('请完善');
                         }
                         node.op = node.opList.reduce((a, b) => a + b);
-                        node.authitemsList.length && (node.authitems = node.authitemsList.join(','));
                         node.bodyitemsList.length && (node.bodyitems = node.bodyitemsList.join(','));
                     }
 
@@ -239,9 +237,6 @@ export default {
             const ret = await API.formsCfg({ data: { id }, method: "get" });
             state.formStore = new FormStore(ret.data);
 
-            //获取权限项
-            const pRet = await API.permissionEntries({ data: { data_code: ret.data.data_code }, method: "get" });
-            state.formAuthOptions = pRet.data;
             state.loading = false;
         }
     },

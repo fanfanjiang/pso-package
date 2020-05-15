@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="pso-wf-stage__controller">
-      <wf-controller ref="wfController" @downloadStage="downloadStage"></wf-controller>
+      <wf-controller :display-small="displaySmall" ref="wfController" @downloadStage="downloadStage"></wf-controller>
     </div>
   </div>
 </template>
@@ -49,6 +49,10 @@ export default {
   props: {
     workflowData: Object,
     readMode: {
+      type: Boolean,
+      default: false
+    },
+    displaySmall: {
       type: Boolean,
       default: false
     }

@@ -323,6 +323,11 @@ export default {
       }
     },
     async getWorkflowCfg() {
+      
+      Object.keys(this.wfExecutor.show).forEach(key => {
+        if (typeof this.params[key] !== "undefined") this.wfExecutor.show[key] = this.params[key];
+      });
+
       await this.$store.dispatch(WFINS_DATA_GET, {
         cfgId: this.params.node_id,
         readLevel: this.params.readLevel,
@@ -377,7 +382,7 @@ export default {
     async getFormData() {
       try {
         const formData = await this.$refs.formImage.makeData();
-        if (wfExecutor.copy && formData) {
+        if (this.wfExecutor.copy && formData) {
           formData.dataArr[0].leaf_id = shortid.generate();
         }
         return formData;

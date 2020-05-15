@@ -151,6 +151,5 @@ export const REVIEW_LOG_FORMAT = [
 export const WF_AUTH_TYPE = [
     { n: "正常流程", v: 0 },
     { n: "仅保留重复审批人第一步", v: 1 },
-    { n: "连续步骤去重", v: 2 },
-    { n: "仅保留重复审批人最后一步", v: 3 }
+    { n: "仅保留重复审批人最后一步", v: 2 }
 ]

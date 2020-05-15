@@ -225,7 +225,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 return data.is_leaf === 1;
             },
             getNodeIcon(node) {
-                return `${this.nodeIconUri}${(this.folderMode && !this.isLeaf(node)) ? 'folder' : node.data.data_type}${
+                return `${this.nodeIconUri}${(this.folderMode && !this.isLeaf(node)) ? 'folder' : node.data.node_icon}${
                     this.folderMode && !this.isLeaf(node)
                         ? node.data.children && node.data.children.length && node.expanded
                             ? "_expand"
@@ -285,12 +285,12 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 this.nodePayload.formTitle = node.node_id ? '编辑' : '新增';
             },
             async deleteNode(data) {
-                const { node_id, children, node_dimen, data_code } = data;
+                const { node_id, children, node_dimen, data_code, node_name } = data;
                 if (typeof node_id === "undefined") return;
                 if (children && children.length) return this.$message({ message: "此节点有子节点，不能删除", type: "warning" });
 
                 this.loading = true;
-                const subData = { node_id, node_dimen, data_code };
+                const subData = { node_id, node_dimen, data_code, node_name };
                 this.$emit("before-node-delete-submit", { subData, data });
                 const ret = await this.API.trees({ data: subData, method: "delete" });
                 this.loading = false;
@@ -325,7 +325,8 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     throw new Error('data_type required!');
                 }
 
-                data.node_display = data.node_display || data.node_name;
+                data.data_name = data.node_display;
+
                 const ret = await this.API.trees({ data, method: IS_NEW ? "post" : "put" });
 
                 if (!ret.success) return;
@@ -335,7 +336,9 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     this.nodePayload.nodeRef.data = Object.assign(this.nodePayload.nodeRef.data, data);
                 } else {
                     //新增节点
-                    data.node_id = parseInt(ret.data);
+                    const { node_id, node_name } = ret.data;
+                    data.node_id = parseInt(node_id);
+                    data.node_name = node_name;
                     data.children = [];
                     this.$refs[treeRef].append(data, data.node_pid);
                 }

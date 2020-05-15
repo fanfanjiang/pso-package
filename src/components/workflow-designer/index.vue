@@ -11,13 +11,13 @@
           </div>
           <template v-slot:btn>
             <el-popconfirm
-              v-if="wfDesigner.node_id||wfDesigner.pid"
+              v-if="wfDesigner.node_id"
               title="你确定要发布吗？"
               @onConfirm="saveWorkflow('1')"
             >
               <el-button slot="reference" type="primary" size="small">发布流程</el-button>
             </el-popconfirm>
-            <el-button slot="reference" type="text" size="small" @click="saveWorkflow('0')">保存</el-button>
+            <el-button slot="reference" size="small" @click="saveWorkflow('0')">保存</el-button>
             <el-dropdown
               class="pso-wf__more"
               trigger="click"

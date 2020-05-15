@@ -30,17 +30,18 @@ import PsoCountDown from "./components/countdown";
 import PsoFormTable from "./components/form-table";
 import PsoFormDesigner from "./components/form-designer";
 import PsoFormInterpreter from "./components/form-interpreter";
+import PsoDataMgt from "./components/data-mgt";
 
 import PsoSriptDesigner from "./components/script-designer";
 
 import PsoWfDesigner from "./components/workflow-designer";
 import PsoWfStage from "./components/workflow-designer/stage";
 import PsoWfExecutor from "./components/workflow-executor";
+import PsoWfExecutor2 from "./components/wf-executor";
+import PsoWfMgt from "./components/workflow-mgt";
 
-import PsoWorkflowMgt from "./components/workflow-mgt";
 import PsoElementMgt from "./components/element-mgt";
 import PsoTempleteMgt from "./components/templete-mgt";
-import PsoDataMgt from "./components/data-mgt";
 
 import PsoViewDesigner from "./components/view-designer";
 
@@ -70,7 +71,8 @@ const components = {
     PsoWfDesigner,
     PsoWfStage,
     PsoWfExecutor,
-    PsoWorkflowMgt,
+    PsoWfExecutor2,
+    PsoWfMgt,
     PsoElementMgt,
     PsoTempleteMgt,
     PsoDataMgt,

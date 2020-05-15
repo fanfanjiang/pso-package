@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 let config = {};
@@ -15,7 +14,7 @@ if (process.env.BABEL_ENV === 'development') {
                 xlsx: 'XLSX',
                 'video.js': 'videojs'
             },
-            plugins: [new BundleAnalyzerPlugin()],
+            // plugins: [new BundleAnalyzerPlugin()],
         },
         devServer: {
             port: 9009
@@ -46,7 +45,7 @@ if (process.env.BABEL_ENV === 'development') {
                 xlsx: 'XLSX',
                 'video.js': 'videojs'
             },
-            plugins: [new BundleAnalyzerPlugin()],
+            // plugins: [new BundleAnalyzerPlugin()],
         },
         chainWebpack: config => {
             config.plugins.delete('prefetch');

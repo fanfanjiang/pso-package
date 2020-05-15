@@ -1,111 +1,119 @@
 <template>
   <div class="pso-formTable">
-    <div class="pso-formTable-header" v-if="!readOnly">
-      <div class="pso-formTable-header__left">
-        <el-popover v-model="showFilter" placement="bottom-start" width="400" trigger="click">
-          <div class="pso-formTable__filter">
-            <div class="pso-formTable__filter-body">
-              <pso-datafilter v-model="condition" :fieldsOptions="conditionOptions"></pso-datafilter>
+    <div v-if="!initializing">
+      <div class="pso-formTable-header" v-if="!readOnly">
+        <div class="pso-formTable-header__left">
+          <el-popover v-model="showFilter" placement="bottom-start" width="400" trigger="click">
+            <div class="pso-formTable__filter">
+              <div class="pso-formTable__filter-body">
+                <pso-datafilter v-model="condition" :fieldsOptions="conditionOptions"></pso-datafilter>
+              </div>
+              <div class="pso-formTable__filter-footer">
+                <el-button type="primary" size="mini" @click="goFilter">确定</el-button>
+              </div>
             </div>
-            <div class="pso-formTable__filter-footer">
-              <el-button type="primary" size="mini" @click="goFilter">确定</el-button>
+            <el-button type="text" icon="fa fa-filter" slot="reference">筛选</el-button>
+          </el-popover>
+          <el-divider direction="vertical"></el-divider>
+          <el-popover v-model="showSetting" placement="bottom-start" width="300" trigger="click">
+            <div class="pso-formTable__setting">
+              <div class="pso-formTable__setting-item" v-for="fItem of showFields" :key="fItem.fid">
+                <el-switch v-model="fItem._showColumn" :inactive-text="fItem._fieldName"></el-switch>
+              </div>
             </div>
-          </div>
-          <el-button type="text" icon="fa fa-filter" slot="reference">筛选</el-button>
-        </el-popover>
-        <el-divider direction="vertical"></el-divider>
-        <el-popover v-model="showSetting" placement="bottom-start" width="300" trigger="click">
-          <div class="pso-formTable__setting">
-            <div class="pso-formTable__setting-item" v-for="fItem of showFields" :key="fItem.fid">
-              <el-switch v-model="fItem._showColumn" :inactive-text="fItem._fieldName"></el-switch>
-            </div>
-          </div>
-          <el-button type="text" icon="el-icon-setting" slot="reference">列表管理</el-button>
-        </el-popover>
-        <el-divider direction="vertical"></el-divider>
-        <el-input
-          ref="keywords"
-          v-show="showKeywords"
-          placeholder="搜索"
-          prefix-icon="el-icon-search"
-          size="small"
-          @blur="showKeywords=false"
-          v-model="keywords"
-        ></el-input>
-        <el-button
-          v-show="!showKeywords"
-          type="text"
-          icon="el-icon-search"
-          @click="showKeywords=true"
-        >搜索</el-button>
-        <el-divider direction="vertical"></el-divider>
-        <el-button type="text" icon="el-icon-refresh" @click="getFormData">刷新</el-button>
+            <el-button type="text" icon="el-icon-setting" slot="reference">列表管理</el-button>
+          </el-popover>
+          <el-divider direction="vertical"></el-divider>
+          <el-input
+            ref="keywords"
+            v-show="showKeywords"
+            placeholder="搜索"
+            prefix-icon="el-icon-search"
+            size="small"
+            @blur="showKeywords=false"
+            v-model="keywords"
+          ></el-input>
+          <el-button
+            v-show="!showKeywords"
+            type="text"
+            icon="el-icon-search"
+            @click="showKeywords=true"
+          >搜索</el-button>
+          <el-divider direction="vertical"></el-divider>
+          <el-button type="text" icon="el-icon-refresh" @click="getFormData">刷新</el-button>
+        </div>
+        <div class="pso-formTable-header__right">
+          <el-button v-if="addable" type="primary" size="mini" round @click="newData">{{addBtnText}}</el-button>
+          <el-button
+            v-if="checkbox"
+            type="primary"
+            size="mini"
+            round
+            @click="selectConfirmHandler"
+          >确定</el-button>
+        </div>
       </div>
-      <div class="pso-formTable-header__right">
-        <el-button v-if="addable" type="primary" size="mini" round @click="newData">{{addBtnText}}</el-button>
-        <el-button v-if="checkbox" type="primary" size="mini" round @click="selectConfirmHandler">确定</el-button>
-      </div>
-    </div>
-    <div class="pso-formTable-table" v-if="!initializing">
-      <el-table
-        ref="table"
-        v-loading="loadingTable"
-        :data="formData"
-        style="width: 100%"
-        size="medium"
-        max-height="500"
-        @row-click="instanceClick"
-        @selection-change="handleSelectionChange"
-        :highlight-current-row="radio"
-      >
-        <el-table-column v-if="checkbox" type="selection" width="55"></el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          :prop="tableField._fieldValue"
-          :label="tableField._fieldName"
-          v-for="(tableField) of showFieldsReal"
-          :key="tableField.fid"
+      <div class="pso-formTable-table">
+        <el-table
+          ref="table"
+          v-loading="loadingTable"
+          :data="formData"
+          style="width: 100%"
+          size="medium"
+          max-height="500"
+          @row-click="instanceClick"
+          @selection-change="handleSelectionChange"
+          :highlight-current-row="radio"
         >
-          <template slot-scope="scope">
-            <el-tag
-              disable-transitions
-              v-if="tableField.componentid === 'attachment'"
-              size="mini"
-            >附件</el-tag>
-            <el-tag
-              disable-transitions
-              v-else-if="tableField.componentid === 'table'"
-              size="mini"
-            >{{tableField.name}}</el-tag>
-            <div v-else>{{decodeURIComponent(scope.row[tableField._fieldValue])}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column v-if="operate" :label="opText" fixed="right">
-          <template slot-scope="scope" v-if="deletable">
-            <el-button
-              size="mini"
-              type="danger"
-              @click.stop.prevent="deleteForm(scope.row.leaf_id)"
-            >删除</el-button>
-          </template>
-          <template slot-scope="scope" v-if="!deletable">
-            <slot name="column" v-bind:data="{row:scope.row,code:cfg.data_code}"></slot>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pso-formTable-footer">
-        <el-pagination
-          background
-          layout="total, sizes, prev, pager, next, jumper"
-          :page-sizes="[30,50,100,200,500]"
-          :total="dataTotal"
-          :page-size="where.limit"
-          :current-page="where.start"
-          @size-change="sizeChangeHandler"
-          @current-change="currentChangeHandler"
-          @prev-click="prevClickHandler"
-          @next-click="nextClickHandler"
-        ></el-pagination>
+          <el-table-column v-if="checkbox" type="selection" width="55"></el-table-column>
+          <el-table-column
+            show-overflow-tooltip
+            :prop="tableField._fieldValue"
+            :label="tableField._fieldName"
+            v-for="(tableField) of showFieldsReal"
+            :key="tableField.fid"
+          >
+            <template slot-scope="scope">
+              <el-tag
+                disable-transitions
+                v-if="tableField.componentid === 'attachment'"
+                size="mini"
+              >附件</el-tag>
+              <el-tag
+                disable-transitions
+                v-else-if="tableField.componentid === 'table'"
+                size="mini"
+              >{{tableField.name}}</el-tag>
+              <div v-else>{{decodeURIComponent(scope.row[tableField._fieldValue])}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="operate" :label="opText" fixed="right">
+            <template slot-scope="scope" v-if="deletable">
+              <el-button
+                size="mini"
+                type="danger"
+                @click.stop.prevent="deleteForm(scope.row.leaf_id)"
+              >删除</el-button>
+            </template>
+            <template slot-scope="scope" v-if="!deletable">
+              <slot name="column" v-bind:data="{row:scope.row,code:cfg.data_code}"></slot>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="pso-formTable-footer">
+          <el-pagination
+            background
+            layout="total, sizes, prev, pager, next, jumper"
+            :page-sizes="[30,50,100,200,500]"
+            :total="dataTotal"
+            :page-size="where.limit"
+            :current-page="where.start"
+            @size-change="sizeChangeHandler"
+            @current-change="currentChangeHandler"
+            @prev-click="prevClickHandler"
+            @next-click="nextClickHandler"
+          ></el-pagination>
+        </div>
       </div>
     </div>
     <pso-skeleton v-else :lines="5"></pso-skeleton>

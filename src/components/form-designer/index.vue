@@ -48,7 +48,6 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="auth">添加权限项</el-dropdown-item>
               <el-dropdown-item command="saveTemp">保存为模板</el-dropdown-item>
               <el-dropdown-item v-if="formStore.templateId" command="updateTemp">更新模板</el-dropdown-item>
               <el-dropdown-item>
@@ -68,13 +67,6 @@
     <div class="pso-form-designer__body">
       <designer-body @store-ready="formReadyHandler" :data="formCfg" v-if="!loading"></designer-body>
     </div>
-    <auth-editor
-      v-if="showAuthEditor"
-      :show="showAuthEditor"
-      @cancel="showAuthEditor=false"
-      @saved="authSavedHandler"
-    ></auth-editor>
-
     <el-dialog width="30%" title="保存模板" :visible.sync="showTempPop">
       <el-form size="mini" label-position="right">
         <el-form-item label="模板名称" label-width="80px">
@@ -114,7 +106,6 @@
 <script>
 import DesignerBody from "./designer-body";
 import PsoHeader from "../header";
-import AuthEditor from "../auth-editor";
 import { pickerMixin } from "../../mixin/picker";
 import shortid from "shortid";
 
@@ -126,10 +117,9 @@ export default {
       default: () => ({})
     }
   },
-  components: { DesignerBody, PsoHeader, AuthEditor },
+  components: { DesignerBody, PsoHeader },
   data() {
     return {
-      showAuthEditor: false,
       saving: false,
       storeReady: false,
       formStore: {},
@@ -206,10 +196,6 @@ export default {
       this.formStore = store;
       this.storeReady = true;
     },
-    authSavedHandler(data) {
-      this.showAuthEditor = false;
-      this.formStore.permissionEntries.push(data);
-    },
     prepareTempData() {
       if (!this.resource.list.length) {
         return this.$message({ message: "请选择文件夹", type: "warning" });
@@ -240,9 +226,7 @@ export default {
       if (ret.success) this.$notify({ title: "保存成功", type: "success" });
     },
     async handleCommand(command) {
-      if (command === "auth") {
-        this.showAuthEditor = true;
-      } else if (command === "saveTemp") {
+      if (command === "saveTemp") {
         this.tempName = this.tempName || this.formStore.data_name;
         this.showTempPop = true;
       } else if (command === "updateTemp") {
@@ -262,7 +246,7 @@ export default {
 
       this.formCfg = {
         templateId: leaf_id,
-        data_design: template.data_design || [],
+        data_design: template.data_design ||template.data_config || [],
         permissionEntries: template.permissionEntries || [],
         data_name: r_name,
         data_id: this.formStore.data_id,

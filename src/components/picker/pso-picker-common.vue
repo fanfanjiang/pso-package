@@ -100,7 +100,7 @@
   </el-popover>
 </template>
 <script>
-import PsoTypebar from "../pso-typebar";
+import PsoTypebar from "../type-bar";
 import debounce from "throttle-debounce/debounce";
 
 export default {

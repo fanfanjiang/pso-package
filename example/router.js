@@ -56,6 +56,12 @@ const router = new Router({
       name: 'workflowMgt',
       component: () => import('./views/workflow-mgt'),
       props: organizeParams
+    },
+    {
+      path: '/workflow',
+      name: 'workflow',
+      component: () => import('./views/workflow'),
+      props: organizeParams
     }
   ]
 });

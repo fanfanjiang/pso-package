@@ -13,8 +13,11 @@
     <slot></slot>
   </pso-picker-common>
 </template>
-<script>
+<script> 
+import PsoPickerCommon from "./pso-picker-common";
+ 
 export default {
+  components: { PsoPickerCommon },
   props: {
     pattern: {
       type: String,

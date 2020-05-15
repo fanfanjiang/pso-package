@@ -17,7 +17,7 @@
       <div>
         <div class="pso-dd" v-if="curNode">
           <div class="pso-dd-header">
-            <div class="pso-dd-header__title">工作表：{{curNode.node_name}}</div>
+            <div class="pso-dd-header__title">工作表：{{curNode.node_display}}</div>
             <div class="pso-dd-header__btns">
               <el-button size="small" type="primary" plain @click="handleEditForm">编辑表单</el-button>
             </div>
@@ -36,7 +36,14 @@
               <el-table v-loading="tableLoading" :data="tableData" style="width: 100%">
                 <el-table-column prop="field_display" label="字段名" width="180"></el-table-column>
                 <el-table-column prop="field_name" label="字段字典名" width="180"></el-table-column>
-                <el-table-column fixed="right" label="操作"></el-table-column>
+                <el-table-column fixed="right" label="操作">
+                  <template slot-scope="scope" v-if="scope.row.field_name">
+                    <pso-field-auth
+                      :field_name="scope.row.field_name"
+                      :data_code="curNode.data_code"
+                    ></pso-field-auth>
+                  </template>
+                </el-table-column>
               </el-table>
             </div>
           </div>
@@ -73,9 +80,12 @@
 <script>
 import { SHEET_MENU } from "./const.js";
 import PsoFormTable from "../form-table";
+import { formOp } from "../form-designer/mixin.js";
+import PsoFieldAuth from "./field-auth";
 
 export default {
-  components: { PsoFormTable },
+  mixins: [formOp],
+  components: { PsoFormTable, PsoFieldAuth },
   props: {
     appid: {
       type: String,
@@ -108,10 +118,15 @@ export default {
         this.$refs.tree.nodePayload.showForm = true;
       }
     },
-    setSelect(data, tab = "preview") {
+    async setSelect(data, tab = "preview") {
       this.curTab = tab;
       this.curNode = data;
-      this.getFields();
+      await this.getFields();
+      await this.makeFormStore(data.data_code);
+      this.tableData.forEach(item => {
+        const field = this.formStore.search({ options: { fid: item.field_name }, onlyData: true });
+        item.field_display = field ? field._fieldName : "系统字段";
+      });
     },
     nodeClickHandler(data) {
       data.is_leaf && this.setSelect(data);
@@ -124,7 +139,7 @@ export default {
       this.goForm({ id: this.curNode.data_code });
     },
     goForm({ pid = "", id = "" }) {
-      this.$router.push({ name: "formDesigner", query: { pid, id, appid: this.appid } });
+      this.$router.push({ name: "formDesigner", params: { appid: this.appid }, query: { pid, id, appid: this.appid } });
     },
     async getFields() {
       this.tableLoading = true;

@@ -101,7 +101,6 @@
             }
         }
 
-
         .pso-wf-executor__footer {
             position: absolute;
             text-align: right;
@@ -112,24 +111,120 @@
             background-color: #fff;
             box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.12);
             z-index: 2;
-            display: flex;
-            justify-content: flex-end;
 
-            .el-dropdown {
-                margin-left: 10px;
-            }
+            .pso-wf-executor__op {
+                display: flex;
+                justify-content: flex-end;
 
-            .pso-executor-op {
-                margin-left: 10px;
-
-                &+.el-button {
+                .el-dropdown {
                     margin-left: 10px;
+                }
+
+                .pso-executor-op {
+                    margin-left: 10px;
+
+                    &+.el-button {
+                        margin-left: 10px;
+                    }
+                }
+
+                .el-button {
+                    font-size: 13px;
+                    letter-spacing: 1px;
+                }
+            }
+        }
+    }
+
+    &.pso-wf-executor__simple {
+        .pso-wf-executor__flowchart {
+            height: 400px;
+        }
+
+        .pso-wf-executor__content {
+            padding: 20px;
+        }
+
+
+        .pso-wf-executor__log {
+            min-height: auto;
+            padding: 20px;
+        }
+    }
+
+    .pso-wf-executor__content {
+        padding-top: 10px;
+        padding-right: 20px;
+    }
+
+    .pso-wf-executor__attach {
+        min-height: 100%;
+        padding: 20px 20px 0 5px;
+
+        .el-form-item__label {
+            display: none;
+        }
+
+        .el-form-item__content {
+            margin-left: 0 !important;
+        }
+
+        .pso-form-upload__files {
+            margin-top: 20px;
+        }
+    }
+
+    .pso-wf-stage-wrapper {
+        padding-top: 0;
+    }
+
+    .pso-wf-executor__flowchart {
+        height: 100%;
+        position: relative;
+
+        .pso-wf__flowchart-card {
+            position: absolute;
+            top: 0;
+            right: 40px;
+            width: 260px;
+
+            .el-card__header {
+                padding: 10px 15px;
+
+                button {
+                    float: right;
+                    padding: 3px 0;
                 }
             }
 
-            .el-button {
-                font-size: 13px;
-                letter-spacing: 1px;
+            .el-card__body {
+                padding-bottom: 10px;
+
+                .pso-wf__flowchart-card-footer {
+                    text-align: right;
+                    margin-top: 30px;
+                }
+            }
+        }
+    }
+
+    .pso-wf-executor__log {
+        min-height: 100%;
+        padding: 20px 30px 0 0;
+
+        .el-timeline {
+            padding-left: 0;
+        }
+
+        .el-card__body {
+            padding: 20px;
+
+            h4 {
+                margin-top: 0;
+            }
+
+            p {
+                margin-bottom: 0;
             }
         }
     }
@@ -165,81 +260,5 @@
             bottom: 0;
         }
 
-        .pso-wf-executor__content {
-            padding-top: 10px;
-            padding-right: 20px;
-        }
-
-        .pso-wf-executor__attach {
-            min-height: 100%;
-            padding: 20px 20px 0 5px;
-
-            .el-form-item__label {
-                display: none;
-            }
-
-            .el-form-item__content {
-                margin-left: 0 !important;
-            }
-
-            .pso-form-upload__files {
-                margin-top: 20px;
-            }
-        }
-
-        .pso-wf-stage-wrapper {
-            padding-top: 0;
-        }
-
-        .pso-wf-executor__flowchart {
-            height: 100%;
-            position: relative;
-
-            .pso-wf__flowchart-card {
-                position: absolute;
-                top: 0;
-                right: 40px;
-                width: 260px;
-
-                .el-card__header {
-                    padding: 10px 15px;
-
-                    button {
-                        float: right;
-                        padding: 3px 0;
-                    }
-                }
-
-                .el-card__body {
-                    padding-bottom: 10px;
-
-                    .pso-wf__flowchart-card-footer {
-                        text-align: right;
-                        margin-top: 30px;
-                    }
-                }
-            }
-        }
-
-        .pso-wf-executor__log {
-            min-height: 100%;
-            padding: 20px 30px 0 0;
-
-            .el-timeline {
-                padding-left: 0;
-            }
-
-            .el-card__body {
-                padding: 20px;
-
-                h4 {
-                    margin-top: 0;
-                }
-
-                p {
-                    margin-bottom: 0;
-                }
-            }
-        }
     }
 }

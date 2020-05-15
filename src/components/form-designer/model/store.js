@@ -63,10 +63,10 @@ export default class FormStore {
             const sysName = this.search({ options: { componentid: "text" }, dataOptions: { _fieldValue: 'd_name' } });
             const sysTag = this.search({ options: { componentid: "tag" }, dataOptions: { _fieldValue: 'd_tag' } });
             if (!sysTag.length) {
-                this.append({ newIndex: 0, to: { fid: '0' }, target: { componentid: 'tag', _fieldValue: "d_tag", _deletable: false, _fvEditable: false } });
+                this.append({ manual: true, newIndex: 0, to: { fid: '0' }, target: { componentid: 'tag', _fieldValue: "d_tag", _deletable: false, _fvEditable: false } });
             }
             if (!sysName.length) {
-                this.append({ newIndex: 0, to: { fid: '0' }, target: { componentid: 'text', _fieldValue: "d_name", _deletable: false, _fvEditable: false } });
+                this.append({ manual: true, newIndex: 0, to: { fid: '0' }, target: { componentid: 'text', _fieldValue: "d_name", _deletable: false, _fvEditable: false } });
             }
         }
 
@@ -134,7 +134,7 @@ export default class FormStore {
     search({ options, dataOptions, beforePush, onlyData = false, opType = 'and', onlyMain = false }) {
         const { fid } = options;
         if (options && options.hasOwnProperty('fid')) {
-            return onlyData ? this.cpntsMap[fid].data : this.cpntsMap[fid];
+            return onlyData ? (this.cpntsMap[fid] && this.cpntsMap[fid].data) : this.cpntsMap[fid];
         }
         if (!Object.keys(options).length) return [];
 
@@ -202,10 +202,10 @@ export default class FormStore {
         this.reload(_.cloneDeep(unDoneState));
     }
 
-    append({ to, from, target, oldIndex, newIndex }) {
+    append({ manual, to, from, target, oldIndex, newIndex }) {
         const toCpnt = this.search({ options: to });
 
-        if (target.fid) {
+        if (!manual && target.fid) {
             target = this.search({ options: target });
             target.remove();
         }

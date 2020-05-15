@@ -2,36 +2,36 @@
   <div class="pso-wf-mainform">
     <el-form
       :rules="rules"
-      :model="wfExecutor.data"
+      :model="store.data"
       label-width="80px"
       label-position="top"
       size="medium"
     >
       <div class="pso-wf-mainform__item">
         <el-form-item label="发文编号" prop="filetype">
-          <el-select v-model="wfExecutor.data.filetype" :disabled="readMode">
+          <el-select v-model="store.data.filetype" :disabled="readMode">
             <el-option
-              v-for="type in wfExecutor.cfg.selectedFileTypes"
+              v-for="type in store.cfg.selectedFileTypes"
               :key="type.wf_code"
               :label="type.wf_filetype"
               :value="type.wf_filetype"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="wfExecutor.show.showImport" label="重要等级" prop="import">
-          <el-select v-model="wfExecutor.data.import" :disabled="readMode">
+        <el-form-item v-if="store.show.showImport" label="重要等级" prop="import">
+          <el-select v-model="store.data.import" :disabled="readMode">
             <el-option v-for="val in important" :key="val" :label="val" :value="val"></el-option>
           </el-select>
         </el-form-item>
       </div>
       <div class="pso-wf-mainform__item">
-        <el-form-item v-if="wfExecutor.show.showSecret" label="秘密等级" prop="secret">
-          <el-select v-model="wfExecutor.data.secret" :disabled="readMode">
+        <el-form-item v-if="store.show.showSecret" label="秘密等级" prop="secret">
+          <el-select v-model="store.data.secret" :disabled="readMode">
             <el-option v-for="val in secret" :key="val" :label="val" :value="val"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="wfExecutor.show.showUrgent" label="加急程度" prop="urgent">
-          <el-select v-model="wfExecutor.data.urgent" :disabled="readMode">
+        <el-form-item v-if="store.show.showUrgent" label="加急程度" prop="urgent">
+          <el-select v-model="store.data.urgent" :disabled="readMode">
             <el-option v-for="val in urgent" :key="val" :label="val" :value="val"></el-option>
           </el-select>
         </el-form-item>
@@ -40,13 +40,17 @@
   </div>
 </template>  
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 import { WF_IMPORTANCE, WF_SECTRE, WF_URGENT } from "../../const/workflow";
 export default {
+  props: {
+    store: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   computed: {
-    ...mapState(["wfExecutor"]),
     readMode() {
-      return this.wfExecutor.curStep && this.wfExecutor.curStep.atype !== "form";
+      return this.store.curStep && this.store.curStep.atype !== "form";
     }
   },
   data() {

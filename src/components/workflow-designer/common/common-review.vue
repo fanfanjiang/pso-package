@@ -49,16 +49,6 @@
         ></el-option>
       </el-select>
     </el-form-item>
-    <el-form-item v-if="node.atype==='form'" label="表单权限项">
-      <el-select :multiple="true" v-model="node.authitemsList" placeholder="请选择">
-        <el-option
-          v-for="item in wfDesigner.formAuthOptions"
-          :key="item.body_id"
-          :label="item.body_name"
-          :value="item.body_id"
-        ></el-option>
-      </el-select>
-    </el-form-item>
   </div>
 </template>
 <script>

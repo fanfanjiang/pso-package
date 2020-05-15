@@ -1,5 +1,5 @@
 <template>
-  <pso-workflow-mgt :params="params" @designer="handleGo"></pso-workflow-mgt>
+  <pso-wf-mgt :params="params" @designer="handleGo"></pso-wf-mgt>
 </template>
 <script>
 export default { 

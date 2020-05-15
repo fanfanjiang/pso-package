@@ -15,16 +15,6 @@
       <el-form-item v-if="needDefaultValue" :label="defalutValueLabel">
         <el-input v-model="cpnt.data._defaultValue" clearable></el-input>
       </el-form-item>
-      <el-form-item label="设置权限项">
-        <el-select :multiple="true" v-model="cpnt.data._auth" placeholder="请选择">
-          <el-option
-            v-for="item in cpnt.store.permissionEntries"
-            :key="item.body_id"
-            :label="item.body_name"
-            :value="item.body_id"
-          ></el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item label="字段格式">
         <el-select v-model="cpnt.data._fieldFormat" placeholder="请选择">
           <el-option

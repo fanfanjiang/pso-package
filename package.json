@@ -1,6 +1,6 @@
 {
   "name": "pbpm",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "main": "dist/pbpm.umd.min.js",
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
