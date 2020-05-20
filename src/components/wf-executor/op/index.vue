@@ -113,8 +113,15 @@ export default {
       await this.nextStep(this.REVIEW_OP_TYPE.reject.type);
     },
     goPickreject() {
-      this.store.showBody = false;
-      this.store.activeExtendTab = "flowchart";
+      if (this.store.displayMode === "simple") {
+        $(".pso-wf-executor__main .vb-content").scrollTop(0);
+      }
+      if (this.store.showBody) {
+        this.store.showBody = false;
+        this.store.activeExtendTab = "flowchart";
+      } else {
+        this.store.showBody = true;
+      }
     },
     async end() {
       await this.nextStep(this.REVIEW_OP_TYPE.end.type);

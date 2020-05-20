@@ -50,6 +50,9 @@ export function pickerMixin({
             handleDelSelection(data) {
                 this.baseObj[dataListName].splice(_.findIndex(this.baseObj[dataListName], { [this.idName]: data[this.idName] }), 1);
             },
+            handleDelList(list) {
+                list.forEach(item => this.handleDelSelection(item))
+            },
             checkRadio(data) {
                 const dataFix = data ? 0 : 1;
                 const params = [dataFix, this.baseObj[dataListName].length - dataFix];

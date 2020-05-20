@@ -18,7 +18,8 @@ export default {
   props: {
     skey: String,
     keys: Object,
-    filter: [Function, Object]
+    filter: [Function, Object],
+    defBar: Array
   },
   model: {
     prop: "value",
@@ -40,15 +41,19 @@ export default {
   },
   async created() {
     this.loading = true;
+    let data = [];
 
-    //参数配置
-    const options = { skey: this.skey };
-    if (this.keys) {
-      options.keys = this.keys;
+    if (this.defBar) {
+      data = this.defBar;
+    } else {
+      //参数配置
+      const options = { skey: this.skey };
+      if (this.keys) {
+        options.keys = this.keys;
+      }
+      const ret = await this.API.getCommonType(options);
+      data = ret.data;
     }
-
-    const ret = await this.API.getCommonType(options);
-    let data = ret.data;
 
     if (this.filter) {
       if (typeof this.filter === "function") {

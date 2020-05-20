@@ -105,9 +105,9 @@ export default {
       }
     },
     async loadFormTree() {
-      let ret = await this.API.trees({ data: { node_id: this.appid, node_dimen: "nodedimen03" } });
+      let data = await this.API.getFormTree();
       let tree = listToTree({
-        list: ret.data,
+        list: data,
         pid: "node_pid",
         id: "node_id"
       });

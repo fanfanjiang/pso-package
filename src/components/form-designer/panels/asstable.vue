@@ -10,9 +10,9 @@
         >
           <el-option
             v-for="item in options"
-            :key="item.node_id"
-            :label="item.node_name"
-            :value="item.node_id"
+            :key="item.data_code"
+            :label="item.node_display"
+            :value="item.data_code"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -130,11 +130,7 @@ export default {
     },
     async getFormList() {
       this.loading = true;
-
-      const ret = await this.API.trees({
-        data: { node_id: this.cpnt.store.appid, appid: this.cpnt.store.appid, node_dimen: "nodedimen03" }
-      });
-      this.options = ret.data.filter(node => node.data_type === "form" && node.is_leaf);
+      this.options = await this.API.getFormTree();
 
       this.loading = false;
     },
@@ -143,6 +139,7 @@ export default {
 
       this.cpnt.cache.defaultEl._option = "";
       this.cpnt.data._showFields = "";
+      this.cpnt.data._outputFormat = id;
 
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
 

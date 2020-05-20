@@ -112,11 +112,11 @@ export default {
       const cpnts = this.store.cpntsMap;
 
       //主表数据
-      const mainData = { d_status: 1, optype: this.dataId ? 1 : 0 };
+      const mainData = { d_status: 0, optype: this.dataId ? 1 : 0 };
       if (this.dataId) {
         mainData.leaf_id = this.dataId;
       }
-      
+
       //最终组合的数据
       const data = {
         data_name: this.store.data_name,

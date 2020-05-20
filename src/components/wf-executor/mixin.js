@@ -22,7 +22,7 @@ export const executor = {
         const parser = new UAParser();
         this.isMobile = parser.getResult().device.type === "mobile";
 
-        this.store = new WfStore({ copy: this.params.copy, extend: this.params.extend });
+        this.store = new WfStore({ copy: this.params.copy, extend: this.params.extend, displayMode: this.params.displayMode });
         await this.store.init({ cfgId: this.params.node_id, instanceId: this.params.instance && this.params.instance.instanceId });
     },
     methods: {

@@ -188,9 +188,8 @@ export default {
         async [MUT_TYPES.WF_INIT]({ state, getters, commit, dispatch }, params) {
 
             //获取表单列表
-            const formTreeRet = await API.getFormTree();
-            state.formsList = formTreeRet.data.filter(node => node.data_type === "form" && node.is_leaf);
-
+            state.formsList = await API.getFormTree();
+ 
             //获取发文类型
             const fRet = await API.getFileTypes();
             state.fileTypes = fRet.data;

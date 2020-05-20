@@ -20,12 +20,20 @@
             <div class="pso-dd-header__title">工作表：{{curNode.node_display}}</div>
             <div class="pso-dd-header__btns">
               <el-button size="small" type="primary" plain @click="handleEditForm">编辑表单</el-button>
+              <el-button
+                size="small"
+                :disabled="listCfgSaving"
+                :loading="listCfgSaving"
+                plain
+                @click="saveListConfig"
+              >保存列表配置</el-button>
             </div>
           </div>
           <div class="pso-dd-tab">
             <el-tabs v-model="curTab" @tab-click="handleTabClick">
               <el-tab-pane label="数据预览" name="preview"></el-tab-pane>
               <el-tab-pane label="字段预览" name="field"></el-tab-pane>
+              <el-tab-pane label="列表设置" name="list"></el-tab-pane>
             </el-tabs>
           </div>
           <div class="pso-dd-body">
@@ -42,6 +50,21 @@
                       :field_name="scope.row.field_name"
                       :data_code="curNode.data_code"
                     ></pso-field-auth>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div v-if="curTab==='list'">
+              <el-table v-loading="listCfgLoading" :data="listCfgData" style="width: 100%">
+                <el-table-column prop="field_name" label="字段" width="180"></el-table-column>
+                <el-table-column label="列表显示名" width="200">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.display_name" placeholder></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="是否显示" width="200">
+                  <template slot-scope="scope">
+                    <el-switch v-model="scope.row.is_show" active-value="1" inactive-value="0"></el-switch>
                   </template>
                 </el-table-column>
               </el-table>
@@ -106,11 +129,14 @@ export default {
       curNode: null,
       curTab: "preview",
       tableData: [],
-      tableLoading: false
+      tableLoading: false,
+      listCfgData: [],
+      listCfgLoading: false,
+      listCfgSaving: false
     };
   },
   methods: {
-    async newSheet({ id }) {
+    async newSheet({ id }) { 
       if (id === "form") {
         this.goForm({ pid: this.$refs.tree.nodePayload.parent.data.node_id });
       }
@@ -121,12 +147,9 @@ export default {
     async setSelect(data, tab = "preview") {
       this.curTab = tab;
       this.curNode = data;
-      await this.getFields();
-      await this.makeFormStore(data.data_code);
-      this.tableData.forEach(item => {
-        const field = this.formStore.search({ options: { fid: item.field_name }, onlyData: true });
-        item.field_display = field ? field._fieldName : "系统字段";
-      });
+      const formStore = await this.makeFormStore(this.curNode.data_code);
+      await this.getFields(formStore);
+      await this.getListTableData(formStore);
     },
     nodeClickHandler(data) {
       data.is_leaf && this.setSelect(data);
@@ -141,12 +164,33 @@ export default {
     goForm({ pid = "", id = "" }) {
       this.$router.push({ name: "formDesigner", params: { appid: this.appid }, query: { pid, id, appid: this.appid } });
     },
-    async getFields() {
+    async getFields(formStore) {
       this.tableLoading = true;
       let ret = await this.API.dict({ data: { data_code: this.curNode.data_code, app_id: this.appid } });
       if (!ret.success) return;
       this.tableLoading = false;
       this.tableData = ret.data;
+      this.tableData.forEach(item => {
+        const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+        item.field_display = field ? field._fieldName : "系统字段";
+      });
+    },
+    async getListTableData(formStore) {
+      this.listCfgLoading = true;
+      const ret = await this.API.getFormDict({ data_code: this.curNode.data_code });
+      if (!ret.success) return;
+      this.listCfgLoading = false;
+      this.listCfgData = ret.data;
+      this.listCfgData.forEach(item => {
+        const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+        item.display_name = item.display_name || (field ? field._fieldName : "");
+      });
+    },
+    async saveListConfig() {
+      this.listCfgSaving = true;
+      const ret = await this.API.trees({ data: { ...this.curNode, display_columns: JSON.stringify(this.listCfgData) }, method: "put" });
+      this.listCfgSaving = false;
+      this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
     }
   }
 };

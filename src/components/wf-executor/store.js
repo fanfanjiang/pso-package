@@ -1,5 +1,6 @@
 import API from "../../service/api.js";
 import shortid from "shortid";
+import { REVIEW_OP_TYPE, REVIEW_OP_APPEND } from "../../const/workflow";
 
 const BASEDADA = {
     instanceId: '',
@@ -26,7 +27,9 @@ export default class WfStore {
     constructor(options) {
 
         this.activeExtendTab = 'data';
-        this.loading = false;
+
+        this.configing = true; //基本参数加载控制
+        this.loading = false;  //整体页面加载控制
         this.steping = false;
 
         this.curStep = null;
@@ -79,6 +82,8 @@ export default class WfStore {
     async init({ cfgId, instanceId }) {
 
         this.loading = true;
+        this.configing = true;
+
         const ret = await API.workflowcfg({ data: { node_id: cfgId } });
         if (ret.success && ret.data) {
 
@@ -98,7 +103,8 @@ export default class WfStore {
 
             this.cfg = ret.data;
         }
-        this.setInstance(instanceId);
+        await this.setInstance(instanceId);
+        this.configing = false;
     }
 
     get startNode() {
@@ -134,9 +140,9 @@ export default class WfStore {
         return family;
     }
 
-    setInstance(instanceId = '') {
+    async setInstance(instanceId = '') {
         if (instanceId) {
-            this.getInstance(instanceId);
+            await this.getInstance(instanceId);
 
             //如果是复制流程
             if (this.copy) {
@@ -189,7 +195,7 @@ export default class WfStore {
                 this.cfg.wf_map_tp.executingNodes = steps;
             }
 
-            const ret = this.getFlowNode({ nid: state.data.step, cb: tiem => tiem.done = true })
+            const ret = this.getFlowNode({ nid: this.data.step, cb: tiem => tiem.done = true })
             if (ret && ret.target) {
                 this.setCurStep(ret.target);
             }
@@ -203,7 +209,7 @@ export default class WfStore {
         //设置日志
         if (log) {
             this.log = log;
-            setTableLogVal(log);
+            this.setTableLogVal(log);
         }
     }
 
@@ -323,9 +329,6 @@ export default class WfStore {
             throw new Error('参数错误');
         }
 
-        if (!formData) formData = this.getFormData();
-        if (!formData) return;
-
         const data = {
             ...this.extend,
             wf_code: this.cfg.wf_code,
@@ -358,7 +361,7 @@ export default class WfStore {
             }
 
             //下一步时有修改表单的需求
-            if (this.curStep.update && this.curStep.update.length) {
+            if (this.curStep.update && this.curStep.update.length && formData) {
                 const updates = this.curStep.update;
                 const upData = formData.dataArr[0];
 
@@ -378,7 +381,11 @@ export default class WfStore {
                     }
                 }
             }
-            data.formData = formData;
+
+            if (formData) {
+                data.formData = formData;
+            }
+
             return await API.workflow({ data, method: "put" });
         } else {
             this.newInstanceData({ nextStep: true, formData })

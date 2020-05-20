@@ -1,6 +1,6 @@
 
 import html2Canvas from 'html2canvas'
-
+ 
 export default function (ref, title = 'pdf') {
     if (typeof ref === 'string') ref = document.querySelector(ref);
     html2Canvas(ref, {

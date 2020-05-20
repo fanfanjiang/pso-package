@@ -16,16 +16,12 @@
       trigger="click"
       v-model="visible"
     >
-      <el-radio-group
-        v-if="store.curStep.atype==='tag'"
-        v-model="store.data.opinion"
-        size="small"
-      >
+      <el-radio-group v-if="store.curStep.atype==='tag'" v-model="store.data.opinion" size="mini">
         <template v-if="showOkTag">
-          <el-radio :label="text" border v-for="text of WF_TAG_TEXT_PASS" :key="text">{{text}}</el-radio>
+          <el-radio :label="text" v-for="text of WF_TAG_TEXT_PASS" :key="text">{{text}}</el-radio>
         </template>
         <template v-else>
-          <el-radio :label="text" border v-for="text of WF_TAG_TEXT_REJECT" :key="text">{{text}}</el-radio>
+          <el-radio :label="text" v-for="text of WF_TAG_TEXT_REJECT" :key="text">{{text}}</el-radio>
         </template>
       </el-radio-group>
       <el-input

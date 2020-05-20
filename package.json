@@ -1,6 +1,6 @@
 {
   "name": "pbpm",
-  "version": "0.0.6",
+  "version": "0.0.10",
   "main": "dist/pbpm.umd.min.js",
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
@@ -24,11 +24,11 @@
     "throttle-debounce": "^1.0.1",
     "tiptap": "^1.26.6",
     "tiptap-extensions": "^1.28.6",
-    "vuex": "^3.1.2",
     "vue-codemirror": "^4.0.6",
     "vue-video-player": "^5.0.2",
     "vuebar": "^0.0.20",
     "vuedraggable": "^2.23.2",
+    "vuex": "^3.1.2",
     "x2js": "^3.4.0"
   },
   "devDependencies": {

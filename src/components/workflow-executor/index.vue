@@ -24,62 +24,64 @@
           </transition>
         </div>
         <div class="pso-wf-executor__footer">
-          <div v-if="wfExecutor.curStep">
-            <el-button
-              v-if="showCommand(REVIEW_OP_TYPE.save.value)"
-              type="primary"
-              plain
-              size="small"
-              @click="saveForm"
-            >暂存</el-button>
-            <pso-wfop
-              v-if="showCommand(REVIEW_OP_TYPE.confirm.value)"
-              :op="REVIEW_OP_TYPE.confirm"
-              :text="wfExecutor.data.instanceId?'通过':'提交'"
-              @confirm="confirm"
-            ></pso-wfop>
-            <pso-wfop
-              v-if="showCommand(REVIEW_OP_TYPE.end.value)"
-              :op="REVIEW_OP_TYPE.end"
-              text="结束"
-              @confirm="end"
-            ></pso-wfop>
-            <el-button
-              v-if="showCommand(REVIEW_OP_TYPE.pickreject.value)"
-              type="primary"
-              plain
-              size="small"
-              @click="goPickreject"
-            >指定</el-button>
-            <pso-wfop
-              v-if="showCommand(REVIEW_OP_TYPE.rollback.value)"
-              :op="REVIEW_OP_TYPE.rollback"
-              type="danger"
-              text="回退"
-              @confirm="rollback"
-            ></pso-wfop>
-            <pso-wfop
-              v-if="showCommand(REVIEW_OP_TYPE.reject.value)"
-              :op="REVIEW_OP_TYPE.reject"
-              type="danger"
-              text="打回"
-              @confirm="reject"
-            ></pso-wfop>
+          <div class="pso-wf-executor__op">
+            <div v-if="wfExecutor.curStep">
+              <el-button
+                v-if="showCommand(REVIEW_OP_TYPE.save.value)"
+                type="primary"
+                plain
+                size="small"
+                @click="saveForm"
+              >暂存</el-button>
+              <pso-wfop
+                v-if="showCommand(REVIEW_OP_TYPE.confirm.value)"
+                :op="REVIEW_OP_TYPE.confirm"
+                :text="wfExecutor.data.instanceId?'通过':'提交'"
+                @confirm="confirm"
+              ></pso-wfop>
+              <pso-wfop
+                v-if="showCommand(REVIEW_OP_TYPE.end.value)"
+                :op="REVIEW_OP_TYPE.end"
+                text="结束"
+                @confirm="end"
+              ></pso-wfop>
+              <el-button
+                v-if="showCommand(REVIEW_OP_TYPE.pickreject.value)"
+                type="primary"
+                plain
+                size="small"
+                @click="goPickreject"
+              >指定</el-button>
+              <pso-wfop
+                v-if="showCommand(REVIEW_OP_TYPE.rollback.value)"
+                :op="REVIEW_OP_TYPE.rollback"
+                type="danger"
+                text="回退"
+                @confirm="rollback"
+              ></pso-wfop>
+              <pso-wfop
+                v-if="showCommand(REVIEW_OP_TYPE.reject.value)"
+                :op="REVIEW_OP_TYPE.reject"
+                type="danger"
+                text="打回"
+                @confirm="reject"
+              ></pso-wfop>
+            </div>
+            <el-dropdown @command="handleCommand">
+              <el-button size="small">
+                更多
+                <i class="el-icon-more"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <template v-if="superable&&wfExecutor.curStep">
+                  <el-dropdown-item command="copy">抄送</el-dropdown-item>
+                  <el-dropdown-item command="distribute">分发</el-dropdown-item>
+                  <el-dropdown-item command="addSign">加签</el-dropdown-item>
+                </template>
+                <el-dropdown-item command="print">打印</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
-          <el-dropdown @command="handleCommand">
-            <el-button size="small">
-              更多
-              <i class="el-icon-more"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <template v-if="superable&&wfExecutor.curStep">
-                <el-dropdown-item command="copy">抄送</el-dropdown-item>
-                <el-dropdown-item command="distribute">分发</el-dropdown-item>
-                <el-dropdown-item command="addSign">加签</el-dropdown-item>
-              </template>
-              <el-dropdown-item command="print">打印</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
         </div>
       </div>
     </transition>
@@ -323,7 +325,6 @@ export default {
       }
     },
     async getWorkflowCfg() {
-      
       Object.keys(this.wfExecutor.show).forEach(key => {
         if (typeof this.params[key] !== "undefined") this.wfExecutor.show[key] = this.params[key];
       });

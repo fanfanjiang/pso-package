@@ -9,11 +9,14 @@ import Element from 'element-ui';
 
 import BASEAPI from './service/api';
 import createPDF from './utils/create-pdf';
+import FormStore from './components/form-designer/model/store';
+import WfStore from './components/wf-executor/store';
 
 //store
 import store from './store';
 
 //组件
+import PsoEmpty from "./components/empty";
 import PsoSkeleton from "./components/skeleton";
 import PsoDrawer from "./components/drawer";
 import PsoPickerTag from "./components/picker/pso-picker-tag";
@@ -52,6 +55,7 @@ import PsoUpload from "./components/upload";
 import PsoChartDesigner from "./components/chart-designer";
 
 const components = {
+    PsoEmpty,
     PsoSkeleton,
     PsoDrawer,
     PsoPickerTag,
@@ -99,7 +103,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     if (API && API.handleAuthError) {
         BASEAPI.handleAuthError = API.handleAuthError;
     }
-    
+
     Vue.prototype.API = API || BASEAPI;
     Vue.prototype.API.URL_PREFIX = apiPrefix;
 
@@ -111,7 +115,7 @@ if (typeof window !== 'undefined' && window.Vue) {
     install(window.Vue);
 }
 
-export { BASEAPI, store }
+export { BASEAPI, store, WfStore, FormStore }
 
 export default {
     install

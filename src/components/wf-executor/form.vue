@@ -3,7 +3,7 @@
     @value-change="formChangeHandler"
     @data-loaded="handleFormDataLoaded"
     ref="formImage"
-    v-if="store.cfg.map_data_code"
+    v-if="store.cfg.map_data_code&&!store.configing"
     :form-id="store.cfg.map_data_code"
     :data-id="instanceId"
     :editable="isFormWriteable"

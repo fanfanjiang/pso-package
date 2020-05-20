@@ -296,7 +296,8 @@ export default class API {
 
     static async getFormTree() {
         try {
-            return await this.trees({ data: { node_id: '3', appid: '3', node_dimen: "nodedimen03", searchtype: 'Data', data_type: 'form' } });
+            const ret = await this.trees({ data: { node_id: '3', appid: '3', node_dimen: "nodedimen03", searchtype: 'Data', data_type: 'form' } });
+            return ret.data.filter(node => (node.data_type || 'common').toLowerCase() === "form" && node.is_leaf);
         } catch (error) {
             throw error;
         }
@@ -305,6 +306,14 @@ export default class API {
     static async getFlowTrash(data = {}) {
         try {
             return await this.request('/api/workflow/trash', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFormDict(data = {}) {
+        try {
+            return await this.request('/api/form/dict', { data, method: 'get' });
         } catch (error) {
             throw error;
         }

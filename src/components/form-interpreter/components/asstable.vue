@@ -49,7 +49,7 @@
       type="danger"
       icon="el-icon-delete"
       size="small"
-      @click="handleDelSelection(selectedList)"
+      @click="handleDelList(selectedList)"
     >取消所选关联数据</el-button>
     <el-dialog
       width="70%"

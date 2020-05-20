@@ -45,9 +45,9 @@
                 >
                   <el-option
                     v-for="item in formOptions"
-                    :key="item.node_id"
-                    :label="item.node_name"
-                    :value="item.node_id"
+                    :key="item.data_code"
+                    :label="item.node_display"
+                    :value="item.data_code"
                   ></el-option>
                 </el-select>
               </div>
@@ -162,8 +162,7 @@ export default {
       this.loadChart();
     },
     async getFormList() {
-      let ret = await this.API.trees({ data: { node_id: this.params.appid, appid: this.params.appid, node_dimen: "nodedimen03" } });
-      this.formOptions = ret.data.filter(node => node.data_type === "form");
+      this.formOptions = await this.API.getFormTree();
     },
     loadChart() {
       if (this.selectedChart.disabled) return;
