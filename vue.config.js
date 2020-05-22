@@ -12,7 +12,8 @@ if (process.env.BABEL_ENV === 'development') {
                 jquery: "jQuery",
                 lodash: '_',
                 xlsx: 'XLSX',
-                'video.js': 'videojs'
+                'video.js': 'videojs',
+                FileSaver: 'file-saver',
             },
             // plugins: [new BundleAnalyzerPlugin()],
         },
@@ -43,7 +44,8 @@ if (process.env.BABEL_ENV === 'development') {
                 jquery: "jQuery",
                 lodash: '_',
                 xlsx: 'XLSX',
-                'video.js': 'videojs'
+                'video.js': 'videojs',
+                // 'file-saver': 'FileSaver'
             },
             // plugins: [new BundleAnalyzerPlugin()],
         },

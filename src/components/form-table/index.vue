@@ -51,6 +51,8 @@
             round
             @click="selectConfirmHandler"
           >确定</el-button>
+          <slot name="op"></slot>
+          <el-button type="primary" size="mini" round @click="print">打印</el-button>
         </div>
       </div>
       <div class="pso-formTable-table">
@@ -64,6 +66,7 @@
           @row-click="instanceClick"
           @selection-change="handleSelectionChange"
           :highlight-current-row="radio"
+          id="pso-formTable-table"
         >
           <el-table-column v-if="checkbox" type="selection" width="55"></el-table-column>
           <el-table-column
@@ -150,6 +153,8 @@
 import PsoDatafilter from "../data-filter/index";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
+// import FileSaver from "file-saver";
+import XLSX from "xlsx";
 
 export default {
   components: { PsoFormView: () => import("../form-interpreter"), PsoDatafilter },
@@ -377,6 +382,22 @@ export default {
       } else {
         this.$emit("submit", { leaf_id: this.dataId, formData });
       }
+    },
+    print() {
+      const dom = $(".pso-formTable").find("#pso-formTable-table");
+      const et = XLSX.utils.table_to_book(dom[0]);
+      const etout = XLSX.write(et, { bookType: "xlsx", bookSST: true, type: "array" });
+      try {
+        FileSaver.saveAs(
+          new Blob([etout], {
+            type: "application/octet-stream"
+          }),
+          "trade-publish.xlsx"
+        );
+      } catch (e) {
+        console.log(e, etout);
+      }
+      return etout;
     }
   }
 };
