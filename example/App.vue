@@ -9,9 +9,15 @@ html,
 body {
   height: 100%;
   width: 100%;
-  background-color: #fff;
+  background-color: #fff !important;
   position: relative;
-  color: #2b3441; 
+  font-variant: tabular-nums;
+  font-feature-settings: "tnum";
+  color: #2b3441;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-variant: tabular-nums;
 }
 #app {
   height: 100%;

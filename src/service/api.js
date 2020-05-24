@@ -9,6 +9,7 @@ export default class API {
 
     static async  request(url, { method = 'post', data = {} }) {
         url = `${this.URL_PREFIX}${url}`;
+        data.appid = 'Main';
         if (method === 'get') {
             url += `?${Qs.stringify(data)}`;
         }

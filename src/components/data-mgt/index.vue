@@ -1,78 +1,234 @@
 <template>
-  <div class="pso-lay-btt">
-    <div class="pso-lay-btt__header">
-      <pso-typebar skey="GetDataTypeBar" v-model="typeVal"></pso-typebar>
+  <div class="pso-data-mgmt">
+    <div class="pso-data-mgmt__tree" v-bar>
+      <div>
+        <pso-tree-common
+          ref="tree"
+          :request-options="treeOptions"
+          :default-node-data="defaultNodeData"
+          :auto-edit="false"
+          @before-node-new="showWorksheetSelector=true"
+          @after-node-new="handleAfterNewdNode"
+          @node-click="nodeClickHandler"
+        ></pso-tree-common>
+      </div>
     </div>
-    <div class="pso-lay-btt__body" v-if="treeOptions.node_id===90">
-      <data-design :appid="params.appid" :tree-options="treeOptions"></data-design>
-    </div>
-    <div class="pso-lay-btt__body" v-else-if="treeOptions.node_id!==''">
-      <div class="pso-lay-btt__bl" v-bar>
-        <div>
-          <pso-tree-common
-            ref="tree"
-            :request-options="treeOptions"
-            :default-node-data="{data_type:treeOptions.data_type}"
-            @after-node-new="nodeNewdHandler"
-            @before-edit-submit="nodeBeforeEditHandler"
-            @node-click="nodeClickHandler"
-            @before-node-edit="nodeEditHandler"
-          ></pso-tree-common>
+    <div class="pso-data-mgmt__content" v-bar>
+      <div>
+        <div class="pso-dd" v-if="curNode">
+          <div class="pso-dd-header">
+            <div class="pso-dd-header__title">工作表：{{curNode.node_display}}</div>
+            <div class="pso-dd-header__btns">
+              <el-button size="small" type="primary" plain @click="handleEditForm">编辑表单</el-button>
+            </div>
+          </div>
+          <div class="pso-dd-tab">
+            <el-tabs v-model="curTab" @tab-click="handleTabClick">
+              <el-tab-pane label="数据预览" name="preview"></el-tab-pane>
+              <el-tab-pane label="字段预览" name="field"></el-tab-pane>
+              <el-tab-pane label="列表设置" name="list"></el-tab-pane>
+              <el-tab-pane label="状态设置" name="status"></el-tab-pane>
+              <el-tab-pane label="权限设置" name="auth"></el-tab-pane>
+              <el-tab-pane label="发布设置" name="publish"></el-tab-pane>
+            </el-tabs>
+          </div>
+          <div class="pso-dd-body">
+            <div v-if="curTab==='preview'">
+              <pso-form-table :cfg-id="curNode.node_name" :auto-submit="true" :read-only="false"></pso-form-table>
+            </div>
+            <div v-if="curTab==='field'">
+              <el-table key="field" v-loading="tableLoading" :data="tableData" style="width: 100%">
+                <el-table-column prop="field_display" label="字段名" width="180"></el-table-column>
+                <el-table-column prop="field_name" label="字段字典名" width="180"></el-table-column>
+                <el-table-column fixed="right" label="操作">
+                  <template slot-scope="scope" v-if="scope.row.field_name">
+                    <pso-field-auth
+                      :field_name="scope.row.field_name"
+                      :data_code="curNode.node_name"
+                    ></pso-field-auth>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div v-if="curTab==='list'">
+              <el-button
+                size="small"
+                :disabled="listCfgSaving"
+                :loading="listCfgSaving"
+                plain
+                @click="saveListConfig"
+              >保存列表配置</el-button>
+              <el-table
+                key="list"
+                v-loading="listCfgLoading"
+                :data="listCfgData"
+                style="width: 100%"
+              >
+                <el-table-column prop="field_name" label="字段" width="180"></el-table-column>
+                <el-table-column label="列表显示名">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.display_name" placeholder></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="是否显示" width="200">
+                  <template slot-scope="scope">
+                    <el-switch v-model="scope.row.is_show" active-value="1" inactive-value="0"></el-switch>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div v-if="curTab==='status'">
+              <el-button size="small" type="primary" plain @click="addStatusCfgItem">添加属性</el-button>
+              <el-table key="status" :data="statusCfgData" style="width: 100%">
+                <el-table-column label="属性值">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.status_val" placeholder></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="属性名">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.display_name" placeholder></el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div v-if="curTab==='auth'">
+              <pso-nodeauth :node="curNode"></pso-nodeauth>
+            </div>
+            <div v-if="curTab==='publish'"></div>
+          </div>
         </div>
       </div>
-      <div class="pso-lay-btt__br" v-bar></div>
     </div>
+    <el-dialog
+      title="选择工作表类型"
+      width="30%"
+      custom-class="worksheet-dialog"
+      :append-to-body="true"
+      :center="true"
+      :visible.sync="showWorksheetSelector"
+    >
+      <div class="pso-worksheet-menu">
+        <div class="pso-worksheet-menu__tip">{{curWsMenu.tip}}</div>
+        <div class="pso-worksheet-menu__list">
+          <div
+            :class="[{'pso-worksheet-menu__item':true,'active':curWsMenu===item}]"
+            @mouseenter="curWsMenu=item"
+            @mouseleave="curWsMenu={}"
+            @click="newSheet(item)"
+            v-for="(item,index) in worksheetMenu"
+            :key="index"
+          >
+            <img :src="curWsMenu===item?item.icon[1]:item.icon[0]" :alt="item.name" />
+            <span>{{item.name}}</span>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import PsoTypebar from "../type-bar";
-import DataDesign from "./data";
-import shortid from "shortid";
+import { SHEET_MENU } from "./const.js";
+import PsoFormTable from "../form-table";
+import { formOp } from "../form-designer/mixin.js";
+import PsoFieldAuth from "./field-auth";
+import PsoNodeauth from "../node-auth";
 
 export default {
-  components: { PsoTypebar, DataDesign },
-  props: ["params"],
-  data() {
-    return {
-      typeVal: {
-        feildvalue: ""
-      },
-      selectedNode: {}
-    };
-  },
-  computed: {
-    treeOptions() {
-      return {
-        data_type: this.typeVal.data_type,
-        node_id: this.typeVal.feildvalue,
-        node_dimen: this.typeVal.node_dimen,
-        searchtype: "Data"
-      };
+  mixins: [formOp],
+  components: { PsoFormTable, PsoFieldAuth, PsoNodeauth },
+  props: {
+    appid: {
+      type: String,
+      default: "3"
     }
   },
+  data() {
+    return {
+      key: 0,
+      worksheetMenu: SHEET_MENU,
+      showWorksheetSelector: false,
+      curWsMenu: {},
+      treeOptions: {
+        dimen: 3,
+        node_id: "3"
+      },
+      defaultNodeData: {
+        node_dimen: 3
+      },
+      curNode: null,
+      curTab: "preview",
+      tableData: [],
+      tableLoading: false,
+      listCfgData: [],
+      listCfgLoading: false,
+      listCfgSaving: false,
+      statusCfgData: []
+    };
+  },
   methods: {
-    nodeNewHandler() {
-      this.$refs.tree.nodePayload.show = true;
-      this.$refs.tree.nodePayload.label = `${this.typeVal.feildname}名称`;
-    },
-    nodeBeforeEditHandler(data) {
-      if (data.is_leaf !== 0) {
-        data.tp_name = data.node_name;
-        data.tp_code = shortid.generate();
-        data.tp_status = "0";
-        data.tp_type = this.typeVal.feildvalue;
+    async newSheet({ id }) {
+      if (id === "form") {
+        this.goForm({ pid: this.$refs.tree.nodePayload.parent.data.node_id });
+      }
+      if (id === "excel" || id === "xml") {
+        this.$refs.tree.nodePayload.showForm = true;
       }
     },
-    nodeClickHandler(node) {
-      this.selectedNode = node;
+    async setSelect(data, tab = "preview") {
+      this.curTab = tab;
+      this.curNode = data;
+      const formStore = await this.makeFormStore(this.curNode.node_name);
+      await this.getFields(formStore);
+      await this.getListTableData(formStore);
     },
-    nodeEditHandler(node) {
-      node.data.is_leaf && this.handleCenterEdit(node.data.tp_code);
+    nodeClickHandler(data) {
+      data.is_leaf && this.setSelect(data);
     },
-    nodeNewdHandler(data) {
-      this.handleCenterEdit(data.tp_code);
+    handleAfterNewdNode(data) {
+      this.setSelect(data, "field");
+      this.showWorksheetSelector = false;
     },
-    handleCenterEdit(tpCode) {}
+    handleEditForm() {
+      this.goForm({ id: this.curNode.node_name });
+    },
+    goForm({ pid = "", id = "" }) {
+      this.$router.push({ name: "formDesigner", params: { appid: this.appid }, query: { pid, id, appid: this.appid } });
+    },
+    async getFields(formStore) {
+      this.tableLoading = true;
+      let ret = await this.API.dict({ data: { data_code: this.curNode.node_name, app_id: this.appid } });
+      if (!ret.success) return;
+      this.tableLoading = false;
+      this.tableData = ret.data;
+      this.tableData.forEach(item => {
+        const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+        item.field_display = field ? field._fieldName : "系统字段";
+      });
+    },
+    async getListTableData(formStore) {
+      this.listCfgLoading = true;
+      const ret = await this.API.getFormDict({ data_code: this.curNode.node_name });
+      if (!ret.success) return;
+      this.listCfgLoading = false;
+      this.listCfgData = ret.data;
+      this.listCfgData.forEach(item => {
+        const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+        item.display_name = item.display_name || (field ? field._fieldName : "");
+      });
+    },
+    async saveListConfig() {
+      this.listCfgSaving = true;
+      const ret = await this.API.trees({ data: { ...this.curNode, display_columns: JSON.stringify(this.listCfgData) }, method: "put" });
+      this.listCfgSaving = false;
+      this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
+    },
+    addStatusCfgItem() {
+      this.statusCfgData.push({ status_val: "", display_name: "" });
+    }
   }
 };
 </script>
+<style lang="less">
+@import "../../assets/less/component/data-mgmt.less";
+</style>

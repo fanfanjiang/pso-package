@@ -1,10 +1,10 @@
-import './assets/less/main.less';
+import './assets/theme/index.css';
 
 import Vuebar from 'vuebar';
 import 'muse-ui/lib/styles/base.less';
 import 'muse-ui/lib/styles/theme.less';
 import { TextField } from 'muse-ui';
-import VCharts from 'v-charts';
+import VCharts from 'v-charts'; 
 import Element from 'element-ui';
 
 import BASEAPI from './service/api';
@@ -29,7 +29,10 @@ import PsoPickerUser from "./components/picker/pso-picker-user";
 import PsoTreeCommon from "./components/tree";
 import PsoTypebar from "./components/type-bar";
 import PsoCountDown from "./components/countdown";
+import PsoTitle from "./components/title";
+import PsoNodeauth from "./components/node-auth";
 
+//表单组件
 import PsoFormTable from "./components/form-table";
 import PsoFormDesigner from "./components/form-designer";
 import PsoFormInterpreter from "./components/form-interpreter";
@@ -83,7 +86,9 @@ const components = {
     PsoChartDesigner,
     PsoViewDesigner,
     PsoScriptOut,
-    PsoUpload
+    PsoUpload,
+    PsoTitle,
+    PsoNodeauth
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3' } = {}) {

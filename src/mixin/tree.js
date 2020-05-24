@@ -112,7 +112,8 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     loading: false,
                     formTitle: '编辑',
                     nameLable: '名称'
-                }
+                },
+                isCopy: false
             }
         },
         watch: {
@@ -174,21 +175,12 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 if (node) {
                     options.node_level = node.level
                 }
-
-                if (!node || (node && node.level === 0)) {
-                    if (!options.node_id) {
-                        if (!options.node_dimen) throw new Error('node_dimen required!')
-                        options.node_id = this.appid;
-                        options.appid = this.appid;
-                    }
-                } else {
-                    options.node_id = node.data.node_id;
-                }
+                options.appid = this.appid;
 
                 const ret = await this.API.trees({ data: options });
 
-                let treeList = ret.data;
-
+                let treeList = ret.data.tagtree;
+                
                 //树节点过滤
                 if (this.nodeDataFilter) {
                     treeList = await this.nodeDataFilter(ret.data);
@@ -290,7 +282,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 if (children && children.length) return this.$message({ message: "此节点有子节点，不能删除", type: "warning" });
 
                 this.loading = true;
-                const subData = { node_id, node_dimen, data_code, node_name };
+                const subData = { node_id, node_dimen, data_code, node_name, code: node_name };
                 this.$emit("before-node-delete-submit", { subData, data });
                 const ret = await this.API.trees({ data: subData, method: "delete" });
                 this.loading = false;
@@ -321,11 +313,8 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     throw new Error('node_dimen required!');
                 }
 
-                if (!data.data_type) {
-                    throw new Error('data_type required!');
-                }
-
                 data.data_name = data.node_display;
+                data.code = data.node_name;
 
                 const ret = await this.API.trees({ data, method: IS_NEW ? "post" : "put" });
 
@@ -353,13 +342,15 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     this.setCurrentNode([data]);
                 });
             },
+            nodeDragStart(node, event) {
+                this.isCopy = event.ctrlKey;
+            },
             async moveNode(data) {
 
                 if (!data.node_id || !data.node_pid) {
-                    console.log(data);
                     return this.$message({ message: "不能移动", type: "warning" });
                 }
-
+                data.move = this.isCopy ? '1' : '0';
                 this.loading = true;
                 //用的是update接口，这里加个操作类型
                 data.op = "move";

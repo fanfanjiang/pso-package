@@ -22,6 +22,7 @@
         :allow-drag="allowDragHandler"
         :lazy="lazyLoad"
         :load="getNodeData"
+        @node-drag-start="nodeDragStart"
         :show-checkbox="showCheckbox"
         @node-click="nodeClickHandler"
         @node-drop="nodeDropHandler"
