@@ -4,17 +4,14 @@
       <el-tag
         v-for="item in proxy.list"
         :key="item.user_id"
-        :closable="cpnt.store.editable&&!cpnt.data._read"
+        :closable="storeEditable&&!cpnt.data._read"
         @close="handleDelSelection(item)"
       >{{item.user_name}}</el-tag>
     </div>
     <pso-skeleton v-else :lines="1"></pso-skeleton>
     <pso-picker-user
-      v-if="cpnt.store.editable&&!cpnt.data._read"
-      ref="selector"
-      :show="show"
+      v-if="storeEditable&&!cpnt.data._read"
       :pattern="cpnt.data._type"
-      @cancel="show=false"
       @confirm="handleAddSelection"
     ></pso-picker-user>
   </el-form-item>

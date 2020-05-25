@@ -72,8 +72,10 @@
     <div class="wf-table-editor__save" v-if="wfDesigner.wfCode">
       <el-button type="primary" size="mini" round :loading="saving" @click="saveHandler">保存主体</el-button>
     </div>
-    <div class="wf-table-editor__content" :style="contentStyle">
-      <editor-content :editor="editor" />
+    <div class="wf-table-editor__content">
+      <div :style="contentStyle">
+        <editor-content :editor="editor" />
+      </div>
     </div>
     <transition name="el-zoom-in-top">
       <div class="wf-table-editor__review" v-if="fieldNode">
@@ -470,15 +472,15 @@ export default {
   position: relative;
   height: 100%;
   .wf-table-editor__save {
-    position: fixed;
+    position: absolute;
     right: 20px;
-    top: 70px;
+    top: 20px;
     z-index: 2;
   }
   .wf-table-editor__menu-wrapper {
-    position: fixed;
+    position: absolute;
     left: 20px;
-    top: 70px;
+    top: 20px;
     z-index: 2;
     box-shadow: 4px 4px 10px 0 rgba(25, 30, 40, 0.1);
     text-align: center;
@@ -571,9 +573,9 @@ export default {
 
 //审核操作
 .wf-table-editor__review {
-  position: fixed;
+  position: absolute;
   left: 260px;
-  top: 70px;
+  top: 20px;
   width: calc(100% - 278px);
   z-index: 3;
   .wf-table-editor__review-header {

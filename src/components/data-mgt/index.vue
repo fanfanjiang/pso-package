@@ -17,13 +17,13 @@
       <div>
         <div class="pso-dd" v-if="curNode">
           <div class="pso-dd-header">
-            <div class="pso-dd-header__title">工作表：{{curNode.node_display}}</div>
+            <pso-title>工作表：{{curNode.node_display}}</pso-title>
             <div class="pso-dd-header__btns">
               <el-button size="small" type="primary" plain @click="handleEditForm">编辑表单</el-button>
             </div>
           </div>
           <div class="pso-dd-tab">
-            <el-tabs v-model="curTab" @tab-click="handleTabClick">
+            <el-tabs v-model="curTab">
               <el-tab-pane label="数据预览" name="preview"></el-tab-pane>
               <el-tab-pane label="字段预览" name="field"></el-tab-pane>
               <el-tab-pane label="列表设置" name="list"></el-tab-pane>
@@ -95,7 +95,34 @@
             <div v-if="curTab==='auth'">
               <pso-nodeauth :node="curNode"></pso-nodeauth>
             </div>
-            <div v-if="curTab==='publish'"></div>
+            <div v-if="curTab==='publish'">
+              <div>
+                <span>是否对外开放</span>
+                <el-switch v-model="isPublic"></el-switch>
+              </div>
+              <div v-if="isPublic" class="pso-dd-public">
+                <pso-title>对外配置</pso-title>
+                <el-form ref="form" label-width="80px" label-position="left">
+                  <el-form-item label="LOGO">
+                    <pso-form-attach :cpnt="{data:publicCig.attach}">
+                      <el-button icon="el-icon-paperclip" plain size="small">上传LOGO</el-button>
+                    </pso-form-attach>
+                  </el-form-item>
+                  <el-form-item label="标题">
+                    <el-input v-model="publicCig.name"></el-input>
+                  </el-form-item>
+                  <el-form-item label="提交文本">
+                    <el-input v-model="publicCig.subBtnText"></el-input>
+                  </el-form-item>
+                  <el-form-item label="完成文本">
+                    <el-input v-model="publicCig.doneText"></el-input>
+                  </el-form-item>
+                </el-form>
+                <pso-title>表单链接</pso-title>
+                http://tongjihbzx.pusiou.com.cn/m/form/{{curNode.node_name}}
+                <pso-title>链接二维码</pso-title>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -133,10 +160,12 @@ import PsoFormTable from "../form-table";
 import { formOp } from "../form-designer/mixin.js";
 import PsoFieldAuth from "./field-auth";
 import PsoNodeauth from "../node-auth";
+import PsoTitle from "../title";
+import PsoFormAttach from "../form-interpreter/components/attachment";
 
 export default {
   mixins: [formOp],
-  components: { PsoFormTable, PsoFieldAuth, PsoNodeauth },
+  components: { PsoFormTable, PsoFieldAuth, PsoNodeauth, PsoTitle, PsoFormAttach },
   props: {
     appid: {
       type: String,
@@ -163,7 +192,17 @@ export default {
       listCfgData: [],
       listCfgLoading: false,
       listCfgSaving: false,
-      statusCfgData: []
+      statusCfgData: [],
+      isPublic: false,
+      publicCig: {
+        attach: {
+          _fieldName: "附件",
+          _val: ""
+        },
+        name: "",
+        subBtnText: "",
+        doneText: ""
+      }
     };
   },
   methods: {
@@ -229,6 +268,3 @@ export default {
   }
 };
 </script>
-<style lang="less">
-@import "../../assets/less/component/data-mgmt.less";
-</style>

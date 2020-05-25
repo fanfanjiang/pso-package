@@ -11,10 +11,7 @@
     <el-form-item label="默认值" v-if="!isSetCurrent" v-loading="loading">
       <pso-picker-user
         :appid="cpnt.store.appid"
-        ref="selector"
-        :show="show"
         :pattern="cpnt.data._type"
-        @cancel="show=false"
         @confirm="handleAddSelection"
       ></pso-picker-user>
       <div :key="cpnt.fid">

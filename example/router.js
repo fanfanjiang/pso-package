@@ -39,10 +39,16 @@ const router = new Router({
       component: () => import('./views/element-mgt'),
       props: organizeParams
     },
-    {
+    { 
       path: '/templete-mgt',
       name: 'templeteMgt',
       component: () => import('./views/templete-mgt'),
+      props: organizeParams
+    },
+    { 
+      path: '/menu-mgt',
+      name: 'menuMgt',
+      component: () => import('./views/menu-mgt'),
       props: organizeParams
     },
     {

@@ -31,6 +31,7 @@ import PsoTypebar from "./components/type-bar";
 import PsoCountDown from "./components/countdown";
 import PsoTitle from "./components/title";
 import PsoNodeauth from "./components/node-auth";
+import PsoMenuMgt from "./components/menu-mgt";
 
 //表单组件
 import PsoFormTable from "./components/form-table";
@@ -88,7 +89,8 @@ const components = {
     PsoScriptOut,
     PsoUpload,
     PsoTitle,
-    PsoNodeauth
+    PsoNodeauth,
+    PsoMenuMgt
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3' } = {}) {

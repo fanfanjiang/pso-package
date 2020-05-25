@@ -23,17 +23,14 @@
             <pso-picker-user
               v-if="auth.access_type===accessTypes[0].v"
               @confirm="handlePick($event,index,'user_id')"
-              :show="auth.show"
             ></pso-picker-user>
             <pso-picker-position
               v-if="auth.access_type===accessTypes[1].v"
               @confirm="handlePick($event,index,'duty_id')"
-              :show="auth.show"
             ></pso-picker-position>
             <pso-picker-post
               v-if="auth.access_type===accessTypes[2].v"
               @confirm="handlePick($event,index,'post_id')"
-              :show="auth.show"
             ></pso-picker-post>
           </div>
         </div>
@@ -62,10 +59,6 @@ import PsoPickerPosition from "../picker/pso-picker-position";
 export default {
   components: { PsoPickerUser, PsoPickerPost, PsoPickerPosition },
   props: {
-    show: {
-      type: Boolean,
-      default: false
-    },
     field_name: String,
     data_code: String
   },
@@ -77,7 +70,8 @@ export default {
         { n: "用户", v: "0" },
         { n: "职位", v: "1" },
         { n: "岗位", v: "2" }
-      ]
+      ],
+      show: false
     };
   },
   created() {
@@ -92,8 +86,7 @@ export default {
         user_id: "",
         duty_id: "",
         field_name: this.field_name,
-        data_code: this.data_code,
-        show: false
+        data_code: this.data_code
       });
     },
     handlePick(data, index, field) {

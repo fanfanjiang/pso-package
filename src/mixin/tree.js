@@ -150,7 +150,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
 
                 if (this.checkAfterLoad) {
                     this.$nextTick(() => {
-                        this.setCurrentNode(this.treeData, 2);
+                        this.setCurrentNode(this.treeData, 3);
                     });
                 }
             },
@@ -180,7 +180,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 const ret = await this.API.trees({ data: options });
 
                 let treeList = ret.data.tagtree;
-                
+
                 //树节点过滤
                 if (this.nodeDataFilter) {
                     treeList = await this.nodeDataFilter(ret.data);

@@ -129,13 +129,18 @@ a {
 }
 
 .el-tabs__nav-wrap::after {
-    background-color: transparent !important;
+    height: 1px;
 }
 
 .el-button [class*="fa"]+span {
     margin-left: 7px;
 }
 
+.el-checkbox {
+    &+.el-checkbox {
+        margin-left: 0 !important;
+    }
+}
 
 .el-table-column--selection {
     >.cell {

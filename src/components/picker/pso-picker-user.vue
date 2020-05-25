@@ -111,10 +111,6 @@ export default {
       type: String,
       default: "3"
     },
-    show: {
-      type: Boolean,
-      default: false
-    },
     pattern: {
       type: String,
       default: "radio"
@@ -157,7 +153,8 @@ export default {
       },
       dataTotal: 0,
       postData: [],
-      dutyData: []
+      dutyData: [],
+      show: false
     };
   },
   watch: {
@@ -226,6 +223,7 @@ export default {
     },
     confirm() {
       this.$emit("confirm", this.getUsers());
+      this.show = false;
     },
     getUsers() {
       return _.cloneDeep(this.selected);

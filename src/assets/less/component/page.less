@@ -1,0 +1,71 @@
+.pso-page {
+    height: 100%;
+    position: relative;
+
+    &.has-header {
+        .pso-page-body {
+            top: 41px;
+        }
+    }
+
+    .pso-page-header {
+        border-bottom: 1px solid #e6e6e6;
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+    }
+
+    .pso-page-body {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        overflow: hidden;
+
+        .pso-page__tree {
+            height: 100%;
+            min-width: 300px;
+        }
+
+        .pso-page-body__content {
+            flex: 1;
+        }
+    }
+
+    .pso-page-body__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .el-tabs__header {
+        margin: 0 !important;
+    }
+
+    .pso-page-wf__stage {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .pso-wf-stage-wrapper {
+        padding: 0;
+    }
+
+    .pso-page-body__wrapper {
+        padding: 15px;
+    }
+
+    .pso-page-body__tabbody {
+        >div {
+            position: relative;
+        }
+    }
+}
+
+.pso-wftag-crl {
+    text-align: right;
+    margin-top: 20px;
+}

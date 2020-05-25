@@ -1,5 +1,8 @@
 <template>
-  <div class="pso-page">
+  <div class="pso-page has-header">
+    <div class="pso-page-header">
+      <pso-typebar skey="getTpEleBar" v-model="typeVal"></pso-typebar>
+    </div>
     <div class="pso-page-body">
       <div class="pso-page__tree" v-bar>
         <div>
@@ -30,23 +33,32 @@
         <div>
           <div class="pso-page-body__wrapper" v-if="currentNode">
             <div class="pso-page-body__header">
-              <pso-title>插件：{{currentNode.node_display}}</pso-title>
+              <pso-title>菜单：{{currentNode.node_display}}</pso-title>
               <div class="pso-page-body__btns"></div>
             </div>
           </div>
-          {{currentNode}}
-          <pso-view-page v-if="currentNode.tp_type===tpTypes[0].value" :node="currentNode"></pso-view-page>
+          <div class="pso-page-body__tab">
+            <el-tabs v-model="curTab">
+              <el-tab-pane label="权限设置" name="auth"></el-tab-pane>
+              <el-tab-pane label="参数设置" name="preview"></el-tab-pane>
+            </el-tabs>
+          </div>
+          <div class="pso-page-body__body">
+            <div v-if="curTab==='auth'">
+              <pso-nodeauth :node="currentNode"></pso-nodeauth>
+            </div>
+            <div v-if="curTab==='preview'"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import PsoViewPage from "./page";
 import PsoNodeauth from "../node-auth";
 
 export default {
-  components: { PsoViewPage, PsoNodeauth },
+  components: { PsoNodeauth },
   props: ["params"],
   data() {
     return {
@@ -69,13 +81,13 @@ export default {
   computed: {
     treeOptions() {
       return {
-        dimen: 4,
+        dimen: 1,
         node_id: "3"
       };
     },
     defaultNodeData() {
       return {
-        node_dimen: 4
+        node_dimen: 1
       };
     }
   },

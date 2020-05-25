@@ -3,7 +3,15 @@
     <router-view></router-view>
   </div>
 </template>
-
+<script>
+export default {
+  created() {
+    $("body")
+      .removeClass()
+      .addClass(`pso-theme-E56281`);
+  }
+};
+</script>
 <style lang="less">
 html,
 body {

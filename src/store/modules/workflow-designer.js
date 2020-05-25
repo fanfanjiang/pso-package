@@ -189,7 +189,7 @@ export default {
 
             //获取表单列表
             state.formsList = await API.getFormTree();
- 
+
             //获取发文类型
             const fRet = await API.getFileTypes();
             state.fileTypes = fRet.data;
@@ -226,7 +226,7 @@ export default {
         },
         async [MUT_TYPES.WF_FORM_SELECT]({ state, getters, commit }, { id, reset = true }) {
 
-            state.formName = _.find(state.formsList, { data_code: id }).node_display;
+            state.formName = _.find(state.formsList, { node_name: id }).node_display; 
             state.loading = true;
 
             if (reset) {

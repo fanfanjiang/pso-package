@@ -450,10 +450,9 @@ export default {
   }
 }
 .pso-formTable {
-  padding: 5px;
   height: 100%;
   width: 100%;
-  background-color: #f7f7f7;
+  background-color: #fff;
 
   .pso-formTable-header {
     display: flex;
