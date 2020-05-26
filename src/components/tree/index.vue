@@ -1,11 +1,21 @@
 <template>
   <div class="pso-tree" :style="treeStyle">
-    <div class="pso-tree__search" v-if="searchable">
-      <mu-text-field v-model="filterText">
-        <template v-slot:prepend>
-          <i class="el-icon-search"></i>
-        </template>
-      </mu-text-field>
+    <div class="pso-tree__header">
+      <div class="pso-tree__search" v-if="searchable">
+        <mu-text-field v-model="filterText">
+          <template v-slot:prepend>
+            <i class="el-icon-search"></i>
+          </template>
+        </mu-text-field>
+      </div>
+      <div>
+        <el-button
+          icon="el-icon-plus"
+          size="mini"
+          circle
+          @click="treeFunHandler('newFolder',{data:{node_id:0}})"
+        ></el-button>
+      </div>
     </div>
     <pso-skeleton v-if="loadingWholeTree" :lines="10"></pso-skeleton>
     <div v-else class="pso-tree__body" v-loading="loading">
@@ -49,30 +59,61 @@
                     <el-dropdown-item command="newNode">新建{{nodeEditLable}}</el-dropdown-item>
                   </template>
                   <el-dropdown-item command="edit">编辑</el-dropdown-item>
-                  <el-dropdown-item command="delete" v-if="!(rootable&&node.level===1)">删除</el-dropdown-item>
+                  <el-dropdown-item command="delete">删除</el-dropdown-item>
                 </slot>
               </el-dropdown-menu>
             </el-dropdown>
           </span>
         </span>
       </el-tree>
+      <el-popover placement="top-start" width="240" trigger="click">
+        <div class="pso-tree__trash-body">
+          <div class="pso-tree__trash-btns">
+            <el-button size="mini" @click="restoreTrash" :disabled="canTrash">还 原</el-button>
+            <el-button size="mini" type="danger" @click="emptyTrash" :disabled="canTrash">清 空</el-button>
+          </div>
+          <el-table
+            size="mini"
+            :data="trash"
+            style="width: 100%"
+            @selection-change="handleTrashSelect"
+          >
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column prop="node_display" label="名称"></el-table-column>
+          </el-table>
+        </div>
+        <div class="pso-tree__trash" slot="reference">
+          <i class="el-icon-delete"></i>
+        </div>
+      </el-popover>
       <el-dialog
         v-loading="nodePayload.loading"
         width="30%"
-        :append-to-body="true" 
+        :append-to-body="true"
         :close-on-click-modal="false"
         :title="nodePayload.formTitle"
         :visible.sync="nodePayload.showForm"
       >
         <el-form v-if="nodePayload.node" :model="nodePayload.node.data" label-width="80px">
           <el-form-item :label="nodePayload.nameLable">
-            <el-input v-model="nodePayload.node.data.node_display" autocomplete="off"></el-input>
+            <el-input size="small" v-model="nodePayload.node.data.node_display" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="标签" v-if="nodePayload.node.data.node_pid===0">
+            <el-select size="small" v-model="nodePayload.node.data.data_type">
+              <el-option
+                v-for="item in dimens"
+                :key="item.dimen_tag"
+                :label="item.tag_name"
+                :value="item.dimen_tag"
+              ></el-option>
+            </el-select>
           </el-form-item>
           <slot v-bind:node="nodePayload.node.data"></slot>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="nodePayload.showForm = false">取 消</el-button>
+          <el-button @click="nodePayload.showForm = false" size="small">取 消</el-button>
           <el-button
+            size="small"
             type="primary"
             @click="editNode"
             :loading="nodePayload.loading"
@@ -96,70 +137,3 @@ export default {
   }
 };
 </script>
-<style lang="less" scoped>
-@import "../../assets/less/variable";
-.pso-tree {
-  width: 100%;
-  padding: 15px;
-  height: 100%;
-  background-color: transparent;
-  box-shadow: 1px 0 1px 0 rgba(0, 0, 0, 0.06), inset -1px 0 0 0 rgba(255, 255, 255, 0.2);
-  @{deep} .el-tree-node__expand-icon {
-    opacity: 0 !important;
-    width: 1px !important;
-    padding: 0 !important;
-    height: 24px !important;
-    transform: rotate(0deg) !important;
-  }
-  .pso-tree__node {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    &:hover {
-      .pso-tree__node-btns {
-        opacity: 1;
-        transition: all 0.2s ease-in-out;
-      }
-    }
-    > span {
-      display: flex;
-      align-items: center;
-    }
-    .pso-tree__node-title {
-      > img {
-        height: 20px;
-        width: 20px;
-        margin-right: 5px;
-      }
-      > span {
-        font-size: 13px;
-      }
-    }
-    .pso-tree__node-btns {
-      padding-right: 10px;
-      color: #999;
-      opacity: 0;
-      transition: all 0.2s ease-in-out;
-      &.show {
-        opacity: 1;
-        transition: all 0.2s ease-in-out;
-      }
-    }
-  }
-  .pso-tree__search {
-    i {
-      margin-right: 5px;
-    }
-    @{deep} {
-      .mu-input {
-        margin-bottom: 0;
-        width: 100%;
-      }
-      .mu-input__focus {
-        color: @main-color;
-      }
-    }
-  }
-}
-</style>

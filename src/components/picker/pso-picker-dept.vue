@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       requestOptions: {
-        node_dimen: "NODEDIMEN02"
+        dimen: 2
       }
     };
   }

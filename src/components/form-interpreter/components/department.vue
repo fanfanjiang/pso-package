@@ -6,7 +6,7 @@
         :key="item.node_id"
         :closable="cpnt.store.editable&&!cpnt.data._read"
         @close="handleDelSelection(item)"
-      >{{item.node_name}}</el-tag>
+      >{{item.node_display}}</el-tag>
     </div>
     <pso-skeleton v-else :lines="1"></pso-skeleton>
     <pso-picker-dept
@@ -44,16 +44,15 @@ export default {
     }
   },
   async created() {
-    const ret = await this.API.trees({ data: { node_id: "3", appid: "3", node_dimen: "NODEDIMEN02" } });
+    const orgTree = await this.API.getOrgTree();
     if (this.cpnt.data._val) {
       this.loading = true;
       for (let node_id of this.cpnt.data._val.split(",")) {
-        const node = _.find(ret.data, { node_id: parseInt(node_id) });
+        const node = _.find(orgTree, { node_id: parseInt(node_id) });
         if (node) this.proxy.list.push(node);
       }
       this.loading = false;
     } else if (this.cpnt.data._defaultValType === "current") {
-
     }
     this.dispatch("PsoformInterpreter", "cpnt-dept-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   }

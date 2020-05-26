@@ -28,10 +28,11 @@ import PsoPickerTree from "./components/picker/pso-picker-tree";
 import PsoPickerUser from "./components/picker/pso-picker-user";
 import PsoTreeCommon from "./components/tree";
 import PsoTypebar from "./components/type-bar";
-import PsoCountDown from "./components/countdown";
+import PsoCountDown from "./components/countdown"; 
 import PsoTitle from "./components/title";
 import PsoNodeauth from "./components/node-auth";
 import PsoMenuMgt from "./components/menu-mgt";
+import PsoTreeDimen from "./components/tree-dimen";
 
 //表单组件
 import PsoFormTable from "./components/form-table";
@@ -90,7 +91,8 @@ const components = {
     PsoUpload,
     PsoTitle,
     PsoNodeauth,
-    PsoMenuMgt
+    PsoMenuMgt,
+    PsoTreeDimen
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3' } = {}) {

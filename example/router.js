@@ -68,6 +68,12 @@ const router = new Router({
       name: 'workflow',
       component: () => import('./views/workflow'),
       props: organizeParams
+    },
+    {
+      path: '/tree-dimen',
+      name: 'treeDimen',
+      component: () => import('./views/tree-dimen'),
+      props: organizeParams
     }
   ]
 });

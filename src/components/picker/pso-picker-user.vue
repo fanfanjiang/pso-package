@@ -126,7 +126,7 @@ export default {
       treeOptions: {
         appid: this.appid,
         dbconfig: "",
-        node_dimen: "NODEDIMEN02"
+        dimen: 2
       },
       TABS: {
         all: "0",

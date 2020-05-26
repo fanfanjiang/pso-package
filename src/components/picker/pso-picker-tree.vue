@@ -27,7 +27,7 @@
       </div>
       <div class="pso-picker__showlist">
         <span v-for="item of selectedData" :key="item.node_id">
-          <el-tag>{{item.node_name}}</el-tag>
+          <el-tag>{{item.node_display}}</el-tag>
         </span>
       </div>
       <div class="pso-picker__controller">

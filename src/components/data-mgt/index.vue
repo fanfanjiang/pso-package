@@ -19,7 +19,7 @@
           <div class="pso-dd-header">
             <pso-title>工作表：{{curNode.node_display}}</pso-title>
             <div class="pso-dd-header__btns">
-              <el-button size="small" type="primary" plain @click="handleEditForm">编辑表单</el-button>
+              <el-button size="small" type="primary" plain @click="handleEditForm">设计表单</el-button>
             </div>
           </div>
           <div class="pso-dd-tab">
@@ -38,8 +38,9 @@
             </div>
             <div v-if="curTab==='field'">
               <el-table key="field" v-loading="tableLoading" :data="tableData" style="width: 100%">
-                <el-table-column prop="field_display" label="字段名" width="180"></el-table-column>
-                <el-table-column prop="field_name" label="字段字典名" width="180"></el-table-column>
+                <el-table-column type="index" :index="1"></el-table-column>
+                <el-table-column prop="field_name" label="字段" width="180"></el-table-column>
+                <el-table-column prop="field_display" label="显示名称" width="180"></el-table-column>
                 <el-table-column fixed="right" label="操作">
                   <template slot-scope="scope" v-if="scope.row.field_name">
                     <pso-field-auth
@@ -56,7 +57,7 @@
                 :disabled="listCfgSaving"
                 :loading="listCfgSaving"
                 plain
-                @click="saveListConfig"
+                @click="saveConfig"
               >保存列表配置</el-button>
               <el-table
                 key="list"
@@ -64,15 +65,50 @@
                 :data="listCfgData"
                 style="width: 100%"
               >
+                <el-table-column type="index" :index="1"></el-table-column>
                 <el-table-column prop="field_name" label="字段" width="180"></el-table-column>
-                <el-table-column label="列表显示名">
+                <el-table-column label="显示名名称">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.display_name" placeholder></el-input>
+                    <el-input size="small" v-model="scope.row.display_name" placeholder></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="是否显示" width="200">
+                <el-table-column label="列宽">
+                  <template slot-scope="scope">
+                    <el-input-number
+                      size="small"
+                      v-model="scope.row.width"
+                      controls-position="right"
+                      :min="0"
+                    ></el-input-number>
+                  </template>
+                </el-table-column>
+                <el-table-column label="启用" width="100">
+                  <template slot-scope="scope">
+                    <el-switch v-model="scope.row.using" active-value="1" inactive-value="0"></el-switch>
+                  </template>
+                </el-table-column>
+                <el-table-column label="隐藏" width="100">
                   <template slot-scope="scope">
                     <el-switch v-model="scope.row.is_show" active-value="1" inactive-value="0"></el-switch>
+                  </template>
+                </el-table-column>
+                <el-table-column label="对齐方式">
+                  <template slot-scope="scope">
+                    <el-select size="small" v-model="scope.row.align">
+                      <el-option label="居中" value="center"></el-option>
+                      <el-option label="居左" value="left"></el-option>
+                      <el-option label="居右" value="right"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="顺序">
+                  <template slot-scope="scope">
+                    <el-input-number
+                      size="small"
+                      v-model="scope.row.number"
+                      controls-position="right"
+                      :min="0"
+                    ></el-input-number>
                   </template>
                 </el-table-column>
               </el-table>
@@ -80,14 +116,33 @@
             <div v-if="curTab==='status'">
               <el-button size="small" type="primary" plain @click="addStatusCfgItem">添加属性</el-button>
               <el-table key="status" :data="statusCfgData" style="width: 100%">
-                <el-table-column label="属性值">
+                <el-table-column label="状态值" width="200">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.status_val" placeholder></el-input>
+                    <el-input-number
+                      size="small"
+                      v-model="scope.row.value"
+                      controls-position="right"
+                      :min="0"
+                    ></el-input-number>
                   </template>
                 </el-table-column>
-                <el-table-column label="属性名">
+                <el-table-column label="显示名称">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.display_name" placeholder></el-input>
+                    <el-input size="small" v-model="scope.row.name" placeholder></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="显示颜色" align="center">
+                  <template slot-scope="scope">
+                    <el-color-picker size="small" v-model="scope.row.color"></el-color-picker>
+                  </template>
+                </el-table-column>
+                <el-table-column label="显示方式">
+                  <template slot-scope="scope">
+                    <el-select size="small" v-model="scope.row.display">
+                      <el-option label="仅自身文字" value="1"></el-option>
+                      <el-option label="整行文字" value="2"></el-option>
+                      <el-option label="整行背景色" value="3"></el-option>
+                    </el-select>
                   </template>
                 </el-table-column>
               </el-table>
@@ -179,8 +234,7 @@ export default {
       showWorksheetSelector: false,
       curWsMenu: {},
       treeOptions: {
-        dimen: 3,
-        node_id: "3"
+        dimen: 3
       },
       defaultNodeData: {
         node_dimen: 3
@@ -256,9 +310,9 @@ export default {
         item.display_name = item.display_name || (field ? field._fieldName : "");
       });
     },
-    async saveListConfig() {
+    async saveConfig() {
       this.listCfgSaving = true;
-      const ret = await this.API.trees({ data: { ...this.curNode, display_columns: JSON.stringify(this.listCfgData) }, method: "put" });
+      const ret = await this.API.updateFormTree({ ...this.curNode, display_columns: JSON.stringify(this.listCfgData) });
       this.listCfgSaving = false;
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
     },

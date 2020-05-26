@@ -227,8 +227,7 @@ export default {
     ...mapState(["wfDesigner"]),
     treeOptions() {
       return {
-        dimen: 7,
-        node_id: "3"
+        dimen: 7
       };
     },
     defaultNodeData() {

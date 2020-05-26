@@ -12,16 +12,21 @@
             @before-edit-submit="beforeNodeUpdate"
           >
             <template v-slot:default="nodeData">
-              <el-form-item label="插件类型" v-if="!nodeData.node.node_id&&nodeData.node.is_leaf">
-                <el-select v-model="tpType">
-                  <el-option
-                    v-for="item in tpTypes"
-                    :key="item.value"
-                    :label="item.name"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
+              <div v-if="nodeData.node.is_leaf">
+                <el-form-item label="插件类型">
+                  <el-select size="small" v-model="tpType">
+                    <el-option
+                      v-for="item in tpTypes"
+                      :key="item.value"
+                      :label="item.name"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="插件地址">
+                  <el-input v-model="uri" size="small" placeholder></el-input>
+                </el-form-item>
+              </div>
             </template>
           </pso-tree-common>
         </div>
@@ -33,9 +38,15 @@
               <pso-title>插件：{{currentNode.node_display}}</pso-title>
               <div class="pso-page-body__btns"></div>
             </div>
+            <pso-view-page
+              v-if="currentNode.tp_type===tpTypes[0].value&&currentNode.node_id"
+              :node="currentNode"
+            ></pso-view-page>
+            <pso-view-statistics
+              v-if="currentNode.tp_type===tpTypes[1].value&&currentNode.node_id"
+              :node="currentNode"
+            ></pso-view-statistics>
           </div>
-          {{currentNode}}
-          <pso-view-page v-if="currentNode.tp_type===tpTypes[0].value" :node="currentNode"></pso-view-page>
         </div>
       </div>
     </div>
@@ -43,10 +54,11 @@
 </template>
 <script>
 import PsoViewPage from "./page";
+import PsoViewStatistics from "./statistics";
 import PsoNodeauth from "../node-auth";
 
 export default {
-  components: { PsoViewPage, PsoNodeauth },
+  components: { PsoViewPage, PsoNodeauth, PsoViewStatistics },
   props: ["params"],
   data() {
     return {
@@ -63,14 +75,14 @@ export default {
           value: 1
         }
       ],
-      tpType: 0
+      tpType: 0,
+      uri: ""
     };
   },
   computed: {
     treeOptions() {
       return {
-        dimen: 4,
-        node_id: "3"
+        dimen: 4
       };
     },
     defaultNodeData() {
@@ -85,13 +97,16 @@ export default {
         this.currentNode = nodeData;
         const ret = await this.API.templates({ data: { tp_code: nodeData.node_name }, method: "get" });
         if (ret.success) {
-          Object.assign(this.currentNode, ret.data.tp);
+          for (let key in ret.data.tp) {
+            this.$set(this.currentNode, key, ret.data.tp[key]);
+          }
         }
       }
     },
     beforeNodeUpdate(data) {
       if (data.is_leaf) {
         data.tp_type = this.tpType;
+        data.tp_route = this.uri;
       }
     }
   }

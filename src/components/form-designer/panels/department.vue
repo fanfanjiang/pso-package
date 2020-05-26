@@ -75,9 +75,9 @@ export default {
   async created() {
     if (!this.isSetCurrent && this.cpnt.data._defaultValue) {
       this.loading = true;
-      const ret = await this.API.trees({ data: { node_id: "3", appid: "3", node_dimen: "NODEDIMEN02" } });
+      const orgTree = await this.API.getOrgTree();
       for (let node_id of this.cpnt.data._defaultValue.split(",")) {
-        const node = _.find(ret.data, { node_id: parseInt(node_id) });
+        const node = _.find(orgTree, { node_id: parseInt(node_id) });
         if (node) this.proxy.defaultList.push(node);
       }
       this.loading = false;

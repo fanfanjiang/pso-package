@@ -113,7 +113,16 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     formTitle: '编辑',
                     nameLable: '名称'
                 },
-                isCopy: false
+                isCopy: false,
+                dimens: [],
+                trash: [],
+                selectedTrash: [],
+                trashCfg: null,
+            }
+        },
+        computed: {
+            canTrash() {
+                return !this.selectedTrash.length
             }
         },
         watch: {
@@ -128,7 +137,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 this.$refs[treeRef].filter(val);
             }
         },
-        created() {
+        async created() {
             //检查树参数
             this.requestOptionHandler(this.requestOptions);
 
@@ -137,6 +146,11 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             } else {
                 //懒加载时关闭自动展开全部
                 this.defaultExpendAll = false;
+            }
+
+            const ret = await this.API.getTreeDimen();
+            if (ret.success) {
+                this.dimens = ret.data;
             }
         },
         methods: {
@@ -180,6 +194,13 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 const ret = await this.API.trees({ data: options });
 
                 let treeList = ret.data.tagtree;
+
+                if (!this.trashCfg && ret.data.rubbish) {
+                    const trashRet = await this.API.getTreeTrash({ code: ret.data.rubbish.NameCode });
+                    if (trashRet.success) {
+                        this.trash = trashRet.data;
+                    }
+                }
 
                 //树节点过滤
                 if (this.nodeDataFilter) {
@@ -232,7 +253,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 switch (command) {
                     case 'newFolder':
                         this.$emit("before-folder-set", this.nodePayload);
-                        this.setNodePayload({ parent: node, node: this.getEmptyNode() });
+                        this.setNodePayload({ parent: node, node: this.getEmptyNode({ node_pid: node.data.node_id }) });
                         this.$emit("before-folder-new", this.nodePayload);
                         this.nodePayload.showForm = true;
                         break;
@@ -265,9 +286,9 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 }
 
                 data.node_name = data.node_name || '';
+                data.data_type = data.data_type || '';
                 typeof data.is_leaf === 'undefined' && (data.is_leaf = 0);
                 typeof data.is_pass === 'undefined' && (data.is_pass = 0);
-
                 return { data };
             },
             setNodePayload({ parent, node }) {
@@ -277,6 +298,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 this.nodePayload.formTitle = node.node_id ? '编辑' : '新增';
             },
             async deleteNode(data) {
+                return this.moveToTrash(data);
                 const { node_id, children, node_dimen, data_code, node_name } = data;
                 if (typeof node_id === "undefined") return;
                 if (children && children.length) return this.$message({ message: "此节点有子节点，不能删除", type: "warning" });
@@ -302,7 +324,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
 
                 //新增
                 if (IS_NEW) {
-                    Object.assign(data, { node_pid: parent.data.node_id, node_path: `${parent.data.node_path}-${parent.data.node_id}` });
+                    Object.assign(data, { node_pid: parent.data.node_id });
                 }
 
                 this.nodePayload.loading = true;
@@ -326,6 +348,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 } else {
                     //新增节点
                     const { node_id, node_name } = ret.data;
+                    Object.assign(data, ret.data);
                     data.node_id = parseInt(node_id);
                     data.node_name = node_name;
                     data.children = [];
@@ -397,7 +420,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 this.$emit('node-checked', this.getCheckedNodes());
             },
             filterNodeHandler(value, data, node) {
-                let keys = ['node_name'];
+                let keys = ['node_display'];
                 if (this.filter) {
                     if (typeof this.filter === 'function') {
                         return this.filter(value, data, node);
@@ -409,6 +432,28 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     if ((data[key] + '').indexOf(value) !== -1) return true;
                 }
                 return false;
+            },
+            async moveToTrash(data) {
+                this.updateTrash({ code: data.node_name, method: 'WasteNode' });
+            },
+            async restoreTrash() {
+                this.updateTrash({ ...this.getOpTrashData(), method: 'RecoverNode' });
+            },
+            async emptyTrash() {
+                this.updateTrash({ ...this.getOpTrashData(), method: 'WasteClear' });
+            },
+            getOpTrashData() {
+                return { code: this.selectedTrash[0].node_name, ids: this.selectedTrash.map(item => item.node_id).join(',') };
+            },
+            async updateTrash(data) {
+                this.loading = true;
+                const ret = await this.API.updateTreeTrash(data);
+                await this.loadWholeTree(false);
+                this.$notify({ title: "成功", message: ret.message, type: "success" });
+                this.loading = false;
+            },
+            handleTrashSelect(data) {
+                this.selectedTrash = data;
             }
         },
     }

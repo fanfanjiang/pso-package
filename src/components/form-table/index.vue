@@ -52,56 +52,65 @@
             @click="selectConfirmHandler"
           >确定</el-button>
           <slot name="op"></slot>
-          <el-button type="primary" size="mini" round @click="print">打印</el-button>
+          <el-button type="primary" size="mini" round @click="print">导出EXCEL</el-button>
         </div>
       </div>
       <div class="pso-formTable-table">
         <el-table
           ref="table"
           v-loading="loadingTable"
-          :data="formData"
+          :data="formData" 
           style="width: 100%"
-          size="medium"
+          size="small"
           max-height="500"
+          height="500"
           @row-click="instanceClick"
           @selection-change="handleSelectionChange"
           :highlight-current-row="radio"
           id="pso-formTable-table"
+          border
         >
-          <el-table-column v-if="checkbox" type="selection" width="55"></el-table-column>
-          <el-table-column
-            show-overflow-tooltip
-            :prop="tableField._fieldValue"
-            :label="tableField._fieldName"
-            v-for="(tableField) of showFieldsReal"
-            :key="tableField.fid"
-          >
-            <template slot-scope="scope">
-              <el-tag
-                disable-transitions
-                v-if="tableField.componentid === 'attachment'"
-                size="mini"
-              >附件</el-tag>
-              <el-tag
-                disable-transitions
-                v-else-if="tableField.componentid === 'table'"
-                size="mini"
-              >{{tableField.name}}</el-tag>
-              <div v-else>{{decodeURIComponent(scope.row[tableField._fieldValue])}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column v-if="operate" :label="opText" fixed="right">
-            <template slot-scope="scope" v-if="deletable">
-              <el-button
-                size="mini"
-                type="danger"
-                @click.stop.prevent="deleteForm(scope.row.leaf_id)"
-              >删除</el-button>
-            </template>
-            <template slot-scope="scope" v-if="!deletable">
-              <slot name="column" v-bind:data="{row:scope.row,code:cfg.data_code}"></slot>
-            </template>
-          </el-table-column>
+          <template #default>
+            <el-table-column v-if="checkbox" type="selection" width="55"></el-table-column>
+            <el-table-column
+              resizable
+              show-overflow-tooltip
+              min-width="120"
+              :prop="tableField._fieldValue"
+              :label="tableField._fieldName"
+              v-for="(tableField) of showFieldsReal"
+              :key="tableField.fid"
+            >
+              <template slot-scope="scope">
+                <el-tag
+                  disable-transitions
+                  v-if="tableField.componentid === 'attachment'"
+                  size="mini"
+                >附件</el-tag>
+                <el-tag
+                  disable-transitions
+                  v-else-if="tableField.componentid === 'table'"
+                  size="mini"
+                >{{tableField.name}}</el-tag>
+                <div v-else>{{decodeURIComponent(scope.row[tableField._fieldValue])}}</div>
+              </template>
+            </el-table-column>
+            <el-table-column v-if="operate" :label="opText" fixed="right">
+              <template slot-scope="scope" v-if="deletable">
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click.stop.prevent="deleteForm(scope.row.leaf_id)"
+                >删除</el-button>
+              </template>
+              <template slot-scope="scope" v-if="!deletable">
+                <slot name="column" v-bind:data="{row:scope.row,code:cfg.data_code}"></slot>
+              </template>
+            </el-table-column>
+          </template>
+          <template #empty>
+            <pso-empty></pso-empty>
+          </template>
         </el-table>
         <div class="pso-formTable-footer">
           <el-pagination

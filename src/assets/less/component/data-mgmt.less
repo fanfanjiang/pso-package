@@ -100,12 +100,39 @@
 
 
 .pso-nodeauth {
+    margin-top: 15px;
+
+    .pso-nodeauth__header {
+        display: flex;
+        margin-bottom: 10px;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .pso-na-check-wrapper {
+        display: flex;
+    }
+
     .pso-na-check {
         display: flex;
 
-        >span {
-            margin-right: 10px;
+        &+.pso-na-check {
+            margin-left: 40px;
         }
+
+        >span {
+            color: #999;
+        }
+    }
+
+    .el-tag {
+        &+.el-tag {
+            margin-left: 5px;
+        }
+    }
+
+    .pso-pagination {
+        margin-top: 10px;
     }
 }
 
@@ -114,5 +141,20 @@
 
     .pso-form-upload__files {
         width: 500px;
+    }
+}
+
+.pso-menu-param {
+    width: 500px;
+    margin-top: 20px;
+
+    .pso-menu-param__controller {
+        text-align: right;
+    }
+}
+
+.pso-view-page {
+    .pso-view-page__param {
+        padding-top: 20px;
     }
 }

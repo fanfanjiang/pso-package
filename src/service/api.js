@@ -297,8 +297,35 @@ export default class API {
 
     static async getFormTree() {
         try {
-            const ret = await this.trees({ data: { node_id: '3', appid: '3', dimen: "3" } });
+            const ret = await this.trees({ data: { appid: 'Main', dimen: "3" } });
             return ret.data.tagtree.filter(node => (node.data_type || 'common').toUpperCase() === "NODEDIMEN03" && node.is_leaf);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getTempleteTree() {
+        try {
+            const ret = await this.trees({ data: { appid: 'Main', dimen: "4" } });
+            return ret.data.tagtree.filter(node => [0, 1, 2].includes(node.tp_type) && node.is_leaf);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getWfTree() {
+        try {
+            const ret = await this.trees({ data: { appid: 'Main', dimen: 7 } });
+            return ret.data.tagtree.filter(node => node.is_leaf);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getOrgTree() {
+        try {
+            const ret = await this.trees({ data: { appid: 'Main', dimen: 2 } });
+            return ret.data.tagtree.filter(node => node.is_leaf);
         } catch (error) {
             throw error;
         }
@@ -331,6 +358,70 @@ export default class API {
     static async getNodeAuth(data = {}) {
         try {
             return await this.request('/api/tree/auth', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getBar(data = {}) {
+        try {
+            return await this.request('/api/common/bar', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getMenuInfo(data = {}) {
+        try {
+            return await this.request('/api/tree/menu', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateMenu(data = {}) {
+        try {
+            return await this.request('/api/tree/menu', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateFormTree(data = {}) {
+        try {
+            return await this.request('/api/tree/form', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getTreeDimen(data = {}) {
+        try {
+            return await this.request('/api/tree/dimen', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateTreeDimen(data = {}) {
+        try {
+            return await this.request('/api/tree/dimen', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getTreeTrash(data = {}) {
+        try {
+            return await this.request('/api/tree/trash', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateTreeTrash(data = {}) {
+        try {
+            return await this.request('/api/tree/trash', { data, method: 'post' });
         } catch (error) {
             throw error;
         }

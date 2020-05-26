@@ -1,0 +1,123 @@
+.pso-tree {
+    width: 100%;
+    padding: 15px;
+    height: 100%;
+    background-color: transparent;
+    box-shadow: 1px 0 1px 0 rgba(0, 0, 0, 0.06), inset -1px 0 0 0 rgba(255, 255, 255, 0.2);
+
+    .pso-tree__header {
+        display: flex;
+        align-items: center;
+
+        .pso-tree__search {
+            flex: 1;
+            margin-right: 10px;
+
+            i {
+                margin-right: 5px;
+            }
+
+            .mu-input {
+                margin-bottom: 0;
+                width: 100%;
+            }
+
+            .mu-input__focus {
+                color: @main-color;
+            }
+        }
+    }
+
+    .el-tree-node__expand-icon {
+        opacity: 0 !important;
+        width: 1px !important;
+        padding: 0 !important;
+        height: 24px !important;
+        transform: rotate(0deg) !important;
+    }
+
+    .pso-tree__node {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+
+        &:hover {
+            .pso-tree__node-btns {
+                opacity: 1;
+                transition: all 0.2s ease-in-out;
+            }
+        }
+
+        >span {
+            display: flex;
+            align-items: center;
+        }
+
+        .pso-tree__node-title {
+            >img {
+                height: 20px;
+                width: 20px;
+                margin-right: 5px;
+            }
+
+            >span {
+                font-size: 13px;
+            }
+        }
+
+        .pso-tree__node-btns {
+            padding-right: 10px;
+            color: #999;
+            opacity: 0;
+            transition: all 0.2s ease-in-out;
+
+            &.show {
+                opacity: 1;
+                transition: all 0.2s ease-in-out;
+            }
+        }
+    }
+
+    .pso-tree__trash {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        font-size: 18px;
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+        border-radius: 100%;
+        opacity: 0.7;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        .hover();
+
+        >i {
+            color: #999;
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+
+}
+
+.pso-tree__trash-body {
+    .pso-tree__trash-btns {
+        text-align: right;
+        margin-bottom: 10px;
+    }
+}
+
+.tree-dimen {
+    .tree-dimen__controller {
+        margin: 10px 0;
+        text-align: right;
+    }
+}
