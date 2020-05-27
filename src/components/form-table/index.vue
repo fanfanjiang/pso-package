@@ -59,7 +59,7 @@
         <el-table
           ref="table"
           v-loading="loadingTable"
-          :data="formData" 
+          :data="formData"
           style="width: 100%"
           size="small"
           max-height="500"
@@ -275,8 +275,8 @@ export default {
       this.initializing = true;
       const ret = await this.API.formsCfg({ data: { id: this.cfgId }, method: "get" });
       if (!ret.success) return;
-      this.store = new FormStore(ret.data);
-      this.cfg = Object.assign({}, this.cfg, ret.data);
+      this.store = new FormStore(ret.data.data);
+      this.cfg = Object.assign({}, this.cfg, ret.data.data);
       this.initializing = false;
       this.conditionOptions = this.store.search({
         options: { db: true },
@@ -349,12 +349,13 @@ export default {
     async deleteForm(leaf_id) {
       this.loadingTable = true;
       const ret = await this.API.form({
-        data: { leaf_id, datacode: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
+        data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
         method: "delete"
       });
       this.$notify({ title: "删除成功", type: "success" });
       this.reload();
       this.loadingTable = false;
+      this.showFormViewer = false;
     },
     startSave() {
       this.saving = true;

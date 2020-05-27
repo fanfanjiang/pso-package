@@ -116,7 +116,7 @@ export default {
     async getFormCfg() {
       let ret = await this.API.formsCfg({ data: { id: this.formNodeId }, method: "get" });
       if (!ret.success) return;
-      this.store = new FormStore(ret.data);
+      this.store = new FormStore(ret.data.data);
       this.conditionOptions = this.store.search({ options: { db: true }, onlyData: true, beforePush: item => !item.parent.CPNT.host_db });
       this.showFields = this.store
         .search({

@@ -13,9 +13,9 @@
     <slot></slot>
   </pso-picker-common>
 </template>
-<script> 
+<script>
 import PsoPickerCommon from "./pso-picker-common";
- 
+
 export default {
   components: { PsoPickerCommon },
   props: {
@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       treeOption: {
-        node_dimen: "NODEDIMEN06",
+        dimen: 6, 
         data_type: this.options.data_type,
         resource_type: this.options.resource_type,
         searchtype: "Resource"

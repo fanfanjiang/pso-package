@@ -94,7 +94,7 @@ export default {
       } else if (this.formId) {
         this.loading = true;
         const ret = await this.API.formsCfg({ data: { id: this.formId } });
-        this.store = new FormStore(ret.data);
+        this.store = new FormStore(ret.data.data);
       }
       this.store.editable = this.editable;
       this.$on("dataId", () => {
@@ -131,7 +131,7 @@ export default {
           const cpntData = cpnt.data;
           if (cpnt.CPNT.host_db && cpntData._val.dataArr.length) {
             data.children.push({
-              datacode: cpntData._val.datacode,
+              data_code: cpntData._val.data_code,
               dataArr: cpntData._val.dataArr.filter(subItem => subItem.optype !== 3)
             });
           } else if (cpnt.CPNT.db && !cpnt.parent.CPNT.host_db) {

@@ -45,9 +45,9 @@
                 >
                   <el-option
                     v-for="item in formOptions"
-                    :key="item.data_code"
+                    :key="item.node_name"
                     :label="item.node_display"
-                    :value="item.data_code"
+                    :value="item.node_name"
                   ></el-option>
                 </el-select>
               </div>

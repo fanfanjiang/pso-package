@@ -19,14 +19,15 @@
             <div class="pso-page-body__header">
               <pso-title>流程：{{currentNode.node_display}}</pso-title>
               <div class="pso-page-body__btns">
-                <el-button size="small" type="primary" plain @click="handleEditWf">编辑流程</el-button>
+                <el-button size="small" type="primary" plain @click="handleEditWf">设计流程</el-button>
+                <el-button size="small" type="primary" plain @click="handleSaveWf">保存设置</el-button>
               </div>
             </div>
             <div class="pso-page-body__tab">
               <el-tabs v-model="curTab">
-                <el-tab-pane label="流程预览" name="preview"></el-tab-pane>
-                <el-tab-pane label="权限设置" name="auth"></el-tab-pane>
-                <el-tab-pane label="会签主体" name="table"></el-tab-pane>
+                <el-tab-pane label="预览" name="preview"></el-tab-pane>
+                <el-tab-pane label="权限" name="auth"></el-tab-pane>
+                <el-tab-pane label="签单" name="table"></el-tab-pane>
                 <el-tab-pane label="用户代理" name="proxy"></el-tab-pane>
                 <el-tab-pane label="文件类型" name="file"></el-tab-pane>
                 <el-tab-pane label="快捷标签" name="tag"></el-tab-pane>
@@ -38,20 +39,11 @@
               <div class="pso-page-wf__stage" v-if="curTab==='preview'">
                 <pso-wf-stage :workflow-data="wfImage" read-mode v-if="wfImage"></pso-wf-stage>
               </div>
-              <div v-if="curTab==='auth'">
-                <pso-nodeauth v-if="!wfDesigner.initializing" :node="currentNode"></pso-nodeauth>
-              </div>
-              <div v-if="curTab==='table'">
-                <pso-wf-table></pso-wf-table>
-              </div>
-              <div v-if="curTab==='proxy'">
-                <pso-title>设置代理用户</pso-title>
-                <el-form>
-                  <pso-form-user :cpnt="{data:user}"></pso-form-user>
-                </el-form>
-              </div>
+              <pso-nodeauth v-if="curTab==='auth'&&!wfDesigner.initializing" :node="currentNode"></pso-nodeauth>
+              <pso-wf-table v-if="curTab==='table'"></pso-wf-table>
+              <pso-wf-agent v-if="curTab==='proxy'" :data="agents"></pso-wf-agent>
               <div v-if="curTab==='file'">
-                <pso-title>设置问号</pso-title>
+                <pso-title>设置文号</pso-title>
                 <el-form>
                   <el-form-item>
                     <el-select :multiple="true" v-model="wfDesigner.wfFiletype" placeholder="请选择">
@@ -65,85 +57,9 @@
                   </el-form-item>
                 </el-form>
               </div>
-              <div v-if="curTab==='tag'">
-                <pso-title>设置标签文本</pso-title>
-                <el-table :data="tagData" style="width: 100%" key="tag">
-                  <el-table-column prop="tagType" label="文本类型" width="180"></el-table-column>
-                  <el-table-column prop="tagVal" label="文本值">
-                    <template slot-scope="scope">
-                      <el-tag
-                        v-for="(itemVal,index) in scope.row.tagVal"
-                        :key="itemVal"
-                        closable
-                        @close="handleDelTag(index,scope.row)"
-                      >{{itemVal}}</el-tag>
-                    </template>
-                  </el-table-column>
-                  <el-table-column fixed="right" label="操作">
-                    <template slot-scope="scope">
-                      <pso-wf-tageditor :data="scope.row" @confirm="addTagText($event,scope.row)"></pso-wf-tageditor>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-              <div v-if="curTab==='text'">
-                <pso-title>设置文本</pso-title>
-                <el-table :data="textData" style="width: 100%" key="text">
-                  <el-table-column prop="type" label="功能" width="180"></el-table-column>
-                  <el-table-column label="文本值">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.value" size="small" placeholder></el-input>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="是否显示">
-                    <template slot-scope="scope">
-                      <el-switch
-                        v-model="scope.row.show"
-                        size="small"
-                        active-value="1"
-                        inactive-value="0"
-                      ></el-switch>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-              <div v-if="curTab==='subwf'">
-                <el-table :data="subWfData" style="width: 100%" key="tag">
-                  <el-table-column prop="subForm" label="子表单" width="180"></el-table-column>
-                  <el-table-column label="是否是流程">
-                    <template slot-scope="scope">
-                      <el-switch
-                        v-model="scope.row.isFlow"
-                        size="small"
-                        active-value="1"
-                        inactive-value="0"
-                      ></el-switch>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="选择流程">
-                    <template slot-scope="scope">
-                      <el-select v-model="wfDesigner.wfFiletype" placeholder="请选择">
-                        <el-option
-                          v-for="item in wfDesigner.fileTypes"
-                          :key="item.wf_filetype"
-                          :label="item.wf_filetype"
-                          :value="item.wf_filetype"
-                        ></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column fixed="right" label="操作">
-                    <template slot-scope="scope">
-                      <el-button
-                        size="mini"
-                        type="primary"
-                        plain
-                        @click="goDesigner({node_id:scope.row.subCode})"
-                      >设置流程</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
+              <pso-wf-tag v-if="curTab==='tag'" :data="tagData"></pso-wf-tag>
+              <pso-wf-text v-if="curTab==='text'" :data="textData"></pso-wf-text>
+              <pso-wf-subwf v-if="curTab==='subwf'" :data="subWfData" @go-designer="goDesigner"></pso-wf-subwf>
             </div>
           </div>
         </div>
@@ -157,11 +73,14 @@ import PsoTypebar from "../type-bar";
 import PsoWfTable from "../workflow-designer/table-editor";
 import { WF_INIT, WF_RESET } from "../../store/mutation-types";
 import { mapState } from "vuex";
-import PsoFormUser from "../form-interpreter/components/user";
 import PsoWfTageditor from "./tag-editor";
+import PsoWfAgent from "./agent";
+import PsoWfTag from "./tag";
+import PsoWfText from "./text";
+import PsoWfSubwf from "./wf-sub";
 
 export default {
-  components: { PsoWfStage, PsoTypebar, PsoWfTable, PsoFormUser, PsoWfTageditor },
+  components: { PsoWfStage, PsoTypebar, PsoWfTable, PsoWfTageditor, PsoWfAgent, PsoWfTag, PsoWfText, PsoWfSubwf },
   props: ["params"],
   data() {
     return {
@@ -170,11 +89,6 @@ export default {
       currentNode: {},
       wfCfg: {},
       curTab: "preview",
-      user: {
-        _fieldName: "",
-        _type: "checkbox",
-        _val: ""
-      },
       tagData: [
         {
           tagType: "通过",
@@ -187,7 +101,6 @@ export default {
           tagVal: ["不同意", "请完善"]
         }
       ],
-      tagVal: "",
       textData: [
         {
           type: "提交按钮",
@@ -220,7 +133,8 @@ export default {
           show: true
         }
       ],
-      subWfData: []
+      subWfData: [],
+      agents: []
     };
   },
   computed: {
@@ -294,11 +208,8 @@ export default {
         console.log(this.subWfData);
       }
     },
-    addTagText(val, data) {
-      data.tagVal.push(val);
-    },
-    handleDelTag(index, data) {
-      data.tagVal.splice(index, 1);
+    async handleSaveWf() {
+      
     }
   }
 };

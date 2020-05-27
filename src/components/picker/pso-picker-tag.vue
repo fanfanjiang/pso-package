@@ -141,7 +141,7 @@ export default {
   computed: {
     treeOptions() {
       const options = {
-        node_dimen: "NODEDIMEN05"
+        dimen: 5
       };
       if (this.treeOption) {
         const treeOption = this.treeOption.split(",");
@@ -154,7 +154,7 @@ export default {
       return this.source === "tree" ? "node_id" : "tag_no";
     },
     displayName() {
-      return this.source === "tree" ? "node_name" : "tag_name";
+      return this.source === "tree" ? "node_display" : "tag_name";
     },
     showCheckbox() {
       return this.source === "tree" ? this.pattern === "checkbox" : false;

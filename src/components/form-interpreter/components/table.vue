@@ -82,7 +82,7 @@ export default {
   },
   created() {
     this.store = new FormStore({ data_code: this.cpnt.fid, data_config: this.cpnt.data.children });
-    this.$set(this.cpnt.data, "_val", { datacode: this.cpnt.fid, dataArr: [] });
+    this.$set(this.cpnt.data, "_val", { data_code: this.cpnt.fid, dataArr: [] });
   },
   watch: {
     "cpnt.store.instance_id": {

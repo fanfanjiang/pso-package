@@ -8,7 +8,7 @@
           </template>
         </mu-text-field>
       </div>
-      <div>
+      <div v-if="editMode">
         <el-button
           icon="el-icon-plus"
           size="mini"
@@ -66,7 +66,7 @@
           </span>
         </span>
       </el-tree>
-      <el-popover placement="top-start" width="240" trigger="click">
+      <el-popover placement="top-start" width="240" trigger="click" v-if="editMode">
         <div class="pso-tree__trash-body">
           <div class="pso-tree__trash-btns">
             <el-button size="mini" @click="restoreTrash" :disabled="canTrash">还 原</el-button>

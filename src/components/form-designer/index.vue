@@ -79,7 +79,7 @@
               :key="item.node_id"
               closable
               @close="handleDelSelection(item)"
-            >{{item.node_name}}</el-tag>
+            >{{item.node_display}}</el-tag>
           </div>
           <pso-picker-tree
             rootable
@@ -129,16 +129,10 @@ export default {
       showTempPop: false,
       savingCfg: false,
       treeOptions: {
-        node_dimen: "NODEDIMEN06",
-        data_type: "formtp",
-        resource_type: this.params.resource_type || "public",
-        searchtype: "Resource"
+        dimen: 6
       },
       importTreeOption: {
-        node_dimen: "NODEDIMEN06",
-        data_type: "formtp",
-        resource_type: this.params.resource_type || "public",
-        searchtype: "Resource"
+        dimen: 6
       },
       resource: {
         list: [],
@@ -180,15 +174,21 @@ export default {
         method: this.params.id ? "put" : "post"
       });
       if (!ret.success) return (this.saving = false);
+      if (!this.params.id) {
+        const { node_name } = ret.data;
+        this.params.id = this.formCfg.data_id = node_name;
+        this.params.pid = "";
+      }
       this.$notify({ title: "保存成功", type: "success" });
       this.$emit("saved");
+      this.saving = false;
     },
     async getFormCfg(id) {
       this.loading = true;
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
       if (ret.success) {
-        ret.data.data_id = id;
-        this.formCfg = ret.data;
+        ret.data.data.data_id = id;
+        this.formCfg = ret.data.data;
       }
       this.loading = false;
     },
@@ -246,7 +246,7 @@ export default {
 
       this.formCfg = {
         templateId: leaf_id,
-        data_design: template.data_design ||template.data_config || [],
+        data_design: template.data_design || template.data_config || [],
         permissionEntries: template.permissionEntries || [],
         data_name: r_name,
         data_id: this.formStore.data_id,

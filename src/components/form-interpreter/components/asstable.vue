@@ -194,8 +194,8 @@ export default {
     async getFormCfg() {
       this.loading = true;
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
-      ret.data.data_id = this.cpnt.data._option;
-      this.store = new FormStore(ret.data);
+      ret.data.data.data_id = this.cpnt.data._option;
+      this.store = new FormStore(ret.data.data);
       this.loading = false;
     },
     async getFormData(value) {
@@ -252,7 +252,7 @@ export default {
       this.deletingFrom = true;
       const leaf_id = this.dataId;
       const ret = await this.API.form({
-        data: { leaf_id, datacode: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
+        data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
         method: "delete"
       });
       if (ret.success) {

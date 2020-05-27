@@ -10,9 +10,9 @@
         >
           <el-option
             v-for="item in options"
-            :key="item.data_code"
+            :key="item.node_name"
             :label="item.node_display"
-            :value="item.data_code"
+            :value="item.node_name"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -143,7 +143,7 @@ export default {
 
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
 
-      const store = new FormStore(ret.data);
+      const store = new FormStore(ret.data.data);
 
       this.cpnt.cache.fieldOptions = store.search({
         options: { table_show: true },

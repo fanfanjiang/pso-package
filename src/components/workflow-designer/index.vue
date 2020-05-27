@@ -147,16 +147,16 @@ export default {
       tempName: "",
       savingCfg: false,
       treeOptions: {
-        node_dimen: "NODEDIMEN06",
-        data_type: "flowtp",
-        resource_type: this.params.resource_type || "public",
-        searchtype: "Resource"
+        dimen: 6
+        // data_type: "flowtp",
+        // resource_type: this.params.resource_type || "public",
+        // searchtype: "Resource"
       },
       importTreeOption: {
-        node_dimen: "NODEDIMEN06",
-        data_type: "flowtp",
-        resource_type: this.params.resource_type || "public",
-        searchtype: "Resource"
+        dimen: 6
+        // data_type: "flowtp",
+        // resource_type: this.params.resource_type || "public",
+        // searchtype: "Resource"
       },
       resource: {
         list: [],
@@ -193,11 +193,26 @@ export default {
       this[WF_NODE_PANEL_SET](false);
     },
     async saveWorkflow(is_pub = "0") {
+
       const data = await this.prepareData();
       if (!data) return;
+
       data.is_pub = is_pub;
+
+      this.wfDesigner.loading = true;
       const ret = await this.API.workflowcfg({ data, method: data.node_id ? "put" : "post" });
-      if (ret.success) this.$notify({ title: "保存成功", type: "success" });
+
+      if (ret.success) {
+        //如果是新增，则新增后将数据替换
+        if (!data.node_id) {
+          const { node_id, node_name } = ret.data;
+          this.wfDesigner.node_id = node_id;
+          this.wfDesigner.wfCode = node_name;
+          this.wfDesigner.pid = "";
+        }
+
+        this.$notify({ title: "保存成功", type: "success" });
+      }
       this.wfDesigner.loading = false;
     },
     savedAuth(data) {

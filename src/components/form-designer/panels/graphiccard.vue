@@ -5,9 +5,9 @@
         <el-select v-model="cpnt.data._selectedTable" placeholder="请选择">
           <el-option
             v-for="item in options"
-            :key="item.data_code"
+            :key="item.node_name"
             :label="item.node_display"
-            :value="item.data_code"
+            :value="item.node_name"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -84,7 +84,7 @@ export default {
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._selectedTable }, method: "get" });
       this.loading = false;
       if (!ret.success) return;
-      const store = new FormStore(ret.data);
+      const store = new FormStore(ret.data.data);
       this.fieldOptions = store.search({
         options: { db: true },
         onlyData: true,

@@ -1,18 +1,25 @@
 <template>
   <div class="pso-nodeauth">
-    <pso-title>权限</pso-title>
     <div class="pso-nodeauth__header">
       <div class="pso-na-check-wrapper">
-        <div class="pso-na-check">
+        <template v-if="node.is_leaf">
+          <div class="pso-na-check">
+            <span>栏目权限：</span>
+            <el-checkbox-group v-model="nodeAuth">
+              <el-checkbox v-for="item in nodeAuthCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
+            </el-checkbox-group>
+          </div>
+          <div class="pso-na-check">
+            <span>数据权限：</span>
+            <el-checkbox-group v-model="leafAuth">
+              <el-checkbox v-for="item in leafAuthCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
+            </el-checkbox-group>
+          </div>
+        </template>
+        <div class="pso-na-check" v-else>
           <span>栏目权限：</span>
           <el-checkbox-group v-model="nodeAuth">
-            <el-checkbox v-for="item in nodeAuthCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
-          </el-checkbox-group>
-        </div>
-        <div class="pso-na-check">
-          <span>数据权限：</span>
-          <el-checkbox-group v-model="leafAuth">
-            <el-checkbox v-for="item in leafAuthCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
+            <el-checkbox v-for="item in foldAuthCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -76,15 +83,24 @@ export default {
   components: { PsoTitle },
   data() {
     return {
+      foldAuthCfg: [
+        { n: "无", v: 0 },
+        { n: "查看", v: 1 },
+        { n: "完全控制", v: 2 }
+      ],
       nodeAuthCfg: [
         { n: "新增", v: 1 },
         { n: "编辑", v: 2 },
-        { n: "删除", v: 4 }
+        { n: "删除", v: 4 },
+        { n: "发布", v: 8 },
+        { n: "审核", v: 16 }
       ],
       leafAuthCfg: [
         { n: "新增", v: 1 },
         { n: "编辑", v: 2 },
-        { n: "删除", v: 4 }
+        { n: "删除", v: 4 },
+        { n: "发布", v: 8 },
+        { n: "审核", v: 16 }
       ],
       nodeAuth: [],
       leafAuth: [],

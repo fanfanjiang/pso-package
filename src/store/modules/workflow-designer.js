@@ -13,7 +13,6 @@ export function genNode(tid) {
 }
 
 const STATE = {
-    appid: '3',
     pid: '',
     node_id: '',
     templateId: '',   //模板node_id
@@ -44,8 +43,7 @@ export default {
         [MUT_TYPES.WF_RESET](state) {
             Object.assign(state, _.cloneDeep(STATE))
         },
-        [MUT_TYPES.WF_NODE_INIT](state, { appid = "3", pid = '', node_id = "", node, templateId = '' }) {
-            state.appid = appid;
+        [MUT_TYPES.WF_NODE_INIT](state, { pid = '', node_id = "", node, templateId = '' }) {
             state.pid = pid;
 
             //如果有模板id，则不能更新node_id;
@@ -170,15 +168,15 @@ export default {
                 }
             }
             traverse(node);
+            
             const data = {
-                appid: state.appid,
                 pid: state.pid,
                 node_id: state.node_id,
                 wf_name: state.wfName,
                 map_data_code: state.formId,
                 wf_list_column: '',
                 wf_code: state.wfCode || shortid.generate(),
-                wf_map_tp: node,
+                wf_map_tp: JSON.stringify(node),
                 wf_auth_type: state.wfAuthType,
                 wf_filetype: state.wfFiletype.join(','),
                 permissionEntries: state.permissionEntries
@@ -226,7 +224,7 @@ export default {
         },
         async [MUT_TYPES.WF_FORM_SELECT]({ state, getters, commit }, { id, reset = true }) {
 
-            state.formName = _.find(state.formsList, { node_name: id }).node_display; 
+            state.formName = _.find(state.formsList, { node_name: id }).node_display;
             state.loading = true;
 
             if (reset) {
@@ -234,7 +232,7 @@ export default {
             }
 
             const ret = await API.formsCfg({ data: { id }, method: "get" });
-            state.formStore = new FormStore(ret.data);
+            state.formStore = new FormStore(ret.data.data);
 
             state.loading = false;
         }

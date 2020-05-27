@@ -241,7 +241,7 @@ export default class API {
 
     static async getTreeNode(data) {
         try {
-            return await this.request('/api/tree/node', { data });
+            return await this.request('/api/tree/node', { data, method: 'get' });
         } catch (error) {
             throw error;
         }
@@ -395,6 +395,14 @@ export default class API {
         }
     }
 
+    static async getFormInfo(data = {}) {
+        try {
+            return await this.request('/api/tree/form', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async getTreeDimen(data = {}) {
         try {
             return await this.request('/api/tree/dimen', { data, method: 'get' });
@@ -422,6 +430,22 @@ export default class API {
     static async updateTreeTrash(data = {}) {
         try {
             return await this.request('/api/tree/trash', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getTreeWf(data = {}) {
+        try {
+            return await this.request('/api/tree/wf', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateWfAgent(data = {}) {
+        try {
+            return await this.request('/api/workflowcfg/agent', { data, method: 'put' });
         } catch (error) {
             throw error;
         }

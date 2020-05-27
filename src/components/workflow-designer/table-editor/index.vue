@@ -460,7 +460,11 @@ export default {
     }
   },
   beforeDestroy() {
-    this.editor.destroy();
+    try {
+      this.editor.destroy();
+    } catch (error) {
+      
+    }
   }
 };
 </script>

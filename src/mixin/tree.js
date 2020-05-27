@@ -118,6 +118,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 trash: [],
                 selectedTrash: [],
                 trashCfg: null,
+                treeList: []
             }
         },
         computed: {
