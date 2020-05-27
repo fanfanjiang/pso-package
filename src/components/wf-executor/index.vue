@@ -5,6 +5,7 @@
 import PsoExecutor from "./executor";
 import PsoExecutorSimple from "./executor-simple";
 export default {
+  componentName: "PsoWfExecutor",
   components: { PsoExecutor, PsoExecutorSimple },
   props: {
     params: {
@@ -16,6 +17,17 @@ export default {
     currentCpnt() {
       return `pso-executor` + (this.params.displayMode ? `-${this.params.displayMode}` : "");
     }
+  },
+  created() {
+    this.$on("before-save", val => {
+      this.$emit("before-save", val);
+    });
+    this.$on("before-next", val => {
+      this.$emit("before-next", val);
+    });
+    this.$on("excuted", val => {
+      this.$emit("excuted", val);
+    });
   }
 };
 </script>

@@ -96,16 +96,6 @@ export default {
         return (this.store.curStep.op & command) === command;
       }
     },
-    async saveForm() {
-      //暂存
-      try {
-        const formData = await this.store.getFormData();
-        this.$emit("before-save", { formData });
-        formData && this.excuted(await this.store.hold(formData));
-      } catch (error) {
-        this.$message({ message: error.message, type: "warning" });
-      }
-    },
     async confirm() {
       await this.nextStep(this.REVIEW_OP_TYPE.confirm.type);
     },

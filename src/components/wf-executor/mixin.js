@@ -33,16 +33,27 @@ export const executor = {
 };
 
 export const op = {
+    mixins: [emitter],
     data() {
         return {
             REVIEW_OP_TYPE: REVIEW_OP_TYPE
         };
     },
     methods: {
+        async saveForm() {
+            //暂存
+            try {
+                const formData = await this.store.getFormData();
+                this.dispatch("PsoWfExecutor", "before-save", { optype: REVIEW_OP_TYPE.save.value, formData });
+                formData && this.excuted(await this.store.hold(formData));
+            } catch (error) {
+                this.$message({ message: error.message, type: "warning" });
+            }
+        },
         async nextStep(optype) {
             try {
                 const formData = await this.store.getFormData();
-                this.$emit("before-next", { optype, formData });
+                this.dispatch("PsoWfExecutor", "before-next", { optype, formData });
                 formData && this.excuted(await this.store.doNextStep({ optype, formData }));
             } catch (error) {
                 this.store.steping = false;
@@ -51,7 +62,7 @@ export const op = {
         },
         excuted({ success }) {
             this.$notify({ title: success ? "执行成功" : "执行失败", type: success ? "success" : "warning" });
-            this.$emit("excuted");
+            this.dispatch("PsoWfExecutor", "excuted");
         }
     }
 };

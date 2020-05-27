@@ -388,7 +388,7 @@ export default class WfStore {
 
             return await API.workflow({ data, method: "put" });
         } else {
-            this.newInstanceData({ nextStep: true, formData })
+            return await this.newInstanceData({ nextStep: true, formData })
         }
     }
 }
