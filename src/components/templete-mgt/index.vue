@@ -33,18 +33,18 @@
       </div>
       <div class="pso-page-body__content" v-bar>
         <div>
-          <div class="pso-page-body__wrapper" v-if="currentNode">
+          <div class="pso-page-body__wrapper" v-if="curNode">
             <div class="pso-page-body__header">
-              <pso-title>插件：{{currentNode.node_display}}</pso-title>
+              <pso-title>插件：{{curNode.node_display}}</pso-title>
               <div class="pso-page-body__btns"></div>
             </div>
             <pso-view-page
-              v-if="currentNode.tp_type===tpTypes[0].value&&currentNode.node_id"
-              :node="currentNode"
+              v-if="curNode.tp_type===tpTypes[0].value&&curNode.node_id"
+              :node="curNode"
             ></pso-view-page>
             <pso-view-statistics
-              v-if="currentNode.tp_type===tpTypes[1].value&&currentNode.node_id"
-              :node="currentNode"
+              v-if="curNode.tp_type===tpTypes[1].value&&curNode.node_id"
+              :node="curNode"
             ></pso-view-statistics>
           </div>
         </div>
@@ -59,12 +59,19 @@ import PsoNodeauth from "../node-auth";
 
 export default {
   components: { PsoViewPage, PsoNodeauth, PsoViewStatistics },
-  props: ["params"],
+  props: {
+    params: {
+      type: Object,
+      default: () => {
+        data_type: "";
+      }
+    }
+  },
   data() {
     return {
       loading: false,
       copying: false,
-      currentNode: {},
+      curNode: {},
       tpTypes: [
         {
           name: "页面插件",
@@ -82,7 +89,8 @@ export default {
   computed: {
     treeOptions() {
       return {
-        dimen: 4
+        dimen: 4,
+        data_type: this.params.data_type
       };
     },
     defaultNodeData() {
@@ -93,12 +101,12 @@ export default {
   },
   methods: {
     async nodeClickHandler(nodeData) {
+      this.curNode = nodeData;
       if (nodeData.is_leaf) {
-        this.currentNode = nodeData;
         const ret = await this.API.templates({ data: { tp_code: nodeData.node_name }, method: "get" });
         if (ret.success) {
           for (let key in ret.data.tp) {
-            this.$set(this.currentNode, key, ret.data.tp[key]);
+            this.$set(this.curNode, key, ret.data.tp[key]);
           }
         }
       }

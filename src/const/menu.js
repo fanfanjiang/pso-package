@@ -15,13 +15,18 @@ export const OPEN_TYPE = [{
 }];
 
 //模板参数设置控件类型
-export const TP_CTL_TYPE = [{
-    n: '文本框',
-    v: 'input'
-}, {
-    n: '表单选择器',
-    v: 'picker-form'
-}, {
-    n: '流程选择器',
-    v: 'picker-wf'
-}];
+export const TP_CTL_TYPE = [
+    {
+        n: '维度选择器',
+        v: 'picker-tag'
+    }, {
+        n: '表单选择器',
+        v: 'picker-form'
+    }, {
+        n: '流程选择器',
+        v: 'picker-wf'
+    }, {
+        n: '文本框',
+        v: 'input'
+    }
+];

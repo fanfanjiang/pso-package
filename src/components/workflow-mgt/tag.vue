@@ -20,7 +20,10 @@
   </el-table>
 </template>
 <script>
+import PsoWfTageditor from "./tag-editor";
+
 export default {
+  components: { PsoWfTageditor },
   props: ["data"],
   data() {
     return {};

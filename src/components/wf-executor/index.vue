@@ -1,11 +1,11 @@
 <template>
-  <component v-bind:is="currentCpnt" :params="params" @excuted="$emit('excuted',$event)"></component>
+  <component v-bind:is="currentCpnt" :params="params"></component>
 </template> 
 <script>
 import PsoExecutor from "./executor";
 import PsoExecutorSimple from "./executor-simple";
 export default {
-  componentName: "PsoWfExecutor",
+  componentName: "PsoWfExecutorBox",
   components: { PsoExecutor, PsoExecutorSimple },
   props: {
     params: {
@@ -19,13 +19,13 @@ export default {
     }
   },
   created() {
-    this.$on("before-save", val => {
+    this.$on("op-before-save", val => {
       this.$emit("before-save", val);
     });
-    this.$on("before-next", val => {
+    this.$on("op-before-next", val => {
       this.$emit("before-next", val);
     });
-    this.$on("excuted", val => {
+    this.$on("op-excuted", val => {
       this.$emit("excuted", val);
     });
   }

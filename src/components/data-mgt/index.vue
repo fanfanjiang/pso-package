@@ -136,19 +136,23 @@ export default {
   mixins: [formOp],
   components: { PsoFormTable, FormField, PsoNodeauth, PsoTitle, PsoFormAttach, FormColumn, FormStatus, FormPublish, FormProperty },
   props: {
-    appid: {
-      type: String,
-      default: "Main"
+    params: {
+      type: Object,
+      default: () => {
+        data_type: "";
+      }
     }
   },
   data() {
     return {
+      appid: "Main",
       key: 0,
       worksheetMenu: SHEET_MENU,
       showWorksheetSelector: false,
       curWsMenu: {},
       treeOptions: {
-        dimen: 3
+        dimen: 3,
+        data_type: this.params.data_type
       },
       defaultNodeData: {
         node_dimen: 3

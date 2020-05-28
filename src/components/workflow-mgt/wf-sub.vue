@@ -7,13 +7,13 @@
       </template>
     </el-table-column>
     <el-table-column label="选择流程">
-      <template>
-        <el-select v-model="wfDesigner.wfFiletype" placeholder="请选择">
+      <template slot-scope="scope">
+        <el-select v-model="scope.row.subWf" placeholder="请选择">
           <el-option
-            v-for="item in wfDesigner.fileTypes"
-            :key="item.wf_filetype"
-            :label="item.wf_filetype"
-            :value="item.wf_filetype"
+            v-for="item in workflows"
+            :key="item.node_name"
+            :label="item.node_display"
+            :value="item.node_name"
           ></el-option>
         </el-select>
       </template>
@@ -31,13 +31,15 @@
   </el-table>
 </template>
 <script>
-import { mapState } from "vuex";
-
 export default {
   props: ["data"],
-  computed: {
-    ...mapState(["wfDesigner"])
+  data() {
+    return {
+      workflows: []
+    };
   },
-  methods: {}
+  async created() {
+    this.workflows = await this.API.getWfTree();
+  }
 };
 </script>

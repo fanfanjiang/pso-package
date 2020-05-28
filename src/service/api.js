@@ -199,9 +199,9 @@ export default class API {
         }
     }
 
-    static async getFileTypes(data) {
+    static async wfFileType(data, method = 'get') {
         try {
-            return await this.request('/api/workflowcfg/filetypes', { data, method: 'get' });
+            return await this.request('/api/workflowcfg/filetypes', { data, method });
         } catch (error) {
             throw error;
         }

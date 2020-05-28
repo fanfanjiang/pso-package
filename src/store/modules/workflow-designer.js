@@ -189,7 +189,7 @@ export default {
             state.formsList = await API.getFormTree();
 
             //获取发文类型
-            const fRet = await API.getFileTypes();
+            const fRet = await API.wfFileType();
             state.fileTypes = fRet.data;
 
             if (params.node_id || params.templateId) {

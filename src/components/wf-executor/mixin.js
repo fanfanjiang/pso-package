@@ -44,7 +44,7 @@ export const op = {
             //暂存
             try {
                 const formData = await this.store.getFormData();
-                this.dispatch("PsoWfExecutor", "before-save", { optype: REVIEW_OP_TYPE.save.value, formData });
+                this.dispatch("PsoWfExecutorBox", "op-before-save", { optype: REVIEW_OP_TYPE.save.value, formData });
                 formData && this.excuted(await this.store.hold(formData));
             } catch (error) {
                 this.$message({ message: error.message, type: "warning" });
@@ -53,7 +53,7 @@ export const op = {
         async nextStep(optype) {
             try {
                 const formData = await this.store.getFormData();
-                this.dispatch("PsoWfExecutor", "before-next", { optype, formData });
+                this.dispatch("PsoWfExecutorBox", "op-before-next", { optype, formData });
                 formData && this.excuted(await this.store.doNextStep({ optype, formData }));
             } catch (error) {
                 this.store.steping = false;
@@ -62,7 +62,7 @@ export const op = {
         },
         excuted({ success }) {
             this.$notify({ title: success ? "执行成功" : "执行失败", type: success ? "success" : "warning" });
-            this.dispatch("PsoWfExecutor", "excuted");
+            this.dispatch("PsoWfExecutorBox", "op-excuted");
         }
     }
 };

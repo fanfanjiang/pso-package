@@ -3,12 +3,15 @@
     <pso-skeleton v-if="loading" :lines="1"></pso-skeleton>
     <div v-else class="pso-typebar-wrapper">
       <el-tabs v-model="selectedType" @tab-click="typeClickHandler">
-        <el-tab-pane
-          :label="getTabName(typeItem)||'未命名'"
-          :name="typeItem.feildname"
-          v-for="typeItem of types"
-          :key="typeItem.feildvalue"
-        ></el-tab-pane>
+        <el-tab-pane v-for="item of types" :name="item.feildname" :key="item.feildvalue">
+          <el-badge
+            slot="label"
+            :value="item.total||0"
+            :hidden="!item.total"
+            is-dot
+            class="pso-typebar-badge"
+          >{{item.feildname}}</el-badge>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -89,21 +92,3 @@ export default {
   }
 };
 </script>
-<style lang="less" scoped>
-@deep: ~">>>";
-.pso-typebar {
-  padding: 0 15px;
-  height: 40px;
-}
-@{deep} {
-  .el-tabs__header {
-    margin: 0;
-  }
-  .pso-skeleton {
-    padding-top: 10px;
-  }
-  .pso-skeleton-text__line {
-    margin: 0;
-  }
-}
-</style>

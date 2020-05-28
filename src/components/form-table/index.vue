@@ -470,7 +470,6 @@ export default {
     align-items: center;
     background-color: #fff;
     padding: 5px 10px;
-    border-bottom: 1px solid #ebeef5;
     .pso-formTable-header__left {
       flex: 1;
       @{deep} {
