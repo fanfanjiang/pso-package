@@ -40,7 +40,7 @@ export const formOp = {
         async makeFormStore(id) {
             const ret = await this.API.formsCfg({ data: { id }, method: "get" });
             if (!ret.success) return;
-            this.formStore = new FormStore(ret.data.data);
+            this.formStore = new FormStore(ret.data);
             return this.formStore;
         }
     }

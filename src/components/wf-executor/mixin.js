@@ -27,7 +27,7 @@ export const executor = {
     },
     methods: {
         print(dom) {
-            this.getPdf(dom, this.store.data.name);
+            this.createPDF(dom, this.store.data.name);
         }
     }
 };

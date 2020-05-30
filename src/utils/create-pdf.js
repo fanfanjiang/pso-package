@@ -1,6 +1,6 @@
 
 import html2Canvas from 'html2canvas'
- 
+// jspdf需要从外部直接引入，window.jsPDF
 export default function (ref, title = 'pdf') {
     if (typeof ref === 'string') ref = document.querySelector(ref);
     html2Canvas(ref, {
@@ -18,7 +18,7 @@ export default function (ref, title = 'pdf') {
         let imgWidth = 595.28
         let imgHeight = 592.28 / contentWidth * contentHeight
         let pageData = canvas.toDataURL('image/jpeg', 1.0)
-        let PDF = new JsPDF('', 'pt', 'a4')
+        let PDF = new jsPDF('', 'pt', 'a4')
         if (leftHeight < pageHeight) {
             PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
         } else {

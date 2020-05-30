@@ -194,8 +194,8 @@ export default {
     async getFormCfg() {
       this.loading = true;
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
-      ret.data.data.data_id = this.cpnt.data._option;
-      this.store = new FormStore(ret.data.data);
+      ret.data.data_id = this.cpnt.data._option;
+      this.store = new FormStore(ret.data);
       this.loading = false;
     },
     async getFormData(value) {

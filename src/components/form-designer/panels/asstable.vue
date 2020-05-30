@@ -143,7 +143,7 @@ export default {
 
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
 
-      const store = new FormStore(ret.data.data);
+      const store = new FormStore(ret.data);
 
       this.cpnt.cache.fieldOptions = store.search({
         options: { table_show: true },

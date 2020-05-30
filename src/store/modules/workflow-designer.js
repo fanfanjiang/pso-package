@@ -201,7 +201,7 @@ export default {
                     if (!ret.success) return;
                     data = ret.data;
                     state.wfCode = data.wf_code;
-                    state.wfFiletype = _.map(data.selectedFileTypes, 'wf_filetype');
+                    state.wfFiletype = _.map(data.files, 'wf_filetype');
                 } else {
                     const ret = await API.resource({ data: { leaf_id: params.templateId } });
                     if (!ret || !ret.data) return;
@@ -232,7 +232,7 @@ export default {
             }
 
             const ret = await API.formsCfg({ data: { id }, method: "get" });
-            state.formStore = new FormStore(ret.data.data);
+            state.formStore = new FormStore(ret.data);
 
             state.loading = false;
         }

@@ -275,8 +275,8 @@ export default {
       this.initializing = true;
       const ret = await this.API.formsCfg({ data: { id: this.cfgId }, method: "get" });
       if (!ret.success) return;
-      this.store = new FormStore(ret.data.data);
-      this.cfg = Object.assign({}, this.cfg, ret.data.data);
+      this.store = new FormStore(ret.data);
+      this.cfg = Object.assign({}, this.cfg, ret.data);
       this.initializing = false;
       this.conditionOptions = this.store.search({
         options: { db: true },

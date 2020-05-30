@@ -25,6 +25,7 @@
           <transition name="el-zoom-in-bottom">
             <pso-wfop-user
               v-if="store.showUserOp"
+              :store="store"
               @close="store.showUserOp=false"
               @confirm="append"
             ></pso-wfop-user>

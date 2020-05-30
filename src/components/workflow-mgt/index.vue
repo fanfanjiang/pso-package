@@ -173,7 +173,7 @@ export default {
       this.curNode = node;
     },
     reset() {
-      Object.assign(this.$data, _DATA);
+      Object.assign(this.$data, _.cloneDeep(_DATA));
     },
     async getBaseInfo(node) {
       const ret = await this.API.getTreeNode({ code: node.node_name });

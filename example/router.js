@@ -46,6 +46,12 @@ const router = new Router({
       props: organizeParams
     },
     { 
+      path: '/tag-mgt',
+      name: 'tagMgt',
+      component: () => import('./views/tag-mgt'),
+      props: organizeParams
+    },
+    { 
       path: '/menu-mgt',
       name: 'menuMgt',
       component: () => import('./views/menu-mgt'),

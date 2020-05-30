@@ -45,7 +45,7 @@ const STATE = {
     wf_body_tp: "",
     wf_status: "",
     map_data_code: "",
-    selectedFileTypes: []
+    files: []
   },
   show: {
     showImport: true,

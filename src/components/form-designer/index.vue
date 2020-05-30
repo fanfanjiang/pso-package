@@ -187,8 +187,8 @@ export default {
       this.loading = true;
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
       if (ret.success) {
-        ret.data.data.data_id = id;
-        this.formCfg = ret.data.data;
+        ret.data.data_id = id;
+        this.formCfg = ret.data;
       }
       this.loading = false;
     },

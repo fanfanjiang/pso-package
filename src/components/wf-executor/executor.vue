@@ -18,13 +18,14 @@
           <transition name="el-zoom-in-bottom">
             <pso-wfop-user
               v-if="store.showUserOp"
+              :store="store"
               @close="store.showUserOp=false"
               @confirm="append"
             ></pso-wfop-user>
           </transition>
         </div>
         <div class="pso-wf-executor__footer">
-          <pso-wfop :store="store"></pso-wfop>
+          <pso-wfop :store="store" @print="doPrint"></pso-wfop>
         </div>
       </div>
     </transition>
@@ -53,7 +54,7 @@
 </template>
 <script>
 import shortid from "shortid";
-
+ 
 import { REVIEW_OP_TYPE, REVIEW_OP_APPEND } from "../../const/workflow";
 
 import PsoWfMainform from "./form-main";
@@ -90,6 +91,9 @@ export default {
   methods: {
     async append() {
       await this.nextStep(REVIEW_OP_APPEND);
+    },
+    doPrint() {
+      this.print($("#executorMain")[0]);
     }
   }
 };

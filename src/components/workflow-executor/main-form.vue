@@ -11,7 +11,7 @@
         <el-form-item label="发文编号" prop="filetype">
           <el-select v-model="wfExecutor.data.filetype" :disabled="readMode">
             <el-option
-              v-for="type in wfExecutor.cfg.selectedFileTypes"
+              v-for="type in wfExecutor.cfg.files"
               :key="type.wf_code"
               :label="type.wf_filetype"
               :value="type.wf_filetype"

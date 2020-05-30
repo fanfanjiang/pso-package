@@ -121,7 +121,7 @@ const _DATA = {
     doneText: ""
   },
   property: {
-    cal_mark: "",
+    cal_mark: 0,
     cal_amount_field: "",
     cal_tag_field: "",
     cal_unit_field: "",
@@ -159,31 +159,9 @@ export default {
       },
       curNode: null,
       curTab: "preview",
-      tableData: [],
-      colData: [],
-      staData: [],
-      pubCfg: {
-        isPublic: false,
-        attach: {
-          _fieldName: "附件",
-          _val: ""
-        },
-        name: "",
-        subBtnText: "",
-        doneText: ""
-      },
-      property: {
-        cal_mark: "",
-        cal_amount_field: "",
-        cal_tag_field: "",
-        cal_unit_field: "",
-        cal_parent_tag: "",
-        cal_source_main_form: "",
-        cal_source_leaf_form: "",
-        cal_end_leaf_form: ""
-      },
       saving: false,
-      formStore: null
+      formStore: null,
+      ..._DATA
     };
   },
   computed: {},
@@ -210,8 +188,8 @@ export default {
         const formStore = await this.makeFormStore(this.curNode.node_name);
         this.formStore = formStore;
 
-        await this.getFields(formStore);
         await this.getListTableData(formStore);
+        await this.getFields(formStore);
         await this.getFormInfo();
       }
     },
@@ -233,7 +211,10 @@ export default {
           const columns = JSON.parse(cfg.display_columns);
           this.colData.forEach(item => {
             const col = _.find(columns, { field_name: item.field_name });
-            col && Object.assign(item, col);
+            if (col) {
+              item = Object.assign(item, col);
+              console.log(item);
+            }
           });
         }
       }
@@ -263,10 +244,14 @@ export default {
     async getListTableData(formStore) {
       const ret = await this.API.getFormDict({ data_code: this.curNode.node_name });
       if (!ret.success) return;
-      this.colData = ret.data;
-      this.colData.forEach(item => {
-        const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
-        item.display_name = item.display_name || (field ? field._fieldName : "");
+      let number = 0;
+      ret.data.forEach(item => {
+        if (item) {
+          const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+          item.display_name = item.display_name || (field ? field._fieldName : "");
+          this.colData.push({ ...item, width: "", using: "1", is_show: "1", align: "left", number });
+          number++;
+        }
       });
     },
     async saveConfig() {

@@ -105,8 +105,8 @@ export default {
 
             let ret = await API.formsCfg({ data: { id: state.formId }, method: "get" });
             if (!ret.success) return;
-            state.cfg = ret.data.data;
-            const store = new FormStore(ret.data.data);
+            state.cfg = ret.data;
+            const store = new FormStore(ret.data);
             const fields = store.search({
                 options: { db: true },
                 onlyData: true,

@@ -57,7 +57,7 @@
           <el-dropdown-item command="distribute">分发</el-dropdown-item>
           <el-dropdown-item command="addSign">加签</el-dropdown-item>
         </template>
-        <el-dropdown-item command="$emit('print')">打印</el-dropdown-item>
+        <el-dropdown-item command="print">打印</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -132,6 +132,9 @@ export default {
       this.store.userOp.text = text;
       this.store.userOp.appendType = op;
       this.store.showUserOp = true;
+    },
+    print() {
+      this.$emit("print");
     }
   }
 };

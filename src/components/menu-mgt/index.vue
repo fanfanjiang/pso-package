@@ -18,7 +18,7 @@
       </div>
       <div class="pso-page-body__content" v-bar>
         <div>
-          <div class="pso-page-body__wrapper" v-if="curNode">
+          <div class="pso-page-body__wrapper" v-if="curNode&&!loadingInfo">
             <div class="pso-page-body__header">
               <pso-title :size="16">菜单：{{curNode.node_display}}</pso-title>
               <div class="pso-page-body__btns"></div>
@@ -39,13 +39,17 @@
                 <el-form label-position="left" label-width="80px">
                   <pso-title>基本参数</pso-title>
                   <el-form-item label="菜单名称">
-                    <el-input v-model="curNode.menu_name" autocomplete="off"></el-input>
+                    <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
                   </el-form-item>
                   <el-form-item label="菜单图标">
-                    <el-input v-model="curNode.menu_icon" autocomplete="off"></el-input>
+                    <el-input size="small" v-model="curNode.menu_icon">
+                      <template slot="prepend">
+                        <el-button icon="el-icon-edit" @click="handleIcon"></el-button>
+                      </template>
+                    </el-input>
                   </el-form-item>
                   <el-form-item label="打开方式">
-                    <el-select v-model="curNode.open_type">
+                    <el-select size="small" v-model="curNode.open_type">
                       <el-option
                         v-for="item in OPEN_TYPE"
                         :key="item.v"
@@ -55,7 +59,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="菜单类型">
-                    <el-select v-model="curNode.menu_type">
+                    <el-select size="small" v-model="curNode.menu_type">
                       <el-option
                         v-for="item in MENU_TYPE"
                         :key="item.v"
@@ -64,59 +68,16 @@
                       ></el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item v-if="curNode.menu_type===MENU_TYPE[0].v" label="选择插件">
-                    <el-select v-model="curNode.menu_link" clearable @change="getTpDetail">
-                      <el-option
-                        v-for="item in templetes"
-                        :key="item.node_name"
-                        :label="item.node_display"
-                        :value="item.node_name"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
+                  <plug-set
+                    v-if="curNode.menu_type===MENU_TYPE[0].v"
+                    :data="curTpDetail"
+                    :node="curNode"
+                    @change="handleTagChange"
+                    field="menu_link"
+                  ></plug-set>
                   <el-form-item v-else label="菜单链接">
                     <el-input v-model="curNode.menu_link" autocomplete="off"></el-input>
                   </el-form-item>
-                  <transition name="el-zoom-in-top">
-                    <div v-if="showParamForm">
-                      <pso-title>插件参数</pso-title>
-                      <el-form-item
-                        v-for="tpItem in curTpDetail"
-                        :key="tpItem.field"
-                        :label="tpItem.name"
-                      >
-                        <el-select v-if="tpItem.picker==='picker-form'" v-model="tpItem.value">
-                          <el-option
-                            v-for="item in forms"
-                            :key="item.node_name"
-                            :label="item.node_display"
-                            :value="item.node_name"
-                          ></el-option>
-                        </el-select>
-                        <el-select v-if="tpItem.picker==='picker-wf'" v-model="tpItem.value">
-                          <el-option
-                            v-for="item in workflows"
-                            :key="item.node_name"
-                            :label="item.node_display"
-                            :value="item.node_name"
-                          ></el-option>
-                        </el-select>
-                        <el-select v-if="tpItem.picker==='picker-tag'" v-model="tpItem.value">
-                          <el-option
-                            v-for="item in tags"
-                            :key="item.dimen_tag"
-                            :label="item.tag_name"
-                            :value="item.dimen_tag"
-                          ></el-option>
-                        </el-select>
-                        <el-input
-                          v-if="tpItem.picker==='input'"
-                          v-model="tpItem.value"
-                          autocomplete="off"
-                        ></el-input>
-                      </el-form-item>
-                    </div>
-                  </transition>
                   <div class="pso-menu-param__controller">
                     <el-button type="primary" @click="updateNode" size="mini">保存</el-button>
                   </div>
@@ -127,14 +88,24 @@
         </div>
       </div>
     </div>
+    <el-dialog title="选择图标" append-to-body :visible.sync="showIconBox" width="60%">
+      <el-row>
+        <el-col :span="2" v-for="i in ICON" :key="i">
+          <div class="pso-icon-picker__item" @click="pickIcon(i)">
+            <i :class="i"></i>
+          </div>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 <script>
 import PsoNodeauth from "../node-auth";
+import PlugSet from "./plug-set";
 import { MENU_TYPE, OPEN_TYPE } from "../../const/menu";
-
+import ICON from "../../const/icon";
 export default {
-  components: { PsoNodeauth },
+  components: { PsoNodeauth, PlugSet },
   props: {
     params: {
       type: Object,
@@ -156,11 +127,11 @@ export default {
       OPEN_TYPE: OPEN_TYPE,
       templetes: [],
       curTpDetail: [],
-      forms: [],
-      workflows: [],
-      tags: [],
       saving: false,
-      loadingInfo: false
+      loadingInfo: false,
+      showIconBox: false,
+      ICON: ICON,
+      initTpCode: ""
     };
   },
   computed: {
@@ -175,9 +146,6 @@ export default {
       return {
         node_dimen: 1
       };
-    },
-    showParamForm() {
-      return this.curNode.menu_type === this.MENU_TYPE[0].v && this.curTpDetail.length;
     },
     paramsEditable() {
       return this.curNode.menu_type === this.MENU_TYPE[0].v && this.curNode.menu_link;
@@ -194,16 +162,6 @@ export default {
         };
       });
     }
-    this.templetes = await this.API.getTempleteTree();
-
-    //加载流程列表
-    this.forms = await this.API.getFormTree();
-    //加载表单列表
-    this.workflows = await this.API.getWfTree();
-
-    const tagRet = await this.API.getTreeDimen();
-    this.tags = tagRet.data;
-
     this.loadingBar = false;
   },
   methods: {
@@ -219,27 +177,11 @@ export default {
           }
           if (this.curNode.param_value) {
             this.curTpDetail = JSON.parse(this.curNode.param_value);
-          } else if (this.paramsEditable) {
-            await this.getTpDetail(this.curNode.menu_link);
-          } else {
-            this.curTpDetail = [];
           }
         }
         this.loadingInfo = false;
       } else {
         this.curTab = "auth";
-      }
-    },
-    async getTpDetail(tp_code) {
-      if (tp_code) {
-        const ret = await this.API.templates({ data: { tp_code }, method: "get" });
-        if (ret.success && ret.data.tp.route_setting) {
-          this.curTpDetail = JSON.parse(ret.data.tp.route_setting);
-        } else {
-          this.curTpDetail = [];
-        }
-      } else {
-        this.curTpDetail = [];
       }
     },
     async updateNode() {
@@ -258,6 +200,16 @@ export default {
     check(ret) {
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
       this.saving = false;
+    },
+    handleIcon() {
+      this.showIconBox = true;
+    },
+    pickIcon(icon) {
+      this.curNode.menu_icon = icon;
+      this.showIconBox = false;
+    },
+    handleTagChange(data) {
+      this.curTpDetail = data;
     }
   }
 };

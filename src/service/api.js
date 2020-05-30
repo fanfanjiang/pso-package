@@ -287,6 +287,14 @@ export default class API {
         }
     }
 
+    static async updateTag(data) {
+        try {
+            return await this.request('/api/tag/attribute', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async getTagLeafData(data) {
         try {
             return await this.request('/api/tag/leaf', { data, method: 'get' });
@@ -446,6 +454,14 @@ export default class API {
     static async updateWfAgent(data = {}) {
         try {
             return await this.request('/api/workflowcfg/agent', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateUnit(data = {}) {
+        try {
+            return await this.request('/api/tag/unit', { data, method: 'put' });
         } catch (error) {
             throw error;
         }

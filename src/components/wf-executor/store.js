@@ -58,7 +58,7 @@ export default class WfStore {
             wf_body_tp: "",
             wf_status: "",
             map_data_code: "",
-            selectedFileTypes: []
+            files: []
         }
 
         this.show = {

@@ -84,7 +84,7 @@ export default {
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._selectedTable }, method: "get" });
       this.loading = false;
       if (!ret.success) return;
-      const store = new FormStore(ret.data.data);
+      const store = new FormStore(ret.data);
       this.fieldOptions = store.search({
         options: { db: true },
         onlyData: true,
