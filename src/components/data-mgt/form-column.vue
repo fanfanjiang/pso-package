@@ -8,7 +8,7 @@
       <el-table-column prop="field_name" label="字段" width="180"></el-table-column>
       <el-table-column label="显示名名称">
         <template slot-scope="scope">
-          <el-input size="small" v-model="scope.row.display_name" placeholder></el-input>
+          <el-input size="small" v-model="scope.row.display" placeholder></el-input>
         </template>
       </el-table-column>
       <el-table-column label="列宽">
@@ -26,9 +26,14 @@
           <el-switch v-model="scope.row.using" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="隐藏" width="100">
+      <el-table-column label="显示" width="100">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.is_show" active-value="1" inactive-value="0"></el-switch>
+          <el-switch v-model="scope.row.show" active-value="1" inactive-value="0"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序" width="100">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.sortable" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="对齐方式">

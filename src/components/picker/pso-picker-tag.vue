@@ -130,6 +130,7 @@ export default {
       options: {
         start: 1,
         limit: 20,
+        tag_code: "",
         keys: {
           node_id: { value: "", type: 1 },
           tag_name: { value: "", type: 2 }
@@ -207,7 +208,7 @@ export default {
         ret = await this.API.getTagLeafData({ tag_no });
       } else {
         ret = await this.API.tag({
-          data: { ...this.options, keys: JSON.stringify(this.options.keys), start: this.options.start - 1 }
+          data: { ...this.options, keys: JSON.stringify(this.options.keys), page: this.options.start - 1 }
         });
       }
       this.loading = false;
@@ -240,9 +241,10 @@ export default {
 
         this.options.start = 1;
         this.options.keys.node_id.value = node.node_id;
+        this.options.tag_code = node.node_id;
         if (this.showCenter) {
           const ret = await this.API.tag({
-            data: { keys: JSON.stringify({ node_id: { value: node.node_id, type: 1 } }), start: 0, limit: 999 }
+            data: { tag_code: node.node_id, start: 0, limit: 999 }
           });
           if (ret.success) {
             this.tagList = ret.data;

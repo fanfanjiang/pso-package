@@ -112,6 +112,7 @@ export default {
     },
     async submitHandler(data) {
       const ret = await this.API.updateUnit(data);
+      this.$notify({ title: ret.success ? "成功" : "失败", type: ret.success ? "success" : "warning" });
       this.fetch();
     }
   }

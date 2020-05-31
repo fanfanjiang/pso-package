@@ -4,93 +4,97 @@
       <pso-typebar :defBar="defBar" v-model="typeVal"></pso-typebar>
     </div>
     <div class="pso-page-body" v-if="typeVal.feildvalue">
-      <div class="pso-page__tree" v-bar>
-        <div>
-          <pso-tree-common
-            ref="tree"
-            :request-options="treeOptions"
-            :default-node-data="defaultNodeData"
-            :auto-edit="true"
-            @node-click="nodeClickHandler"
-            @before-edit-submit="beforeNodeUpdate"
-          ></pso-tree-common>
-        </div>
+      <div class="pso-page__tree">
+        <pso-tree-common
+          ref="tree"
+          :request-options="treeOptions"
+          :default-node-data="defaultNodeData"
+          :auto-edit="true"
+          @node-click="nodeClickHandler"
+          @before-edit-submit="beforeNodeUpdate"
+        ></pso-tree-common>
       </div>
-      <div class="pso-page-body__content" v-bar>
-        <div>
-          <div class="pso-page-body__wrapper" v-if="curNode&&!loadingInfo">
-            <div class="pso-page-body__header">
-              <pso-title :size="16">菜单：{{curNode.node_display}}</pso-title>
-              <div class="pso-page-body__btns"></div>
-            </div>
-            <div class="pso-page-body__tab">
-              <el-tabs v-model="curTab">
-                <el-tab-pane label="权限设置" name="auth"></el-tab-pane>
-                <el-tab-pane v-if="!!curNode.is_leaf" label="参数设置" name="param"></el-tab-pane>
-              </el-tabs>
-            </div>
-            <div class="pso-page-body__body">
-              <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
-              <div
-                class="pso-menu-param"
-                v-if="curTab==='param'&&!!curNode.is_leaf"
-                v-loading="saving||loadingInfo"
-              >
-                <el-form label-position="left" label-width="80px">
-                  <pso-title>基本参数</pso-title>
-                  <el-form-item label="菜单名称">
-                    <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
-                  </el-form-item>
-                  <el-form-item label="菜单图标">
-                    <el-input size="small" v-model="curNode.menu_icon">
-                      <template slot="prepend">
-                        <el-button icon="el-icon-edit" @click="handleIcon"></el-button>
-                      </template>
-                    </el-input>
-                  </el-form-item>
-                  <el-form-item label="打开方式">
-                    <el-select size="small" v-model="curNode.open_type">
-                      <el-option
-                        v-for="item in OPEN_TYPE"
-                        :key="item.v"
-                        :label="item.n"
-                        :value="item.v"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="菜单类型">
-                    <el-select size="small" v-model="curNode.menu_type">
-                      <el-option
-                        v-for="item in MENU_TYPE"
-                        :key="item.v"
-                        :label="item.n"
-                        :value="item.v"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                  <plug-set
-                    v-if="curNode.menu_type===MENU_TYPE[0].v"
-                    :data="curTpDetail"
-                    :node="curNode"
-                    @change="handleTagChange"
-                    field="menu_link"
-                  ></plug-set>
-                  <el-form-item v-else label="菜单链接">
-                    <el-input v-model="curNode.menu_link" autocomplete="off"></el-input>
-                  </el-form-item>
-                  <div class="pso-menu-param__controller">
-                    <el-button type="primary" @click="updateNode" size="mini">保存</el-button>
-                  </div>
-                </el-form>
-              </div>
+      <div class="pso-page-body__content">
+        <div class="pso-page-body__wrapper" v-if="curNode&&!loadingInfo">
+          <div class="pso-page-body__header">
+            <pso-title :size="16">菜单：{{curNode.node_display}}</pso-title>
+            <div class="pso-page-body__btns"></div>
+          </div>
+          <div class="pso-page-body__tab">
+            <el-tabs v-model="curTab">
+              <el-tab-pane v-if="!!curNode.is_leaf" label="属性" name="param"></el-tab-pane>
+              <el-tab-pane label="权限设置" name="auth"></el-tab-pane>
+            </el-tabs>
+          </div>
+          <div class="pso-page-body__body">
+            <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
+            <div
+              class="pso-menu-param"
+              v-if="curTab==='param'&&!!curNode.is_leaf"
+              v-loading="saving||loadingInfo"
+            >
+              <el-form label-position="left" label-width="80px">
+                <pso-title>基本参数</pso-title>
+                <el-form-item label="菜单名称">
+                  <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="菜单图标">
+                  <el-input size="small" v-model="curNode.menu_icon">
+                    <template slot="prepend">
+                      <el-button icon="el-icon-edit" @click="handleIcon"></el-button>
+                    </template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="排序">
+                  <el-input-number
+                    size="small"
+                    v-model="curNode.node_serial"
+                    controls-position="right"
+                    :min="0"
+                  ></el-input-number>
+                </el-form-item>
+                <el-form-item label="打开方式">
+                  <el-select size="small" v-model="curNode.open_type">
+                    <el-option
+                      v-for="item in OPEN_TYPE"
+                      :key="item.v"
+                      :label="item.n"
+                      :value="item.v"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="菜单类型">
+                  <el-select size="small" v-model="curNode.menu_type">
+                    <el-option
+                      v-for="item in MENU_TYPE"
+                      :key="item.v"
+                      :label="item.n"
+                      :value="item.v"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <plug-set
+                  v-if="curNode.menu_type===MENU_TYPE[0].v"
+                  :data="curTpDetail"
+                  :node="curNode"
+                  @change="handleTagChange"
+                  field="menu_link"
+                ></plug-set>
+                <el-form-item v-else label="菜单链接">
+                  <el-input v-model="curNode.menu_link" autocomplete="off"></el-input>
+                </el-form-item>
+                <div class="pso-menu-param__controller">
+                  <el-button type="primary" @click="updateNode" size="mini">保存</el-button>
+                </div>
+              </el-form>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog title="选择图标" append-to-body :visible.sync="showIconBox" width="60%">
+    <el-dialog title="选择图标" append-to-body :visible.sync="showIconBox" width="80%">
       <el-row>
-        <el-col :span="2" v-for="i in ICON" :key="i">
+        <el-col :span="1" v-for="i in ICON" :key="i">
           <div class="pso-icon-picker__item" @click="pickIcon(i)">
             <i :class="i"></i>
           </div>
@@ -121,7 +125,7 @@ export default {
       curNode: null,
       defBar: [],
       typeVal: {},
-      curTab: "auth",
+      curTab: "param",
       loadingBar: false,
       MENU_TYPE: MENU_TYPE,
       OPEN_TYPE: OPEN_TYPE,

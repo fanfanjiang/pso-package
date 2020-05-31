@@ -1,56 +1,60 @@
 <template>
   <div class="pso-page">
     <div class="pso-page-body">
-      <div class="pso-page__tree" v-bar>
-        <div>
-          <pso-tree-common
-            ref="tree"
-            :request-options="treeOptions"
-            :default-node-data="defaultNodeData"
-            :auto-edit="false"
-            @before-node-new="handleNewNode"
-            @node-click="nodeClickHandler"
-          ></pso-tree-common>
-        </div>
+      <div class="pso-page__tree">
+        <pso-tree-common
+          ref="tree"
+          :request-options="treeOptions"
+          :default-node-data="defaultNodeData"
+          :auto-edit="false"
+          @before-node-new="handleNewNode"
+          @node-click="nodeClickHandler"
+        ></pso-tree-common>
       </div>
-      <div class="pso-page-body__content" v-bar>
-        <div>
-          <div class="pso-page-body__wrapper" v-if="curNode" v-loading="loading">
-            <div class="pso-page-body__header">
-              <pso-title>流程：{{curNode.node_display}}</pso-title>
-              <div class="pso-page-body__btns">
-                <el-button size="small" type="primary" plain @click="handleEditWf">设计流程</el-button>
-                <el-button size="small" type="primary" plain @click="handleSaveWf">保存设置</el-button>
-              </div>
+      <div class="pso-page-body__content">
+        <div class="pso-page-body__wrapper" v-if="curNode" v-loading="loading">
+          <div class="pso-page-body__header">
+            <pso-title>流程：{{curNode.node_display}}</pso-title>
+            <div class="pso-page-body__btns">
+              <el-button size="small" type="primary" plain @click="handleEditWf">设计流程</el-button>
+              <el-button size="small" type="primary" plain @click="handleSaveWf">保存设置</el-button>
             </div>
-            <div class="pso-page-body__tab">
-              <el-tabs v-model="curTab">
-                <template v-if="!!curNode.is_leaf">
-                  <el-tab-pane label="预览" name="preview"></el-tab-pane>
-                  <el-tab-pane label="签单" name="table"></el-tab-pane>
-                  <el-tab-pane label="代理" name="proxy"></el-tab-pane>
-                  <el-tab-pane label="文号" name="file"></el-tab-pane>
-                  <el-tab-pane label="快捷标签" name="tag"></el-tab-pane>
-                  <el-tab-pane label="文本" name="text"></el-tab-pane>
-                  <el-tab-pane label="子流程" name="subwf"></el-tab-pane>
-                </template>
-                <el-tab-pane label="权限" name="auth"></el-tab-pane>
-              </el-tabs>
-            </div>
-            <div class="pso-page-body__tabbody">
+          </div>
+          <div class="pso-page-body__tab">
+            <el-tabs v-model="curTab">
               <template v-if="!!curNode.is_leaf">
-                <div class="pso-page-wf__stage" v-if="curTab==='preview'">
-                  <pso-wf-stage :workflow-data="wfImage" read-mode v-if="wfImage"></pso-wf-stage>
-                </div>
-                <pso-wf-table v-if="curTab==='table'"></pso-wf-table>
-                <pso-wf-agent v-if="curTab==='proxy'" :node="curNode"></pso-wf-agent>
-                <pso-wf-autoid v-if="curTab==='file'" :node="curNode"></pso-wf-autoid>
-                <pso-wf-tag v-if="curTab==='tag'" :data="tagData"></pso-wf-tag>
-                <pso-wf-text v-if="curTab==='text'" :data="textData"></pso-wf-text>
-                <pso-wf-subwf v-if="curTab==='subwf'" :data="subWfData" @go-designer="goDesigner"></pso-wf-subwf>
+                <el-tab-pane label="预览" name="preview"></el-tab-pane>
+                <el-tab-pane label="签单" name="table"></el-tab-pane>
+                <el-tab-pane label="代理" name="proxy"></el-tab-pane>
+                <el-tab-pane label="文号" name="file"></el-tab-pane>
+                <el-tab-pane label="快捷标签" name="tag"></el-tab-pane>
+                <el-tab-pane label="文本" name="text"></el-tab-pane>
+                <el-tab-pane label="子流程" name="subwf"></el-tab-pane>
+                <el-tab-pane label="脚本" name="script"></el-tab-pane>
               </template>
-              <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
-            </div>
+              <el-tab-pane label="权限" name="auth"></el-tab-pane>
+            </el-tabs>
+          </div>
+          <div class="pso-page-body__tabbody">
+            <template v-if="!!curNode.is_leaf">
+              <div class="pso-page-wf__stage" v-if="curTab==='preview'">
+                <pso-wf-stage :workflow-data="wfImage" read-mode v-if="wfImage"></pso-wf-stage>
+              </div>
+              <pso-wf-table v-if="curTab==='table'"></pso-wf-table>
+              <pso-wf-agent v-if="curTab==='proxy'" :node="curNode"></pso-wf-agent>
+              <pso-wf-autoid v-if="curTab==='file'" :node="curNode"></pso-wf-autoid>
+              <pso-wf-tag v-if="curTab==='tag'" :data="tagData"></pso-wf-tag>
+              <pso-wf-text v-if="curTab==='text'" :data="textData"></pso-wf-text>
+              <pso-wf-subwf v-if="curTab==='subwf'" :data="subWfData" @go-designer="wf_sql_setting"></pso-wf-subwf>
+              <el-input
+                v-if="curTab==='script'"
+                type="textarea"
+                :rows="8"
+                placeholder="脚本"
+                v-model="wf_sql_setting"
+              ></el-input>
+            </template>
+            <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
           </div>
         </div>
       </div>
@@ -115,7 +119,8 @@ const _DATA = {
       show: true
     }
   ],
-  subWfData: []
+  subWfData: [],
+  wf_sql_setting: ""
 };
 
 export default {
@@ -191,6 +196,8 @@ export default {
         if (cfg.wf_leaf_setting) {
           this.subWfData = JSON.parse(cfg.wf_leaf_setting);
         }
+
+        this.wf_sql_setting = cfg.wf_sql_setting || "";
       }
     },
     handleNewNode(payload) {
@@ -242,7 +249,8 @@ export default {
           code: this.curNode.node_name,
           wf_list_column: JSON.stringify(this.textData),
           wf_auth_tag: JSON.stringify(this.tagData),
-          wf_leaf_setting: JSON.stringify(this.subWfData)
+          wf_leaf_setting: JSON.stringify(this.subWfData),
+          wf_sql_setting: this.wf_sql_setting
         },
         method: "put"
       });

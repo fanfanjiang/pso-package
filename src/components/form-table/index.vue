@@ -1,6 +1,15 @@
 <template>
   <div class="pso-formTable">
     <div v-if="!initializing">
+      <div class="pso-formTable-sort" v-if="sorts.length">
+        <el-tag
+          size="small"
+          v-for="(sort,index) in sorts"
+          :key="sort.prop"
+          closable
+          @close="handleDelSort(index)"
+        >{{sort.name}} {{sort.order==='desc'?'降序':'升序'}}</el-tag>
+      </div>
       <div class="pso-formTable-header" v-if="!readOnly">
         <div class="pso-formTable-header__left">
           <el-popover v-model="showFilter" placement="bottom-start" width="400" trigger="click">
@@ -17,8 +26,13 @@
           <el-divider direction="vertical"></el-divider>
           <el-popover v-model="showSetting" placement="bottom-start" width="300" trigger="click">
             <div class="pso-formTable__setting">
-              <div class="pso-formTable__setting-item" v-for="fItem of showFields" :key="fItem.fid">
-                <el-switch v-model="fItem._showColumn" :inactive-text="fItem._fieldName"></el-switch>
+              <div class="pso-formTable__setting-item" v-for="fItem of fields" :key="fItem.fid">
+                <el-switch
+                  v-model="fItem.show"
+                  :inactive-text="fItem._fieldName"
+                  active-value="1"
+                  inactive-value="0"
+                ></el-switch>
               </div>
             </div>
             <el-button type="text" icon="el-icon-setting" slot="reference">列表管理</el-button>
@@ -57,18 +71,18 @@
       </div>
       <div class="pso-formTable-table">
         <el-table
+          id="pso-formTable-table"
           ref="table"
           v-loading="loadingTable"
-          :data="formData"
           style="width: 100%"
           size="small"
-          max-height="500"
-          height="500"
+          border
+          height="570"
+          :highlight-current-row="radio"
+          :data="formData"
           @row-click="instanceClick"
           @selection-change="handleSelectionChange"
-          :highlight-current-row="radio"
-          id="pso-formTable-table"
-          border
+          @sort-change="handleSort"
         >
           <template #default>
             <el-table-column v-if="checkbox" type="selection" width="55"></el-table-column>
@@ -76,24 +90,15 @@
               resizable
               show-overflow-tooltip
               min-width="120"
-              :prop="tableField._fieldValue"
-              :label="tableField._fieldName"
-              v-for="(tableField) of showFieldsReal"
-              :key="tableField.fid"
+              :prop="field.field_name"
+              :label="field.display"
+              v-for="field of showFieldsReal"
+              :key="field.field_name"
+              :width="field.width"
+              :align="field.align"
+              :sortable="field.sortable==='1'?'custom':false"
             >
-              <template slot-scope="scope">
-                <el-tag
-                  disable-transitions
-                  v-if="tableField.componentid === 'attachment'"
-                  size="mini"
-                >附件</el-tag>
-                <el-tag
-                  disable-transitions
-                  v-else-if="tableField.componentid === 'table'"
-                  size="mini"
-                >{{tableField.name}}</el-tag>
-                <div v-else>{{decodeURIComponent(scope.row[tableField._fieldValue])}}</div>
-              </template>
+              <template slot-scope="scope">{{decodeURIComponent(scope.row[field.field_name])}}</template>
             </el-table-column>
             <el-table-column v-if="operate" :label="opText" fixed="right">
               <template slot-scope="scope" v-if="deletable">
@@ -162,7 +167,6 @@
 import PsoDatafilter from "../data-filter/index";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
-// import FileSaver from "file-saver";
 import XLSX from "xlsx";
 
 export default {
@@ -221,7 +225,7 @@ export default {
         data_code: "",
         data_design: []
       },
-      showFields: [],
+      fields: [],
       formData: [],
       currentRow: {},
       conditionOptions: [],
@@ -234,18 +238,18 @@ export default {
       saving: false,
       where: {
         limit: 30,
-        start: 1
+        page: 1
       },
       dataTotal: 0,
       selectedList: [],
       store: null,
-      backup: []
+      sorts: []
     };
   },
   computed: {
     showFieldsReal() {
-      return this.showFields.filter(
-        item => item._showColumn && (this.columnFilter ? this.columnFilter.indexOf(item._fieldValue) === -1 : true)
+      return this.fields.filter(
+        item => item.show === "1" && (this.columnFilter ? this.columnFilter.indexOf(item.field_name) === -1 : true)
       );
     }
   },
@@ -278,6 +282,7 @@ export default {
       this.store = new FormStore(ret.data);
       this.cfg = Object.assign({}, this.cfg, ret.data);
       this.initializing = false;
+
       this.conditionOptions = this.store.search({
         options: { db: true },
         onlyMain: true,
@@ -287,24 +292,36 @@ export default {
           return true;
         }
       });
-      this.showFields = this.store.search({
-        options: { table_show: true },
-        onlyMain: true,
-        onlyData: true,
-        beforePush: item => {
-          this.$set(item.data, "_showColumn", true);
-          return true;
-        }
-      });
+
+      if (this.cfg.display_columns) {
+        this.fields = JSON.parse(this.cfg.display_columns).filter(item => item.using === "1");
+      }
+
+      if (!this.fields.length) {
+        this.fields = this.store.search({
+          options: { table_show: true },
+          onlyMain: true,
+          onlyData: true,
+          beforePush: item => {
+            this.$set(item.data, "display", item.data._fieldName);
+            this.$set(item.data, "field_name", item.data._fieldValue);
+            this.$set(item.data, "show", "1");
+            return true;
+          }
+        });
+      }
+
       await this.getFormData();
     },
     async getFormData() {
       this.loadingTable = true;
+      const order = this.sorts.map(item => `${item.prop} ${item.order}`).join(",");
       const ret = await this.API.form({
         data: {
           form_code: this.cfg.data_code,
           limit: this.where.limit,
-          start: this.where.start - 1
+          page: this.where.page - 1,
+          orderby: order ? `order by ${order}` : ""
         },
         method: "get"
       });
@@ -313,7 +330,6 @@ export default {
         await this.dataPovider(ret.data);
       }
       this.loadingTable = false;
-      this.backup = ret.data;
       this.formData = ret.data;
       this.dataTotal = ret.total;
       this.$emit("data-loaded");
@@ -322,13 +338,13 @@ export default {
       this.where.limit = size;
     },
     currentChangeHandler(page) {
-      this.where.start = page;
+      this.where.page = page;
     },
     prevClickHandler() {
-      this.where.start -= 1;
+      this.where.page -= 1;
     },
     nextClickHandler() {
-      this.where.start += 1;
+      this.where.page += 1;
     },
     async goFilter() {
       this.showFilter = false;
@@ -408,80 +424,21 @@ export default {
         console.log(e, etout);
       }
       return etout;
+    },
+    handleDelSort(index) {
+      this.sorts.splice(index, 1);
+      this.getFormData();
+    },
+    handleSort({ column, prop, order }) {
+      order = order === "descending" ? "desc" : "asc";
+      const sort = _.find(this.sorts, { prop });
+      if (sort) {
+        sort.order = order;
+      } else {
+        this.sorts.push({ prop, order, name: _.find(this.fields, { field_name: prop }).display });
+      }
+      this.getFormData();
     }
   }
 };
 </script>
-<style lang="less">
-.pso-formTable-formViewer {
-  padding: 15px;
-}
-</style>
-<style lang="less" scoped>
-@deep: ~">>>";
-@{deep} {
-  .el-table::before {
-    background-color: transparent;
-  }
-  .pso-drawer-footer__body {
-    text-align: right;
-  }
-}
-.pso-formTable__filter {
-  position: relative;
-  .pso-formTable__filter-body {
-    max-height: 400px;
-    overflow: scroll;
-    padding-bottom: 30px;
-  }
-  .pso-formTable__filter-footer {
-    position: absolute;
-    text-align: right;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #fff;
-  }
-}
-.pso-formTable__setting {
-  max-height: 500px;
-  overflow: scroll;
-  .pso-formTable__setting-item {
-    & + .pso-formTable__setting-item {
-      margin-top: 15px;
-    }
-  }
-  @{deep} {
-    .el-switch {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-    }
-  }
-}
-.pso-formTable {
-  height: 100%;
-  width: 100%;
-  background-color: #fff;
-
-  .pso-formTable-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fff;
-    padding: 5px 10px;
-    .pso-formTable-header__left {
-      flex: 1;
-      @{deep} {
-        .el-input {
-          width: 150px;
-        }
-      }
-    }
-  }
-  .pso-formTable-footer {
-    padding: 10px 5px;
-    background-color: #fff;
-  }
-}
-</style>

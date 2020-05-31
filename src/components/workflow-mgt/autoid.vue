@@ -8,9 +8,9 @@
       <el-table-column prop="wf_filetype" label="文件类型"></el-table-column>
       <el-table-column prop="wf_font_script" label="文件脚本"></el-table-column>
       <el-table-column prop="wf_note" label="文件描述"></el-table-column>
-      <el-table-column prop="font_auto_no" label="启用键数"></el-table-column>
-      <el-table-column prop="font_auto_key1" label="自增键1"></el-table-column>
-      <el-table-column prop="font_auto_key2" label="自增键2"></el-table-column>
+      <el-table-column prop="font_auto_no" label="启用键数"  width="100"></el-table-column>
+      <el-table-column prop="font_auto_key1" label="自增键1" width="100"></el-table-column>
+      <el-table-column prop="font_auto_key2" label="自增键2" width="100"></el-table-column>
       <el-table-column label="操作" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" @click="editHandler(scope.$index)">编辑</el-button>

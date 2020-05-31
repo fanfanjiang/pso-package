@@ -1,5 +1,6 @@
 <template>
-  <div class="pso-tp-statistics">
+  <div>
+    <el-button size="mini" type="primary" plain @click="handleAdd">添加列</el-button>
     <el-table key="list" :data="data" style="width: 100%" height="300">
       <el-table-column type="index" :index="1"></el-table-column>
       <el-table-column label="字段">
@@ -46,40 +47,33 @@
           ></el-input-number>
         </template>
       </el-table-column>
+      <el-table-column fixed="right" label="操作">
+        <template slot-scope="scope">
+          <el-button size="mini" plain @click="handleDel(scope.$index)">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
-    <el-form ref="form" label-width="80px" style="margin-top:20px">
-      <el-form-item label="数据源">
-        <el-input type="textarea" v-model="source"></el-input>
-      </el-form-item>
-      <el-form-item label="约束">
-        <el-input v-model="restrain"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="saveTp">保存</el-button>
-      </el-form-item>
-    </el-form>
   </div>
 </template>
 <script>
 export default {
-  props: ["node", "data"],
+  props: ["data"],
   data() {
-    return {
-      source: "",
-      restrain: ""
-    };
+    return {};
   },
-  created() {},
   methods: {
-    async saveTp() {
-      const ret = await this.API.templates({
-        data: {
-          tp_code: this.node.node_name,
-          route_setting: this.restrain,
-          data_list: this.source
-        },
-        method: "put"
+    handleAdd() {
+      this.data.push({
+        field: "",
+        name: "",
+        width: 120,
+        show: "1",
+        align: "left",
+        number: 0
       });
+    },
+    handleDel(index) {
+      this.data.splice(index, 1);
     }
   }
 };

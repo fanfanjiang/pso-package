@@ -32,7 +32,7 @@
         ></el-pagination>
       </div>
     </div>
-    <div class="pso-tag__r">
+    <div class="pso-tag__r" v-loading="loading">
       <div class="pso-tag__contet" v-if="curTag">
         <div class="pso-tag__tab">
           <el-tabs v-model="curTab">
@@ -168,11 +168,17 @@ export default {
       this.saveHandler(data);
     },
     async saveHandler(subData) {
+      this.loading = true;
       const data = { ...subData, node_id: this.node.node_id };
       data.tag_config = JSON.stringify({ tag_set: data.tag_set, tag_source: data.tag_source });
       delete data.tag_source;
       delete data.tag_set;
+
       const ret = await this.API.updateTag(data);
+      this.$notify({ title: ret.success ? "成功" : "失败", type: ret.success ? "success" : "warning" });
+      
+      this.loading = false;
+
       this.fetch();
     }
   }

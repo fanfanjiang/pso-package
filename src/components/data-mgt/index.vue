@@ -1,67 +1,63 @@
 <template>
   <div class="pso-data-mgmt">
-    <div class="pso-data-mgmt__tree" v-bar>
-      <div>
-        <pso-tree-common
-          ref="tree"
-          :request-options="treeOptions"
-          :default-node-data="defaultNodeData"
-          :auto-edit="false"
-          @before-node-new="showWorksheetSelector=true"
-          @after-node-new="handleAfterNewdNode"
-          @node-click="nodeClickHandler"
-        ></pso-tree-common>
-      </div>
+    <div class="pso-data-mgmt__tree">
+      <pso-tree-common
+        ref="tree"
+        :request-options="treeOptions"
+        :default-node-data="defaultNodeData"
+        :auto-edit="false"
+        @before-node-new="showWorksheetSelector=true"
+        @after-node-new="handleAfterNewdNode"
+        @node-click="nodeClickHandler"
+      ></pso-tree-common>
     </div>
-    <div class="pso-data-mgmt__content" v-bar>
-      <div>
-        <div class="pso-dd" v-if="curNode">
-          <div class="pso-dd-header">
-            <pso-title>工作表：{{curNode.node_display}}</pso-title>
-            <div class="pso-dd-header__btns">
-              <el-button size="small" type="primary" plain @click="handleEditForm">设计表单</el-button>
-            </div>
+    <div class="pso-data-mgmt__content">
+      <div class="pso-dd" v-if="curNode">
+        <div class="pso-dd-header">
+          <pso-title>工作表：{{curNode.node_display}}</pso-title>
+          <div class="pso-dd-header__btns">
+            <el-button size="small" type="primary" plain @click="handleEditForm">设计表单</el-button>
           </div>
-          <div class="pso-dd-tab">
-            <el-tabs v-model="curTab">
-              <template v-if="!!curNode.is_leaf">
-                <el-tab-pane label="数据" name="preview"></el-tab-pane>
-                <el-tab-pane label="字段" name="field"></el-tab-pane>
-                <el-tab-pane label="列表" name="list"></el-tab-pane>
-                <el-tab-pane label="状态" name="status"></el-tab-pane>
-                <el-tab-pane label="发布" name="publish"></el-tab-pane>
-                <el-tab-pane label="属性" name="property"></el-tab-pane>
-              </template>
-              <el-tab-pane label="权限" name="auth"></el-tab-pane>
-            </el-tabs>
-          </div>
-          <div class="pso-dd-body" v-loading="saving">
+        </div>
+        <div class="pso-dd-tab">
+          <el-tabs v-model="curTab">
             <template v-if="!!curNode.is_leaf">
-              <pso-form-table
-                v-if="curTab==='preview'"
-                :cfg-id="curNode.node_name"
-                :auto-submit="true"
-                :read-only="false"
-              ></pso-form-table>
-              <form-field v-if="curTab==='field'" :data="tableData" :code="curNode.node_name"></form-field>
-              <form-column v-if="curTab==='list'" :data="colData" @save="saveConfig"></form-column>
-              <form-status v-if="curTab==='status'" :data="staData" @save="saveConfig"></form-status>
-              <form-publish
-                v-if="curTab==='publish'"
-                :data="pubCfg"
-                :node="curNode"
-                @save="saveConfig"
-              ></form-publish>
-              <form-property
-                v-if="curTab==='property'"
-                :data="property"
-                :fields="colData"
-                :store="formStore"
-                @save="saveConfig"
-              ></form-property>
+              <el-tab-pane label="数据" name="preview"></el-tab-pane>
+              <el-tab-pane label="字段" name="field"></el-tab-pane>
+              <el-tab-pane label="列表" name="list"></el-tab-pane>
+              <el-tab-pane label="状态" name="status"></el-tab-pane>
+              <el-tab-pane label="发布" name="publish"></el-tab-pane>
+              <el-tab-pane label="属性" name="property"></el-tab-pane>
             </template>
-            <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
-          </div>
+            <el-tab-pane label="权限" name="auth"></el-tab-pane>
+          </el-tabs>
+        </div>
+        <div class="pso-dd-body" v-loading="saving">
+          <template v-if="!!curNode.is_leaf">
+            <pso-form-table
+              v-if="curTab==='preview'"
+              :cfg-id="curNode.node_name"
+              :auto-submit="true"
+              :read-only="false"
+            ></pso-form-table>
+            <form-field v-if="curTab==='field'" :data="tableData" :code="curNode.node_name"></form-field>
+            <form-column v-if="curTab==='list'" :data="colData" @save="saveConfig"></form-column>
+            <form-status v-if="curTab==='status'" :data="staData" @save="saveConfig"></form-status>
+            <form-publish
+              v-if="curTab==='publish'"
+              :data="pubCfg"
+              :node="curNode"
+              @save="saveConfig"
+            ></form-publish>
+            <form-property
+              v-if="curTab==='property'"
+              :data="property"
+              :fields="colData"
+              :store="formStore"
+              @save="saveConfig"
+            ></form-property>
+          </template>
+          <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
         </div>
       </div>
     </div>
@@ -213,7 +209,6 @@ export default {
             const col = _.find(columns, { field_name: item.field_name });
             if (col) {
               item = Object.assign(item, col);
-              console.log(item);
             }
           });
         }
@@ -244,13 +239,11 @@ export default {
     async getListTableData(formStore) {
       const ret = await this.API.getFormDict({ data_code: this.curNode.node_name });
       if (!ret.success) return;
-      let number = 0;
       ret.data.forEach(item => {
         if (item) {
           const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
-          item.display_name = item.display_name || (field ? field._fieldName : "");
-          this.colData.push({ ...item, width: "", using: "1", is_show: "1", align: "left", number });
-          number++;
+          item.display = item.display_name || (field ? field._fieldName : "");
+          this.colData.push({ ...item, width: "", using: "1", show: "1", align: "left", number: 0, sortable: "0" });
         }
       });
     },

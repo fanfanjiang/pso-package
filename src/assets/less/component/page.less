@@ -2,12 +2,12 @@
     height: 100%;
     position: relative;
 
-    &.has-header { 
+    &.has-header {
         .pso-page-body {
             top: 41px;
         }
     }
-  
+
     .pso-page-header {
         position: absolute;
         left: 0;
@@ -27,10 +27,57 @@
         .pso-page__tree {
             height: 100%;
             min-width: 300px;
+            position: relative;
+            overflow-y: scroll;
+ 
+            &.narrow {
+                min-width: 200px;
+                width: 200px;
+            }
+
+            .pso-page__tree-header {
+                position: absolute;
+                top: 0;
+                left: 10px;
+                right: 20px;
+                background-color: #fff;
+                z-index: 1;
+
+                #tab-tree {
+                    padding-left: 50px;
+                }
+            }
+
+            .tag-list {
+                padding-top: 20px;
+                height: calc(100% - 30px);
+
+                .el-tabs {
+                    width: 100%;
+
+                    .el-tabs__header {
+                        width: 100%;
+                        padding-right: 4px;
+                    }
+
+                    .el-tabs__nav-wrap {
+                        &::after {
+                            width: 0;
+                        }
+                    }
+
+                    .is-active {
+                        background-color: #F5F5F7;
+                    }
+                }
+            }
+
         }
 
         .pso-page-body__content {
             flex: 1;
+            height: 100%;
+            overflow-y: scroll;
         }
     }
 
@@ -58,6 +105,8 @@
     }
 
     .pso-page-body__tabbody {
+        padding-top: 20px;
+
         >div {
             position: relative;
         }

@@ -1,0 +1,79 @@
+.pso-formTable {
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    padding: 15px;
+
+    .pso-formTable-sort {
+        .el-tag {
+            &+.el-tag {
+                margin-left: 10px;
+            }
+        }
+    }
+
+    .pso-formTable-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+        padding: 5px 10px;
+
+        .pso-formTable-header__left {
+            flex: 1;
+
+            .el-input {
+                width: 150px;
+            }
+        }
+    }
+
+    .pso-formTable-footer {
+        margin-top: 10px;
+        background-color: #fff;
+    }
+
+    .pso-formTable-formViewer {
+        padding: 15px;
+    }
+
+    .pso-drawer-footer__body {
+        text-align: right;
+    }
+
+    .pso-formTable__filter {
+        position: relative;
+
+        .pso-formTable__filter-body {
+            max-height: 400px;
+            overflow: scroll;
+            padding-bottom: 30px;
+        }
+
+        .pso-formTable__filter-footer {
+            position: absolute;
+            text-align: right;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+        }
+    }
+
+    .pso-formTable__setting {
+        max-height: 500px;
+        overflow: scroll;
+
+        .pso-formTable__setting-item {
+            &+.pso-formTable__setting-item {
+                margin-top: 15px;
+            }
+        }
+
+        .el-switch {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+}

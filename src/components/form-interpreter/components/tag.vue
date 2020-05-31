@@ -41,7 +41,7 @@ export default {
       return this.cpnt.data._source === "tree" ? "node_id" : "tag_no";
     },
     tagDisplayName() {
-      return this.cpnt.data._source === "tree" ? "node_name" : "tag_name";
+      return this.cpnt.data._source === "tree" ? "node_display" : "tag_name";
     }
   },
   watch: {
@@ -62,11 +62,11 @@ export default {
       let ret = { data: [] };
       let idName = "";
       if (this.cpnt.data._source === "tree") {
-        ret = await this.API.trees({ data: { node_id: "3", appid: "3", node_dimen: "NODEDIMEN05" } });
+        ret = await this.API.trees({ data: { dimen: 5 } });
         idName = "node_id";
         tagData = tagData.map(val => parseInt(val));
       } else {
-        ret = await this.API.tag({ data: { keys: JSON.stringify({}), start: 0, limit: 9999999 } });
+        ret = await this.API.tag({ data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } });
         idName = "tag_no";
       }
       ret.data.forEach(item => {
