@@ -31,6 +31,10 @@ export default {
 .pso-empty {
   text-align: center;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   > svg {
     width: 60px;
     margin: 0 auto;

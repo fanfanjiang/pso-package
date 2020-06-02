@@ -13,7 +13,7 @@ if (process.env.BABEL_ENV === 'development') {
                 lodash: '_',
                 xlsx: 'XLSX',
                 'video.js': 'videojs',
-                FileSaver: 'file-saver',
+                // FileSaver: 'file-saver',
             },
             // plugins: [new BundleAnalyzerPlugin()],
         },
@@ -36,7 +36,7 @@ if (process.env.BABEL_ENV === 'development') {
     }
 } else {
     config = {
-        configureWebpack: {
+        configureWebpack: { 
             externals: {
                 vue: 'Vue',
                 'element-ui': 'ELEMENT',
@@ -45,7 +45,7 @@ if (process.env.BABEL_ENV === 'development') {
                 lodash: '_',
                 xlsx: 'XLSX',
                 'video.js': 'videojs',
-                // 'file-saver': 'FileSaver'
+                // FileSaver: 'file-saver',
             },
             // plugins: [new BundleAnalyzerPlugin()],
         },

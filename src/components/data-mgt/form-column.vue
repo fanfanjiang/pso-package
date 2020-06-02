@@ -5,13 +5,13 @@
     </div>
     <el-table key="list" :data="data" style="width: 100%" height="500">
       <el-table-column type="index" :index="1"></el-table-column>
-      <el-table-column prop="field_name" label="字段" width="180"></el-table-column>
-      <el-table-column label="显示名名称">
+      <el-table-column prop="field_name" label="字段" width="120"></el-table-column>
+      <el-table-column label="显示名名称" width="200">
         <template slot-scope="scope">
           <el-input size="small" v-model="scope.row.display" placeholder></el-input>
         </template>
       </el-table-column>
-      <el-table-column label="列宽">
+      <el-table-column label="列宽" width="160">
         <template slot-scope="scope">
           <el-input-number
             size="small"
@@ -36,7 +36,12 @@
           <el-switch v-model="scope.row.sortable" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="对齐方式">
+      <el-table-column label="统计" width="100">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.cal" active-value="1" inactive-value="0"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column label="对齐方式" width="150">
         <template slot-scope="scope">
           <el-select size="small" v-model="scope.row.align">
             <el-option label="居中" value="center"></el-option>
@@ -45,7 +50,7 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="顺序">
+      <el-table-column label="顺序" width="160">
         <template slot-scope="scope">
           <el-input-number
             size="small"
@@ -53,6 +58,11 @@
             controls-position="right"
             :min="0"
           ></el-input-number>
+        </template>
+      </el-table-column>
+      <el-table-column label="响应地址" width="400">
+        <template slot-scope="scope">
+          <el-input size="small" v-model="scope.row.url" placeholder></el-input>
         </template>
       </el-table-column>
     </el-table>

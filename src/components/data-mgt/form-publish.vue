@@ -26,13 +26,34 @@
         </el-form-item>
       </el-form>
       <pso-title>表单链接</pso-title>
-      http://tongjihbzx.pusiou.com.cn/m/form/{{node.node_name}}
+      <p>{{SELFURL}}/form/{{node.node_name}}</p>
       <pso-title>链接二维码</pso-title>
+      <div>
+        <img :src="qrsrc" alt />
+      </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props: ["data", "node"]
+  props: ["data", "node"],
+  data() {
+    return {
+      qrsrc: ""
+    };
+  },
+  watch: {
+    "node.node_name"() {
+      this.genQR();
+    }
+  },
+  async created() {
+    this.qrsrc = await this.genQR(`${this.SELFURL}/form/${this.node.node_name}`);
+  },
+  methods: {
+    async genQR() {
+      return await QRCode.toDataURL(`${this.SELFURL}/form/${this.node.node_name}`);
+    }
+  }
 };
 </script>

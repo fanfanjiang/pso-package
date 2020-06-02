@@ -97,7 +97,7 @@ const components = {
     PsoTagMgt
 }
 
-const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3' } = {}) {
+const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', selfUrl } = {}) {
     Object.keys(components).map(key => {
         Vue.component(key, components[key]);
     })
@@ -109,6 +109,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
 
     Vue.prototype.createPDF = createPDF;
     Vue.prototype.APIURL = apiUrl;
+    Vue.prototype.SELFURL = selfUrl;
 
     BASEAPI.URL_PREFIX = apiPrefix;
     if (API && API.handleAuthError) {

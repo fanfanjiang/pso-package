@@ -29,7 +29,7 @@
               <div class="pso-formTable__setting-item" v-for="fItem of fields" :key="fItem.fid">
                 <el-switch
                   v-model="fItem.show"
-                  :inactive-text="fItem._fieldName"
+                  :inactive-text="fItem.display"
                   active-value="1"
                   inactive-value="0"
                 ></el-switch>
@@ -59,13 +59,15 @@
         <div class="pso-formTable-header__right">
           <el-button v-if="addable" type="primary" size="mini" round @click="newData">{{addBtnText}}</el-button>
           <el-button
-            v-if="checkbox"
+            v-if="selectable"
             type="primary"
             size="mini"
             round
             @click="selectConfirmHandler"
           >确定</el-button>
           <slot name="op"></slot>
+          <el-button type="primary" size="mini" round>归档</el-button>
+          <el-button type="primary" size="mini" round>撤销</el-button>
           <el-button type="primary" size="mini" round @click="print">导出EXCEL</el-button>
         </div>
       </div>
@@ -77,15 +79,17 @@
           style="width: 100%"
           size="small"
           border
-          height="570"
           :highlight-current-row="radio"
           :data="formData"
+          :summary-method="handleSummary"
+          :show-summary="showSummary"
           @row-click="instanceClick"
           @selection-change="handleSelectionChange"
           @sort-change="handleSort"
         >
           <template #default>
-            <el-table-column v-if="checkbox" type="selection" width="55"></el-table-column>
+            <el-table-column v-if="checkbox" type="selection" width="40"></el-table-column>
+            <el-table-column type="index" label="序号" :index="1" width="50"></el-table-column>
             <el-table-column
               resizable
               show-overflow-tooltip
@@ -98,7 +102,14 @@
               :align="field.align"
               :sortable="field.sortable==='1'?'custom':false"
             >
-              <template slot-scope="scope">{{decodeURIComponent(scope.row[field.field_name])}}</template>
+              <template slot-scope="scope">
+                <a
+                  v-if="field.url"
+                  href="javascript:;"
+                  @click.stop.prevent="handleUrlClick({row:scope.row,field})"
+                >{{getVal(scope.row[field.field_name])}}</a>
+                <span v-else>{{getVal(scope.row[field.field_name])}}</span>
+              </template>
             </el-table-column>
             <el-table-column v-if="operate" :label="opText" fixed="right">
               <template slot-scope="scope" v-if="deletable">
@@ -123,8 +134,8 @@
             layout="total, sizes, prev, pager, next, jumper"
             :page-sizes="[30,50,100,200,500]"
             :total="dataTotal"
-            :page-size="where.limit"
-            :current-page="where.start"
+            :page-size="defWhere.limit"
+            :current-page="defWhere.start"
             @size-change="sizeChangeHandler"
             @current-change="currentChangeHandler"
             @prev-click="prevClickHandler"
@@ -168,6 +179,7 @@ import PsoDatafilter from "../data-filter/index";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
 import XLSX from "xlsx";
+import Qs from "qs";
 
 export default {
   components: { PsoFormView: () => import("../form-interpreter"), PsoDatafilter },
@@ -200,9 +212,13 @@ export default {
     },
     checkbox: {
       type: Boolean,
-      default: false
+      default: true
     },
     readOnly: {
+      type: Boolean,
+      default: false
+    },
+    selectable: {
       type: Boolean,
       default: false
     },
@@ -214,7 +230,8 @@ export default {
     opText: {
       type: String,
       default: "操作"
-    }
+    },
+    where: Object
   },
   data() {
     return {
@@ -236,14 +253,15 @@ export default {
       keywords: "",
       dataId: "",
       saving: false,
-      where: {
-        limit: 30,
+      defWhere: {
+        limit: 15,
         page: 1
       },
       dataTotal: 0,
       selectedList: [],
       store: null,
-      sorts: []
+      sorts: [],
+      summary: null
     };
   },
   computed: {
@@ -251,6 +269,9 @@ export default {
       return this.fields.filter(
         item => item.show === "1" && (this.columnFilter ? this.columnFilter.indexOf(item.field_name) === -1 : true)
       );
+    },
+    showSummary() {
+      return this.summary;
     }
   },
   watch: {
@@ -261,7 +282,7 @@ export default {
         });
       }
     },
-    where: {
+    defWhere: {
       deep: true,
       handler() {
         this.getFormData();
@@ -275,6 +296,9 @@ export default {
     this.getFormCfg();
   },
   methods: {
+    getVal(val) {
+      return _.isNull(val) ? "" : decodeURIComponent(val);
+    },
     async getFormCfg() {
       this.initializing = true;
       const ret = await this.API.formsCfg({ data: { id: this.cfgId }, method: "get" });
@@ -310,19 +334,32 @@ export default {
           }
         });
       }
+      this.fields = _.orderBy(this.fields, ["number"], ["asc"]);
 
       await this.getFormData();
     },
     async getFormData() {
       this.loadingTable = true;
+
       const order = this.sorts.map(item => `${item.prop} ${item.order}`).join(",");
+
+      const parameters = {
+        form_code: this.cfg.data_code,
+        limit: this.defWhere.limit,
+        page: this.defWhere.page - 1,
+        orderby: order ? `order by ${order}` : ""
+      };
+
+      if (this.where) {
+        parameters.keys = {};
+        for (let key in this.where) {
+          parameters.keys[key] = { value: this.where[key], type: 1 };
+        }
+        parameters.keys = JSON.stringify(parameters.keys);
+      }
+
       const ret = await this.API.form({
-        data: {
-          form_code: this.cfg.data_code,
-          limit: this.where.limit,
-          page: this.where.page - 1,
-          orderby: order ? `order by ${order}` : ""
-        },
+        data: parameters,
         method: "get"
       });
 
@@ -330,21 +367,30 @@ export default {
         await this.dataPovider(ret.data);
       }
       this.loadingTable = false;
-      this.formData = ret.data;
-      this.dataTotal = ret.total;
+      if (ret.success) {
+        this.formData = ret.data;
+        this.dataTotal = ret.total;
+
+        if (ret.sum) {
+          this.summary = ret.sum;
+        } else {
+          this.summary = null;
+        }
+      }
+
       this.$emit("data-loaded");
     },
     sizeChangeHandler(size) {
-      this.where.limit = size;
+      this.defWhere.limit = size;
     },
     currentChangeHandler(page) {
-      this.where.page = page;
+      this.defWhere.page = page;
     },
     prevClickHandler() {
-      this.where.page -= 1;
+      this.defWhere.page -= 1;
     },
     nextClickHandler() {
-      this.where.page += 1;
+      this.defWhere.page += 1;
     },
     async goFilter() {
       this.showFilter = false;
@@ -438,6 +484,22 @@ export default {
         this.sorts.push({ prop, order, name: _.find(this.fields, { field_name: prop }).display });
       }
       this.getFormData();
+    },
+    handleUrlClick({ row, field }) {
+      window.open(`${field.url}?${Qs.stringify({ [field.field_name]: row[field.field_name] })}`);
+    },
+    handleSummary({ columns }) {
+      const indexs = new Array(columns.length).fill("");
+      if (this.summary) {
+        for (let key in this.summary) {
+          const index = _.findIndex(columns, { property: key });
+          console.log(index);
+          if (index !== -1) {
+            indexs[index] = this.summary[key];
+          }
+        }
+      }
+      return indexs;
     }
   }
 };

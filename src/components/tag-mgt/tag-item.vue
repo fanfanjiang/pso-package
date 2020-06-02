@@ -9,14 +9,20 @@
         v-loading="loadingTable"
         :data="data"
         style="width: 100%"
-        height="500"
+        height="470"
         @row-click="instanceClick"
       >
         <el-table-column prop="tag_name" label="标签名"></el-table-column>
-        <el-table-column prop="tag_type" label="标签类型"></el-table-column>
-        <el-table-column label="操作" fixed="right">
+        <el-table-column prop="tag_type" label="标签类型" width="80"></el-table-column>
+        <el-table-column label="操作" fixed="right" width="50">
           <template slot-scope="scope">
-            <el-button size="mini" type="danger" @click="delHandler(scope.row)">删除</el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              circle
+              @click="delHandler(scope.row)"
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -176,7 +182,7 @@ export default {
 
       const ret = await this.API.updateTag(data);
       this.$notify({ title: ret.success ? "成功" : "失败", type: ret.success ? "success" : "warning" });
-      
+
       this.loading = false;
 
       this.fetch();

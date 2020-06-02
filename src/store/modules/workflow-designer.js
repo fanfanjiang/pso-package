@@ -168,7 +168,7 @@ export default {
                 }
             }
             traverse(node);
-            
+
             const data = {
                 pid: state.pid,
                 node_id: state.node_id,
@@ -223,7 +223,7 @@ export default {
             state.initializing = false;
         },
         async [MUT_TYPES.WF_FORM_SELECT]({ state, getters, commit }, { id, reset = true }) {
-
+            console.log(state.formsList);
             state.formName = _.find(state.formsList, { node_name: id }).node_display;
             state.loading = true;
 

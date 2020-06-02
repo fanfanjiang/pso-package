@@ -68,6 +68,7 @@
         :selection-type="selectionType"
         :addable="cpnt.data._new"
         :edtail-editable="false"
+        selectable
         @selection-confirm="handleAddSelection"
       ></pso-form-table>
     </el-dialog>

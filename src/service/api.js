@@ -18,15 +18,14 @@ export default class API {
             const ret = await axios({ method, url, data });
             const message = ret.msg || ret.message;
             if (!ret.success && message) {
-                Message({ showClose: true, message, type: 'warning' });
+                // Message({ showClose: true, message, type: 'warning' });
             }
             return ret;
         } catch (error) {
-            console.log(error);
             if (error.response && error.response.status === 401) {
                 Message({ showClose: true, message: '登录过期，请重新登录', type: 'warning' });
             } else {
-                Message({ showClose: true, message: '数据请求失败，请稍后再试', type: 'error' })
+                // Message({ showClose: true, message: '数据请求失败，请稍后再试', type: 'error' })
             }
         }
     }
@@ -306,7 +305,7 @@ export default class API {
     static async getFormTree() {
         try {
             const ret = await this.trees({ data: { appid: 'Main', dimen: "3" } });
-            return ret.data.tagtree.filter(node => (node.data_type || 'common').toUpperCase() === "NODEDIMEN03" && node.is_leaf);
+            return ret.data.tagtree.filter(node => node.is_leaf);
         } catch (error) {
             throw error;
         }

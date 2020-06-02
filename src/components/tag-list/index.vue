@@ -5,7 +5,7 @@
         <div style="padding-top:40px">
           <div class="pso-page__tree-header">
             <el-tabs v-model="curTab">
-              <el-tab-pane label="树" name="tree"></el-tab-pane>
+              <el-tab-pane label="分类" name="tree"></el-tab-pane>
               <el-tab-pane label="标签" name="tag"></el-tab-pane>
             </el-tabs>
           </div>
@@ -86,9 +86,10 @@ export default {
       const ret = await this.API.tag({ data: { tag_code: this.curNode.node_id } });
       if (ret.success) {
         this.tags = ret.data;
+        this.curTag = this.tags[0];
       }
       this.loading = false;
-    },
+    }, 
     handleTagClick(tag) {
       this.curTag = _.find(this.tags, { tag_no: tag.name });
     }

@@ -22,17 +22,13 @@
           </div>
           <div class="pso-page-body__tab">
             <el-tabs v-model="curTab">
-              <el-tab-pane v-if="!!curNode.is_leaf" label="属性" name="param"></el-tab-pane>
-              <el-tab-pane label="权限设置" name="auth"></el-tab-pane>
+              <el-tab-pane label="属性" name="param"></el-tab-pane>
+              <el-tab-pane label="权限" name="auth"></el-tab-pane>
             </el-tabs>
           </div>
           <div class="pso-page-body__body">
             <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
-            <div
-              class="pso-menu-param"
-              v-if="curTab==='param'&&!!curNode.is_leaf"
-              v-loading="saving||loadingInfo"
-            >
+            <div class="pso-menu-param" v-if="curTab==='param'" v-loading="saving||loadingInfo">
               <el-form label-position="left" label-width="80px">
                 <pso-title>基本参数</pso-title>
                 <el-form-item label="菜单名称">
@@ -53,36 +49,39 @@
                     :min="0"
                   ></el-input-number>
                 </el-form-item>
-                <el-form-item label="打开方式">
-                  <el-select size="small" v-model="curNode.open_type">
-                    <el-option
-                      v-for="item in OPEN_TYPE"
-                      :key="item.v"
-                      :label="item.n"
-                      :value="item.v"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="菜单类型">
-                  <el-select size="small" v-model="curNode.menu_type">
-                    <el-option
-                      v-for="item in MENU_TYPE"
-                      :key="item.v"
-                      :label="item.n"
-                      :value="item.v"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-                <plug-set
-                  v-if="curNode.menu_type===MENU_TYPE[0].v"
-                  :data="curTpDetail"
-                  :node="curNode"
-                  @change="handleTagChange"
-                  field="menu_link"
-                ></plug-set>
-                <el-form-item v-else label="菜单链接">
-                  <el-input v-model="curNode.menu_link" autocomplete="off"></el-input>
-                </el-form-item>
+                <div v-if="!!curNode.is_leaf">
+                  <el-form-item label="打开方式">
+                    <el-select size="small" v-model="curNode.open_type">
+                      <el-option
+                        v-for="item in OPEN_TYPE"
+                        :key="item.v"
+                        :label="item.n"
+                        :value="item.v"
+                      ></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="菜单类型">
+                    <el-select size="small" v-model="curNode.menu_type">
+                      <el-option
+                        v-for="item in MENU_TYPE"
+                        :key="item.v"
+                        :label="item.n"
+                        :value="item.v"
+                      ></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <plug-set
+                    v-if="curNode.menu_type===MENU_TYPE[0].v"
+                    :data="curTpDetail"
+                    :node="curNode"
+                    @change="handleTagChange"
+                    field="menu_link"
+                  ></plug-set>
+                  <el-form-item v-else label="菜单链接">
+                    <el-input v-model="curNode.menu_link" autocomplete="off"></el-input>
+                  </el-form-item>
+                </div>
+
                 <div class="pso-menu-param__controller">
                   <el-button type="primary" @click="updateNode" size="mini">保存</el-button>
                 </div>
@@ -155,9 +154,9 @@ export default {
       return this.curNode.menu_type === this.MENU_TYPE[0].v && this.curNode.menu_link;
     }
   },
-  async created() {
+  async created() { 
     this.loadingBar = true;
-    const ret = await this.API.getBar({ menu: true });
+    const ret = await this.API.getBar({ menu: true, data_type: this.params.data_type }); 
     if (ret.success) {
       this.defBar = ret.data.map(item => {
         return {
@@ -172,20 +171,20 @@ export default {
     async nodeClickHandler(nodeData) {
       this.curNode = nodeData;
 
-      if (nodeData.is_leaf) {
-        this.loadingInfo = true;
-        const ret = await this.API.getMenuInfo({ menu_code: nodeData.node_name });
-        if (ret.success) {
-          for (let key in ret.data) {
-            this.$set(this.curNode, key, ret.data[key]);
-          }
+      this.loadingInfo = true;
+      const ret = await this.API.getMenuInfo({ menu_code: nodeData.node_name });
+      if (ret.success) {
+        for (let key in ret.data) {
+          this.$set(this.curNode, key, ret.data[key]);
+        }
+        if (nodeData.is_leaf) {
           if (this.curNode.param_value) {
             this.curTpDetail = JSON.parse(this.curNode.param_value);
           }
+        } else {
+          // this.curTab = "auth";
         }
         this.loadingInfo = false;
-      } else {
-        this.curTab = "auth";
       }
     },
     async updateNode() {

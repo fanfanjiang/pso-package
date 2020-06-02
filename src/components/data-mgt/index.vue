@@ -209,6 +209,8 @@ export default {
             const col = _.find(columns, { field_name: item.field_name });
             if (col) {
               item = Object.assign(item, col);
+              // item.show = item.is_show;
+              // delete item.is_show
             }
           });
         }
@@ -243,7 +245,7 @@ export default {
         if (item) {
           const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
           item.display = item.display_name || (field ? field._fieldName : "");
-          this.colData.push({ ...item, width: "", using: "1", show: "1", align: "left", number: 0, sortable: "0" });
+          this.colData.push({ ...item, width: "", using: "1", show: "1", align: "left", number: 0, sortable: "0", url: "", cal: "0" });
         }
       });
     },

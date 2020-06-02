@@ -1,6 +1,6 @@
 
 import html2Canvas from 'html2canvas'
-// jspdf需要从外部直接引入，window.jsPDF
+
 export default function (ref, title = 'pdf') {
     if (typeof ref === 'string') ref = document.querySelector(ref);
     html2Canvas(ref, {

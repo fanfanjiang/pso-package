@@ -28,6 +28,11 @@
           <el-switch v-model="scope.row.show" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
+      <el-table-column label="统计" width="100">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.cal" active-value="1" inactive-value="0"></el-switch>
+        </template>
+      </el-table-column>
       <el-table-column label="对齐方式">
         <template slot-scope="scope">
           <el-select size="small" v-model="scope.row.align">
@@ -68,6 +73,7 @@ export default {
         name: "",
         width: 120,
         show: "1",
+        cal: "0",
         align: "left",
         number: 0
       });

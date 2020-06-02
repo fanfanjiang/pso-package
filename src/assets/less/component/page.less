@@ -29,7 +29,7 @@
             min-width: 300px;
             position: relative;
             overflow-y: scroll;
- 
+
             &.narrow {
                 min-width: 200px;
                 width: 200px;
@@ -58,6 +58,13 @@
                     .el-tabs__header {
                         width: 100%;
                         padding-right: 4px;
+                    }
+
+                    .el-tabs__nav {
+                        >div {
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
                     }
 
                     .el-tabs__nav-wrap {
