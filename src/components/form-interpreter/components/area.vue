@@ -1,6 +1,6 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-cascader v-if="show" v-model="proxy" :props="props" filterable></el-cascader>
+    <el-cascader size="small" v-if="show" v-model="proxy" :props="props" filterable></el-cascader>
   </el-form-item>
 </template>
 <script>

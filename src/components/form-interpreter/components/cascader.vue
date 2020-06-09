@@ -1,6 +1,7 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
     <el-cascader
+      size="small"
       filterable
       clearable
       :props="props"

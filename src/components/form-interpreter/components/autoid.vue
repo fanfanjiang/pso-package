@@ -1,6 +1,6 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-input disabled :value="cpnt.data._val"></el-input>
+    <el-input size="small" disabled :value="cpnt.data._val"></el-input>
   </el-form-item>
 </template>
 <script>

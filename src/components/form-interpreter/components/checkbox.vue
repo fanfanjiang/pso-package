@@ -2,6 +2,7 @@
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
     <el-checkbox-group v-model="cpnt.data._val">
       <el-checkbox
+        size="small"
         v-for="opt in cpnt.data._option"
         :key="opt._optionValue"
         :label="opt._optionName||opt._optionValue"

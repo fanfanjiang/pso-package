@@ -3,6 +3,7 @@
     <common-panel :cpnt="cpnt" info="关联相关工作表，可以从中引用或创建记录，如：订单关联商品" :needDefaultValue="false">
       <el-form-item label="选择工作表" v-loading="loading">
         <el-select
+          size="small"
           v-model="cpnt.data._option"
           filterable
           placeholder="请选择"
@@ -21,7 +22,7 @@
         <el-radio v-model="cpnt.data._type" :label="2">多条</el-radio>
       </el-form-item>
       <el-form-item label="选择显示字段" v-loading="loading">
-        <el-select multiple v-model="showFields" placeholder="请选择" :key="cpnt.fid">
+        <el-select size="small" multiple v-model="showFields" placeholder="请选择" :key="cpnt.fid">
           <el-option
             v-for="item in cpnt.cache.fieldOptions"
             :key="item._fieldValue"

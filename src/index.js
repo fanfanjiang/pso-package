@@ -1,5 +1,5 @@
 import './assets/theme/index.css';
-
+  
 import Vuebar from 'vuebar';
 import 'muse-ui/lib/styles/base.less';
 import 'muse-ui/lib/styles/theme.less';
@@ -34,6 +34,7 @@ import PsoNodeauth from "./components/node-auth";
 import PsoMenuMgt from "./components/menu-mgt";
 import PsoTreeDimen from "./components/tree-dimen";
 import PsoTagMgt from "./components/tag-mgt";
+import PsoKnowlMgt from "./components/knowl-mgt";
 
 //表单组件
 import PsoFormTable from "./components/form-table";
@@ -94,7 +95,8 @@ const components = {
     PsoNodeauth,
     PsoMenuMgt,
     PsoTreeDimen,
-    PsoTagMgt
+    PsoTagMgt,
+    PsoKnowlMgt
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', selfUrl } = {}) {

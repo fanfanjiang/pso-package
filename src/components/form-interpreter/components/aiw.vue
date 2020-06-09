@@ -1,6 +1,6 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-input type="text" :disabled="true" :value="transWords"></el-input>
+    <el-input size="small" type="text" :disabled="true" :value="transWords"></el-input>
   </el-form-item>
 </template>
 <script>

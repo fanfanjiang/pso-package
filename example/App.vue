@@ -8,7 +8,7 @@ export default {
   created() {
     $("body")
       .removeClass()
-      .addClass(`pso-theme-E56281`);
+      .addClass(`pso-theme-2D8CF0`);
   }
 };
 </script>

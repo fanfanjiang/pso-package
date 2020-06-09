@@ -3,20 +3,13 @@
     <panel-header :icon="cpnt.CPNT.icon" :name="cpnt.CPNT.name" :info="info"></panel-header>
     <el-form :label-position="'top'" label-width="80px" :model="cpnt.data">
       <el-form-item label="名称">
-        <el-input v-model.trim="cpnt.data._fieldName" clearable></el-input>
+        <el-input size="small" v-model.trim="cpnt.data._fieldName" clearable></el-input>
       </el-form-item>
-      <el-form-item label="字典名称">
-        <el-input
-          v-model.trim="cpnt.data._fieldValue"
-          :disabled="!cpnt.data._fvEditable||(!!cpnt.store.data_id&&!cpnt.add)"
-          clearable
-        ></el-input>
+      <el-form-item v-if="needPlaceholder" label="引导文字">
+        <el-input size="small" v-model="cpnt.data._placeholder" clearable></el-input>
       </el-form-item>
-      <el-form-item v-if="needDefaultValue" :label="defalutValueLabel">
-        <el-input v-model="cpnt.data._defaultValue" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="字段格式">
-        <el-select v-model="cpnt.data._fieldFormat" placeholder="请选择">
+      <el-form-item label="字段类型">
+        <el-select size="small" v-model="cpnt.data._fieldFormat" placeholder="请选择">
           <el-option
             v-for="item in FIELD_FORMAT"
             :key="item.value"
@@ -25,25 +18,34 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="输出格式">
-        <el-input :clearable="true" type="textarea" v-model.trim="cpnt.data._outputFormat"></el-input>
-      </el-form-item>
-      <el-form-item label="转换字段集">
-        <el-input :clearable="true" type="textarea" v-model.trim="cpnt.data._transFields"></el-input>
+      <el-form-item v-if="needDefaultValue" :label="defalutValueLabel">
+        <el-input size="small" v-model="cpnt.data._defaultValue" clearable></el-input>
       </el-form-item>
       <slot></slot>
       <el-form-item label="验证">
-        <el-checkbox v-model="cpnt.data._required" :true-label="true" :false-label="false">必填</el-checkbox>
         <el-checkbox
+          size="small"
+          v-model="cpnt.data._required"
+          :true-label="true"
+          :false-label="false"
+        >必填</el-checkbox>
+        <el-checkbox
+          size="small"
           v-if="needUnique"
           v-model="cpnt.data._unique"
           :true-label="true"
           :false-label="false"
         >不允许重复</el-checkbox>
+        <el-input size="small" placeholder="正则验证" v-model="cpnt.data._regular" clearable></el-input>
       </el-form-item>
       <el-form-item label="权限">
         <div class="act-panel_check">
-          <el-checkbox v-model="cpnt.data._read" :true-label="true" :false-label="false">用户只读</el-checkbox>
+          <el-checkbox
+            size="small"
+            v-model="cpnt.data._read"
+            :true-label="true"
+            :false-label="false"
+          >用户只读</el-checkbox>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">
               设为只读的字段将不允许被用户直接编辑。
@@ -54,6 +56,7 @@
         </div>
         <div class="act-panel_check">
           <el-checkbox
+            size="small"
             v-model="cpnt.data._hideOnNew"
             :true-label="true"
             :false-label="false"
@@ -68,18 +71,44 @@
           </el-tooltip>
         </div>
         <div class="act-panel_check">
-          <el-checkbox v-model="cpnt.data._hideForever" :true-label="true" :false-label="false">永久隐藏</el-checkbox>
+          <el-checkbox
+            size="small"
+            v-model="cpnt.data._hideForever"
+            :true-label="true"
+            :false-label="false"
+          >永久隐藏</el-checkbox>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">通常用于隐藏一些不需要用户填入的字段。</div>
             <i class="tip el-icon-question"></i>
           </el-tooltip>
         </div>
       </el-form-item>
-      <el-form-item v-if="needPlaceholder" label="引导文字">
-        <el-input v-model="cpnt.data._placeholder" clearable></el-input>
+      <el-form-item label="字典名称">
+        <el-input
+          size="small"
+          v-model.trim="cpnt.data._fieldValue"
+          :disabled="!cpnt.data._fvEditable||(!!cpnt.store.data_id&&!cpnt.add)"
+          clearable
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="输出格式">
+        <el-input
+          size="small"
+          :clearable="true"
+          type="textarea"
+          v-model.trim="cpnt.data._outputFormat"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="转换字段集">
+        <el-input
+          size="small"
+          :clearable="true"
+          type="textarea"
+          v-model.trim="cpnt.data._transFields"
+        ></el-input>
       </el-form-item>
       <el-form-item label="字段说明">
-        <el-input type="textarea" :rows="2" v-model="cpnt.data._fieldInfo" clearable></el-input>
+        <el-input size="small" type="textarea" :rows="2" v-model="cpnt.data._fieldInfo" clearable></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -111,7 +140,7 @@ export default {
     },
     needUnique: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   components: {

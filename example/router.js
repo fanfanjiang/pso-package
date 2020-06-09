@@ -70,6 +70,12 @@ const router = new Router({
       props: organizeParams
     },
     {
+      path: '/knowl-mgt',
+      name: 'knowlMgt',
+      component: () => import('./views/knowl-mgt'),
+      props: organizeParams
+    },
+    {
       path: '/workflow',
       name: 'workflow',
       component: () => import('./views/workflow'),

@@ -1,0 +1,70 @@
+.pso-drawer {
+    height: 100vh;
+    position: relative;
+ 
+    .pso-drawer-header {
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        #gradient.horizontal(@main-color, #f56c6c);
+        height: 50px;
+        padding: 0 15px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 0;
+
+        .pso-drawer-title__icon {
+            margin-right: 6px;
+        }
+
+        .pso-drawer-close {
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.2s ease-in;
+
+            &:hover {
+                transform: rotate(90deg);
+                transition: all 0.2s ease-in;
+            }
+        }
+    }
+
+    .pso-drawer-body__wrapper {
+        position: absolute !important;
+        top: 50px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+    }
+
+    .pso-drawer-body {
+        position: absolute !important;
+        background-color: #f8f8f8;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+    }
+
+    .pso-drawer-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.12);
+        z-index: 2;
+    }
+}
+
+.el-drawer__header {
+    display: none !important;
+}
+
+.el-divider__text {
+    background-color: #f8f8f8;
+}

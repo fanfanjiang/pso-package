@@ -52,7 +52,7 @@ export default {
   computed: {
     numOptions() {
       return this.cpnt.store.search({
-        options: { figure: true },
+        options: { db: true },
         onlyData: true,
         beforePush: item => {
           if (item.fid === this.cpnt.fid) return false;

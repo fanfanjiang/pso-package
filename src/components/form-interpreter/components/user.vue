@@ -1,6 +1,6 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <div class="pso-form-user-selectedlist" v-if="!loading">
+    <div class="pso-form-user-selectedlist" v-if="!loading&&proxy.list.length">
       <el-tag
         v-for="item in proxy.list"
         :key="item.user_id"
@@ -8,7 +8,7 @@
         @close="handleDelSelection(item)"
       >{{item.user_name}}</el-tag>
     </div>
-    <pso-skeleton v-else :lines="1"></pso-skeleton>
+    <pso-skeleton v-if="loading" :lines="1"></pso-skeleton>
     <pso-picker-user
       v-if="storeEditable&&!cpnt.data._read"
       :pattern="cpnt.data._type"

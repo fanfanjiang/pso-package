@@ -37,10 +37,10 @@ export const formOp = {
         }
     },
     methods: {
-        async makeFormStore(id) {
+        async makeFormStore(id, options = { designMode: false }) {
             const ret = await this.API.formsCfg({ data: { id }, method: "get" });
             if (!ret.success) return;
-            this.formStore = new FormStore(ret.data);
+            this.formStore = new FormStore({ ...ret.data, options });
             return this.formStore;
         }
     }

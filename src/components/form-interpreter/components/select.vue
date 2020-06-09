@@ -1,6 +1,7 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
     <el-select
+      size="small"
       v-if="cpnt.data._showType==='select'"
       :disabled="!cpnt.store.editable||cpnt.data._read"
       v-model="cpnt.data._val"
@@ -13,7 +14,7 @@
         :value="opt._optionValue"
       ></el-option>
     </el-select>
-    <el-radio-group v-else v-model="cpnt.data._val">
+    <el-radio-group size="small" v-else v-model="cpnt.data._val">
       <el-radio
         :label="opt._optionName||opt._optionValue"
         :disabled="!cpnt.store.editable||cpnt.data._read"

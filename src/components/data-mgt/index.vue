@@ -16,6 +16,7 @@
         <div class="pso-dd-header">
           <pso-title>工作表：{{curNode.node_display}}</pso-title>
           <div class="pso-dd-header__btns">
+            <el-button size="small" type="primary" plain @click="saveConfig">保存设置</el-button>
             <el-button size="small" type="primary" plain @click="handleEditForm">设计表单</el-button>
           </div>
         </div>
@@ -28,6 +29,7 @@
               <el-tab-pane label="状态" name="status"></el-tab-pane>
               <el-tab-pane label="发布" name="publish"></el-tab-pane>
               <el-tab-pane label="属性" name="property"></el-tab-pane>
+              <el-tab-pane label="显示规则" name="rule"></el-tab-pane>
             </template>
             <el-tab-pane label="权限" name="auth"></el-tab-pane>
           </el-tabs>
@@ -56,6 +58,7 @@
               :store="formStore"
               @save="saveConfig"
             ></form-property>
+            <form-rule v-if="curTab==='rule'&&formStore" :store="formStore" :rules="rules"></form-rule>
           </template>
           <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
         </div>
@@ -101,6 +104,7 @@ import FormColumn from "./form-column";
 import FormStatus from "./form-status";
 import FormPublish from "./form-publish";
 import FormProperty from "./form-property";
+import FormRule from "./form-rule";
 
 const _DATA = {
   tableData: [],
@@ -125,12 +129,24 @@ const _DATA = {
     cal_source_main_form: "",
     cal_source_leaf_form: "",
     cal_end_leaf_form: ""
-  }
+  },
+  rules: []
 };
 
 export default {
   mixins: [formOp],
-  components: { PsoFormTable, FormField, PsoNodeauth, PsoTitle, PsoFormAttach, FormColumn, FormStatus, FormPublish, FormProperty },
+  components: {
+    PsoFormTable,
+    FormField,
+    PsoNodeauth,
+    PsoTitle,
+    PsoFormAttach,
+    FormColumn,
+    FormStatus,
+    FormPublish,
+    FormProperty,
+    FormRule
+  },
   props: {
     params: {
       type: Object,
@@ -214,6 +230,10 @@ export default {
             }
           });
         }
+
+        if (cfg.rule_config) {
+          this.rules = JSON.parse(cfg.rule_config);
+        }
       }
     },
     nodeClickHandler(data) {
@@ -251,11 +271,33 @@ export default {
     },
     async saveConfig() {
       this.saving = true;
+
+      //提取规则参数
+      const rules = [];
+      this.rules.forEach(item => {
+        const rule = {
+          controlIds: item.controlIds,
+          filters: [],
+          type: item.type
+        };
+        item.filters.forEach(fitem => {
+          rule.filters.push({
+            id: fitem.id,
+            name: fitem.name,
+            cid: fitem.cid,
+            op: fitem.op,
+            val: fitem.val
+          });
+        });
+        rules.push(rule);
+      });
+
       const ret = await this.API.updateFormTree({
         data_code: this.curNode.node_name,
         display_columns: JSON.stringify(this.colData),
         status_config: JSON.stringify(this.staData),
         pub_config: JSON.stringify(this.pubCfg),
+        rule_config: JSON.stringify(rules),
         ...this.property
       });
       this.saving = false;

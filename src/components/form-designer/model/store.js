@@ -22,6 +22,10 @@ export default class FormStore {
         this.editable = true;
         this.forceInsertSys = true;
 
+        this.designMode = true; //设计模式
+
+        this.rule_config;
+
         this.cpntsDataMps = {};
 
         for (let option in options) {
@@ -36,8 +40,12 @@ export default class FormStore {
             this.data_config = JSON.parse(this.data_config);
         }
 
+        if (this.rule_config && typeof this.rule_config === 'string') {
+            this.rule_config = JSON.parse(this.rule_config);
+        }
+
         //对原始表单配置进行保存
-        if (this.data_id && this.data_config) {
+        if (this.data_id && this.data_config && this.designMode) {
             this.traverse(this.data_config, (cpnt, parent) => {
                 if (CPNT[cpnt.componentid].db || CPNT[cpnt.componentid].host_db) {
                     const cloned = _.cloneDeep(cpnt);
@@ -70,8 +78,10 @@ export default class FormStore {
             }
         }
 
-        this.setCurrentCpnt(this.root);
-        this.redoList.push(_.cloneDeep(this.root.data.children));
+        if (this.designMode) {
+            this.setCurrentCpnt(this.root);
+            this.redoList.push(_.cloneDeep(this.root.data.children));
+        }
     }
 
     get fid() {
@@ -123,6 +133,8 @@ export default class FormStore {
                 }
             }
         }
+
+        this.setShowByRules();
     }
 
     reload(data) {
@@ -186,6 +198,48 @@ export default class FormStore {
             }
         }
         return resault;
+    }
+
+    setShowByRules(cpnt) {
+
+        const rules = this.rule_config;
+
+        if (rules && rules.length) {
+            rules.forEach(r => {
+                if (!r.filtersIds) {
+                    r.filtersIds = _.map(r.filters, 'id');
+                }
+
+                let show = false;
+
+                if (cpnt && r.filtersIds.indexOf(cpnt.data._fieldValue) !== -1) {
+                    const conditions = [];
+                    r.filters.forEach(f => {
+                        let condition = false;
+                        const _cpnt = this.search({ options: { fid: f.id } });
+
+                        if (_cpnt) {
+                            const op = _cpnt.CPNT.fop[f.op];
+                            switch (op.id) {
+                                case 'op1':
+                                    condition = _cpnt.data._val === f.val
+                                    break;
+                            }
+                        }
+
+                        conditions.push(condition);
+                    })
+                    show = conditions[r.type === 1 ? 'every' : "some"](i => i);
+                }
+
+                r.controlIds.forEach(fid => {
+                    const _cpnt = this.search({ options: { fid } });
+                    if (_cpnt) {
+                        Vue.set(_cpnt.data, 'showInRules', show)
+                    }
+                })
+            })
+        }
     }
 
     undo() {

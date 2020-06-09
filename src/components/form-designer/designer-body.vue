@@ -11,7 +11,7 @@
                   <div class="fd__menu-section-title">{{cpnList.title}}</div>
                   <div class="fd__menu-section-body" v-if="!roloadingMenu">
                     <el-row
-                      :gutter="20"
+                      :gutter="1"
                       class="dropable"
                       id="formDesignerMenu"
                       put="false"
@@ -19,7 +19,7 @@
                       sort="false"
                     >
                       <el-col
-                        :span="12"
+                        :span="8"
                         :class="['dragable',...cpnt.class]"
                         v-for="cpnt in cpnList.children"
                         :key="cpnt.name"
@@ -80,38 +80,24 @@ export default {
       type: Object,
       default: () => {
         return {
-          常用控件: [
-            "text",
-            "number",
-            "money",
-            "select",
-            "checkbox",
-            "cascader",
-            "time",
-            "phone",
-            "email",
-            "area",
-            "attachment",
-            "user",
-            "department"
-          ],
+          常用控件: ["text", "number", "money", "select", "checkbox", "time", "area", "attachment", "user", "department", "rich"],
           布局控件: ["row", "div"],
           高级控件: [
-            "table",
+            // "table",
             "asstable",
             "summary",
             "assfield",
             "formula",
             "tag",
             "autoid",
-            "unit",
+            // "unit",
             "rate",
-            "timerange",
-            "credential",
-            "rich",
+            // "timerange",
+            // "credential",
+            // "cascader",
             "signature"
           ],
-          特殊控件: ["section", "remark", "aiw"]
+          特殊控件: ["section", "remark", "aiw", "phone", "email"]
         };
       }
     },
@@ -278,18 +264,19 @@ export default {
       width: 300px;
       background-color: #f1f2f3;
       .form-designer__menu-body {
-        padding: 15px 20px;
+        padding: 15px 5px;
         .fd__menu-section {
-          margin-top: 15px;
+          margin-top: 0;
+          margin-bottom: 10px;
           .fd__menu-section-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             color: #666;
           }
           .fd__menu-section-body {
             .dragable {
-              margin-bottom: 15px;
+              margin-bottom: 1px;
               &:active {
                 padding: 0;
               }
@@ -297,6 +284,9 @@ export default {
           }
         }
       }
+    }
+    .fd__menu-section-item-title {
+      font-size: 12px;
     }
   }
 }

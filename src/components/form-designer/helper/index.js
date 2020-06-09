@@ -7,7 +7,7 @@ const defalutCpntData = [
     { n: '_fieldRealType', v: 'string' }, { n: '_defaultValue', v: '' }, { n: '_fieldValue', v: '' },
     { n: '_fieldLen', v: 300 }, { n: '_required', v: false }, { n: '_read', v: false },
     { n: '_hideOnNew', v: false }, { n: '_hideForever', v: false }, { n: '_placeholder', v: '' },
-    { n: '_fieldInfo', v: '' }, { n: '_unique', v: false }, { n: '_auth', v: [] },
+    { n: '_fieldInfo', v: '' }, { n: '_unique', v: false }, { n: '_auth', v: [] }, { n: '_regular', v: '' },
     { n: '_fieldFormat', v: 'common' }, { n: '_outputFormat', v: '' }, { n: '_transFields', v: '' }
 ]
 

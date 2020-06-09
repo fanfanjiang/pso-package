@@ -34,16 +34,21 @@ requireComponent.keys().forEach(fileName => {
 
 export default {
   name: "PsoFormComponent",
-  components: componentsMap,
-  props: ["cpnt"],
+  components: componentsMap, 
+  props: ["cpnt", "forceShow"],
   computed: {
     currentCpnt() {
       return `pso-form-${this.cpnt.componentid}`;
     }
   },
   methods: {
-    displayable(cpnt) {
-      return this.cpnt.data._hideForever ? false : !this.cpnt.store.instance_id ? this.cpnt.data._hideOnNew !== true : true;
+    displayable(cpnt) { 
+      if (this.forceShow) return true;
+      let sysShow = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : true;
+      if (typeof cpnt.data.showInRules !== "undefined") {
+        sysShow = !!cpnt.data.showInRules;
+      }
+      return sysShow;
     }
   }
 };

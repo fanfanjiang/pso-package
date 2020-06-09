@@ -1,7 +1,7 @@
 <template>
   <common-panel :cpnt="cpnt" info="可以选择标签插入表单" :needPlaceholder="true" :needDefaultValue="false">
     <el-form-item label="源类型">
-      <el-radio-group v-model="cpnt.data._source" @change="handleSourceChange">
+      <el-radio-group size="small" v-model="cpnt.data._source" @change="handleSourceChange">
         <el-radio label="tree">树节点</el-radio>
         <el-radio label="table">列表</el-radio>
         <el-radio label="data">数据</el-radio>
@@ -12,7 +12,7 @@
       <el-radio v-model="cpnt.data._type" label="checkbox">多选</el-radio>
     </el-form-item>
     <el-form-item label="值类型">
-      <el-select v-model="dataType" clearable>
+      <el-select size="small" v-model="dataType" clearable>
         <el-option
           v-for="item in treeTypes"
           :key="item.data_type"

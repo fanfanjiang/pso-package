@@ -1,12 +1,12 @@
 <template>
   <common-panel :cpnt="cpnt" info="将记录生成一个自动递增的唯一编号" :needPlaceholder="true">
     <el-form-item label="指定编号位数">
-      <el-select v-model="cpnt.data._digit" placeholder="请选择">
+      <el-select size="small" v-model="cpnt.data._digit" placeholder="请选择">
         <el-option v-for="item in digit" :key="item" :label="digitName(item)" :value="item"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="指定日期格式">
-      <el-select v-model="cpnt.data._format" placeholder="请选择">
+      <el-select size="small" v-model="cpnt.data._format" placeholder="请选择">
         <el-option v-for="item in dateFormat" :key="item.v" :label="item.n" :value="item.v"></el-option>
       </el-select>
     </el-form-item>

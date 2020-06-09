@@ -1,15 +1,26 @@
 .pso-title {
-    margin: 5px 0 20px 0;
-    padding-left: 15px;
-    position: relative;
-    color: #666;
 
-    &::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        height: 100%;
-        width: 5px;
-        background-color: @main-color;
+    margin: 5px 0 20px 0;
+
+    .pso-title__title {
+        padding-left: 15px;
+        position: relative;
+        color: #666;
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            height: 100%;
+            width: 5px;
+            background-color: @main-color;
+        }
     }
+
+    .pso-title__info {
+        font-size: 13px;
+        color: #999;
+        margin-top: 5px;
+    }
+
 }

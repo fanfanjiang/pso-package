@@ -2,6 +2,7 @@
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
     <div class="pso-number">
       <el-input-number
+        size="small"
         v-model="cpnt.data._val"
         :disabled="!cpnt.store.editable||cpnt.data._read"
         :controls="false"

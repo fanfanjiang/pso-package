@@ -1,7 +1,7 @@
 <template>
   <common-panel :cpnt="cpnt" info="统计关联的记录中的数据。" :needDefaultValue="false">
     <el-form-item label="关联表">
-      <el-select v-model="cpnt.data._selectedTable" placeholder="请选择">
+      <el-select size="small" v-model="cpnt.data._selectedTable" placeholder="请选择">
         <el-option
           v-for="item in tableOptions"
           :key="item.fid"
@@ -11,7 +11,7 @@
       </el-select>
     </el-form-item>
     <el-form-item label="选择字段">
-      <el-select v-model="cpnt.data._selectedField" placeholder="请选择">
+      <el-select size="small" v-model="cpnt.data._selectedField" placeholder="请选择">
         <el-option
           v-for="item in fieldOptions"
           :key="item._fieldValue"

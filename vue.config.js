@@ -12,10 +12,9 @@ if (process.env.BABEL_ENV === 'development') {
                 jquery: "jQuery",
                 lodash: '_',
                 xlsx: 'XLSX',
-                'video.js': 'videojs',
-                // FileSaver: 'file-saver',
+                'video.js': 'videojs'
             },
-            // plugins: [new BundleAnalyzerPlugin()],
+            plugins: [new BundleAnalyzerPlugin()],
         },
         devServer: {
             port: 9009
@@ -30,7 +29,7 @@ if (process.env.BABEL_ENV === 'development') {
                 })
         },
         css: {
-            extract: false,
+            extract: false, 
             sourceMap: false,
         }
     }
@@ -44,8 +43,7 @@ if (process.env.BABEL_ENV === 'development') {
                 jquery: "jQuery",
                 lodash: '_',
                 xlsx: 'XLSX',
-                'video.js': 'videojs',
-                // FileSaver: 'file-saver',
+                'video.js': 'videojs'
             },
             // plugins: [new BundleAnalyzerPlugin()],
         },

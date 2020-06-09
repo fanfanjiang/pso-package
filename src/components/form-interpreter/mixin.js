@@ -22,7 +22,8 @@ export default {
         'cpnt.data._val': {
             handler(value) {
                 this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy });
-                this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy })
+                this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy });
+                this.cpnt.store.setShowByRules(this.cpnt);
             }
         }
     },

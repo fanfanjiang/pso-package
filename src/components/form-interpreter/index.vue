@@ -140,6 +140,13 @@ export default {
               throw new Error(`${cpntData._fieldName}不能为空`);
             }
 
+            //正则检查
+            if (cpntData._regular && typeof cpntData._val !== "undefined" && cpntData._val !== "") {
+              if (!new RegExp(cpntData._regular).test(cpntData._val)) {
+                throw new Error(`${cpntData._fieldName}验证失败`);
+              }
+            }
+
             //唯一性检查
             if (cpntData._unique) {
               const keys = {};
@@ -184,19 +191,3 @@ export default {
   }
 };
 </script>
-<style lang="less">
-@import "../../assets/less/component/form.less";
-</style>
-<style lang="less" scoped>
-@deep: ~">>>";
-.pso-form {
-  @{deep} {
-    .el-date-editor.el-input,
-    .el-input-number,
-    .el-select,
-    .el-date-editor.el-input__inner {
-      width: 100%;
-    }
-  }
-}
-</style>

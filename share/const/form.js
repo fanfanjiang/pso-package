@@ -1,4 +1,5 @@
 const OP_TYPE = require('./op');
+const OP_FILTER = require('./op-filter');
 
 const CPNT = {
   text: {
@@ -17,13 +18,14 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1 }],
     type: 'string',
     layout: false,
     db: true,
     host_db: false,
     chart: true,
     table_show: true,
-    data: [{ n: '_type', v: 'text' }]
+    data: [{ n: '_type', v: 'text' }, { n: '_scannable', v: false }, { n: '_scanType', v: 'qr' }]
   },
   number: {
     icon: "fa fa-sort-numeric-desc",
@@ -41,6 +43,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1 }],
     type: 'number',
     layout: false,
     db: true,
@@ -65,6 +68,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1 }],
     type: 'number',
     layout: false,
     db: true,
@@ -82,6 +86,7 @@ const CPNT = {
       Object.assign({ match: 2 }, OP_TYPE.op1),
       Object.assign({ match: 3 }, OP_TYPE.op2),
     ],
+    fop: [{ ...OP_FILTER.op1 }],
     type: 'string',
     layout: false,
     db: true,
@@ -124,6 +129,7 @@ const CPNT = {
       Object.assign({ match: 3 }, OP_TYPE.op1),
       Object.assign({ match: 3 }, OP_TYPE.op2),
     ],
+    fop: [{ ...OP_FILTER.op1 }],
     type: 'string',
     layout: false,
     db: true,
@@ -337,7 +343,7 @@ const CPNT = {
   },
   assfield: {
     icon: "el-icon-view",
-    name: "关联表字段",
+    name: "关联字段",
     componentid: "assfield",
     class: 'unSubTable',
     layout: false,
@@ -356,6 +362,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1, match: 1 }],
     data: [{ n: '_selectedTable', v: '' }, { n: '_selectedField', v: '' }]
   },
   summary: {
@@ -369,7 +376,7 @@ const CPNT = {
     chart: false,
     table_show: true,
     figure: true,
-    data: [{ n: '_selectedTable', v: '' }, { n: '_selectedField', v: '' }, { n: '_selectedOp', v: '' }, { n: '_unit', v: '' }, { n: '_decimalPlaces', v: 0 }],
+    data: [{ n: '_fieldRealType', v: 'decimal' }, { n: '_selectedTable', v: '' }, { n: '_selectedField', v: '' }, { n: '_selectedOp', v: '' }, { n: '_unit', v: '' }, { n: '_decimalPlaces', v: 0 }],
     op: [
       Object.assign({ match: 1 }, OP_TYPE.op1),
       Object.assign({ match: 1 }, OP_TYPE.op2),
@@ -381,6 +388,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1, match: 1 }],
   },
   formula: {
     icon: "fa fa-superscript",
@@ -406,6 +414,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1, match: 1 }],
   },
   rate: {
     icon: "el-icon-star-off",
@@ -428,6 +437,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1 }],
   },
   credential: {
     icon: "fa fa-id-card-o",
@@ -473,6 +483,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1, match: 1 }],
   },
   user: {
     icon: "el-icon-user",
@@ -497,6 +508,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1 }],
   },
   department: {
     icon: "fa fa-users",
@@ -521,6 +533,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1 }],
   },
   tag: {
     icon: "el-icon-s-help",
@@ -550,6 +563,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    fop: [{ ...OP_FILTER.op1 }],
   },
   signature: {
     icon: "el-icon-edit",

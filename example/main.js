@@ -1,12 +1,8 @@
 import 'normalize.css/normalize.css';
 import 'font-awesome/css/font-awesome.min.css';
 import '../theme/2D8CF0/index.css';
-import '../theme/006E4B/index.css';
-import '../theme/6076E3/index.css';
-import '../theme/E56281/index.css';
-import '../theme/fd8647/index.css';
 
-import Vue from 'vue'
+import Vue from 'vue' 
 import App from './App.vue'
 import router from './router';
 import store from './store'
