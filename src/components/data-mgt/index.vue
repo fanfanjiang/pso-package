@@ -37,10 +37,11 @@
         <div class="pso-dd-body" v-loading="saving">
           <template v-if="!!curNode.is_leaf">
             <pso-form-table
-              v-if="curTab==='preview'"
+              v-show="curTab==='preview'"
               :cfg-id="curNode.node_name"
               :auto-submit="true"
               :read-only="false"
+              :key="curNode.node_id"
             ></pso-form-table>
             <form-field v-if="curTab==='field'" :data="tableData" :code="curNode.node_name"></form-field>
             <form-column v-if="curTab==='list'" :data="colData" @save="saveConfig"></form-column>
@@ -60,7 +61,7 @@
             ></form-property>
             <form-rule v-if="curTab==='rule'&&formStore" :store="formStore" :rules="rules"></form-rule>
           </template>
-          <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
+          <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
         </div>
       </div>
     </div>
@@ -173,6 +174,11 @@ export default {
       curTab: "preview",
       saving: false,
       formStore: null,
+      leafAuthcfg: [
+        { n: "新增", v: 1 },
+        { n: "更改", v: 2 },
+        { n: "导出", v: 4 }
+      ],
       ..._DATA
     };
   },

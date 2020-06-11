@@ -87,7 +87,6 @@ export default {
       this.$emit("data-loaded", this.store);
     },
     async getFormCfg() {
-      let formCfg;
       //获取表单配置
       if (this.formEntity) {
         this.store = new FormStore(this.formEntity);
@@ -97,10 +96,10 @@ export default {
         this.store = new FormStore(ret.data);
       }
       this.store.editable = this.editable;
-      this.$on("dataId", () => {
+      this.$watch("dataId", () => {
         this.getFormData();
       });
-      this.$on("dataInstance", {
+      this.$watch("dataInstance", {
         deep: true,
         handler: () => {
           this.getFormData();
@@ -112,9 +111,9 @@ export default {
       const cpnts = this.store.cpntsMap;
 
       //主表数据
-      const mainData = { d_status: 0, optype: this.dataId ? 1 : 0 };
-      if (this.dataId) {
-        mainData.leaf_id = this.dataId;
+      const mainData = { d_status: 0, optype: this.store.instance_id ? 1 : 0 };
+      if (this.store.instance_id) {
+        mainData.leaf_id = this.store.instance_id;
       }
 
       //最终组合的数据
@@ -174,7 +173,7 @@ export default {
               });
 
               if (ret.data.length) {
-                if (ret.data.length === 1 && ret.data[0].leaf_Id === this.dataId) return;
+                if (ret.data.length === 1 && ret.data[0].leaf_Id === this.store.instance_id) return;
                 throw new Error(`${cpntData._fieldName}的数据已存在，不能重复提交，请修改`);
               }
             }

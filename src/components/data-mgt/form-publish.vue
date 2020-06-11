@@ -26,7 +26,7 @@
         </el-form-item>
       </el-form>
       <pso-title>表单链接</pso-title>
-      <p>{{SELFURL}}/form/{{node.node_name}}</p>
+      <p>{{host}}/form/{{node.node_name}}</p>
       <pso-title>链接二维码</pso-title>
       <div>
         <img :src="qrsrc" alt />
@@ -47,12 +47,17 @@ export default {
       this.genQR();
     }
   },
+  computed: {
+    host() {
+      return `http://${window.location.host}`;
+    }
+  },
   async created() {
-    this.qrsrc = await this.genQR(`${this.SELFURL}/form/${this.node.node_name}`);
+    this.qrsrc = await this.genQR();
   },
   methods: {
     async genQR() {
-      return await QRCode.toDataURL(`${this.SELFURL}/form/${this.node.node_name}`);
+      return await QRCode.toDataURL(`${this.host}/form/${this.node.node_name}`);
     }
   }
 };

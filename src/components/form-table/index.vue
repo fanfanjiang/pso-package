@@ -1,6 +1,21 @@
 <template>
   <div class="pso-formTable">
     <div v-if="!initializing">
+      <div class="pso-formTable-view" v-if="viewAuths.length>1">
+        <el-tabs v-model="activeView">
+          <el-tab-pane :label="auth.n" :name="auth.v+''" v-for="auth in viewAuths" :key="auth.v"></el-tab-pane>
+        </el-tabs>
+      </div>
+      <div class="pso-formTable-status" v-if="statuses.length">
+        <el-tag size="medium" @click="handleStatusClick()" effect="dark">全部</el-tag>
+        <el-tag
+          size="medium"
+          v-for="(status,index) in statuses"
+          :key="index"
+          :effect="curStatus===status?'dark':'plain'"
+          @click="handleStatusClick(status)"
+        >{{status.name}}</el-tag>
+      </div>
       <div class="pso-formTable-sort" v-if="sorts.length">
         <el-tag
           size="small"
@@ -57,18 +72,46 @@
           <el-button type="text" icon="el-icon-refresh" @click="getFormData">刷新</el-button>
         </div>
         <div class="pso-formTable-header__right">
-          <el-button v-if="addable" type="primary" size="mini" round @click="newData">{{addBtnText}}</el-button>
+          <el-button v-if="opAddable" type="primary" size="mini" @click="newData">{{addBtnText}}</el-button>
+          <el-button v-if="selectable" type="primary" size="mini" @click="selectConfirmHandler">确定</el-button>
+          <el-button type="primary" size="mini" @click="genQR">生成二维码</el-button>
+          <slot name="op"></slot>
+          <el-dropdown size="small" trigger="click" v-if="opChangable">
+            <el-button type="primary" size="mini" :disabled="!selectedList.length">更改</el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="(status,index) in statuses" :key="index">
+                <el-popconfirm
+                  confirmButtonText="确定"
+                  cancelButtonText="取消"
+                  icon="el-icon-info"
+                  iconColor="red"
+                  title="你确认要修改吗"
+                  @onConfirm="handleStatusChange(status)"
+                >
+                  <span slot="reference">{{status.name}}</span>
+                </el-popconfirm>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
           <el-button
-            v-if="selectable"
+            v-if="opAddable"
             type="primary"
             size="mini"
-            round
-            @click="selectConfirmHandler"
-          >确定</el-button>
-          <slot name="op"></slot>
-          <el-button type="primary" size="mini" round>归档</el-button>
-          <el-button type="primary" size="mini" round>撤销</el-button>
-          <el-button type="primary" size="mini" round @click="print">导出EXCEL</el-button>
+            @click="handleCopy"
+            :disabled="selectedList.length !== 1"
+          >复制</el-button>
+          <el-dropdown size="small" @command="handleMore">
+            <el-button class="el-dropdown-link" size="mini" type="text">
+              更多
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>下载模板</el-dropdown-item>
+              <el-dropdown-item v-if="opAddable">导入</el-dropdown-item>
+              <el-dropdown-item command="export" v-if="opExportable">导出EXCEL</el-dropdown-item>
+              <el-dropdown-item v-if="opExportable">全部导出</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </div>
       <div class="pso-formTable-table">
@@ -146,7 +189,7 @@
     </div>
     <pso-skeleton v-else :lines="5"></pso-skeleton>
     <pso-drawer
-      size="40%"
+      size="48%"
       :visible="showFormViewer"
       :title="cfg.data_name"
       @close="showFormViewer=false"
@@ -156,6 +199,7 @@
           ref="formImage"
           :form-entity="cfg"
           :data-id="dataId"
+          :data-instance="instance"
           :editable="dataId?edtailEditable:addable"
         ></pso-form-view>
       </div>
@@ -172,6 +216,11 @@
         </div>
       </template>
     </pso-drawer>
+    <el-dialog title="数据二维码" :visible.sync="showQRBox" append-to-body>
+      <div>
+        <img :src="qrsrc" alt />
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -180,6 +229,7 @@ import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
 import XLSX from "xlsx";
 import Qs from "qs";
+import { MENU_LEAF_AUTH } from "../../const/menu";
 
 export default {
   components: { PsoFormView: () => import("../form-interpreter"), PsoDatafilter },
@@ -231,7 +281,12 @@ export default {
       type: String,
       default: "操作"
     },
-    where: Object
+    where: Object,
+    viewAuth: {
+      type: Number,
+      default: 7
+    },
+    defOpauth: Number
   },
   data() {
     return {
@@ -255,13 +310,22 @@ export default {
       saving: false,
       defWhere: {
         limit: 15,
-        page: 1
+        page: 1,
+        keys: {}
       },
       dataTotal: 0,
       selectedList: [],
       store: null,
       sorts: [],
-      summary: null
+      summary: null,
+      statuses: [],
+      curStatus: "",
+      instance: null,
+      viewAuths: [],
+      activeView: 0,
+      opAuth: -1,
+      qrsrc: "",
+      showQRBox: false
     };
   },
   computed: {
@@ -272,6 +336,15 @@ export default {
     },
     showSummary() {
       return this.summary;
+    },
+    opAddable() {
+      return this.addable && this.opAuth & 1;
+    },
+    opChangable() {
+      return this.statuses.length && this.opAuth & 2;
+    },
+    opExportable() {
+      return this.opAuth & 4;
     }
   },
   watch: {
@@ -290,19 +363,80 @@ export default {
     },
     cfgId() {
       this.getFormCfg();
+    },
+    activeView() {
+      this.getFormData();
     }
   },
-  created() {
-    this.getFormCfg();
+  async created() {
+    if (typeof this.defOpauth !== "undefined") {
+      this.opAuth = this.defOpauth;
+    }
+    await this.getFormCfg();
   },
   methods: {
+    async genQR() {
+      if (this.selectedList.length !== 1) {
+        return this.$message("请先选择一条要生成的数据");
+      }
+      const { leaf_id } = this.selectedList[0];
+      this.qrsrc = await QRCode.toDataURL(`${this.SELFURL}/form/${this.cfg.data_code}/${leaf_id}`);
+      this.showQRBox = true;
+    },
+    handleMore(command) {
+      this[command] && this[command]();
+    },
+    handleCopy() {
+      if (this.selectedList.length !== 1) {
+        return this.$message("请先选择一条要复制的数据");
+      }
+      this.dataId = "";
+      this.instance = { ...this.selectedList[0], leaf_id: "" };
+      this.showFormViewer = true;
+    },
+    handleStatusChange(status) {
+      if (!this.selectedList.length) {
+        return this.$message("请先选择要更改的数据");
+      }
+
+      const dataArr = this.selectedList.map(item => ({
+        d_status: status.value,
+        optype: 1,
+        leaf_id: item.leaf_id
+      }));
+
+      const formData = {
+        data_name: this.cfg.data_name,
+        node_id: this.cfg.node_id,
+        data_code: this.cfg.data_code,
+        children: [],
+        dataArr
+      };
+
+      this.updateFormData({ formData });
+    },
+    handleStatusClick(status) {
+      this.curStatus = status;
+      if (status) {
+        this.$set(this.defWhere.keys, "d_status", { value: status.value, type: 1 });
+      } else {
+        delete this.defWhere.keys.d_status;
+        this.getFormData();
+      }
+    },
     getVal(val) {
       return _.isNull(val) ? "" : decodeURIComponent(val);
     },
+    reset() {
+      this.viewAuths = [];
+    },
     async getFormCfg() {
+      this.reset();
+
       this.initializing = true;
-      const ret = await this.API.formsCfg({ data: { id: this.cfgId }, method: "get" });
+      const ret = await this.API.formsCfg({ data: { id: this.cfgId, auth: 1 }, method: "get" });
       if (!ret.success) return;
+
       this.store = new FormStore(ret.data);
       this.cfg = Object.assign({}, this.cfg, ret.data);
       this.initializing = false;
@@ -336,6 +470,26 @@ export default {
       }
       this.fields = _.orderBy(this.fields, ["number"], ["asc"]);
 
+      //状态设置
+      if (this.cfg.status_config) {
+        this.statuses = JSON.parse(this.cfg.status_config);
+      }
+
+      //视图权限
+      if (this.viewAuth) {
+        MENU_LEAF_AUTH.forEach(a => {
+          if ((a.v & this.viewAuth) === a.v) {
+            this.viewAuths.push(a);
+          }
+        });
+        this.activeView = this.viewAuths[0].v + "";
+      }
+
+      //获取操作权限
+      if (this.cfg.opAuth) {
+        this.opAuth = this.cfg.opAuth.leaf_auth;
+      }
+
       await this.getFormData();
     },
     async getFormData() {
@@ -344,19 +498,21 @@ export default {
       const order = this.sorts.map(item => `${item.prop} ${item.order}`).join(",");
 
       const parameters = {
-        form_code: this.cfg.data_code,
+        orderby: order ? `order by ${order}` : "",
+        data_code: this.cfg.data_code,
         limit: this.defWhere.limit,
         page: this.defWhere.page - 1,
-        orderby: order ? `order by ${order}` : ""
+        keys: this.defWhere.keys,
+        searchtype: this.activeView
       };
 
+      //外部传入的请求参数
       if (this.where) {
-        parameters.keys = {};
         for (let key in this.where) {
           parameters.keys[key] = { value: this.where[key], type: 1 };
         }
-        parameters.keys = JSON.stringify(parameters.keys);
       }
+      parameters.keys = JSON.stringify(parameters.keys);
 
       const ret = await this.API.form({
         data: parameters,
@@ -402,10 +558,12 @@ export default {
     instanceClick(row) {
       this.currentRow = row;
       this.dataId = row.leaf_id;
+      this.instance = null;
       this.showFormViewer = true;
     },
     newData() {
       this.dataId = "";
+      this.instance = null;
       this.showFormViewer = true;
     },
     async deleteForm(leaf_id) {
@@ -425,7 +583,7 @@ export default {
     savedForm() {
       this.showFormViewer = false;
       this.saving = false;
-      this.$notify({ title: "添加成功", type: "success" });
+      this.$notify({ title: "成功", type: "success" });
       this.getFormData();
     },
     handleSelectionChange(val) {
@@ -440,22 +598,24 @@ export default {
       this.$emit("selection-confirm", this.selectedList);
     },
     async saveForm() {
-      let formData;
-      const leaf_id = this.dataId || shortid.generate();
       try {
-        formData = await this.$refs.formImage.makeData();
+        const formData = await this.$refs.formImage.makeData();
+        this.updateFormData({ leaf_id: this.dataId, formData });
       } catch (error) {
         return null;
       }
+    },
+    async updateFormData({ leaf_id, formData }) {
+      leaf_id = leaf_id || shortid.generate();
       if (this.autoSubmit) {
         this.startSave();
-        let ret = await this.API.form({ data: { leaf_id, formData }, method: "put" });
+        const ret = await this.API.form({ data: { leaf_id, formData }, method: "put" });
         this.savedForm();
       } else {
         this.$emit("submit", { leaf_id: this.dataId, formData });
       }
     },
-    print() {
+    export() {
       const dom = $(".pso-formTable").find("#pso-formTable-table");
       const et = XLSX.utils.table_to_book(dom[0]);
       const etout = XLSX.write(et, { bookType: "xlsx", bookSST: true, type: "array" });

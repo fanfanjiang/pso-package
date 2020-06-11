@@ -119,7 +119,11 @@ export default class FormStore {
     }
 
     updateInstance(instance) {
-        if (instance && instance.leaf_id) this.instance_id = instance.leaf_id;
+        if (instance && instance.leaf_id) {
+            this.instance_id = instance.leaf_id;
+        } else {
+            this.instance_id = '';
+        }
 
         for (let key in this.cpntsMap) {
             const cpntData = this.cpntsMap[key].data;

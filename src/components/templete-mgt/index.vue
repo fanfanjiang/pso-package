@@ -39,6 +39,8 @@
               <template v-if="!!curNode.is_leaf">
                 <el-tab-pane label="属性" name="base"></el-tab-pane>
                 <el-tab-pane label="参数" name="param"></el-tab-pane>
+                <el-tab-pane label="初始文本" name="textdef"></el-tab-pane>
+                <el-tab-pane label="文本" name="text"></el-tab-pane>
                 <el-tab-pane v-if="curNode.tp_type===1" label="列表" name="column"></el-tab-pane>
               </template>
               <el-tab-pane label="权限" name="auth"></el-tab-pane>
@@ -49,6 +51,8 @@
               <pso-tp-base v-if="curTab==='base'" :node="curNode"></pso-tp-base>
               <pso-tp-param v-if="curTab==='param'" :data="paramData"></pso-tp-param>
               <pso-tp-column v-if="curTab==='column'" :data="columnData"></pso-tp-column>
+              <pso-tp-textdef v-if="curTab==='textdef'" :data="tpButtons"></pso-tp-textdef>
+              <pso-tp-text v-if="curTab==='text'" :data="tpText" :def-text="tpButtons"></pso-tp-text>
             </template>
             <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
           </div>
@@ -62,9 +66,11 @@ import PsoNodeauth from "../node-auth";
 import PsoTpBase from "./base";
 import PsoTpParam from "./param";
 import PsoTpColumn from "./column";
+import PsoTpText from "./text";
+import PsoTpTextdef from "./text-def";
 
 export default {
-  components: { PsoNodeauth, PsoTpBase, PsoTpParam, PsoTpColumn },
+  components: { PsoNodeauth, PsoTpBase, PsoTpParam, PsoTpColumn, PsoTpText, PsoTpTextdef },
   props: {
     params: {
       type: Object,
@@ -90,7 +96,9 @@ export default {
           name: "统计插件",
           value: 1
         }
-      ]
+      ],
+      tpText: [],
+      tpButtons: []
     };
   },
   computed: {
@@ -141,7 +149,9 @@ export default {
           ...this.curNode,
           tp_code: this.curNode.node_name,
           route_setting: JSON.stringify(this.paramData),
-          tp_content: JSON.stringify(this.columnData)
+          tp_content: JSON.stringify(this.columnData),
+          tp_text: JSON.stringify(this.tpText),
+          tp_buttons: JSON.stringify(this.tpButtons)
         },
         method: "put"
       });

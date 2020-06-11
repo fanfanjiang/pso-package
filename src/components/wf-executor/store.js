@@ -30,7 +30,7 @@ export default class WfStore {
 
         this.configing = true; //基本参数加载控制
         this.loading = false;  //整体页面加载控制
-        this.steping = false;
+        this.steping = false;  //下一步控制
 
         this.curStep = null;
         this.appointStep = null;
@@ -143,12 +143,10 @@ export default class WfStore {
     async setInstance(instanceId = '') {
         if (instanceId) {
             await this.getInstance(instanceId);
-
             //如果是复制流程
             if (this.copy) {
                 this.setCopyMode();
             }
-
         } else {
             this.newInstance();
         }

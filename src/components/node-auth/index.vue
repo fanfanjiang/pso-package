@@ -2,24 +2,16 @@
   <div class="pso-nodeauth">
     <div class="pso-nodeauth__header">
       <div class="pso-na-check-wrapper">
-        <template v-if="node.is_leaf">
-          <div class="pso-na-check">
-            <span>栏目权限：</span>
-            <el-checkbox-group v-model="nodeAuth">
-              <el-checkbox v-for="item in nodeAuthCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
-            </el-checkbox-group>
-          </div>
-          <div class="pso-na-check">
-            <span>数据权限：</span>
-            <el-checkbox-group v-model="leafAuth">
-              <el-checkbox v-for="item in leafAuthCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
-            </el-checkbox-group>
-          </div>
-        </template>
-        <div class="pso-na-check" v-else>
+        <div class="pso-na-check">
           <span>栏目权限：</span>
           <el-checkbox-group v-model="nodeAuth">
             <el-checkbox v-for="item in foldAuthCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
+          </el-checkbox-group>
+        </div>
+        <div class="pso-na-check" v-if="node.is_leaf">
+          <span>数据权限：</span>
+          <el-checkbox-group v-model="leafAuth">
+            <el-checkbox v-for="item in leafAuthcfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -45,7 +37,7 @@
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="user_name" label="用户" width="180"></el-table-column>
-        <el-table-column prop="user_name" label="栏目权限">
+        <el-table-column label="栏目权限">
           <template slot-scope="scope">
             <el-tag
               v-for="itemVal in getAuthTag(scope.row.node_auth,'node')"
@@ -53,7 +45,14 @@
             >{{itemVal}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="user_name" label="数据权限"></el-table-column>
+        <el-table-column label="数据权限">
+          <template slot-scope="scope">
+            <el-tag
+              v-for="itemVal in getAuthTag(scope.row.leaf_auth,'leaf')"
+              :key="itemVal"
+            >{{itemVal}}</el-tag>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="pso-pagination">
         <el-pagination
@@ -78,7 +77,17 @@ import { pickerMixin } from "../../mixin/picker";
 export default {
   mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" })],
   props: {
-    node: Object
+    node: Object,
+    leafAuthcfg: {
+      type: Array,
+      default: () => [
+        { n: "新增", v: 1 },
+        { n: "编辑", v: 2 },
+        { n: "删除", v: 4 },
+        { n: "发布", v: 8 },
+        { n: "审核", v: 16 }
+      ]
+    }
   },
   components: { PsoTitle },
   data() {
@@ -89,13 +98,6 @@ export default {
         { n: "完全控制", v: 2 }
       ],
       nodeAuthCfg: [
-        { n: "新增", v: 1 },
-        { n: "编辑", v: 2 },
-        { n: "删除", v: 4 },
-        { n: "发布", v: 8 },
-        { n: "审核", v: 16 }
-      ],
-      leafAuthCfg: [
         { n: "新增", v: 1 },
         { n: "编辑", v: 2 },
         { n: "删除", v: 4 },
@@ -196,13 +198,13 @@ export default {
     getAuthTag(value, type) {
       const list = [];
       if (type === "node") {
-        this.nodeAuthCfg.forEach(item => {
+        this.foldAuthCfg.forEach(item => {
           if ((item.v & value) === item.v) {
             list.push(item.n);
           }
         });
       } else {
-        this.leafAuthCfg.forEach(item => {
+        this.leafAuthcfg.forEach(item => {
           if ((item.v & value) === item.v) {
             list.push(item.n);
           }

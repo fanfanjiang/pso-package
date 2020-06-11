@@ -27,7 +27,7 @@
             <template v-if="!!curNode.is_leaf">
               <pso-tag-item v-if="curTab==='tag'" :node="curNode"></pso-tag-item>
             </template>
-            <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
+            <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
           </div>
         </div>
       </div>
@@ -37,6 +37,7 @@
 <script>
 import PsoTagItem from "./tag-item";
 import PsoNodeauth from "../node-auth";
+import { MENU_LEAF_AUTH } from "../../const/menu";
 
 export default {
   components: { PsoTagItem, PsoNodeauth },
@@ -52,7 +53,8 @@ export default {
     return {
       loading: false,
       curNode: {},
-      curTab: "tag"
+      curTab: "tag",
+      leafAuthcfg: MENU_LEAF_AUTH
     };
   },
   computed: {

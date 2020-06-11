@@ -8,12 +8,12 @@
       <div class="pso-wf-executor__body">
         <div class="pso-wf-executor__main" v-bar>
           <div>
-            <div class="pso-wf-executor__main-header">
+            <!-- <div class="pso-wf-executor__main-header">
               <pso-wf-overview :store="store"></pso-wf-overview>
             </div>
             <div class="pso-wf-executor__flowchart">
               <pso-wf-chart :store="store" display-small></pso-wf-chart>
-            </div>
+            </div> -->
             <div>
               <div class="pso-wf-executor__content">
                 <pso-wf-mainform :store="store"></pso-wf-mainform>

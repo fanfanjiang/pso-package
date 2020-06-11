@@ -1,6 +1,6 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-checkbox-group v-model="cpnt.data._val">
+    <el-checkbox-group v-model="proxy">
       <el-checkbox
         size="small"
         v-for="opt in cpnt.data._option"
@@ -16,12 +16,20 @@
 import cpntMixin from "../mixin";
 export default {
   mixins: [cpntMixin],
+  data() {
+    return {
+      proxy: []
+    };
+  },
   created() {
-    this.cpnt.data._val = this.cpnt.data._val
-      ? typeof this.cpnt.data._val === "string"
-        ? this.cpnt.data._val.split(",")
-        : this.cpnt.data._val
-      : [];
+    if (this.cpnt.data._val) {
+      this.proxy = this.cpnt.data._val.split(",");
+    }
+  },
+  watch: {
+    proxy(val) {
+      this.cpnt.data._val = val.join(",");
+    }
   }
 };
 </script>

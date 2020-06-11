@@ -27,7 +27,7 @@
             </el-tabs>
           </div>
           <div class="pso-page-body__body">
-            <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
+            <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
             <div class="pso-menu-param" v-if="curTab==='param'" v-loading="saving||loadingInfo">
               <el-form label-position="left" label-width="80px">
                 <pso-title>基本参数</pso-title>
@@ -105,7 +105,7 @@
 <script>
 import PsoNodeauth from "../node-auth";
 import PlugSet from "./plug-set";
-import { MENU_TYPE, OPEN_TYPE } from "../../const/menu";
+import { MENU_TYPE, OPEN_TYPE, MENU_LEAF_AUTH } from "../../const/menu";
 import ICON from "../../const/icon";
 export default {
   components: { PsoNodeauth, PlugSet },
@@ -134,7 +134,8 @@ export default {
       loadingInfo: false,
       showIconBox: false,
       ICON: ICON,
-      initTpCode: ""
+      initTpCode: "",
+      leafAuthcfg: MENU_LEAF_AUTH
     };
   },
   computed: {
@@ -154,9 +155,9 @@ export default {
       return this.curNode.menu_type === this.MENU_TYPE[0].v && this.curNode.menu_link;
     }
   },
-  async created() { 
+  async created() {
     this.loadingBar = true;
-    const ret = await this.API.getBar({ menu: true, data_type: this.params.data_type }); 
+    const ret = await this.API.getBar({ menu: true, data_type: this.params.data_type });
     if (ret.success) {
       this.defBar = ret.data.map(item => {
         return {

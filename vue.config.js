@@ -14,7 +14,7 @@ if (process.env.BABEL_ENV === 'development') {
                 xlsx: 'XLSX',
                 'video.js': 'videojs'
             },
-            plugins: [new BundleAnalyzerPlugin()],
+            // plugins: [new BundleAnalyzerPlugin()],
         },
         devServer: {
             port: 9009

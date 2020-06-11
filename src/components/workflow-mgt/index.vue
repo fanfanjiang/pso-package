@@ -54,7 +54,7 @@
                 v-model="wf_sql_setting"
               ></el-input>
             </template>
-            <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
+            <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
           </div>
         </div>
       </div>
@@ -139,6 +139,13 @@ export default {
       curNode: {},
       wfCfg: {},
       curTab: "preview",
+      leafAuthcfg: [
+        { n: "新增", v: 1 },
+        { n: "更改", v: 2 },
+        { n: "导出", v: 4 },
+        { n: "撤销", v: 8 },
+        { n: "归档", v: 16 },
+      ],
       ..._DATA
     };
   },

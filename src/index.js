@@ -1,5 +1,5 @@
 import './assets/theme/index.css';
-  
+
 import Vuebar from 'vuebar';
 import 'muse-ui/lib/styles/base.less';
 import 'muse-ui/lib/styles/theme.less';
@@ -122,6 +122,10 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.API.URL_PREFIX = apiPrefix;
 
     Vue.prototype.DEFAULT_APP_ID = defaultAppId;
+
+    Vue.prototype.ResultNotify = function (ret, message) {
+        this.$notify({ title: ret.success ? "成功" : '失败', message: message || ret.message, type: ret.success ? "success" : 'warning' });
+    };
 };
 
 // auto install

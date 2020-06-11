@@ -18,7 +18,7 @@ export default class API {
             const ret = await axios({ method, url, data });
             const message = ret.msg || ret.message;
             if (!ret.success && message) {
-                // Message({ showClose: true, message, type: 'warning' });
+                Message({ showClose: true, message, type: 'warning' });
             }
             return ret;
         } catch (error) {

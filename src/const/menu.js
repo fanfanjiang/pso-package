@@ -19,14 +19,25 @@ export const TP_CTL_TYPE = [
     {
         n: '维度选择器',
         v: 'picker-tag'
-    }, {
+    },
+    {
         n: '表单选择器',
         v: 'picker-form'
-    }, {
+    },
+    {
         n: '流程选择器',
         v: 'picker-wf'
-    }, {
+    },
+    {
         n: '文本框',
         v: 'input'
     }
+];
+
+//leaf节点权限
+export const MENU_LEAF_AUTH = [
+    { n: "仅个人", v: 0 },
+    { n: "仅部门", v: 1 },
+    { n: "仅岗位", v: 2 },
+    { n: "全部", v: 4 }
 ];
