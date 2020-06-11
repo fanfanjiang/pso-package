@@ -81,7 +81,6 @@
                     <el-input v-model="curNode.menu_link" autocomplete="off"></el-input>
                   </el-form-item>
                 </div>
-
                 <div class="pso-menu-param__controller">
                   <el-button type="primary" @click="updateNode" size="mini">保存</el-button>
                 </div>

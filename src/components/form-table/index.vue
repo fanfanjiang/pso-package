@@ -7,7 +7,6 @@
         </el-tabs>
       </div>
       <div class="pso-formTable-status" v-if="statuses.length">
-        <el-tag size="medium" @click="handleStatusClick()" effect="dark">全部</el-tag>
         <el-tag
           size="medium"
           v-for="(status,index) in statuses"
@@ -15,6 +14,7 @@
           :effect="curStatus===status?'dark':'plain'"
           @click="handleStatusClick(status)"
         >{{status.name}}</el-tag>
+        <el-tag size="medium" @click="handleStatusClick()" :effect="!curStatus?'dark':'plain'">全部</el-tag>
       </div>
       <div class="pso-formTable-sort" v-if="sorts.length">
         <el-tag
@@ -72,12 +72,15 @@
           <el-button type="text" icon="el-icon-refresh" @click="getFormData">刷新</el-button>
         </div>
         <div class="pso-formTable-header__right">
-          <el-button v-if="opAddable" type="primary" size="mini" @click="newData">{{addBtnText}}</el-button>
+          <el-button v-if="opAddable" type="primary" size="mini" @click="newData">{{cpntText.add}}</el-button>
           <el-button v-if="selectable" type="primary" size="mini" @click="selectConfirmHandler">确定</el-button>
-          <el-button type="primary" size="mini" @click="genQR">生成二维码</el-button>
           <slot name="op"></slot>
           <el-dropdown size="small" trigger="click" v-if="opChangable">
-            <el-button type="primary" size="mini" :disabled="!selectedList.length">更改</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              :disabled="!selectedList.length"
+            >{{cpntText.change}}</el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="(status,index) in statuses" :key="index">
                 <el-popconfirm
@@ -99,7 +102,7 @@
             size="mini"
             @click="handleCopy"
             :disabled="selectedList.length !== 1"
-          >复制</el-button>
+          >{{cpntText.copy}}</el-button>
           <el-dropdown size="small" @command="handleMore">
             <el-button class="el-dropdown-link" size="mini" type="text">
               更多
@@ -177,8 +180,8 @@
             layout="total, sizes, prev, pager, next, jumper"
             :page-sizes="[30,50,100,200,500]"
             :total="dataTotal"
-            :page-size="defWhere.limit"
-            :current-page="defWhere.start"
+            :page-size="limit"
+            :current-page="page"
             @size-change="sizeChangeHandler"
             @current-change="currentChangeHandler"
             @prev-click="prevClickHandler"
@@ -216,11 +219,6 @@
         </div>
       </template>
     </pso-drawer>
-    <el-dialog title="数据二维码" :visible.sync="showQRBox" append-to-body>
-      <div>
-        <img :src="qrsrc" alt />
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -240,10 +238,6 @@ export default {
       default: true
     },
     columnFilter: Array,
-    addBtnText: {
-      type: String,
-      default: "新增"
-    },
     operate: {
       type: Boolean,
       default: false
@@ -284,9 +278,11 @@ export default {
     where: Object,
     viewAuth: {
       type: Number,
-      default: 7
+      default: 0
     },
-    defOpauth: Number
+    defOpauth: Number,
+    textGroup: String,
+    plug_code: String
   },
   data() {
     return {
@@ -308,11 +304,9 @@ export default {
       keywords: "",
       dataId: "",
       saving: false,
-      defWhere: {
-        limit: 15,
-        page: 1,
-        keys: {}
-      },
+      limit: 15,
+      page: 1,
+      keys: {},
       dataTotal: 0,
       selectedList: [],
       store: null,
@@ -324,8 +318,11 @@ export default {
       viewAuths: [],
       activeView: 0,
       opAuth: -1,
-      qrsrc: "",
-      showQRBox: false
+      cpntText: {
+        add: "新增",
+        change: "更改",
+        copy: "复制"
+      }
     };
   },
   computed: {
@@ -345,6 +342,13 @@ export default {
     },
     opExportable() {
       return this.opAuth & 4;
+    },
+    defWhere() {
+      return {
+        searchtype: this.activeView,
+        limit: this.limit,
+        page: this.page - 1
+      };
     }
   },
   watch: {
@@ -358,14 +362,11 @@ export default {
     defWhere: {
       deep: true,
       handler() {
-        this.getFormData();
+        !this.initializing && this.getFormData();
       }
     },
     cfgId() {
       this.getFormCfg();
-    },
-    activeView() {
-      this.getFormData();
     }
   },
   async created() {
@@ -375,14 +376,6 @@ export default {
     await this.getFormCfg();
   },
   methods: {
-    async genQR() {
-      if (this.selectedList.length !== 1) {
-        return this.$message("请先选择一条要生成的数据");
-      }
-      const { leaf_id } = this.selectedList[0];
-      this.qrsrc = await QRCode.toDataURL(`${this.SELFURL}/form/${this.cfg.data_code}/${leaf_id}`);
-      this.showQRBox = true;
-    },
     handleMore(command) {
       this[command] && this[command]();
     },
@@ -418,11 +411,11 @@ export default {
     handleStatusClick(status) {
       this.curStatus = status;
       if (status) {
-        this.$set(this.defWhere.keys, "d_status", { value: status.value, type: 1 });
+        this.$set(this.keys, "d_status", { value: status.value, type: 1 });
       } else {
-        delete this.defWhere.keys.d_status;
-        this.getFormData();
+        delete this.keys.d_status;
       }
+      !this.initializing && this.getFormData();
     },
     getVal(val) {
       return _.isNull(val) ? "" : decodeURIComponent(val);
@@ -439,7 +432,6 @@ export default {
 
       this.store = new FormStore(ret.data);
       this.cfg = Object.assign({}, this.cfg, ret.data);
-      this.initializing = false;
 
       this.conditionOptions = this.store.search({
         options: { db: true },
@@ -473,6 +465,9 @@ export default {
       //状态设置
       if (this.cfg.status_config) {
         this.statuses = JSON.parse(this.cfg.status_config);
+        if (this.statuses.length) {
+          this.handleStatusClick(this.statuses[0]);
+        }
       }
 
       //视图权限
@@ -490,7 +485,25 @@ export default {
         this.opAuth = this.cfg.opAuth.leaf_auth;
       }
 
-      await this.getFormData();
+      //获取按钮文本
+      if (this.textGroup && this.plug_code) {
+        const tpRet = await this.API.getTreeNode({ code: this.plug_code });
+        if (tpRet.success) {
+          const tpCfg = tpRet.data.data;
+          if (tpCfg.tp_text) {
+            const text = JSON.parse(tpCfg.tp_text);
+            const selectedText = _.find(text, { id: this.textGroup });
+            if (selectedText) {
+              selectedText.list.forEach(item => {
+                this.cpntText[item.id] = item.value || item.name;
+              });
+            }
+          }
+        }
+      }
+
+      this.initializing = false;
+      this.getFormData();
     },
     async getFormData() {
       this.loadingTable = true;
@@ -498,12 +511,10 @@ export default {
       const order = this.sorts.map(item => `${item.prop} ${item.order}`).join(",");
 
       const parameters = {
+        ...this.defWhere,
         orderby: order ? `order by ${order}` : "",
         data_code: this.cfg.data_code,
-        limit: this.defWhere.limit,
-        page: this.defWhere.page - 1,
-        keys: this.defWhere.keys,
-        searchtype: this.activeView
+        keys: this.keys
       };
 
       //外部传入的请求参数
@@ -537,16 +548,16 @@ export default {
       this.$emit("data-loaded");
     },
     sizeChangeHandler(size) {
-      this.defWhere.limit = size;
+      this.limit = size;
     },
     currentChangeHandler(page) {
-      this.defWhere.page = page;
+      this.page = page;
     },
     prevClickHandler() {
-      this.defWhere.page -= 1;
+      this.page -= 1;
     },
     nextClickHandler() {
-      this.defWhere.page += 1;
+      this.page += 1;
     },
     async goFilter() {
       this.showFilter = false;

@@ -9,21 +9,19 @@
     v-model="show"
   >
     <div class="pso-picker-tree" v-if="opened">
-      <div class="pso-picker-tree__body" v-bar>
-        <div>
-          <pso-tree-common
-            ref="tree"
-            :rootable="rootable"
-            :request-options="requestOptions"
-            :edit-mode="false"
-            :draggable="false"
-            :show-checkbox="showCheckbox"
-            :check-after-load="false"
-            :tree-style="{'box-shadow':'none',padding:0}"
-            @node-click="nodeClickHandler"
-            @node-checked="nodeCheckHandler"
-          ></pso-tree-common>
-        </div>
+      <div class="pso-picker-tree__body">
+        <pso-tree-common
+          ref="tree"
+          :rootable="rootable"
+          :request-options="requestOptions"
+          :edit-mode="false"
+          :draggable="false"
+          :show-checkbox="showCheckbox"
+          :check-after-load="false"
+          :tree-style="{'box-shadow':'none',padding:0}"
+          @node-click="nodeClickHandler"
+          @node-checked="nodeCheckHandler"
+        ></pso-tree-common>
       </div>
       <div class="pso-picker__showlist">
         <span v-for="item of selectedData" :key="item.node_id">

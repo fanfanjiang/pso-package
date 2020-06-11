@@ -69,6 +69,13 @@ import PsoTpColumn from "./column";
 import PsoTpText from "./text";
 import PsoTpTextdef from "./text-def";
 
+const _DATA = {
+  columnData: [],
+  paramData: [],
+  tpText: [],
+  tpButtons: []
+};
+
 export default {
   components: { PsoNodeauth, PsoTpBase, PsoTpParam, PsoTpColumn, PsoTpText, PsoTpTextdef },
   props: {
@@ -84,8 +91,6 @@ export default {
       loading: false,
       curNode: null,
       curTab: "base",
-      columnData: [],
-      paramData: [],
       tpType: "",
       tpTypes: [
         {
@@ -97,8 +102,7 @@ export default {
           value: 1
         }
       ],
-      tpText: [],
-      tpButtons: []
+      ..._DATA
     };
   },
   computed: {
@@ -115,26 +119,44 @@ export default {
     }
   },
   methods: {
+    reset() {
+      Object.assign(this.$data, _.cloneDeep(_DATA));
+    },
     async nodeClickHandler(nodeData) {
+      this.reset();
       this.loading = true;
       this.curNode = nodeData;
       if (nodeData.is_leaf) {
-        const ret = await this.API.templates({ data: { tp_code: nodeData.node_name }, method: "get" });
+        const ret = await this.API.getTreeNode({ code: nodeData.node_name });
         if (ret.success) {
-          for (let key in ret.data.tp) {
-            this.$set(this.curNode, key, ret.data.tp[key]);
+          const cfg = ret.data.data;
+          for (let key in cfg) {
+            this.$set(this.curNode, key, cfg[key]);
           }
 
           if (this.curNode.route_setting) {
             this.paramData = JSON.parse(this.curNode.route_setting);
-          } else {
-            this.paramData = [];
           }
 
           if (this.curNode.tp_content) {
             this.columnData = JSON.parse(this.curNode.tp_content);
-          } else {
-            this.columnData = [];
+          }
+
+          if (cfg.tp_buttons) {
+            this.tpButtons = JSON.parse(cfg.tp_buttons);
+          }
+
+          if (cfg.tp_text) {
+            const text = JSON.parse(cfg.tp_text);
+
+            text.forEach(item => {
+              let subList = [];
+              for (let i = 0; i < this.tpButtons.length; i++) {
+                const exist = _.find(item.list, { id: this.tpButtons[i].id }) || this.tpButtons[i];
+                subList.push({ ...this.tpButtons[i], value: exist.value || exist.name });
+              }
+              this.tpText.push({ list: subList, id: item.id, name: item.name });
+            });
           }
         }
       } else {

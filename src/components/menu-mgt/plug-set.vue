@@ -63,6 +63,15 @@
               size="small"
               autocomplete="off"
             ></el-input>
+            <el-select
+              v-if="tpItem.picker==='picker-text'"
+              filterable
+              clearable
+              size="small"
+              v-model="tpItem.value"
+            >
+              <el-option v-for="item in text" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
           </el-form-item>
         </div>
       </transition>
@@ -78,7 +87,8 @@ export default {
       initializing: true,
       forms: [],
       workflows: [],
-      tags: []
+      tags: [],
+      text: []
     };
   },
   async created() {
@@ -90,18 +100,32 @@ export default {
     this.workflows = await this.API.getWfTree();
     const tagRet = await this.API.getTreeDimen();
     this.tags = tagRet.data;
-
-    if (this.node[this.field] && !this.data.length) {
-      this.getTpDetail(this.node[this.field]);
-    }
+    this.getTpDetail(this.node[this.field], this.data);
     this.initializing = false;
   },
   methods: {
-    async getTpDetail(tp_code) {
-      if (tp_code) {
-        const ret = await this.API.templates({ data: { tp_code }, method: "get" });
-        if (ret.success && ret.data.tp.route_setting) {
-          this.data = JSON.parse(ret.data.tp.route_setting);
+    async getTpDetail(code, originData) {
+      if (code) {
+        const ret = await this.API.getTreeNode({ code });
+        if (ret.success) {
+          const cfg = ret.data.data;
+          const setting = JSON.parse(cfg.route_setting);
+
+          if (originData) {
+            const data = [];
+            setting.forEach(item => {
+              const exist = _.find(originData, { field: item.field }) || {};
+              data.push({ ...item, ...exist });
+            });
+            this.data = data;
+          } else {
+            this.data = setting;
+          }
+
+          //加载文本组
+          if (cfg.tp_text) {
+            this.text = JSON.parse(cfg.tp_text);
+          }
         } else {
           this.data = [];
         }

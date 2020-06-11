@@ -29,7 +29,11 @@ export const TP_CTL_TYPE = [
         v: 'picker-wf'
     },
     {
-        n: '文本框',
+        n: '文本选择器',
+        v: 'picker-text'
+    },
+    {
+        n: '文本',
         v: 'input'
     }
 ];
