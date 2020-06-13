@@ -27,7 +27,6 @@
           <div class="pso-wf-executor__op">
             <div v-if="wfExecutor.curStep">
               <el-button
-                v-if="showCommand(REVIEW_OP_TYPE.save.value)"
                 type="primary"
                 plain
                 size="small"

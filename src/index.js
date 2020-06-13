@@ -35,6 +35,7 @@ import PsoMenuMgt from "./components/menu-mgt";
 import PsoTreeDimen from "./components/tree-dimen";
 import PsoTagMgt from "./components/tag-mgt";
 import PsoKnowlMgt from "./components/knowl-mgt";
+import PsoDataFilter from "./components/data-filter";
 
 //表单组件
 import PsoFormTable from "./components/form-table";
@@ -96,7 +97,8 @@ const components = {
     PsoMenuMgt,
     PsoTreeDimen,
     PsoTagMgt,
-    PsoKnowlMgt
+    PsoKnowlMgt,
+    PsoDataFilter
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', selfUrl } = {}) {

@@ -14,6 +14,7 @@ import PsoFormComponent from "./cpnt";
 import FormStore from "../form-designer/model/store.js";
 import shortid from "shortid";
 import emitter from "../../mixin/emitter";
+import { FIELD_FORMAT } from "../../const/form";
 
 export default {
   name: "pso-form-interpreter",

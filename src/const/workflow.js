@@ -17,15 +17,24 @@ export const REVIEW_TYPE = {
     }
 }
 
-export const REVIEW_OP_TYPE = {
+export const REVIEW_STATUS = {
     save: {
         name: '暂存',
         id: "save",
         type: 'save',
+        value: 0
+    },
+    submited: {
+        name: '已提交',
+        id: "save",
+        type: 'save',
         value: 1
     },
+}
+
+export const REVIEW_OP_TYPE = {
     confirm: {
-        name: '确认',
+        name: '通过',
         id: "confirm",
         type: 'next',
         value: 2

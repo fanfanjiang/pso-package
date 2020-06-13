@@ -23,7 +23,10 @@
         >
           <el-button size="mini" type="primary" plain>添加权限</el-button>
         </pso-picker-user>
-        <el-button v-else size="mini" type="primary" plain @click="updateNodeAuth(1)">设置权限</el-button>
+        <template v-else>
+          <el-button size="mini" type="primary" plain @click="updateNodeAuth(1)">设置权限</el-button>
+          <el-button size="mini" type="primary" plain @click="updateNodeAuth(2)">删除权限</el-button>
+        </template>
       </div>
     </div>
     <div class="pso-nodeauth__body">
@@ -122,7 +125,7 @@ export default {
   },
   computed: {
     selectedUids() {
-      var targetList = this.selectedAuthItem.length ? this.selectedAuthItem : this.proxy.list;
+      const targetList = this.selectedAuthItem.length ? this.selectedAuthItem : this.proxy.list;
       return _.map(targetList, "user_id").join(",");
     },
     selectNodeAuth() {
@@ -160,6 +163,7 @@ export default {
         leaf_auth: this.selectLeafAuth
       });
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
+      this.proxy.list.splice(0);
       this.reloadNodeAuth();
     },
     reloadNodeAuth() {

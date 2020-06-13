@@ -30,7 +30,7 @@
                 <el-tab-pane label="快捷标签" name="tag"></el-tab-pane>
                 <el-tab-pane label="文本" name="text"></el-tab-pane>
                 <el-tab-pane label="子流程" name="subwf"></el-tab-pane>
-                <el-tab-pane label="脚本" name="script"></el-tab-pane>
+                <el-tab-pane label="状态" name="script"></el-tab-pane>
               </template>
               <el-tab-pane label="权限" name="auth"></el-tab-pane>
             </el-tabs>
@@ -45,14 +45,8 @@
               <pso-wf-autoid v-if="curTab==='file'" :node="curNode"></pso-wf-autoid>
               <pso-wf-tag v-if="curTab==='tag'" :data="tagData"></pso-wf-tag>
               <pso-wf-text v-if="curTab==='text'" :data="textData"></pso-wf-text>
-              <pso-wf-subwf v-if="curTab==='subwf'" :data="subWfData" @go-designer="wf_sql_setting"></pso-wf-subwf>
-              <el-input
-                v-if="curTab==='script'"
-                type="textarea"
-                :rows="8"
-                placeholder="脚本"
-                v-model="wf_sql_setting"
-              ></el-input>
+              <pso-wf-subwf v-if="curTab==='subwf'" :data="subWfData"></pso-wf-subwf>
+              <pso-wf-script v-if="curTab==='script'" :data="script"></pso-wf-script>
             </template>
             <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
           </div>
@@ -73,6 +67,7 @@ import PsoWfTag from "./tag";
 import PsoWfText from "./text";
 import PsoWfSubwf from "./wf-sub";
 import PsoWfAutoid from "./autoid";
+import PsoWfScript from "./script";
 
 const _DATA = {
   tagData: [
@@ -120,11 +115,11 @@ const _DATA = {
     }
   ],
   subWfData: [],
-  wf_sql_setting: ""
+  script: []
 };
 
 export default {
-  components: { PsoWfStage, PsoTypebar, PsoWfTable, PsoWfTageditor, PsoWfAgent, PsoWfTag, PsoWfText, PsoWfSubwf, PsoWfAutoid },
+  components: { PsoWfStage, PsoTypebar, PsoWfTable, PsoWfTageditor, PsoWfAgent, PsoWfTag, PsoWfText, PsoWfSubwf, PsoWfAutoid, PsoWfScript },
   props: {
     params: {
       type: Object,
@@ -144,7 +139,7 @@ export default {
         { n: "更改", v: 2 },
         { n: "导出", v: 4 },
         { n: "撤销", v: 8 },
-        { n: "归档", v: 16 },
+        { n: "归档", v: 16 }
       ],
       ..._DATA
     };
@@ -204,7 +199,9 @@ export default {
           this.subWfData = JSON.parse(cfg.wf_leaf_setting);
         }
 
-        this.wf_sql_setting = cfg.wf_sql_setting || "";
+        if (cfg.wf_sql_setting) {
+          this.script = JSON.parse(cfg.wf_sql_setting);
+        }
       }
     },
     handleNewNode(payload) {
@@ -257,10 +254,11 @@ export default {
           wf_list_column: JSON.stringify(this.textData),
           wf_auth_tag: JSON.stringify(this.tagData),
           wf_leaf_setting: JSON.stringify(this.subWfData),
-          wf_sql_setting: this.wf_sql_setting
+          wf_sql_setting: JSON.stringify(this.script)
         },
         method: "put"
       });
+      this.ResultNotify(ret)
       this.loading = false;
     }
   }

@@ -4,12 +4,70 @@
     background-color: #fff;
     padding: 10px;
 
+    .pso-formTable__top {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .pso-formTable__title {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        font-size: 16px;
+
+        svg {
+            height: 24px;
+            margin-right: 3px;
+        }
+
+        >span {
+            color: rgb(153, 151, 151);
+            font-weight: bold;
+            letter-spacing: 1.2px;
+        }
+    }
+
     .pso-formTable-view {
         margin-top: -10px;
+        flex: 1;
+
+        .el-tabs__header {
+            margin: 0;
+        }
+ 
+        .el-tabs__nav {
+            float: right;
+        }
     }
 
     .pso-formTable-status {
         margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+
+        .el-badge {
+            &+.el-badge {
+                margin-left: 20px;
+            }
+
+            &+.el-tag {
+                margin-left: 20px;
+            }
+        }
+
+        .el-tag {
+            cursor: pointer;
+
+            &+.el-tag {
+                margin-left: 20px;
+            }
+
+        }
+
+        .el-badge__content {
+            top: 3px;
+            right: 14px;
+        }
     }
 
     .pso-formTable-status,
@@ -87,21 +145,23 @@
         }
     }
 
-    .pso-formTable__setting {
-        max-height: 500px;
-        overflow: scroll;
 
-        .pso-formTable__setting-item {
-            &+.pso-formTable__setting-item {
-                margin-top: 15px;
-            }
-        }
+}
 
-        .el-switch {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
+.pso-formTable__setting {
+    max-height: 300px;
+    overflow: scroll;
+
+    .pso-formTable__setting-item {
+        &+.pso-formTable__setting-item {
+            margin-top: 15px;
         }
+    }
+
+    .el-switch {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
     }
 }
 

@@ -1,3 +1,8 @@
+/* 应用 */
+export const APP_SET_USER = 'APP_SET_USER';
+export const APP_GET_USER = 'APP_GET_USER';
+export const APP_SIGNOUT = 'APP_SIGNOUT';
+
 /* 流程编辑器 */
 export const WF_RESET = 'WF_RESET';
 export const WF_INIT = 'WF_INIT';
@@ -35,6 +40,10 @@ export const CD_FIGURE_SET = 'CD_FIGURE_SET';
 export const CD_FILTER_SET = 'CD_FILTER_SET';
 
 const MUT_TYPES = {
+  APP_SET_USER,
+  APP_GET_USER,
+  APP_SIGNOUT,
+
   /* 流程编辑器 */
   WF_RESET,
   WF_INIT,

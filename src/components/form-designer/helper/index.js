@@ -12,6 +12,7 @@ const defalutCpntData = [
 ]
 
 export function genComponentData(target) {
+    
     if (!target.componentid) throw new Error('componentid required');
     const _CPNT = CPNT[target.componentid];
     if (!_CPNT) return null;

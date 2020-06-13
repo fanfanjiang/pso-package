@@ -1,19 +1,33 @@
 <template>
   <div class="pso-formTable">
     <div v-if="!initializing">
-      <div class="pso-formTable-view" v-if="viewAuths.length>1">
-        <el-tabs v-model="activeView">
-          <el-tab-pane :label="auth.n" :name="auth.v+''" v-for="auth in viewAuths" :key="auth.v"></el-tab-pane>
-        </el-tabs>
+      <div class="pso-formTable__top">
+        <div class="pso-formTable__title">
+          <form-icon></form-icon>
+          <span>{{cfg.data_name}}</span>
+        </div>
+        <div class="pso-formTable-view" v-if="viewAuths.length>1">
+          <el-tabs v-model="activeView">
+            <el-tab-pane :label="auth.n" :name="auth.v+''" v-for="auth in viewAuths" :key="auth.v"></el-tab-pane>
+          </el-tabs>
+        </div>
       </div>
       <div class="pso-formTable-status" v-if="statuses.length">
-        <el-tag
-          size="medium"
+        <el-badge
+          :hidden="status.total==='0'"
+          :value="status.total"
+          class="item"
+          :type="index>3?'info':''"
+          :max="99"
           v-for="(status,index) in statuses"
           :key="index"
-          :effect="curStatus===status?'dark':'plain'"
-          @click="handleStatusClick(status)"
-        >{{status.name}}</el-tag>
+        >
+          <el-tag
+            size="medium"
+            :effect="curStatus===status?'dark':'plain'"
+            @click="handleStatusClick(status)"
+          >{{status.name}}</el-tag>
+        </el-badge>
         <el-tag size="medium" @click="handleStatusClick()" :effect="!curStatus?'dark':'plain'">全部</el-tag>
       </div>
       <div class="pso-formTable-sort" v-if="sorts.length">
@@ -30,7 +44,7 @@
           <el-popover v-model="showFilter" placement="bottom-start" width="400" trigger="click">
             <div class="pso-formTable__filter">
               <div class="pso-formTable__filter-body">
-                <pso-datafilter v-model="condition" :fieldsOptions="conditionOptions"></pso-datafilter>
+                <pso-data-filter v-model="condition" :fieldsOptions="conditionOptions"></pso-data-filter>
               </div>
               <div class="pso-formTable__filter-footer">
                 <el-button type="primary" size="mini" @click="goFilter">确定</el-button>
@@ -50,17 +64,20 @@
                 ></el-switch>
               </div>
             </div>
-            <el-button type="text" icon="el-icon-setting" slot="reference">列表管理</el-button>
+            <el-button type="text" icon="el-icon-setting" slot="reference">列表</el-button>
           </el-popover>
           <el-divider direction="vertical"></el-divider>
           <el-input
             ref="keywords"
             v-show="showKeywords"
-            placeholder="搜索"
+            placeholder="按回车搜索"
             prefix-icon="el-icon-search"
-            size="small"
-            @blur="showKeywords=false"
+            size="mini"
             v-model="keywords"
+            clearable
+            @blur="handleKeywordsBlur"
+            @clear="showKeywords=false"
+            @change="getFormData"
           ></el-input>
           <el-button
             v-show="!showKeywords"
@@ -82,7 +99,7 @@
               :disabled="!selectedList.length"
             >{{cpntText.change}}</el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(status,index) in statuses" :key="index">
+              <el-dropdown-item v-for="(status,index) in opStatuses" :key="index">
                 <el-popconfirm
                   confirmButtonText="确定"
                   cancelButtonText="取消"
@@ -222,15 +239,16 @@
   </div>
 </template>
 <script>
-import PsoDatafilter from "../data-filter/index";
+import PsoDataFilter from "../data-filter/index";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
 import XLSX from "xlsx";
 import Qs from "qs";
 import { MENU_LEAF_AUTH } from "../../const/menu";
+import FormIcon from "./form-icon";
 
 export default {
-  components: { PsoFormView: () => import("../form-interpreter"), PsoDatafilter },
+  components: { PsoFormView: () => import("../form-interpreter"), PsoDataFilter, FormIcon },
   props: {
     cfgId: String,
     autoSubmit: {
@@ -282,7 +300,8 @@ export default {
     },
     defOpauth: Number,
     textGroup: String,
-    plug_code: String
+    plug_code: String,
+    defKeys: String
   },
   data() {
     return {
@@ -306,6 +325,7 @@ export default {
       saving: false,
       limit: 15,
       page: 1,
+      defaultKeys: {},
       keys: {},
       dataTotal: 0,
       selectedList: [],
@@ -317,7 +337,7 @@ export default {
       instance: null,
       viewAuths: [],
       activeView: 0,
-      opAuth: -1,
+      opAuth: "",
       cpntText: {
         add: "新增",
         change: "更改",
@@ -335,20 +355,22 @@ export default {
       return this.summary;
     },
     opAddable() {
-      return this.addable && this.opAuth & 1;
+      return this.addable && (this.opAuth & 1) === 1;
     },
     opChangable() {
-      return this.statuses.length && this.opAuth & 2;
+      return this.statuses.length && (this.opAuth & 2) === 2;
     },
     opExportable() {
-      return this.opAuth & 4;
+      return (this.opAuth & 4) === 4;
     },
     defWhere() {
       return {
-        searchtype: this.activeView,
         limit: this.limit,
         page: this.page - 1
       };
+    },
+    opStatuses() {
+      return this.statuses.filter(item => item.value !== "0");
     }
   },
   watch: {
@@ -367,6 +389,9 @@ export default {
     },
     cfgId() {
       this.getFormCfg();
+    },
+    activeView() {
+      !this.initializing && this.getFormStatus();
     }
   },
   async created() {
@@ -376,6 +401,11 @@ export default {
     await this.getFormCfg();
   },
   methods: {
+    handleKeywordsBlur() {
+      if (this.keywords === "") {
+        this.showKeywords = false;
+      }
+    },
     handleMore(command) {
       this[command] && this[command]();
     },
@@ -462,14 +492,6 @@ export default {
       }
       this.fields = _.orderBy(this.fields, ["number"], ["asc"]);
 
-      //状态设置
-      if (this.cfg.status_config) {
-        this.statuses = JSON.parse(this.cfg.status_config);
-        if (this.statuses.length) {
-          this.handleStatusClick(this.statuses[0]);
-        }
-      }
-
       //视图权限
       if (this.viewAuth) {
         MENU_LEAF_AUTH.forEach(a => {
@@ -477,6 +499,7 @@ export default {
             this.viewAuths.push(a);
           }
         });
+        this.viewAuths = _.orderBy(this.viewAuths, ["v"], ["desc"]);
         this.activeView = this.viewAuths[0].v + "";
       }
 
@@ -502,8 +525,41 @@ export default {
         }
       }
 
+      try {
+        //外部传入的请求参数
+        if (this.where) {
+          for (let key in this.where) {
+            this.defaultKeys[key] = { value: this.where[key], type: 1 };
+          }
+        }
+        if (this.defKeys) {
+          let keyList = this.defKeys.split(",");
+          keyList.forEach(item => {
+            const key = item.split("=");
+            this.defaultKeys[key[0]] = { value: key[1], type: 1 };
+          });
+        }
+      } catch (error) {}
+
       this.initializing = false;
-      this.getFormData();
+      this.getFormStatus();
+    },
+    async getFormStatus() {
+      const ret = await this.API.getFormStatus({
+        leaf_auth: this.activeView,
+        data_code: this.cfg.data_code,
+        keys: JSON.stringify({ ...this.defaultKeys })
+      });
+
+      //状态设置
+      if (ret.success && ret.data) {
+        this.statuses = ret.data;
+        if (this.statuses.length) {
+          this.handleStatusClick(this.statuses[0]);
+        } else {
+          this.handleStatusClick();
+        }
+      }
     },
     async getFormData() {
       this.loadingTable = true;
@@ -512,17 +568,20 @@ export default {
 
       const parameters = {
         ...this.defWhere,
+        leaf_auth: this.activeView,
         orderby: order ? `order by ${order}` : "",
         data_code: this.cfg.data_code,
-        keys: this.keys
+        keys: { ...this.keys, ...this.defaultKeys }
       };
 
-      //外部传入的请求参数
-      if (this.where) {
-        for (let key in this.where) {
-          parameters.keys[key] = { value: this.where[key], type: 1 };
-        }
+      if (this.condition !== "【】") {
+        parameters.condition = this.condition;
       }
+
+      if (this.keywords !== "" && !parameters.keys.d_name) {
+        parameters.keys.d_name = { value: this.keywords, type: 2 };
+      }
+
       parameters.keys = JSON.stringify(parameters.keys);
 
       const ret = await this.API.form({
@@ -584,7 +643,7 @@ export default {
         method: "delete"
       });
       this.$notify({ title: "删除成功", type: "success" });
-      this.reload();
+      this.getFormStatus();
       this.loadingTable = false;
       this.showFormViewer = false;
     },
@@ -595,7 +654,7 @@ export default {
       this.showFormViewer = false;
       this.saving = false;
       this.$notify({ title: "成功", type: "success" });
-      this.getFormData();
+      this.getFormStatus();
     },
     handleSelectionChange(val) {
       if (this.selectionType === "radio" && val.length > 1) {

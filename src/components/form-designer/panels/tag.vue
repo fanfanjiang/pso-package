@@ -23,7 +23,6 @@
     </el-form-item>
     <el-form-item label="默认值">
       <pso-picker-tag
-        :appid="cpnt.store.appid"
         ref="selector"
         :show="show"
         :tree-option="cpnt.data._treeOptions"

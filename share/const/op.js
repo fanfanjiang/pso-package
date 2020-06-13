@@ -30,12 +30,12 @@ const OP_TYPE = {
         id: 'op6'
     },
     op7: {
-        name: '包括',
+        name: '在其中',
         value: ['IN(', ')'],
         id: 'op7',
     },
     op8: {
-        name: '不包括',
+        name: '不在其中',
         value: ['NOTIN(', ')'],
         id: 'op8'
     },

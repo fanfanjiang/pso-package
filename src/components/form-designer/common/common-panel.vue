@@ -8,6 +8,14 @@
       <el-form-item v-if="needPlaceholder" label="引导文字">
         <el-input size="small" v-model="cpnt.data._placeholder" clearable></el-input>
       </el-form-item>
+      <el-form-item label="字段长度">
+        <el-input-number
+          size="small"
+          v-model="cpnt.data._fieldLen"
+          controls-position="right"
+          :min="3"
+        ></el-input-number>
+      </el-form-item>
       <el-form-item label="字段类型">
         <el-select size="small" v-model="cpnt.data._fieldFormat" placeholder="请选择">
           <el-option

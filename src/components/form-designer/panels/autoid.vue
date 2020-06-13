@@ -26,6 +26,24 @@
       </div>
       <span>示例：{{sample}}</span>
     </el-form-item>
+    <el-form-item label="绑定标签">
+      <pso-picker-tag
+        ref="selector"
+        :show="show"
+        pattern="radio"
+        source="table"
+        @cancel="show=false"
+        @confirm="handleAddSelection"
+      ></pso-picker-tag>
+      <div :key="cpnt.fid">
+        <el-tag
+          v-for="item in proxy.list"
+          :key="item.tag_no"
+          closable
+          @close="handleDelSelection(item)"
+        >{{item.tag_name}}</el-tag>
+      </div>
+    </el-form-item>
   </common-panel>
 </template>
 <script>
@@ -35,10 +53,11 @@ import { codemirror } from "vue-codemirror";
 import "codemirror/lib/codemirror.css";
 import dayjs from "dayjs";
 import { common } from "../mixin";
+import { pickerMixin } from "../../../mixin/picker";
 
 export default {
   props: ["cpnt"],
-  mixins: [common],
+  mixins: [common, pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" })],
   components: {
     commonPanel,
     codemirror
@@ -59,7 +78,12 @@ export default {
         cursorHeight: 0.8
       },
       coding: false,
-      code: ""
+      code: "",
+      show: false,
+      proxy: {
+        list: [],
+        type: "radio"
+      }
     };
   },
   computed: {
@@ -67,6 +91,14 @@ export default {
       return this.cpnt.data._source
         .replace(/#date#/g, `${dayjs().format(this.cpnt.data._format || this.dateFormat[0].v)}`)
         .replace(/#no#/g, `${new Array(parseInt(this.cpnt.data._digit) - 1).fill(0).join("") + "1"}`);
+    }
+  },
+  watch: {
+    "proxy.list": {
+      deep: true,
+      handler(val) {
+        this.cpnt.data._bind = val.map(item => item.tag_no).join(",");
+      }
     }
   },
   created() {

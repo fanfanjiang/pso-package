@@ -1,18 +1,12 @@
 <template>
   <div class="pso-wf-executor__op">
     <div v-if="store.curStep">
-      <el-button
-        v-if="showCommand(REVIEW_OP_TYPE.save.value)"
-        type="primary"
-        plain
-        size="small"
-        @click="saveForm"
-      >暂存</el-button>
+      <el-button v-if="showSave" type="primary" plain size="small" @click="saveForm">暂存</el-button>
       <pso-wf-confirm
         :store="store"
         v-if="showCommand(REVIEW_OP_TYPE.confirm.value)"
         :op="REVIEW_OP_TYPE.confirm"
-        :text="store.data.instanceId?'通过':'提交'"
+        :text="nextText"
         @confirm="confirm"
       ></pso-wf-confirm>
       <pso-wf-confirm
@@ -65,6 +59,7 @@
 <script>
 import PsoWfConfirm from "./confirm";
 import { op } from "../mixin";
+import { mapState } from "vuex";
 
 export default {
   components: { PsoWfConfirm },
@@ -76,9 +71,16 @@ export default {
     }
   },
   computed: {
+    ...mapState(["base"]),
     superable() {
       //只有分发才隐藏
       return this.store.data.msg_tag === 1 ? false : true;
+    },
+    showSave() {
+      return this.store.data.status === 0 && this.base.user && this.base.user.user_id === this.store.data.creator;
+    },
+    nextText() {
+      return this.store.data.instanceId && this.store.data.status != this.REVIEW_STATUS.save.value ? "通过" : "提交";
     }
   },
   methods: {

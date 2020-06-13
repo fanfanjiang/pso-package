@@ -1,17 +1,17 @@
 {
   "name": "pbpm",
-  "version": "0.0.34", 
-  "main": "dist/pbpm.umd.min.js", 
+  "version": "0.0.39",
+  "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
     "build": "vue-cli-service build --target lib --name pbpm src/index.js",
     "build:exam": "vue-cli-service build example/main.js",
     "test:unit": "vue-cli-service test:unit"
   },
-  "dependencies": { 
+  "dependencies": {
     "axios": "^0.19.0",
     "babel-preset-vue": "^2.0.2",
-    "big.js": "^5.2.2", 
+    "big.js": "^5.2.2",
     "dayjs": "^1.8.17",
     "hot-formula-parser": "^3.0.2",
     "html2canvas": "^1.0.0-rc.5",

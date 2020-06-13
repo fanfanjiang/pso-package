@@ -99,10 +99,6 @@
 <script>
 export default {
   props: {
-    appid: {
-      type: String,
-      default: "3"
-    },
     show: {
       type: Boolean,
       default: false

@@ -4,6 +4,7 @@ import { REVIEW_OP_TYPE, REVIEW_OP_APPEND } from "../../const/workflow";
 
 const BASEDADA = {
     instanceId: '',
+    status: 0,
     fileCode: "",
     creator: "",
     ctime: "",
@@ -184,6 +185,7 @@ export default class WfStore {
         Object.keys(instance).forEach(key => (this.data.hasOwnProperty(key) && (this.data[key] = instance[key])))
         this.data.filetype = this.data.filetype || instance.fileType;
         this.data.name = this.data.name || instance.instanceName;
+        this.data.status = instance.instance_status;
 
         //根据实例状态设置当前步骤
         if (instance.instance_status === 0 || instance.instance_status === 2) {

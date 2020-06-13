@@ -231,10 +231,9 @@ export default {
             const col = _.find(columns, { field_name: item.field_name });
             if (col) {
               item = Object.assign(item, col);
-              // item.show = item.is_show;
-              // delete item.is_show
             }
           });
+          this.colData = _.orderBy(this.colData, ["number"], ["asc"]);
         }
 
         if (cfg.rule_config) {

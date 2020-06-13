@@ -1,5 +1,5 @@
 import emitter from "../../mixin/emitter";
-import { REVIEW_OP_TYPE } from "../../const/workflow";
+import { REVIEW_OP_TYPE, REVIEW_STATUS } from "../../const/workflow";
 const UAParser = require("../../../share/util/u-agent");
 import WfStore from "./store";
 
@@ -36,7 +36,8 @@ export const op = {
     mixins: [emitter],
     data() {
         return {
-            REVIEW_OP_TYPE: REVIEW_OP_TYPE
+            REVIEW_OP_TYPE: REVIEW_OP_TYPE,
+            REVIEW_STATUS: REVIEW_STATUS
         };
     },
     methods: {
@@ -44,7 +45,7 @@ export const op = {
             //暂存
             try {
                 const formData = await this.store.getFormData();
-                this.dispatch("PsoWfExecutorBox", "op-before-save", { optype: REVIEW_OP_TYPE.save.value, formData });
+                this.dispatch("PsoWfExecutorBox", "op-before-save", { optype: 0, formData });
                 formData && this.excuted(await this.store.hold(formData));
             } catch (error) {
                 this.$message({ message: error.message, type: "warning" });

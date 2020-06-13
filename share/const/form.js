@@ -214,7 +214,7 @@ const CPNT = {
     host_db: false,
     chart: true,
     table_show: true,
-    data: [{ n: '_digit', v: '3' }, { n: '_format', v: '' }, { n: '_source', v: '#date##no#' }]
+    data: [{ n: '_digit', v: '3' }, { n: '_format', v: '' }, { n: '_bind', v: '' }, { n: '_source', v: '#date##no#' }]
   },
   email: {
     icon: "fa fa-envelope",
@@ -483,6 +483,7 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op8),
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
+    data: [{ n: '_fieldType', v: 'text' }],
     fop: [{ ...OP_FILTER.op1, match: 1 }],
   },
   user: {

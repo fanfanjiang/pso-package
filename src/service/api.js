@@ -7,9 +7,8 @@ export default class API {
 
     URL_PREFIX = ''
 
-    static async  request(url, { method = 'post', data = {} }) {
+    static async request(url, { method = 'post', data = {} }) {
         url = `${this.URL_PREFIX}${url}`;
-        data.appid = 'Main';
         if (method === 'get') {
             url += `?${Qs.stringify(data)}`;
         }
@@ -461,6 +460,14 @@ export default class API {
     static async updateUnit(data = {}) {
         try {
             return await this.request('/api/tag/unit', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFormStatus(data = {}) {
+        try {
+            return await this.request('/api/form/status', { data, method: 'get' });
         } catch (error) {
             throw error;
         }
