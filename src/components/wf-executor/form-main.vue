@@ -8,7 +8,7 @@
       size="medium"
     >
       <div class="pso-wf-mainform__item">
-        <el-form-item label="发文编号" prop="filetype">
+        <el-form-item v-if="store.TEXT.file.show" :label="store.TEXT.file.value" prop="filetype">
           <el-select v-model="store.data.filetype" :disabled="readMode">
             <el-option
               v-for="type in store.cfg.files"
@@ -18,19 +18,19 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="store.show.showImport" label="重要等级" prop="import">
+        <el-form-item v-if="store.TEXT.import.show" :label="store.TEXT.import.value" prop="import">
           <el-select v-model="store.data.import" :disabled="readMode">
             <el-option v-for="val in important" :key="val" :label="val" :value="val"></el-option>
           </el-select>
         </el-form-item>
       </div>
       <div class="pso-wf-mainform__item">
-        <el-form-item v-if="store.show.showSecret" label="秘密等级" prop="secret">
+        <el-form-item v-if="store.TEXT.secret.show" :label="store.TEXT.secret.value" prop="secret">
           <el-select v-model="store.data.secret" :disabled="readMode">
             <el-option v-for="val in secret" :key="val" :label="val" :value="val"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="store.show.showUrgent" label="加急程度" prop="urgent">
+        <el-form-item v-if="store.TEXT.urgent.show" :label="store.TEXT.urgent.value" prop="urgent">
           <el-select v-model="store.data.urgent" :disabled="readMode">
             <el-option v-for="val in urgent" :key="val" :label="val" :value="val"></el-option>
           </el-select>

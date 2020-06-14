@@ -62,10 +62,11 @@ export default class WfStore {
             files: []
         }
 
-        this.show = {
-            showImport: true,
-            showSecret: true,
-            showUrgent: true
+        this.TEXT = {
+            file: { value: "文件编号", id: "file", show: true },
+            import: { value: "重要等级", id: "import", show: true },
+            secret: { value: "秘密等级", id: "secret", show: true },
+            urgent: { value: "加急程度", id: "urgent", show: true }
         }
 
         this.formImage = null;
@@ -103,6 +104,23 @@ export default class WfStore {
             }
 
             this.cfg = ret.data;
+
+            try {
+                //文本设置
+                if (this.cfg.wf_list_column) {
+                    const text = JSON.parse(this.cfg.wf_list_column);
+                    text.forEach(item => {
+                        const exist = this.TEXT[item.id];
+                        if (exist) {
+                            exist.show = item.show;
+                            exist.value = item.value;
+                        }
+                    })
+                }
+            } catch (error) {
+
+            }
+
         }
         await this.setInstance(instanceId);
         this.configing = false;
@@ -256,6 +274,16 @@ export default class WfStore {
             }
         }
 
+        //标签
+        if (cpnt.componentid === "tag" && proxy) {
+            const name = data._source === "tree" ? "node_display" : "tag_name";
+            if (proxy.list.length) {
+                value = _.map(proxy.list, name).join(",");
+            } else {
+                value = "";
+            }
+        }
+
         $("#executorMain").find(`[field=${data._fieldValue}]`).html(value);
     }
 
@@ -266,10 +294,11 @@ export default class WfStore {
 
     //创建流程实例数据
     async newInstanceData({ nextStep = false, formData }) {
-        if (!this.data.filetype) throw new Error('请选择文号');
-        if (this.show.showUrgent && !this.data.urgent) throw new Error('请选择紧急程度');
-        if (this.show.showImport && !this.data.import) throw new Error('请选择重要等级');
-        if (this.show.showSecret && !this.data.secret) throw new Error('请选择秘密等级');
+        // if (this.show.file && !this.data.filetype) throw new Error('请选择文号');
+        // if (this.show.urgent && !this.data.urgent) throw new Error('请选择紧急程度');
+        // if (this.show.import && !this.data.import) throw new Error('请选择重要等级');
+        // if (this.show.secret && !this.data.secret) throw new Error('请选择秘密等级');
+
         const data = {
             filetype: this.data.filetype,
             wf_code: this.cfg.wf_code,
@@ -292,7 +321,8 @@ export default class WfStore {
         try {
             const formData = await this.formImage.makeData();
             if (this.copy && formData) {
-                formData.dataArr[0].leaf_id = shortid.generate();
+                formData.dataArr[0].leaf_id = '';
+                formData.dataArr[0].optype = 0;
             }
             return formData;
         } catch (error) {
@@ -302,6 +332,11 @@ export default class WfStore {
 
     //暂存
     async hold(formData) {
+        if (this.steping) {
+            throw new Error('正在执行');
+        }
+        this.steping = true;
+
         if (!formData) formData = this.getFormData();
         if (!formData) return;
 

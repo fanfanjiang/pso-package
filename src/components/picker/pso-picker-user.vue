@@ -3,9 +3,9 @@
     :visible-arrow="false"
     transition="el-zoom-in-top"
     placement="top-end"
-    width="540"
+    width="620"
     @show="opened=true"
-    @after-leave="opened=false"
+    @after-leave="afterHandler"
     v-model="show"
   >
     <div class="pso-picker" v-if="opened">
@@ -251,6 +251,10 @@ export default {
       this.options[field] = data;
       this.options[emptyfield] = "";
       this.loadUser();
+    },
+    afterHandler() {
+      this.opened = false;
+      this.selected = [];
     }
   }
 };
@@ -263,7 +267,7 @@ export default {
   width: 100%;
   .pso-picker__body-l {
     margin-right: 2px;
-    width: 140px;
+    width: 200px;
     height: 100%;
     > div {
       height: 100%;

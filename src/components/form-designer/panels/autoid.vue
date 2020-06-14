@@ -26,23 +26,15 @@
       </div>
       <span>示例：{{sample}}</span>
     </el-form-item>
-    <el-form-item label="绑定标签">
-      <pso-picker-tag
-        ref="selector"
-        :show="show"
-        pattern="radio"
-        source="table"
-        @cancel="show=false"
-        @confirm="handleAddSelection"
-      ></pso-picker-tag>
-      <div :key="cpnt.fid">
-        <el-tag
-          v-for="item in proxy.list"
-          :key="item.tag_no"
-          closable
-          @close="handleDelSelection(item)"
-        >{{item.tag_name}}</el-tag>
-      </div>
+    <el-form-item label="关联标签字段">
+      <el-select v-model="cpnt.data._bind" placeholder="请选择">
+        <el-option
+          v-for="item in fieldOptions"
+          :key="item.fid"
+          :label="item._fieldName"
+          :value="item.fid"
+        ></el-option>
+      </el-select>
     </el-form-item>
   </common-panel>
 </template>
@@ -53,11 +45,10 @@ import { codemirror } from "vue-codemirror";
 import "codemirror/lib/codemirror.css";
 import dayjs from "dayjs";
 import { common } from "../mixin";
-import { pickerMixin } from "../../../mixin/picker";
 
 export default {
   props: ["cpnt"],
-  mixins: [common, pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" })],
+  mixins: [common],
   components: {
     commonPanel,
     codemirror
@@ -79,11 +70,7 @@ export default {
       },
       coding: false,
       code: "",
-      show: false,
-      proxy: {
-        list: [],
-        type: "radio"
-      }
+      show: false
     };
   },
   computed: {
@@ -91,14 +78,17 @@ export default {
       return this.cpnt.data._source
         .replace(/#date#/g, `${dayjs().format(this.cpnt.data._format || this.dateFormat[0].v)}`)
         .replace(/#no#/g, `${new Array(parseInt(this.cpnt.data._digit) - 1).fill(0).join("") + "1"}`);
-    }
-  },
-  watch: {
-    "proxy.list": {
-      deep: true,
-      handler(val) {
-        this.cpnt.data._bind = val.map(item => item.tag_no).join(",");
-      }
+    },
+    fieldOptions() {
+      return this.cpnt.store.search({
+        options: { componentid: "tag" },
+        onlyData: true,
+        beforePush: item => {
+          if (item.fid === this.cpnt.fid) return false;
+          if (item.parent.CPNT.host_db) return false;
+          return true;
+        }
+      });
     }
   },
   created() {

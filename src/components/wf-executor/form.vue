@@ -7,6 +7,7 @@
     :form-id="store.cfg.map_data_code"
     :data-id="instanceId"
     :editable="isFormWriteable"
+    :copy-mode="store.copy"
   ></pso-form-interpreter>
 </template>
 <script>

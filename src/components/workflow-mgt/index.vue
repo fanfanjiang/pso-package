@@ -86,31 +86,37 @@ const _DATA = {
     {
       type: "提交按钮",
       value: "提交",
+      id: "submit",
       show: true
     },
     {
       type: "下一步按钮",
-      value: "提交",
+      value: "通过",
+      id: "next",
       show: true
     },
     {
       type: "文件编号",
       value: "文件编号",
+      id: "file",
       show: true
     },
     {
       type: "重要等级",
       value: "重要等级",
+      id: "import",
       show: true
     },
     {
       type: "秘密等级",
       value: "秘密等级",
+      id: "secret",
       show: true
     },
     {
       type: "加急程度",
       value: "加急程度",
+      id: "urgent",
       show: true
     }
   ],
@@ -188,7 +194,13 @@ export default {
       if (ret.success) {
         const cfg = ret.data.data;
         if (cfg.wf_list_column) {
-          this.textData = JSON.parse(cfg.wf_list_column);
+          const text = JSON.parse(cfg.wf_list_column);
+          const tempText = [];
+          _DATA.textData.forEach(item => {
+            const exist = _.find(text, { id: item.id }) || item;
+            tempText.push({ ...item, ...exist });
+          });
+          this.textData = tempText;
         }
 
         if (cfg.wf_auth_tag) {
@@ -258,7 +270,7 @@ export default {
         },
         method: "put"
       });
-      this.ResultNotify(ret)
+      this.ResultNotify(ret);
       this.loading = false;
     }
   }

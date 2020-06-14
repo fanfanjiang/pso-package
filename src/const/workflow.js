@@ -19,17 +19,47 @@ export const REVIEW_TYPE = {
 
 export const REVIEW_STATUS = {
     save: {
-        name: '暂存',
+        name: '待提交',
         id: "save",
-        type: 'save',
-        value: 0
+        value: 0,
+        stamp: "待提交",
+        color: "#2d8cf0"
     },
     submited: {
-        name: '已提交',
-        id: "save",
-        type: 'save',
-        value: 1
+        name: '审批中',
+        id: "submited",
+        value: 1,
+        stamp: "审批中",
+        color: "#2d8cf0"
     },
+    pass: {
+        name: '审批通过',
+        id: "pass",
+        value: 8,
+        stamp: "审批<br>通过",
+        color: "#67C23A"
+    },
+    reject: {
+        name: '审批拒绝',
+        id: "reject",
+        value: 2,
+        stamp: "审批<br>拒绝",
+        color: "#F56C6C"
+    },
+    backout: {
+        name: '已撤销',
+        id: "backout",
+        value: 7,
+        stamp: "已撤销",
+        color: "#909399"
+    },
+    archive: {
+        name: '已归档',
+        id: "archive",
+        value: 9,
+        stamp: "已归档",
+        color: "#E6A23C"
+    }
 }
 
 export const REVIEW_OP_TYPE = {

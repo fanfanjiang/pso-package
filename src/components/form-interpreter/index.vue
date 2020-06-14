@@ -29,6 +29,10 @@ export default {
     editable: {
       type: Boolean, //是否可编辑
       default: true
+    },
+    copyMode: {
+      type: Boolean, //是否可编辑
+      default: false
     }
   },
   data() {
@@ -94,7 +98,7 @@ export default {
       } else if (this.formId) {
         this.loading = true;
         const ret = await this.API.formsCfg({ data: { id: this.formId } });
-        this.store = new FormStore(ret.data);
+        this.store = new FormStore({ copyMode: this.copyMode, ...ret.data });
       }
       this.store.editable = this.editable;
       this.$watch("dataId", () => {

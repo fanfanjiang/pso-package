@@ -93,6 +93,16 @@
         justify-content: space-between;
     }
 
+    .pso-page-body__btns {
+
+        span,
+        button {
+            &+span {
+                margin-left: 10px;
+            }
+        }
+    }
+
     .el-tabs__header {
         margin: 0 !important;
     }
@@ -111,7 +121,6 @@
     }
 
     .pso-page-body__tabbody {
-        padding-top: 20px;
 
         >div {
             position: relative;

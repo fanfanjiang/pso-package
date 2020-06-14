@@ -3,7 +3,7 @@
     :pattern="pattern"
     :show="show"
     :requestOptions="requestOptions"
-    btn-text="选择部门"
+    :btn-text="text"
     @confirm="$emit('confirm',$event)"
   ></pso-picker-tree>
 </template>
@@ -17,6 +17,10 @@ export default {
     show: {
       type: Boolean,
       default: false
+    },
+    text: {
+      type: String,
+      default: "选择部门"
     }
   },
   data() {

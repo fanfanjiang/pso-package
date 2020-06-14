@@ -15,18 +15,29 @@ export default {
   },
   computed: {
     showVal() {
-      return !this.cpnt.store.instance_id ? "" : this.cpnt.data._val;
+      return !this.cpnt.store.instance_id || this.cpnt.store.copyMode ? "" : this.cpnt.data._val;
     }
   },
   async created() {
-    if (!this.cpnt.data._val && !this.cpnt.store.instance_id) {
-      if (this.cpnt.data._fieldFormat === FIELD_FORMAT.autotag.value && this.cpnt.data._bind) {
-        this.cpnt.data._val = this.cpnt.data._bind;
-      } else {
+    console.log(this.cpnt.store.copyMode);
+    let instance_id = this.cpnt.store.instance_id;
+    if (this.cpnt.store.copyMode) {
+      this.cpnt.data._val = "";
+      instance_id = "";
+    }
+    if (!this.cpnt.data._val && !instance_id) {
+      if (this.cpnt.data._fieldFormat !== FIELD_FORMAT.autotag.value) {
         let source = this.cpnt.data._source || `#date##no#`;
         this.cpnt.data._val = source
           .replace(/#date#/g, `[date(${this.cpnt.data._format})]`)
           .replace(/#no#/g, `%0${this.cpnt.data._digit}d`);
+      } else if (this.cpnt.data._bind) {
+        this.$on("cpnt-value-changed", ({ cpnt }) => {
+          if (cpnt.fid === this.cpnt.data._bind) {
+            this.cpnt.data._val = cpnt.data._val;
+            console.log(this.cpnt.data._val);
+          }
+        });
       }
     }
   }

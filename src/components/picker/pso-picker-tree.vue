@@ -5,7 +5,7 @@
     placement="top-end"
     width="400"
     @show="opened=true"
-    @after-leave="opened=false"
+   @after-leave="afterHandler"
     v-model="show"
   >
     <div class="pso-picker-tree" v-if="opened">
@@ -94,6 +94,10 @@ export default {
     },
     getSelectedData() {
       return _.cloneDeep(this.selectedData);
+    },
+    afterHandler() {
+      this.opened = false;
+      this.selectedData = [];
     }
   }
 };

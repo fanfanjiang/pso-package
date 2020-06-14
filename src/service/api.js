@@ -472,6 +472,15 @@ export default class API {
             throw error;
         }
     }
+
+
+    static async updateFormStatus(data = {}) {
+        try {
+            return await this.request('/api/form/status', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

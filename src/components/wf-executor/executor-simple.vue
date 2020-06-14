@@ -81,22 +81,4 @@ export default {
   }
 };
 </script>
-<style lang="less">
-@import "../../assets/less/component/wf-executor.less";
-</style>
-<style lang="less" scoped>
-.pso-wf-logs {
-  font-size: 12px;
-  & + .pso-wf-logs {
-    margin-top: 5px;
-  }
-  .pso-wf-logs__item {
-    font-size: 12px;
-    margin-bottom: 5px;
-    > div {
-      margin-bottom: 2px;
-      font-size: 12px;
-    }
-  }
-}
-</style>
+

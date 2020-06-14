@@ -77,10 +77,25 @@ export default {
       return this.store.data.msg_tag === 1 ? false : true;
     },
     showSave() {
-      return this.store.data.status === 0 && this.base.user && this.base.user.user_id === this.store.data.creator;
+      return (
+        !this.store.data.instanceId ||
+        (this.store.data.status === 0 && this.base.user && this.base.user.user_id === this.store.data.creator)
+      );
     },
     nextText() {
-      return this.store.data.instanceId && this.store.data.status != this.REVIEW_STATUS.save.value ? "通过" : "提交";
+      return this.superpower
+        ? "提交"
+        : this.store.data.instanceId && this.store.data.status != this.REVIEW_STATUS.save.value
+        ? "通过"
+        : "提交";
+    },
+    superpower() {
+      return (
+        this.base.user.user_id === this.store.data.creator &&
+        (this.store.data.status === this.REVIEW_STATUS.pass.value ||
+          this.store.data.status === this.REVIEW_STATUS.backout.value ||
+          this.store.data.status === this.REVIEW_STATUS.reject.value)
+      );
     }
   },
   methods: {
@@ -88,6 +103,9 @@ export default {
       this[command] && this[command]();
     },
     showCommand(command) {
+      if (command === 2 && this.superpower) {
+        return true;
+      }
       if (this.store.curStep.atype === "sign") {
         return command === 2;
       } else if (this.store.data.msg_tag === 0) {

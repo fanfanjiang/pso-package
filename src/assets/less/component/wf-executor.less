@@ -60,9 +60,52 @@
                 border-bottom: 1px solid #F4F4F4;
             }
 
+            .pso-wf-executor__main-content-wrapper {
+                position: relative;
+
+                .pso-wf-executor__stamp {
+                    position: absolute;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    top: 20px;
+                    right: 30px;
+                    transform: rotateZ(-45deg);
+                    font-size: 16px;
+                    height: 60px;
+                    width: 60px;
+                    padding: 5px;
+                    box-sizing: content-box;
+                    border: 2px solid #666;
+                    border-radius: 100%;
+                    line-height: 18px;
+
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        top: 5px;
+                        left: 5px;
+                        right: 5px;
+                        bottom: 5px;
+                        border: 2px solid;
+                        border-radius: 100%;
+                        border-color: inherit;
+                    }
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                    }
+                }
+            }
+
             .pso-wf-executor__main-content {
                 padding: 10px 15px;
                 .richEditor();
+            }
+
+            .pso-wf-executor__main-log {
+                padding: 10px;
             }
 
             .pso-wf-executor__user {
@@ -229,9 +272,11 @@
 
             h4 {
                 margin-top: 0;
+                margin-bottom: 5px;
             }
 
             p {
+                margin-top: 5px;
                 margin-bottom: 0;
             }
         }
@@ -268,5 +313,25 @@
             bottom: 0;
         }
 
+    }
+
+
+}
+
+.pso-wf-logs {
+    font-size: 12px;
+
+    &+.pso-wf-logs {
+        margin-top: 5px;
+    }
+
+    .pso-wf-logs__item {
+        font-size: 12px;
+        margin-bottom: 5px;
+
+        >div {
+            margin-bottom: 2px;
+            font-size: 12px;
+        }
     }
 }

@@ -74,6 +74,7 @@
           >
             <el-table-column v-if="pattern==='checkbox'" type="selection" width="55"></el-table-column>
             <el-table-column prop="tag_name" label="标签名"></el-table-column>
+            <el-table-column prop="tag_rule" label="规则"></el-table-column>
           </el-table>
         </div>
       </div>

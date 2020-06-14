@@ -7,13 +7,24 @@
             <div class="pso-wf-executor__main-header">
               <pso-wf-overview :store="store"></pso-wf-overview>
             </div>
-            <div
-              v-if="!isMobile"
-              ref="wfTable"
-              class="pso-wf-executor__main-content"
-              id="executorMain"
-              v-html="store.cfg.wf_body_tp"
-            ></div>
+            <div class="pso-wf-executor__main-content-wrapper">
+              <div
+                v-if="!isMobile"
+                ref="wfTable"
+                class="pso-wf-executor__main-content"
+                id="executorMain"
+                v-html="store.cfg.wf_body_tp"
+              ></div>
+              <div
+                class="pso-wf-executor__stamp"
+                v-if="!loading"
+                v-html="stamp.stamp"
+                :style="stampStyle"
+              ></div>
+            </div>
+            <div class="pso-wf-executor__main-log">
+              <pso-wf-log :store="store"></pso-wf-log>
+            </div>
           </div>
           <transition name="el-zoom-in-bottom">
             <pso-wfop-user
@@ -54,8 +65,8 @@
 </template>
 <script>
 import shortid from "shortid";
- 
-import { REVIEW_OP_TYPE, REVIEW_OP_APPEND } from "../../const/workflow";
+
+import { REVIEW_OP_TYPE, REVIEW_OP_APPEND, REVIEW_STATUS } from "../../const/workflow";
 
 import PsoWfMainform from "./form-main";
 import PsoWfop from "./op";
@@ -85,6 +96,19 @@ export default {
       return {
         "pso-wf-executor__m": this.isMobile
       };
+    },
+    stamp() {
+      try {
+        return _.find(Object.values(REVIEW_STATUS), { value: this.store.data.status });
+      } catch (error) {
+        return { stamp: "" };
+      }
+    },
+    stampStyle() {
+      return {
+        color: this.stamp.color,
+        "border-color": this.stamp.color
+      };
     }
   },
   async created() {},
@@ -98,22 +122,4 @@ export default {
   }
 };
 </script>
-<style lang="less">
-@import "../../assets/less/component/wf-executor.less";
-</style>
-<style lang="less" scoped>
-.pso-wf-logs {
-  font-size: 12px;
-  & + .pso-wf-logs {
-    margin-top: 5px;
-  }
-  .pso-wf-logs__item {
-    font-size: 12px;
-    margin-bottom: 5px;
-    > div {
-      margin-bottom: 2px;
-      font-size: 12px;
-    }
-  }
-}
-</style>
+

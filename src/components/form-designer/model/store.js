@@ -24,6 +24,8 @@ export default class FormStore {
 
         this.designMode = true; //设计模式
 
+        this.copyMode = false;
+
         this.rule_config;
 
         this.cpntsDataMps = {};

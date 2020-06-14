@@ -417,26 +417,19 @@ export default {
       this.instance = { ...this.selectedList[0], leaf_id: "" };
       this.showFormViewer = true;
     },
-    handleStatusChange(status) {
+    async handleStatusChange(status) {
       if (!this.selectedList.length) {
         return this.$message("请先选择要更改的数据");
       }
 
-      const dataArr = this.selectedList.map(item => ({
-        d_status: status.value,
-        optype: 1,
-        leaf_id: item.leaf_id
-      }));
-
-      const formData = {
-        data_name: this.cfg.data_name,
-        node_id: this.cfg.node_id,
+      const ret = await this.API.updateFormStatus({
         data_code: this.cfg.data_code,
-        children: [],
-        dataArr
-      };
+        d_status: status.value,
+        leafids: this.selectedList.map(item => item.leaf_id).join(",")
+      });
 
-      this.updateFormData({ formData });
+      this.ResultNotify(ret);
+      this.getFormStatus();
     },
     handleStatusClick(status) {
       this.curStatus = status;

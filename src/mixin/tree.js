@@ -155,7 +155,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             }
         },
         methods: {
-            async  loadWholeTree(loading = true) {
+            async loadWholeTree(loading = true) {
                 //加载整颗静态树
                 this.loadingWholeTree = loading;
 
@@ -217,7 +217,6 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                         pnode.children = _.orderBy(pnode.children, ...this.sortOptions);
                     }
                 });
-
                 //如果是懒加载
                 if (resolve) {
                     resolve(data);
