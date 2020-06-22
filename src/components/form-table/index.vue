@@ -195,7 +195,7 @@
           <el-pagination
             background
             layout="total, sizes, prev, pager, next, jumper"
-            :page-sizes="[30,50,100,200,500]"
+            :page-sizes="[limit,50,100,200,500]"
             :total="dataTotal"
             :page-size="limit"
             :current-page="page"

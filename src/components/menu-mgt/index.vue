@@ -91,13 +91,7 @@
       </div>
     </div>
     <el-dialog title="选择图标" append-to-body :visible.sync="showIconBox" width="80%">
-      <el-row>
-        <el-col :span="1" v-for="i in ICON" :key="i">
-          <div class="pso-icon-picker__item" @click="pickIcon(i)">
-            <i :class="i"></i>
-          </div>
-        </el-col>
-      </el-row>
+      <pso-picker-icon @select="pickIcon"></pso-picker-icon>
     </el-dialog>
   </div>
 </template>
@@ -105,9 +99,9 @@
 import PsoNodeauth from "../node-auth";
 import PlugSet from "./plug-set";
 import { MENU_TYPE, OPEN_TYPE, MENU_LEAF_AUTH } from "../../const/menu";
-import ICON from "../../const/icon";
+import PsoPickerIcon from "../picker/pso-picker-icon";
 export default {
-  components: { PsoNodeauth, PlugSet },
+  components: { PsoNodeauth, PlugSet, PsoPickerIcon },
   props: {
     params: {
       type: Object,
@@ -132,7 +126,6 @@ export default {
       saving: false,
       loadingInfo: false,
       showIconBox: false,
-      ICON: ICON,
       initTpCode: "",
       leafAuthcfg: MENU_LEAF_AUTH
     };

@@ -46,16 +46,18 @@
             <template v-if="curTag.tag_meter">
               <el-tab-pane label="计量" name="cal"></el-tab-pane>
             </template>
+            <el-tab-pane label="查询参数" name="search" v-if="curTag.tag_type==='searchtag'"></el-tab-pane>
           </el-tabs>
         </div>
-        <div class="pso-tag__body">
-          <div v-if="curTab==='base'">
+        <div class="pso-tag__body" :key="curTag.node_id">
+          <div v-show="curTab==='base'">
             <tag-editor :data="curTag"></tag-editor>
             <div style="text-align:right">
               <el-button size="mini" type="primary" @click="editHandler(curTag)">保 存</el-button>
             </div>
           </div>
           <tag-cal v-if="curTab==='cal'" :tag="curTag"></tag-cal>
+          <tag-search v-if="curTab==='search'" :tag="curTag"></tag-search>
         </div>
       </div>
     </div>
@@ -70,10 +72,11 @@
 </template>
 <script>
 import TagCal from "./cal.vue";
+import TagSearch from "./search.vue";
 import TagEditor from "./tag-editor.vue";
 
 export default {
-  components: { TagCal, TagEditor },
+  components: { TagCal, TagEditor, TagSearch },
   props: ["node"],
   data() {
     return {
@@ -140,6 +143,9 @@ export default {
       if (tag.tag_config) {
         cfg = JSON.parse(tag.tag_config);
       }
+      if (tag.tag_rule) {
+        tag.tag_rule = JSON.parse(tag.tag_rule);
+      }
       tag.tag_set = cfg.tag_set || [];
       tag.tag_source = cfg.tag_source || "";
       this.curTag = tag;
@@ -180,7 +186,12 @@ export default {
       delete data.tag_source;
       delete data.tag_set;
 
-      const ret = await this.API.updateTag(data);
+      const tagRule = [];
+      data.tag_rule.forEach(item => {
+        tagRule.push({ ...item, fields: [] });
+      });
+
+      const ret = await this.API.updateTag({ ...data, tag_rule: JSON.stringify(tagRule) });
       this.$notify({ title: ret.success ? "成功" : "失败", type: ret.success ? "success" : "warning" });
 
       this.loading = false;

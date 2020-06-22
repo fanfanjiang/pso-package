@@ -167,14 +167,12 @@ export default {
                   });
                 }
               } else {
-                keys[cpntData._fieldValue] = { type: 2, value: cpntData._val };
+                keys[cpntData._fieldValue] = { type: 1, value: cpntData._val };
               }
 
-              const ret = await this.API.formSearch({
-                keys,
-                form_code: this.store.data_code,
-                limit: 9999999,
-                start: 0
+              const ret = await this.API.form({
+                data: { keys: JSON.stringify(keys), data_code: this.store.data_code, limit: 9999999999, page: 0 },
+                method: "get"
               });
 
               if (ret.data.length) {

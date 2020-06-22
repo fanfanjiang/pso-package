@@ -1,157 +1,174 @@
 <template>
-  <el-popover
-    :visible-arrow="false"
-    transition="el-zoom-in-top"
-    placement="top-end"
-    width="300"
-    @show="opened=true"
-    @after-leave="opened=false"
-    v-model="show"
-  >
-    <div class="field-auth" v-if="opened">
-      <div class="field-auth__item" v-for="(auth,index) in auths" :key="index">
-        <div class="field-auth__item-option">
-          <el-select size="small" v-model="auth.access_type" @change="typeChange(index)">
-            <el-option v-for="item in accessTypes" :key="item.v" :label="item.n" :value="item.v"></el-option>
-          </el-select>
-          <el-tag
-            v-if="auth.post_id||auth.user_id||auth.duty_id"
-            closable
-            @close="handleClose(index)"
-          >{{auth.name}}</el-tag>
-          <div v-show="!!!auth.name">
-            <pso-picker-user
-              v-if="auth.access_type===accessTypes[0].v"
-              @confirm="handlePick($event,index,'user_id')"
-            ></pso-picker-user>
-            <pso-picker-position
-              v-if="auth.access_type===accessTypes[1].v"
-              @confirm="handlePick($event,index,'duty_id')"
-            ></pso-picker-position>
-            <pso-picker-post
-              v-if="auth.access_type===accessTypes[2].v"
-              @confirm="handlePick($event,index,'post_id')"
-            ></pso-picker-post>
-          </div>
+  <div class="pso-nodeauth">
+    <div class="pso-nodeauth__header">
+      <div class="pso-na-check-wrapper">
+        <div class="pso-na-check">
+          <span>字段权限：</span>
+          <el-checkbox-group v-model="fieldAuth">
+            <el-checkbox v-for="item in authCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
+          </el-checkbox-group>
         </div>
-        <i class="field-auth__item-del el-icon-delete-solid" @click="delOption(index)"></i>
       </div>
-      <div class="field-auth__add">
-        <el-button size="mini" @click="addAuth">添加权限</el-button>
-      </div>
-      <div class="field-auth__footer">
-        <el-button @click="show=false" size="mini">取 消</el-button>
-        <el-button type="primary" @click="handleSubmit" size="mini">提 交</el-button>
+      <div class="pso-na-controller">
+        <pso-picker-user
+          v-if="!selectedAuthItem.length"
+          pattern="checkbox"
+          @confirm="handleAddAuth"
+        >
+          <el-button size="mini" type="primary" plain>添加权限</el-button>
+        </pso-picker-user>
+        <template v-else>
+          <el-button size="mini" type="primary" plain @click="updateNodeAuth(1)">设置权限</el-button>
+          <el-button size="mini" type="primary" plain @click="updateNodeAuth(2)">删除权限</el-button>
+        </template>
       </div>
     </div>
-    <template slot="reference">
-      <slot>
-        <el-button icon="el-icon-plus" plain size="small">设置权限</el-button>
-      </slot>
-    </template>
-  </el-popover>
+    <div class="pso-nodeauth__body">
+      <el-table
+        ref="table"
+        v-loading="loadingTable"
+        :data="authData"
+        style="width: 100%"
+        size="medium"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="user_name" label="用户" width="180"></el-table-column>
+        <el-table-column label="权限">
+          <template slot-scope="scope">
+            <el-tag v-for="itemVal in getAuthTag(scope.row.show_auth)" :key="itemVal">{{itemVal}}</el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pso-pagination">
+        <el-pagination
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          :page-sizes="[30,50,100,200,500]"
+          :total="dataTotal"
+          :page-size="where.limit"
+          :current-page="where.page"
+          @size-change="sizeChangeHandler"
+          @current-change="currentChangeHandler"
+          @prev-click="prevClickHandler"
+          @next-click="nextClickHandler"
+        ></el-pagination>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
-import PsoPickerUser from "../picker/pso-picker-user";
-import PsoPickerPost from "../picker/pso-picker-post";
-import PsoPickerPosition from "../picker/pso-picker-position";
-
+import PsoTitle from "../title";
+import { pickerMixin } from "../../mixin/picker";
+import { MENU_LEAF_AUTH } from "../../const/menu";
 export default {
-  components: { PsoPickerUser, PsoPickerPost, PsoPickerPosition },
+  mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" })],
   props: {
-    field_name: String,
-    data_code: String
+    field: Object,
+    code: String
   },
+  components: { PsoTitle },
   data() {
     return {
-      opened: false,
-      auths: [],
-      accessTypes: [
-        { n: "用户", v: "0" },
-        { n: "职位", v: "1" },
-        { n: "岗位", v: "2" }
-      ],
-      show: false
+      authCfg: MENU_LEAF_AUTH,
+      fieldAuth: [],
+      selectedAuthItem: [],
+      proxy: {
+        list: [],
+        type: "checkbox"
+      },
+      where: {
+        page: 1,
+        limit: 30
+      },
+      dataTotal: 0,
+      authData: [],
+      loadingTable: false
     };
   },
-  created() {
-    this.addAuth();
+  computed: {
+    selectedUids() {
+      if (this.selectedAuthItem.length) {
+        return _.map(this.selectedAuthItem, "auto_no").join(",");
+      } else {
+        return _.map(this.proxy.list, "user_id").join(",");
+      }
+    },
+    selectFieldAuth() {
+      return this.fieldAuth.length ? this.fieldAuth.reduce((a, b) => a + b) : 0;
+    }
+  },
+  watch: {
+    "field.field_name": {
+      immediate: true,
+      handler() {
+        this.getAuth();
+      }
+    },
+    where: {
+      deep: true,
+      handler() {
+        this.getAuth();
+      }
+    }
   },
   methods: {
-    addAuth() {
-      this.auths.push({
-        access_type: "0",
-        name: "",
-        post_id: "",
-        user_id: "",
-        duty_id: "",
-        field_name: this.field_name,
-        data_code: this.data_code
+    async handleAddAuth(users) {
+      this.handleAddSelection(users);
+      this.updateNodeAuth(0);
+    },
+    async updateNodeAuth(optype = 1) {
+      const ret = await this.API.updateFieldAuth({
+        auth_user: this.selectedUids,
+        auto_no: this.selectedUids,
+        data_code: this.code,
+        field_name: this.field.field_name,
+        show_auth: this.selectFieldAuth,
+        optype
       });
+      this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
+      this.proxy.list.splice(0);
+      this.getAuth();
     },
-    handlePick(data, index, field) {
-      this.resetAuthItem(index);
-      this.auths[index][field] = data[0][field];
-      this.auths[index].name = data[0].user_name || data[0].duty_name || data[0].post_name;
+    async getAuth() {
+      this.loadingTable = true;
+      const ret = await this.API.getFieldAuth({
+        data_code: this.code,
+        field_name: this.field.field_name,
+        ...this.where,
+        page: this.where.page - 1
+      });
+      if (ret.success) {
+        this.authData = ret.data;
+        this.dataTotal = ret.count;
+      }
+      this.loadingTable = false;
     },
-    resetAuthItem(index) {
-      this.auths[index].post_id = "";
-      this.auths[index].user_id = "";
-      this.auths[index].duty_id = "";
-      this.auths[index].name = "";
+    sizeChangeHandler(size) {
+      this.where.limit = size;
     },
-    typeChange(index) {
-      this.resetAuthItem(index);
+    currentChangeHandler(page) {
+      this.where.page = page;
     },
-    handleClose(index) {
-      this.resetAuthItem(index);
+    prevClickHandler() {
+      this.where.page -= 1;
     },
-    delOption(index) {
-      this.auths.splice(index, 1);
+    nextClickHandler() {
+      this.where.page += 1;
     },
-    handleSubmit() {}
+    handleSelectionChange(val) {
+      this.selectedAuthItem = val;
+    },
+    getAuthTag(value) {
+      value = parseInt(value);
+      const list = [];
+      this.authCfg.forEach(item => {
+        if ((item.v & value) === item.v) {
+          list.push(item.n);
+        }
+      });
+      return list;
+    }
   }
 };
 </script>
-<style lang="less" scoped>
-@import "../../assets/less/variable.less";
-.field-auth {
-  .field-auth__item {
-    display: flex;
-    margin-bottom: 15px;
-    .field-auth__item-option {
-      flex: 1;
-    }
-  }
-
-  .field-auth__add + .field-auth__item {
-    margin-top: 20px;
-  }
-
-  .field-auth__item-del {
-    font-size: 20px;
-    color: rgb(182, 182, 182);
-    margin-left: 5px;
-    padding-top: 5px;
-    height: 30px;
-    cursor: pointer;
-    transition: color 0.2s ease-in-out;
-
-    &:hover {
-      color: #f56c6c;
-      transition: color 0.2s ease-in-out;
-    }
-  }
-
-  .field-auth__footer {
-    margin-top: 20px;
-    text-align: right;
-  }
-}
-@{deep} {
-  .el-select {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-}
-</style>

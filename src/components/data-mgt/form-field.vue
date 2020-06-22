@@ -1,20 +1,55 @@
 <template>
-  <el-table key="field" :data="data" style="width: 100%" height="600">
-    <el-table-column type="index" :index="1"></el-table-column>
-    <el-table-column prop="field_name" label="字段" width="180"></el-table-column>
-    <el-table-column prop="field_display" label="显示名称" width="180"></el-table-column>
-    <el-table-column fixed="right" label="操作">
-      <template slot-scope="scope" v-if="scope.row.field_name">
-        <pso-field-auth :field_name="scope.row.field_name" :data_code="code"></pso-field-auth>
-      </template>
-    </el-table-column>
-  </el-table>
+  <div class="pso-page">
+    <div class="pso-page-body">
+      <div class="pso-page__tree narrow">
+        <div class="tag-list">
+          <el-tabs tab-position="left" @tab-click="handleTabClick" v-model="curTab">
+            <el-tab-pane
+              :label="getName(item)"
+              :name="item.field_name"
+              :key="item.field_name"
+              v-for="item in data"
+            ></el-tab-pane>
+          </el-tabs>
+        </div>
+      </div>
+      <div class="pso-page-body__content">
+        <div class="pso-page-body__wrapper">
+          <div class="pso-page-body__tabbody" v-if="curNode">
+            <pso-field-auth :field="curNode" :code="code"></pso-field-auth>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 import PsoFieldAuth from "./field-auth";
 
 export default {
   props: ["data", "code"],
-  components: { PsoFieldAuth }
+  components: { PsoFieldAuth },
+  data() {
+    return {
+      curNode: null,
+      curTab: ""
+    };
+  },
+  created() {
+    if (this.data.length) {
+      this.handleTabClick({ name: this.data[0].field_name });
+    }
+  },
+  methods: {
+    handleTabClick({ name }) {
+      const tab = _.find(this.data, { field_name: name });
+      if (tab) {
+        this.curNode = tab;
+      }
+    },
+    getName({ field_display, field_name }) {
+      return `${field_display}(${field_name})`;
+    }
+  }
 };
 </script>

@@ -19,6 +19,7 @@ import store from './store';
 import PsoEmpty from "./components/empty";
 import PsoSkeleton from "./components/skeleton";
 import PsoDrawer from "./components/drawer";
+
 import PsoPickerTag from "./components/picker/pso-picker-tag";
 import PsoPickerDept from "./components/picker/pso-picker-dept";
 import PsoPickerPosition from "./components/picker/pso-picker-position";
@@ -26,6 +27,8 @@ import PsoPickerPost from "./components/picker/pso-picker-post";
 import PsoPickerResource from "./components/picker/pso-picker-resource";
 import PsoPickerTree from "./components/picker/pso-picker-tree";
 import PsoPickerUser from "./components/picker/pso-picker-user";
+import PsoPickerIcon from "./components/picker/pso-picker-icon";
+
 import PsoTreeCommon from "./components/tree";
 import PsoTypebar from "./components/type-bar";
 import PsoCountDown from "./components/countdown";
@@ -73,6 +76,7 @@ const components = {
     PsoPickerResource,
     PsoPickerTree,
     PsoPickerUser,
+    PsoPickerIcon,
     PsoTreeCommon,
     PsoFormTable,
     PsoFormDesigner,

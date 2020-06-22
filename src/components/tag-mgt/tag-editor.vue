@@ -33,6 +33,10 @@ export default {
         {
           n: "计量标签",
           v: "calculate"
+        },
+        {
+          n: "查询标签",
+          v: "searchtag"
         }
       ]
     };

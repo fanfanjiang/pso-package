@@ -303,7 +303,7 @@ export default class API {
 
     static async getFormTree() {
         try {
-            const ret = await this.trees({ data: { appid: 'Main', dimen: "3" } });
+            const ret = await this.trees({ data: { dimen: "3" } });
             return ret.data.tagtree.filter(node => node.is_leaf);
         } catch (error) {
             throw error;
@@ -312,7 +312,7 @@ export default class API {
 
     static async getTempleteTree() {
         try {
-            const ret = await this.trees({ data: { appid: 'Main', dimen: "4" } });
+            const ret = await this.trees({ data: { dimen: "4" } });
             return ret.data.tagtree.filter(node => [0, 1, 2].includes(node.tp_type) && node.is_leaf);
         } catch (error) {
             throw error;
@@ -321,7 +321,7 @@ export default class API {
 
     static async getWfTree() {
         try {
-            const ret = await this.trees({ data: { appid: 'Main', dimen: 7 } });
+            const ret = await this.trees({ data: { dimen: 7 } });
             return ret.data.tagtree.filter(node => node.is_leaf);
         } catch (error) {
             throw error;
@@ -330,7 +330,16 @@ export default class API {
 
     static async getOrgTree() {
         try {
-            const ret = await this.trees({ data: { appid: 'Main', dimen: 2 } });
+            const ret = await this.trees({ data: { dimen: 2 } });
+            return ret.data.tagtree.filter(node => node.is_leaf);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getMenuTree() {
+        try {
+            const ret = await this.trees({ data: { dimen: 1 } });
             return ret.data.tagtree.filter(node => node.is_leaf);
         } catch (error) {
             throw error;
@@ -477,6 +486,24 @@ export default class API {
     static async updateFormStatus(data = {}) {
         try {
             return await this.request('/api/form/status', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    //获取字段权限
+    static async getFieldAuth(data = {}) {
+        try {
+            return await this.request('/api/form/auth', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    //设置字段权限
+    static async updateFieldAuth(data = {}) {
+        try {
+            return await this.request('/api/form/auth', { data, method: 'put' });
         } catch (error) {
             throw error;
         }

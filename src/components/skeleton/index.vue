@@ -1,5 +1,5 @@
 <template>
-  <div :class="classObject">
+  <div :class="classObject" :style="style">
     <pso-skeleton-heading v-if="heading" :img="headimg"></pso-skeleton-heading>
     <slot />
     <pso-skeleton-text :lines="lines"></pso-skeleton-text>

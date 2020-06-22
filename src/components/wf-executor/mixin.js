@@ -2,6 +2,7 @@ import emitter from "../../mixin/emitter";
 import { REVIEW_OP_TYPE, REVIEW_STATUS } from "../../const/workflow";
 const UAParser = require("../../../share/util/u-agent");
 import WfStore from "./store";
+import { mapState } from "vuex";
 
 export const executor = {
     mixins: [emitter],
@@ -18,11 +19,20 @@ export const executor = {
             isMobile: false
         };
     },
+    computed: {
+        ...mapState(["base"]),
+    },
     async created() {
         const parser = new UAParser();
         this.isMobile = parser.getResult().device.type === "mobile";
 
-        this.store = new WfStore({ copy: this.params.copy, extend: this.params.extend, displayMode: this.params.displayMode });
+        this.store = new WfStore({
+            copy: this.params.copy,
+            extend: this.params.extend,
+            displayMode: this.params.displayMode,
+            curUser: this.base.user
+        });
+
         await this.store.init({ cfgId: this.params.node_id, instanceId: this.params.instance && this.params.instance.instanceId });
     },
     methods: {

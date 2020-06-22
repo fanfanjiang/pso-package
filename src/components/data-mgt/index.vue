@@ -29,7 +29,8 @@
               <el-tab-pane label="状态" name="status"></el-tab-pane>
               <el-tab-pane label="发布" name="publish"></el-tab-pane>
               <el-tab-pane label="属性" name="property"></el-tab-pane>
-              <el-tab-pane label="显示规则" name="rule"></el-tab-pane>
+              <el-tab-pane label="显示" name="rule"></el-tab-pane>
+              <el-tab-pane label="提交" name="submit"></el-tab-pane>
             </template>
             <el-tab-pane label="权限" name="auth"></el-tab-pane>
           </el-tabs>
@@ -60,7 +61,8 @@
               @save="saveConfig"
             ></form-property>
             <form-rule v-if="curTab==='rule'&&formStore" :store="formStore" :rules="rules"></form-rule>
-          </template>
+            <form-submit v-if="curTab==='submit'" :data="subCfg" :fields="tableData"></form-submit>
+          </template> 
           <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
         </div>
       </div>
@@ -106,6 +108,7 @@ import FormStatus from "./form-status";
 import FormPublish from "./form-publish";
 import FormProperty from "./form-property";
 import FormRule from "./form-rule";
+import FormSubmit from "./form-submit";
 
 const _DATA = {
   tableData: [],
@@ -131,7 +134,8 @@ const _DATA = {
     cal_source_leaf_form: "",
     cal_end_leaf_form: ""
   },
-  rules: []
+  rules: [],
+  subCfg: []
 };
 
 export default {
@@ -146,7 +150,8 @@ export default {
     FormStatus,
     FormPublish,
     FormProperty,
-    FormRule
+    FormRule,
+    FormSubmit
   },
   props: {
     params: {
@@ -239,6 +244,10 @@ export default {
         if (cfg.rule_config) {
           this.rules = JSON.parse(cfg.rule_config);
         }
+
+        if (cfg.submit_config) {
+          this.subCfg = JSON.parse(cfg.submit_config);
+        }
       }
     },
     nodeClickHandler(data) {
@@ -255,7 +264,7 @@ export default {
       this.$router.push({ name: "formDesigner", params: { appid: this.appid }, query: { pid, id, appid: this.appid } });
     },
     async getFields(formStore) {
-      let ret = await this.API.dict({ data: { data_code: this.curNode.node_name, app_id: this.appid } });
+      let ret = await this.API.getFormDict({ data_code: this.curNode.node_name });
       if (!ret.success) return;
       this.tableData = ret.data;
       this.tableData.forEach(item => {
@@ -297,12 +306,18 @@ export default {
         rules.push(rule);
       });
 
+      const subCfgData = [];
+      this.subCfg.forEach(item => {
+        subCfgData.push({ ...item, params: item.param.join(",") });
+      });
+
       const ret = await this.API.updateFormTree({
         data_code: this.curNode.node_name,
         display_columns: JSON.stringify(this.colData),
         status_config: JSON.stringify(this.staData),
         pub_config: JSON.stringify(this.pubCfg),
         rule_config: JSON.stringify(rules),
+        submit_config: JSON.stringify(subCfgData),
         ...this.property
       });
       this.saving = false;

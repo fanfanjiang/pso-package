@@ -23,6 +23,10 @@ export const skeleton = {
         lines: {
             type: Number,
             default: 4
+        },
+        style: {
+            type: Object,
+            default: () => ({})
         }
     }
 }

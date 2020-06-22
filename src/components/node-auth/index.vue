@@ -173,7 +173,6 @@ export default {
     async getNodeAuth() {
       this.loadingTable = true;
       const ret = await this.API.getNodeAuth({
-        appid: "Main",
         node_id: this.node.node_id,
         ...this.where,
         page: this.where.page - 1

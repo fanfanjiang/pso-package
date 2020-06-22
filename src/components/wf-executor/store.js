@@ -1,6 +1,6 @@
 import API from "../../service/api.js";
 import shortid from "shortid";
-import { REVIEW_OP_TYPE, REVIEW_OP_APPEND } from "../../const/workflow";
+import { REVIEW_OP_TYPE, REVIEW_OP_APPEND, REVIEW_STATUS } from "../../const/workflow";
 
 const BASEDADA = {
     instanceId: '',
@@ -73,11 +73,25 @@ export default class WfStore {
         this.showUserOp = false;
         this.showBody = true;
 
+        this.curUser = {};
+
         for (let option in options) {
             if (options.hasOwnProperty(option)) {
                 this[option] = options[option];
             }
         }
+    }
+
+    get isCreator() {
+        return this.curUser.user_id === this.data.creator;
+    }
+
+    get hasCreatorPower() {
+        return this.isCreator && (
+            this.data.status === REVIEW_STATUS.save.value ||
+            instance.instance_status === REVIEW_STATUS.reject.value ||
+            instance.instance_status === REVIEW_STATUS.backout.value
+        );
     }
 
     //初始化流程配置
@@ -206,7 +220,7 @@ export default class WfStore {
         this.data.status = instance.instance_status;
 
         //根据实例状态设置当前步骤
-        if (instance.instance_status === 0 || instance.instance_status === 2) {
+        if (this.hasCreatorPower) {
             this.setCurStep();
         } else {
             if (steps && steps.length) {

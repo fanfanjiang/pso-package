@@ -82,6 +82,7 @@ export default {
     },
     confirm() {
       this.$emit("confirm", this.selected);
+      this.show = false;
     }
   }
 };

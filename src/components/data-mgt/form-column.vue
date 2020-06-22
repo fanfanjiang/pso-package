@@ -3,7 +3,7 @@
     <div class="pso-table-controller">
       <el-button size="small" @click="$emit('save')">保存</el-button>
     </div>
-    <el-table key="list" :data="data" style="width: 100%" height="500">
+    <el-table key="list" size="small" :data="data" style="width: 100%" height="700">
       <el-table-column type="index" :index="1"></el-table-column>
       <el-table-column prop="field_name" label="字段" width="120"></el-table-column>
       <el-table-column label="显示名名称" width="200">
@@ -18,7 +18,7 @@
             v-model="scope.row.width"
             controls-position="right"
             :min="0"
-          ></el-input-number>
+          ></el-input-number> 
         </template>
       </el-table-column>
       <el-table-column label="启用" width="100">
