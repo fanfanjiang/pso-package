@@ -23,32 +23,34 @@
           <div class="pso-page-body__tab">
             <el-tabs v-model="curTab">
               <el-tab-pane label="属性" name="param"></el-tab-pane>
-              <el-tab-pane label="权限" name="auth"></el-tab-pane>
+              <el-tab-pane v-if="!params.hide" label="权限" name="auth"></el-tab-pane>
             </el-tabs>
           </div>
           <div class="pso-page-body__body">
             <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
             <div class="pso-menu-param" v-if="curTab==='param'" v-loading="saving||loadingInfo">
               <el-form label-position="left" label-width="80px">
-                <pso-title>基本参数</pso-title>
-                <el-form-item label="菜单名称">
-                  <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="菜单图标">
-                  <el-input size="small" v-model="curNode.menu_icon">
-                    <template slot="prepend">
-                      <el-button icon="el-icon-edit" @click="handleIcon"></el-button>
-                    </template>
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="排序">
-                  <el-input-number
-                    size="small"
-                    v-model="curNode.node_serial"
-                    controls-position="right"
-                    :min="0"
-                  ></el-input-number>
-                </el-form-item>
+                <template v-if="!params.hide">
+                  <pso-title>基本参数</pso-title>
+                  <el-form-item label="菜单名称">
+                    <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="菜单图标">
+                    <el-input size="small" v-model="curNode.menu_icon">
+                      <template slot="prepend">
+                        <el-button icon="el-icon-edit" @click="handleIcon"></el-button>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="排序">
+                    <el-input-number
+                      size="small"
+                      v-model="curNode.node_serial"
+                      controls-position="right"
+                      :min="0"
+                    ></el-input-number>
+                  </el-form-item>
+                </template>
                 <div v-if="!!curNode.is_leaf">
                   <el-form-item label="打开方式">
                     <el-select size="small" v-model="curNode.open_type">
@@ -76,12 +78,16 @@
                     :node="curNode"
                     @change="handleTagChange"
                     field="menu_link"
-                  ></plug-set>
+                  >
+                    <template v-slot:default="slotProps">
+                      <slot v-bind:data="{node_name:curNode.node_name,set:slotProps.data}"></slot>
+                    </template>
+                  </plug-set>
                   <el-form-item v-else label="菜单链接">
                     <el-input v-model="curNode.menu_link" autocomplete="off"></el-input>
                   </el-form-item>
                 </div>
-                <div class="pso-menu-param__controller">
+                <div class="pso-menu-param__controller" v-if="!params.hide">
                   <el-button type="primary" @click="updateNode" size="mini">保存</el-button>
                 </div>
               </el-form>

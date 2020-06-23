@@ -62,7 +62,7 @@
             ></form-property>
             <form-rule v-if="curTab==='rule'&&formStore" :store="formStore" :rules="rules"></form-rule>
             <form-submit v-if="curTab==='submit'" :data="subCfg" :fields="tableData"></form-submit>
-          </template> 
+          </template>
           <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
         </div>
       </div>
@@ -279,7 +279,19 @@ export default {
         if (item) {
           const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
           item.display = item.display_name || (field ? field._fieldName : "");
-          this.colData.push({ ...item, width: "", using: "1", show: "1", align: "left", number: 0, sortable: "0", url: "", cal: "0" });
+          this.colData.push({
+            ...item,
+            width: "",
+            using: "1",
+            show: "1",
+            align: "left",
+            number: 0,
+            sortable: "0",
+            url: "",
+            cal: "0",
+            res_dimen: "",
+            target_form: {}
+          });
         }
       });
     },
@@ -306,14 +318,21 @@ export default {
         rules.push(rule);
       });
 
+      //提交规则
       const subCfgData = [];
       this.subCfg.forEach(item => {
         subCfgData.push({ ...item, params: item.param.join(",") });
       });
 
+      //列表规则
+      const colData = [];
+      this.colData.forEach(item => {
+        colData.push({ ...item, fields: [] });
+      });
+
       const ret = await this.API.updateFormTree({
         data_code: this.curNode.node_name,
-        display_columns: JSON.stringify(this.colData),
+        display_columns: JSON.stringify(colData),
         status_config: JSON.stringify(this.staData),
         pub_config: JSON.stringify(this.pubCfg),
         rule_config: JSON.stringify(rules),

@@ -34,7 +34,7 @@ requireComponent.keys().forEach(fileName => {
 
 export default {
   name: "PsoFormComponent",
-  components: componentsMap, 
+  components: componentsMap,
   props: ["cpnt", "forceShow"],
   computed: {
     currentCpnt() {
@@ -42,13 +42,20 @@ export default {
     }
   },
   methods: {
-    displayable(cpnt) { 
+    displayable(cpnt) {
       if (this.forceShow) return true;
-      let sysShow = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : true;
-      if (typeof cpnt.data.showInRules !== "undefined") {
-        sysShow = !!cpnt.data.showInRules;
+      let show = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : true;
+
+      //字段权限判断
+      if (!_.isNull(cpnt.data.__auth__)) {
+        show = (cpnt.data.__auth__ & 8) === 8;
       }
-      return sysShow;
+
+      //显示规则判断
+      if (typeof cpnt.data.showInRules !== "undefined") {
+        show = !!cpnt.data.showInRules;
+      }
+      return show;
     }
   }
 };

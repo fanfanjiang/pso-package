@@ -66,6 +66,7 @@
         :deletable="deletable"
         :operate="deletable"
         :selection-type="selectionType"
+        :view-auth="cpnt.data.__auth__||0"
         :addable="cpnt.data._new"
         :edtail-editable="false"
         selectable
@@ -205,9 +206,10 @@ export default {
         form_code: this.store.data_code,
         limit: 9999,
         start: 0,
+        leaf_auth: 4,
         keys: {
           leaf_id: {
-            type: 2,
+            type: 1,
             value
           }
         }

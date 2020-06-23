@@ -28,6 +28,8 @@ export default class FormStore {
 
         this.rule_config;
 
+        this.__fieldAuth__ = []; //字段权限
+
         this.cpntsDataMps = {};
 
         for (let option in options) {
@@ -133,6 +135,8 @@ export default class FormStore {
                 if (instance) {
                     if (typeof instance[cpntData._fieldValue] !== 'undefined') {
                         Vue.set(cpntData, '_val', instance[cpntData._fieldValue]);
+                    } else {
+                        Vue.set(cpntData, '_val', cpntData._defaultValue || "");
                     }
                 } else {
                     Vue.set(cpntData, '_val', cpntData._defaultValue || "");

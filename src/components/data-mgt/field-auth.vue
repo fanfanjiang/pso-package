@@ -60,7 +60,7 @@
 <script>
 import PsoTitle from "../title";
 import { pickerMixin } from "../../mixin/picker";
-import { MENU_LEAF_AUTH } from "../../const/menu";
+import { FORM_AUTH } from "../../const/menu";
 export default {
   mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" })],
   props: {
@@ -70,7 +70,7 @@ export default {
   components: { PsoTitle },
   data() {
     return {
-      authCfg: MENU_LEAF_AUTH,
+      authCfg: FORM_AUTH,
       fieldAuth: [],
       selectedAuthItem: [],
       proxy: {

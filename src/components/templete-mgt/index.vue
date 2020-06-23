@@ -139,7 +139,21 @@ export default {
           }
 
           if (this.curNode.tp_content) {
-            this.columnData = JSON.parse(this.curNode.tp_content);
+            const columnData = JSON.parse(this.curNode.tp_content);
+            columnData.forEach(item => {
+              this.columnData.push({
+                field: "",
+                name: "",
+                width: 120,
+                show: "1",
+                cal: "0", 
+                align: "left",
+                number: 0,
+                formulable: "0",
+                formula: "",
+                ...item
+              });
+            });
           }
 
           if (cfg.tp_buttons) {

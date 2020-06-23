@@ -33,7 +33,8 @@ export default {
     copyMode: {
       type: Boolean, //是否可编辑
       default: false
-    }
+    },
+    dataDefault: Object
   },
   data() {
     return {
@@ -86,7 +87,7 @@ export default {
         const ret = await this.API.form({ data: { leaf_id: this.dataId, form_code: this.store.data_code } });
         this.store.updateInstance(ret.data);
       } else {
-        this.store.updateInstance();
+        this.store.updateInstance(this.dataDefault);
       }
       this.loading = false;
       this.$emit("data-loaded", this.store);

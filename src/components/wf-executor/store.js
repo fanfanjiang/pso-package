@@ -87,7 +87,7 @@ export default class WfStore {
     }
 
     get hasCreatorPower() {
-        return this.isCreator && (
+        return (this.isCreator || !this.data.creator) && (
             this.data.status === REVIEW_STATUS.save.value ||
             instance.instance_status === REVIEW_STATUS.reject.value ||
             instance.instance_status === REVIEW_STATUS.backout.value

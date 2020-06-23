@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="pso-table-controller">
+    <div class="pso-table-controller" v-loading="initializing">
       <el-button size="small" type="primary" plain @click="addHandler">添加查询规则</el-button>
     </div>
-    <el-table :data="tag.tag_rule" style="width: 100%">
+    <el-table :data="tag.tag_rule" style="width: 100%" v-if="!initializing">
       <el-table-column label="表单" width="160">
         <template slot-scope="scope">
           <el-select
@@ -53,21 +53,32 @@ export default {
   props: ["tag"],
   data() {
     return {
+      initializing: true,
       forms: [],
       fields: []
     };
   },
-  async created() {
-    this.forms = await this.API.getFormTree();
-    if (!this.tag.tag_rule) {
-      this.$set(this.tag, "tag_rule", []);
-    } else {
-      for (let item of this.tag.tag_rule) {
-        await this.formChangeHandler(item.data_code, item);
-      }
+  watch: {
+   'tag.tag_no'() {
+      this.initialize();
     }
   },
+  async created() {
+    this.initialize();
+  },
   methods: {
+    async initialize() {
+      this.initializing = true;
+      this.forms = await this.API.getFormTree();
+      if (!this.tag.tag_rule) {
+        this.$set(this.tag, "tag_rule", []);
+      } else {
+        for (let item of this.tag.tag_rule) {
+          await this.formChangeHandler(item.data_code, item);
+        }
+      }
+      this.initializing = false;
+    },
     addHandler() {
       this.tag.tag_rule.push({ data_code: "", field_name: "", fields: [], rule: "" });
     },

@@ -15,34 +15,37 @@
         <div v-if="node[field]&&data.length">
           <pso-title>插件参数</pso-title>
           <el-form-item v-for="tpItem in data" :key="tpItem.field" :label="tpItem.name">
-            <el-select
-              v-if="tpItem.picker==='picker-form'"
-              filterable
-              clearable
-              size="small"
-              v-model="tpItem.value"
-            >
-              <el-option
-                v-for="item in forms"
-                :key="item.node_name"
-                :label="item.node_display"
-                :value="item.node_name"
-              ></el-option>
-            </el-select>
-            <el-select
-              v-if="tpItem.picker==='picker-wf'"
-              filterable
-              clearable
-              size="small"
-              v-model="tpItem.value"
-            >
-              <el-option
-                v-for="item in workflows"
-                :key="item.node_name"
-                :label="item.node_display"
-                :value="item.node_name"
-              ></el-option>
-            </el-select>
+            <template v-if="tpItem.picker==='picker-form'||tpItem.picker==='picker-wf'">
+              <el-select
+                v-if="tpItem.picker==='picker-form'"
+                filterable
+                clearable
+                size="small"
+                v-model="tpItem.value"
+              >
+                <el-option
+                  v-for="item in forms"
+                  :key="item.node_name"
+                  :label="item.node_display"
+                  :value="item.node_name"
+                ></el-option>
+              </el-select>
+              <el-select
+                v-if="tpItem.picker==='picker-wf'"
+                filterable
+                clearable
+                size="small"
+                v-model="tpItem.value"
+              >
+                <el-option
+                  v-for="item in workflows"
+                  :key="item.node_name"
+                  :label="item.node_display"
+                  :value="item.node_name"
+                ></el-option>
+              </el-select>
+              <slot v-bind:data="tpItem"></slot>
+            </template>
             <el-select
               v-if="tpItem.picker==='picker-tag'"
               filterable

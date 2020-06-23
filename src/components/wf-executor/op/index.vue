@@ -87,8 +87,7 @@ export default {
         : "提交";
     },
     superpower() {
-      return;
-      this.hasCreatorPower;
+      return this.hasCreatorPower;
     }
   },
   methods: {

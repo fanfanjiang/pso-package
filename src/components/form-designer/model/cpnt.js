@@ -16,11 +16,15 @@ export default class Component {
             }
         }
         const store = this.store;
-       
+
         genComponentData(this.data);
 
         //默认组件名称
         this.data._fieldName = this.data._fieldName || this.CPNT.name;
+
+        //权限
+        const auth = _.find(store.__fieldAuth__, { field_name: this.data._fieldValue }) || {};
+        this.data.__auth__ = auth.show_auth || null;
 
         //对以前数据的兼容处理
         this.compatible('_required');

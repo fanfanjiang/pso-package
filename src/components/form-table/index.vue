@@ -220,6 +220,7 @@
           :form-entity="cfg"
           :data-id="dataId"
           :data-instance="instance"
+          :data-default="defForm"
           :editable="dataId?edtailEditable:addable"
         ></pso-form-view>
       </div>
@@ -301,7 +302,8 @@ export default {
     defOpauth: Number,
     textGroup: String,
     plug_code: String,
-    defKeys: String
+    defKeys: String,
+    defForm: Object
   },
   data() {
     return {
@@ -709,7 +711,9 @@ export default {
       this.getFormData();
     },
     handleUrlClick({ row, field }) {
-      window.open(`${field.url}?${Qs.stringify({ [field.field_name]: row[field.field_name] })}`);
+      window.open(
+        `${field.url}/${field.res_dimen}?${Qs.stringify({ ...row, __data_code__: this.cfg.data_code, __source_field__: field.field_name })}`
+      );
     },
     handleSummary({ columns }) {
       const indexs = new Array(columns.length).fill("");
