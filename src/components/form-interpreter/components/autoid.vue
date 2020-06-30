@@ -19,7 +19,6 @@ export default {
     }
   },
   async created() {
-    console.log(this.cpnt.store.copyMode);
     let instance_id = this.cpnt.store.instance_id;
     if (this.cpnt.store.copyMode) {
       this.cpnt.data._val = "";
@@ -35,7 +34,6 @@ export default {
         this.$on("cpnt-value-changed", ({ cpnt }) => {
           if (cpnt.fid === this.cpnt.data._bind) {
             this.cpnt.data._val = cpnt.data._val;
-            console.log(this.cpnt.data._val);
           }
         });
       }

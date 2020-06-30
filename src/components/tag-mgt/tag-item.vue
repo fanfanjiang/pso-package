@@ -96,6 +96,7 @@ export default {
         tag_meter: 0,
         tag_config: "",
         tag_set: [],
+        tag_rule: [],
         tag_source: "",
         optype: 0
       },
@@ -145,6 +146,8 @@ export default {
       }
       if (tag.tag_rule) {
         tag.tag_rule = JSON.parse(tag.tag_rule);
+      } else {
+        tag.tag_rule = [];
       }
       tag.tag_set = cfg.tag_set || [];
       tag.tag_source = cfg.tag_source || "";
@@ -187,9 +190,11 @@ export default {
       delete data.tag_set;
 
       const tagRule = [];
-      data.tag_rule.forEach(item => {
-        tagRule.push({ ...item, fields: [] });
-      });
+      if (data.optype !== 2) { 
+        data.tag_rule.forEach(item => {
+          tagRule.push({ ...item, fields: [] });
+        });
+      }
 
       const ret = await this.API.updateTag({ ...data, tag_rule: JSON.stringify(tagRule) });
       this.$notify({ title: ret.success ? "成功" : "失败", type: ret.success ? "success" : "warning" });

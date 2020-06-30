@@ -44,7 +44,8 @@ export default {
   methods: {
     displayable(cpnt) {
       if (this.forceShow) return true;
-      let show = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : true;
+
+      let show = true;
 
       //字段权限判断
       if (!_.isNull(cpnt.data.__auth__)) {
@@ -55,6 +56,9 @@ export default {
       if (typeof cpnt.data.showInRules !== "undefined") {
         show = !!cpnt.data.showInRules;
       }
+
+      show = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : true;
+
       return show;
     }
   }

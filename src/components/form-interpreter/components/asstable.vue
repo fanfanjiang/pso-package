@@ -41,14 +41,14 @@
       type="primary"
       plain
       icon="el-icon-plus"
-      size="small"
+      size="mini"
       @click="handleClickAdd"
     >添加{{cpnt.data._fieldName}}</el-button>
     <el-button
       v-show="selectedList.length"
       type="danger"
       icon="el-icon-delete"
-      size="small"
+      size="mini"
       @click="handleDelList(selectedList)"
     >取消所选关联数据</el-button>
     <el-dialog
@@ -62,14 +62,15 @@
     >
       <pso-form-table
         :cfgId="cpnt.data._option"
-        checkbox
+        checkbox  
         :deletable="deletable"
         :operate="deletable"
         :selection-type="selectionType"
-        :view-auth="cpnt.data.__auth__||0"
+        :view-auth="4"
         :addable="cpnt.data._new"
         :edtail-editable="false"
         selectable
+        :changable="false"
         @selection-confirm="handleAddSelection"
       ></pso-form-table>
     </el-dialog>

@@ -285,6 +285,10 @@ export default {
       type: Boolean,
       default: false
     },
+    changable: {
+      type: Boolean,
+      default: true
+    },
     selectionType: {
       type: String,
       default: "checkbox"
@@ -338,7 +342,7 @@ export default {
       curStatus: "",
       instance: null,
       viewAuths: [],
-      activeView: 0,
+      activeView: "",
       opAuth: "",
       cpntText: {
         add: "新增",
@@ -360,7 +364,7 @@ export default {
       return this.addable && (this.opAuth & 1) === 1;
     },
     opChangable() {
-      return this.statuses.length && (this.opAuth & 2) === 2;
+      return this.changable && this.statuses.length && (this.opAuth & 2) === 2;
     },
     opExportable() {
       return (this.opAuth & 4) === 4;
@@ -487,17 +491,6 @@ export default {
       }
       this.fields = _.orderBy(this.fields, ["number"], ["asc"]);
 
-      //视图权限
-      if (this.viewAuth) {
-        MENU_LEAF_AUTH.forEach(a => {
-          if ((a.v & this.viewAuth) === a.v) {
-            this.viewAuths.push(a);
-          }
-        });
-        this.viewAuths = _.orderBy(this.viewAuths, ["v"], ["desc"]);
-        this.activeView = this.viewAuths[0].v + "";
-      }
-
       //获取操作权限
       if (this.cfg.opAuth) {
         this.opAuth = this.cfg.opAuth.leaf_auth;
@@ -536,8 +529,20 @@ export default {
         }
       } catch (error) {}
 
+      //视图权限
+      if (this.viewAuth) {
+        MENU_LEAF_AUTH.forEach(a => {
+          if ((a.v & this.viewAuth) === a.v) {
+            this.viewAuths.push(a);
+          }
+        });
+        this.viewAuths = _.orderBy(this.viewAuths, ["v"], ["desc"]);
+        this.activeView = this.viewAuths[0].v + "";
+      } else {
+        this.activeView = 0;
+      }
+
       this.initializing = false;
-      this.getFormStatus();
     },
     async getFormStatus() {
       const ret = await this.API.getFormStatus({
@@ -720,7 +725,6 @@ export default {
       if (this.summary) {
         for (let key in this.summary) {
           const index = _.findIndex(columns, { property: key });
-          console.log(index);
           if (index !== -1) {
             indexs[index] = this.summary[key];
           }

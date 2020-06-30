@@ -1,7 +1,6 @@
 <template>
   <div class="pso-wf-mainform">
     <el-form
-      :rules="rules"
       :model="store.data"
       label-width="80px"
       label-position="top"

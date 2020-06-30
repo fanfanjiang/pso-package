@@ -8,7 +8,7 @@
     ></el-time-picker>
     <el-date-picker
       v-else
-      value-format="yyyy-MM-dd HH:mm:ss"  
+      value-format="yyyy-MM-dd HH:mm:ss"
       v-model="cpnt.data._val"
       :disabled="!cpnt.store.editable||cpnt.data._read"
       :type="cpnt.data._type"

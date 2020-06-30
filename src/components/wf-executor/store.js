@@ -1,6 +1,5 @@
 import API from "../../service/api.js";
-import shortid from "shortid";
-import { REVIEW_OP_TYPE, REVIEW_OP_APPEND, REVIEW_STATUS } from "../../const/workflow";
+import { REVIEW_OP_TYPE, REVIEW_OP_APPEND, REVIEW_STATUS, WF_IMPORTANCE, WF_SECTRE, WF_URGENT } from "../../const/workflow";
 
 const BASEDADA = {
     instanceId: '',
@@ -10,9 +9,9 @@ const BASEDADA = {
     ctime: "",
     step: "",
     name: '',
-    urgent: '',
-    import: '',
-    secret: '',
+    urgent: WF_URGENT[0],
+    import: WF_IMPORTANCE[0],
+    secret: WF_SECTRE[0],
     filetype: '',
     opinion: '',
     d_tag: '',
@@ -75,6 +74,8 @@ export default class WfStore {
 
         this.curUser = {};
 
+        this.defForm = null;
+
         for (let option in options) {
             if (options.hasOwnProperty(option)) {
                 this[option] = options[option];
@@ -89,8 +90,8 @@ export default class WfStore {
     get hasCreatorPower() {
         return (this.isCreator || !this.data.creator) && (
             this.data.status === REVIEW_STATUS.save.value ||
-            instance.instance_status === REVIEW_STATUS.reject.value ||
-            instance.instance_status === REVIEW_STATUS.backout.value
+            this.data.status === REVIEW_STATUS.reject.value ||
+            this.data.status === REVIEW_STATUS.backout.value
         );
     }
 

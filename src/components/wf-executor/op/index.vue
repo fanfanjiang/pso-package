@@ -59,7 +59,6 @@
 <script>
 import PsoWfConfirm from "./confirm";
 import { op } from "../mixin";
-import { mapState } from "vuex";
 
 export default {
   components: { PsoWfConfirm },
@@ -71,7 +70,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(["base"]),
     superable() {
       //只有分发才隐藏
       return this.store.data.msg_tag === 1 ? false : true;

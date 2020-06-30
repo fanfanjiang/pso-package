@@ -8,6 +8,7 @@
               <pso-wf-overview :store="store"></pso-wf-overview>
             </div>
             <div class="pso-wf-executor__main-content-wrapper">
+              <slot name="content" :store="store"></slot>
               <div
                 v-if="!isMobile"
                 ref="wfTable"
@@ -54,6 +55,7 @@
           <div class="pso-wf-executor__content" v-show="store.activeExtendTab==='data'">
             <pso-wf-mainform :store="store"></pso-wf-mainform>
             <pso-wf-form :store="store"></pso-wf-form>
+            <slot name="data" :store="store"></slot>
           </div>
           <pso-wf-attach :store="store" v-show="store.activeExtendTab==='attach'"></pso-wf-attach>
           <pso-wf-chart :store="store" v-show="store.activeExtendTab==='flowchart'"></pso-wf-chart>

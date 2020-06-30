@@ -1,5 +1,12 @@
 <template>
-  <component v-bind:is="currentCpnt" :params="params"></component>
+  <component v-bind:is="currentCpnt" :params="params">
+    <template slot="data" slot-scope="{store}">
+      <slot name="data" :store="store"></slot>
+    </template>
+    <template slot="content" slot-scope="{store}">
+      <slot name="content" :store="store"></slot>
+    </template>
+  </component>
 </template> 
 <script>
 import PsoExecutor from "./executor";
@@ -27,6 +34,9 @@ export default {
     });
     this.$on("op-excuted", val => {
       this.$emit("excuted", val);
+    });
+    this.$on("initialized", val => {
+      this.$emit("executor-initialized", val);
     });
   }
 };

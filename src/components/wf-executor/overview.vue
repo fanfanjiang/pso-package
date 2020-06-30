@@ -20,7 +20,7 @@
         <span>申请人</span>
       </div>
       <span v-if="!isNew">{{store.data.creator_name}}</span>
-      <span v-else></span>
+      <span v-else>{{store.curUser.user_nick}}</span>
     </div>
     <div class="pso-wf-executor__overview-item">
       <div class="pso-wf-executor__overview-item__title">

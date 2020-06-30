@@ -27,7 +27,7 @@
       <span>示例：{{sample}}</span>
     </el-form-item>
     <el-form-item label="关联标签字段">
-      <el-select v-model="cpnt.data._bind" placeholder="请选择">
+      <el-select v-model="cpnt.data._bind" placeholder="请选择" clearable>
         <el-option
           v-for="item in fieldOptions"
           :key="item.fid"

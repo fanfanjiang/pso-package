@@ -219,7 +219,9 @@ export default {
     },
     handleCurrentChange(val) {
       if (this.pattern !== "radio") return;
-      this.selected = [val];
+      if (val) {
+        this.selected = _.cloneDeep([val]);
+      }
     },
     confirm() {
       this.$emit("confirm", this.getUsers());

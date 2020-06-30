@@ -30,7 +30,8 @@ export const executor = {
             copy: this.params.copy,
             extend: this.params.extend,
             displayMode: this.params.displayMode,
-            curUser: this.base.user
+            curUser: this.base.user,
+            defForm: this.params.defForm
         });
 
         await this.store.init({ cfgId: this.params.node_id, instanceId: this.params.instance && this.params.instance.instanceId });

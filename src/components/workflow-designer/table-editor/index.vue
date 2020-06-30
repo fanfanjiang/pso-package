@@ -74,7 +74,7 @@
     </div>
     <div class="wf-table-editor__content">
       <div :style="contentStyle">
-        <editor-content :editor="editor" />
+        <editor-content :editor="editor" v-if="editor" />
       </div>
     </div>
     <transition name="el-zoom-in-top">
@@ -462,9 +462,7 @@ export default {
   beforeDestroy() {
     try {
       this.editor.destroy();
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   }
 };
 </script>

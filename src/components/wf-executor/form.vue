@@ -6,14 +6,17 @@
     v-if="store.cfg.map_data_code&&!store.configing"
     :form-id="store.cfg.map_data_code"
     :data-id="instanceId"
-    :editable="isFormWriteable"
+    :data-default="store.defForm"
+    :editable="isFormWriteable" 
     :copy-mode="store.copy"
   ></pso-form-interpreter>
 </template>
 <script>
 import PsoFormInterpreter from "../form-interpreter";
+import emitter from "../../mixin/emitter";
 
 export default {
+  mixins: [emitter],
   components: { PsoFormInterpreter },
   props: {
     store: {
@@ -38,6 +41,7 @@ export default {
           await this.formChangeHandler({ cpnt: maps[key], value: maps[key].data._val });
         }
       }
+      this.dispatch("PsoWfExecutorBox", "initialized", this.store);
     },
     formChangeHandler(data) {
       this.store.setTableVal(data);
