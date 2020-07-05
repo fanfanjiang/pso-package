@@ -39,8 +39,8 @@
         text="打回"
         @confirm="reject"
       ></pso-wf-confirm>
-    </div>
-    <el-dropdown @command="handleCommand">
+    </div> 
+    <el-dropdown @command="handleCommand"  v-if="store.data.instanceId">
       <el-button size="small">
         更多
         <i class="el-icon-more"></i>

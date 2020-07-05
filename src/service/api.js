@@ -508,6 +508,15 @@ export default class API {
             throw error;
         }
     }
+
+    //设置字段权限
+    static async updateFormStage(data = {}) {
+        try {
+            return await this.request('/api/form/stage', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

@@ -41,6 +41,7 @@ export function pickerMixin({
             handleAddSelection(data) {
                 if (data.length) {
                     this.baseObj[dataListName] = _.uniqBy(this.baseObj[dataListName].concat(data), this.idName);
+                    console.log(this.idName);
                     if (this.baseObj[typeName] === radioVal) {
                         this.checkRadio(data[0]);
                     }
@@ -59,8 +60,8 @@ export function pickerMixin({
                 if (data) params.push(data);
                 this.baseObj[dataListName].splice(...params);
             },
-            resetPicker({ idName }) {
-                this.baseObj[dataListName] = [];
+            resetPicker({ idName, reset = true }) {
+                if (reset) this.baseObj[dataListName] = [];
                 if (idName) this.idName = idName;
             }
         }

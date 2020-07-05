@@ -60,6 +60,7 @@
               :small="true"
               layout="total,prev, pager, next"
               :page-sizes="[30,50,100,200,500]"
+              :pager-count="3"
               :total="dataTotal"
               :page-size="options.limit"
               :current-page="options.start"
@@ -269,7 +270,7 @@ export default {
   width: 100%;
   .pso-picker__body-l {
     margin-right: 2px;
-    width: 200px;
+    width: 260px;
     height: 100%;
     > div {
       height: 100%;

@@ -62,10 +62,10 @@ export default class WfStore {
         }
 
         this.TEXT = {
-            file: { value: "文件编号", id: "file", show: true },
-            import: { value: "重要等级", id: "import", show: true },
-            secret: { value: "秘密等级", id: "secret", show: true },
-            urgent: { value: "加急程度", id: "urgent", show: true }
+            file: { value: "文件编号", id: "file", show: false },
+            import: { value: "重要等级", id: "import", show: false },
+            secret: { value: "秘密等级", id: "secret", show: false },
+            urgent: { value: "加急程度", id: "urgent", show: false }
         }
 
         this.formImage = null;

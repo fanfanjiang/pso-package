@@ -113,6 +113,27 @@
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
+          <el-dropdown size="small" trigger="click" v-if="opStageable">
+            <el-button
+              type="primary"
+              size="mini"
+              :disabled="!selectedList.length"
+            >{{cpntText.stage}}</el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="(stage,index) in stages" :key="index">
+                <el-popconfirm
+                  confirmButtonText="确定"
+                  cancelButtonText="取消"
+                  icon="el-icon-info"
+                  iconColor="red"
+                  title="你确认要修改吗"
+                  @onConfirm="handleStageChange(stage)"
+                >
+                  <span slot="reference">{{stage.name}}</span>
+                </el-popconfirm>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
           <el-button
             v-if="opAddable"
             type="primary"
@@ -151,8 +172,21 @@
           @sort-change="handleSort"
         >
           <template #default>
-            <el-table-column v-if="checkbox" type="selection" width="40"></el-table-column>
-            <el-table-column type="index" label="序号" :index="1" width="50"></el-table-column>
+            <el-table-column
+              v-if="checkbox"
+              type="selection"
+              width="40"
+              header-align="center"
+              align="center"
+            ></el-table-column>
+            <el-table-column
+              type="index"
+              label="序号"
+              :index="1"
+              width="50"
+              header-align="center"
+              align="center"
+            ></el-table-column>
             <el-table-column
               resizable
               show-overflow-tooltip
@@ -164,6 +198,7 @@
               :width="field.width"
               :align="field.align"
               :sortable="field.sortable==='1'?'custom':false"
+              header-align="center"
             >
               <template slot-scope="scope">
                 <a
@@ -174,7 +209,14 @@
                 <span v-else>{{getVal(scope.row[field.field_name])}}</span>
               </template>
             </el-table-column>
-            <el-table-column v-if="operate" :label="opText" fixed="right">
+            <el-table-column
+              v-if="operate"
+              :label="opText"
+              :width="operateWidth"
+              fixed="right"
+              align="center"
+              header-align="center"
+            >
               <template slot-scope="scope" v-if="deletable">
                 <el-button
                   size="mini"
@@ -221,12 +263,18 @@
           :data-id="dataId"
           :data-instance="instance"
           :data-default="defForm"
+          :bind-userpicker="bindUserpicker"
           :editable="dataId?edtailEditable:addable"
         ></pso-form-view>
       </div>
       <template v-slot:footer v-if="dataId?edtailEditable:addable">
         <div class="pso-drawer-footer__body">
-          <el-button v-if="deletable" type="danger" size="small" @click="deleteForm(dataId)">删除</el-button>
+          <el-button
+            v-if="dataId?deletable:''"
+            type="danger"
+            size="small"
+            @click="deleteForm(dataId)"
+          >删除</el-button>
           <el-button
             type="primary"
             size="small"
@@ -261,6 +309,10 @@ export default {
       type: Boolean,
       default: false
     },
+    operateWidth: {
+      type: String,
+      default: "100"
+    },
     addable: {
       type: Boolean,
       default: true
@@ -289,6 +341,10 @@ export default {
       type: Boolean,
       default: true
     },
+    stageable: {
+      type: Boolean,
+      default: true
+    },
     selectionType: {
       type: String,
       default: "checkbox"
@@ -307,7 +363,8 @@ export default {
     textGroup: String,
     plug_code: String,
     defKeys: String,
-    defForm: Object
+    defForm: Object,
+    bindUserpicker: Object
   },
   data() {
     return {
@@ -347,8 +404,10 @@ export default {
       cpntText: {
         add: "新增",
         change: "更改",
-        copy: "复制"
-      }
+        copy: "复制",
+        stage: "更改阶段"
+      },
+      stages: []
     };
   },
   computed: {
@@ -365,6 +424,9 @@ export default {
     },
     opChangable() {
       return this.changable && this.statuses.length && (this.opAuth & 2) === 2;
+    },
+    opStageable() {
+      return this.stageable && this.stages.length && (this.opAuth & 8) === 8;
     },
     opExportable() {
       return (this.opAuth & 4) === 4;
@@ -397,7 +459,10 @@ export default {
       this.getFormCfg();
     },
     activeView() {
-      !this.initializing && this.getFormStatus();
+      this.getFormStatus();
+    },
+    defKeys() {
+      this.getFormCfg();
     }
   },
   async created() {
@@ -437,6 +502,20 @@ export default {
       this.ResultNotify(ret);
       this.getFormStatus();
     },
+    async handleStageChange(data) {
+      if (!this.selectedList.length) {
+        return this.$message("请先选择要更改的数据");
+      }
+
+      const ret = await this.API.updateFormStage({
+        data_code: this.cfg.data_code,
+        d_stage: data.value,
+        leafids: this.selectedList.map(item => item.leaf_id).join(",")
+      });
+
+      this.ResultNotify(ret);
+      this.getFormStatus();
+    },
     handleStatusClick(status) {
       this.curStatus = status;
       if (status) {
@@ -451,6 +530,8 @@ export default {
     },
     reset() {
       this.viewAuths = [];
+      this.formData = [];
+      this.defaultKeys = {};
     },
     async getFormCfg() {
       this.reset();
@@ -474,6 +555,10 @@ export default {
 
       if (this.cfg.display_columns) {
         this.fields = JSON.parse(this.cfg.display_columns).filter(item => item.using === "1");
+      }
+
+      if (this.cfg.stage_config) {
+        this.stages = JSON.parse(this.cfg.stage_config);
       }
 
       if (!this.fields.length) {
@@ -521,15 +606,16 @@ export default {
           }
         }
         if (this.defKeys) {
-          let keyList = this.defKeys.split(",");
+          let keyList = this.defKeys.split(";");
           keyList.forEach(item => {
-            const key = item.split("=");
-            this.defaultKeys[key[0]] = { value: key[1], type: 1 };
+            const key = item.split(",");
+            this.defaultKeys[key[0]] = { value: key[1], type: key[2] };
           });
         }
       } catch (error) {}
 
       //视图权限
+      let lastActiveView = this.activeView;
       if (this.viewAuth) {
         MENU_LEAF_AUTH.forEach(a => {
           if ((a.v & this.viewAuth) === a.v) {
@@ -540,6 +626,10 @@ export default {
         this.activeView = this.viewAuths[0].v + "";
       } else {
         this.activeView = 0;
+      }
+
+      if (lastActiveView === this.activeView) {
+        this.getFormStatus();
       }
 
       this.initializing = false;

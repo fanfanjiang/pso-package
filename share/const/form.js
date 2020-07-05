@@ -497,7 +497,7 @@ const CPNT = {
     chart: true,
     table_show: true,
     value_format_id: 'user_id',
-    data: [{ n: '_type', v: 'radio' }, { n: '_defaultValType', v: 'choose' }],
+    data: [{ n: '_type', v: 'radio' }, { n: '_defaultValType', v: 'choose' }, { n: '_bindForm', v: '' }, { n: '_bindFormField', v: '' }],
     op: [
       Object.assign({ match: 1 }, OP_TYPE.op1),
       Object.assign({ match: 1 }, OP_TYPE.op2),

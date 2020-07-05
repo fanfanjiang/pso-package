@@ -59,7 +59,7 @@ export default {
     };
   },
   watch: {
-   'tag.tag_no'() {
+    "tag.tag_no"() {
       this.initialize();
     }
   },
@@ -70,7 +70,7 @@ export default {
     async initialize() {
       this.initializing = true;
       this.forms = await this.API.getFormTree();
-      if (!this.tag.tag_rule) {
+      if (!this.tag.tag_rule || typeof this.tag.tag_rule !== "object") {
         this.$set(this.tag, "tag_rule", []);
       } else {
         for (let item of this.tag.tag_rule) {

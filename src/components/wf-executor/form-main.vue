@@ -1,13 +1,15 @@
 <template>
-  <div class="pso-wf-mainform">
-    <el-form
-      :model="store.data"
-      label-width="80px"
-      label-position="top"
-      size="medium"
-    >
+  <div
+    class="pso-wf-mainform"
+    v-if="(store.TEXT.file.show||!store.cfg.files.length)||store.TEXT.import.show||store.TEXT.secret.show||store.TEXT.urgent.show"
+  >
+    <el-form :model="store.data" label-width="80px" label-position="top" size="medium">
       <div class="pso-wf-mainform__item">
-        <el-form-item v-if="store.TEXT.file.show" :label="store.TEXT.file.value" prop="filetype">
+        <el-form-item
+          v-if="store.TEXT.file.show||!store.cfg.files.length"
+          :label="store.TEXT.file.value"
+          prop="filetype"
+        >
           <el-select v-model="store.data.filetype" :disabled="readMode">
             <el-option
               v-for="type in store.cfg.files"
@@ -50,6 +52,11 @@ export default {
   computed: {
     readMode() {
       return this.store.curStep && this.store.curStep.atype !== "form";
+    }
+  },
+  created() {
+    if (!this.store.data.filetype && this.store.cfg.files.length) {
+      this.store.data.filetype = this.store.cfg.files[0].wf_filetype;
     }
   },
   data() {

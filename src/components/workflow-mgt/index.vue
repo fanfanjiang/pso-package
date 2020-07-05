@@ -99,25 +99,25 @@ const _DATA = {
       type: "文件编号",
       value: "文件编号",
       id: "file",
-      show: true
+      show: false
     },
     {
       type: "重要等级",
       value: "重要等级",
       id: "import",
-      show: true
+      show: false
     },
     {
       type: "秘密等级",
       value: "秘密等级",
       id: "secret",
-      show: true
+      show: false
     },
     {
       type: "加急程度",
       value: "加急程度",
       id: "urgent",
-      show: true
+      show: false
     }
   ],
   subWfData: [],

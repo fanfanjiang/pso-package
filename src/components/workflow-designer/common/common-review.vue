@@ -71,6 +71,9 @@ export default {
       return Object.values(this.REVIEW_AUTH_TYPE);
     }
   },
+  created() {
+    this.node.opa && this.opaChangeHandler(this.node.opa, false);
+  },
   methods: {
     opaAddHandler(data) {
       const auth = _.find(this.authType, { value: this.node.opa });
@@ -79,9 +82,9 @@ export default {
       );
       this.handleAddSelection(data);
     },
-    opaChangeHandler(value) {
+    opaChangeHandler(value, reset = true) {
       const auth = _.find(this.authType, { value });
-      this.resetPicker({ idName: auth.idName });
+      this.resetPicker({ idName: auth.idName, reset });
     }
   }
 };

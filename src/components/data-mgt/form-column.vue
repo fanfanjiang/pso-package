@@ -100,7 +100,7 @@
         <menu-mgt :params="{data_type:curRow.res_dimen,hide:true}" v-if="showEditor">
           <template v-slot:default="slotProps">
             <div :key="slotProps.data.node_name">
-              <div style="display:none">{{getFormFields(slotProps.data)}}</div>
+              <div style="display:none">{{deGetFormFields(slotProps.data)}}</div>
               <div>接收参数设置</div>
               <el-button size="mini" @click="addParamsHandler(slotProps.data.node_name)">添加参数</el-button>
               <el-table
@@ -156,6 +156,7 @@
                   </template>
                 </el-table-column>
               </el-table>
+              <el-button type="primary" size="mini" @click="$emit('save')">保存</el-button>
             </div>
           </template>
         </menu-mgt>
@@ -166,6 +167,7 @@
 <script>
 import { formOp } from "../form-designer/mixin.js";
 import MenuMgt from "../menu-mgt";
+import debounce from "throttle-debounce/debounce";
 export default {
   mixins: [formOp],
   components: { MenuMgt },
@@ -176,7 +178,8 @@ export default {
       forms: [],
       fields: [],
       curRow: null,
-      showEditor: false
+      showEditor: false,
+      deGetFormFields: null
     };
   },
   async created() {
@@ -184,6 +187,7 @@ export default {
     this.dimens = ret.data;
 
     this.forms = await this.API.getFormTree();
+    this.deGetFormFields = debounce(500, this.getFormFields);
   },
   methods: {
     setParamsHandler(row) {
@@ -200,8 +204,13 @@ export default {
       if (!this.curRow.target_form[node_name]) {
         this.curRow.target_form[node_name] = [];
       }
-      const { value } = set;
-      if (value) {
+
+      let { value, picker } = set;
+      if (value && (picker === "picker-form" || picker === "picker-wf")) {
+        if (picker === "picker-wf") {
+          const wfRet = await this.API.workflowcfg({ data: { node_id: value } });
+          value = wfRet.data.map_data_code;
+        }
         const formStore = await this.makeFormStore(value);
         const ret = await this.API.getFormDict({ data_code: value });
         ret.data.forEach(item => {

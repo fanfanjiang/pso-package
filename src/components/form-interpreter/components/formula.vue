@@ -17,7 +17,7 @@ export default {
     numProxy() {
       if (this.cpnt.data._type !== 1) return [];
       return this.cpnt.store.search({
-        options: { figure: true },
+        options: { db: true },
         onlyData: true,
         beforePush: item => {
           if (item.fid === this.cpnt.fid) return false;
@@ -51,8 +51,11 @@ export default {
         datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), item._val);
       });
       try {
+        console.log(datasource);
         this.cpnt.data._val = eval(datasource);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 };

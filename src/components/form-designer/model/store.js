@@ -26,6 +26,7 @@ export default class FormStore {
 
         this.copyMode = false;
 
+
         this.rule_config;
 
         this.__fieldAuth__ = []; //字段权限

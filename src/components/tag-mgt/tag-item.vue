@@ -144,11 +144,15 @@ export default {
       if (tag.tag_config) {
         cfg = JSON.parse(tag.tag_config);
       }
-      if (tag.tag_rule) {
-        tag.tag_rule = JSON.parse(tag.tag_rule);
-      } else {
-        tag.tag_rule = [];
+
+      if (tag.tag_type === "searchtag") {
+        if (tag.tag_rule) {
+          tag.tag_rule = JSON.parse(tag.tag_rule);
+        } else {
+          tag.tag_rule = [];
+        }
       }
+
       tag.tag_set = cfg.tag_set || [];
       tag.tag_source = cfg.tag_source || "";
       this.curTag = tag;
@@ -189,14 +193,17 @@ export default {
       delete data.tag_source;
       delete data.tag_set;
 
-      const tagRule = [];
-      if (data.optype !== 2) { 
-        data.tag_rule.forEach(item => {
-          tagRule.push({ ...item, fields: [] });
-        });
+      if (this.curTag.tag_type === "searchtag") {
+        const tagRule = [];
+        if (data.optype !== 2) {
+          data.tag_rule.forEach(item => {
+            tagRule.push({ ...item, fields: [] });
+          });
+          data.tag_rule = JSON.stringify(tagRule);
+        }
       }
 
-      const ret = await this.API.updateTag({ ...data, tag_rule: JSON.stringify(tagRule) });
+      const ret = await this.API.updateTag(data);
       this.$notify({ title: ret.success ? "成功" : "失败", type: ret.success ? "success" : "warning" });
 
       this.loading = false;

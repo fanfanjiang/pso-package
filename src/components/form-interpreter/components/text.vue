@@ -5,7 +5,7 @@
       :type="type||cpnt.data._type||'text'"
       :clearable="true"
       :disabled="!cpnt.store.editable||cpnt.data._read"
-      v-model.trim="cpnt.data._val"
+      v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
     ></el-input>
   </el-form-item>

@@ -21,6 +21,11 @@
           </el-select>
         </template>
       </el-table-column>
+      <el-table-column label="错误提示" width="600">
+        <template slot-scope="scope">
+          <el-input type="textarea" :row="8" size="small" v-model="scope.row.error" placeholder></el-input>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" type="danger" @click="delHandler(scope.$index)">删除</el-button>
@@ -33,15 +38,14 @@
 export default {
   props: ["data", "fields"],
   created() {
-    console.log(this.data);
     this.data.forEach(item => {
       item.param = item.param.split(",");
-      Object.assign({ sql: "", ...item });
+      Object.assign({ sql: "", param: [], error: "", ...item });
     });
   },
   methods: {
     addHandler() {
-      this.data.push({ sql: "", param: [] });
+      this.data.push({ sql: "", param: [], error: "" });
     },
     delHandler(index) {
       this.data.splice(index, 1);

@@ -7,13 +7,12 @@
             <div class="pso-wf-executor__main-header">
               <pso-wf-overview :store="store"></pso-wf-overview>
             </div>
-            <div class="pso-wf-executor__main-content-wrapper">
+            <div class="pso-wf-executor__main-content-wrapper" id="executorMain">
               <slot name="content" :store="store"></slot>
               <div
                 v-if="!isMobile"
                 ref="wfTable"
                 class="pso-wf-executor__main-content"
-                id="executorMain"
                 v-html="store.cfg.wf_body_tp"
               ></div>
               <div
@@ -22,9 +21,9 @@
                 v-html="stamp.stamp"
                 :style="stampStyle"
               ></div>
-            </div>
-            <div class="pso-wf-executor__main-log">
-              <pso-wf-log :store="store"></pso-wf-log>
+              <div class="pso-wf-executor__main-log">
+                <pso-wf-log :store="store"></pso-wf-log>
+              </div>
             </div>
           </div>
           <transition name="el-zoom-in-bottom">

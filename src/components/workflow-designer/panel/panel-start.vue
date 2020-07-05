@@ -5,7 +5,7 @@
         <el-input type="text" v-model="wfDesigner.wfName" clearable></el-input>
       </el-form-item>
       <el-form-item label="选择工作表">
-        <el-select v-model="wfDesigner.formId" placeholder="请选择">
+        <el-select v-model="wfDesigner.formId" placeholder="请选择" filterable>
           <el-option
             v-for="item in wfDesigner.formsList"
             :key="item.node_name"

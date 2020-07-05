@@ -16,8 +16,8 @@
         <div class="pso-dd-header">
           <pso-title>工作表：{{curNode.node_display}}</pso-title>
           <div class="pso-dd-header__btns">
-            <el-button size="small" type="primary" plain @click="saveConfig">保存设置</el-button>
-            <el-button size="small" type="primary" plain @click="handleEditForm">设计表单</el-button>
+            <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
+            <el-button size="mini" type="primary" plain @click="handleEditForm">设计表单</el-button>
           </div>
         </div>
         <div class="pso-dd-tab">
@@ -31,6 +31,7 @@
               <el-tab-pane label="属性" name="property"></el-tab-pane>
               <el-tab-pane label="显示" name="rule"></el-tab-pane>
               <el-tab-pane label="提交" name="submit"></el-tab-pane>
+              <el-tab-pane label="阶段" name="stage"></el-tab-pane>
             </template>
             <el-tab-pane label="权限" name="auth"></el-tab-pane>
           </el-tabs>
@@ -47,6 +48,7 @@
             <form-field v-if="curTab==='field'" :data="tableData" :code="curNode.node_name"></form-field>
             <form-column v-if="curTab==='list'" :data="colData" @save="saveConfig"></form-column>
             <form-status v-if="curTab==='status'" :data="staData" @save="saveConfig"></form-status>
+            <form-stage v-if="curTab==='stage'" :data="stageData" @save="saveConfig"></form-stage>
             <form-publish
               v-if="curTab==='publish'"
               :data="pubCfg"
@@ -109,6 +111,7 @@ import FormPublish from "./form-publish";
 import FormProperty from "./form-property";
 import FormRule from "./form-rule";
 import FormSubmit from "./form-submit";
+import FormStage from "./form-stage";
 
 const _DATA = {
   tableData: [],
@@ -135,7 +138,8 @@ const _DATA = {
     cal_end_leaf_form: ""
   },
   rules: [],
-  subCfg: []
+  subCfg: [],
+  stageData: []
 };
 
 export default {
@@ -151,7 +155,8 @@ export default {
     FormPublish,
     FormProperty,
     FormRule,
-    FormSubmit
+    FormSubmit,
+    FormStage
   },
   props: {
     params: {
@@ -182,7 +187,8 @@ export default {
       leafAuthcfg: [
         { n: "新增", v: 1 },
         { n: "更改", v: 2 },
-        { n: "导出", v: 4 }
+        { n: "导出", v: 4 },
+        { n: "更改阶段", v: 8 }
       ],
       ..._DATA
     };
@@ -228,6 +234,10 @@ export default {
 
         if (cfg.status_config) {
           this.staData = JSON.parse(cfg.status_config);
+        }
+
+        if (cfg.stage_config) {
+          this.stageData = JSON.parse(cfg.stage_config);
         }
 
         if (cfg.display_columns) {
@@ -337,6 +347,7 @@ export default {
         pub_config: JSON.stringify(this.pubCfg),
         rule_config: JSON.stringify(rules),
         submit_config: JSON.stringify(subCfgData),
+        stage_config: JSON.stringify(this.stageData),
         ...this.property
       });
       this.saving = false;

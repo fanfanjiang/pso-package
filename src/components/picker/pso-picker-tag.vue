@@ -285,7 +285,7 @@ export default {
   }
   &.pso-picker__c__show {
     .pso-picker__body-r {
-      width: calc(100% - 120px - 200px);
+      width: calc(100% - 120px - 320px);
     }
   }
 }
@@ -296,7 +296,7 @@ export default {
 
   .pso-picker__body-l {
     margin-right: 2px;
-    width: 200px;
+    width: 320px;
     height: 100%;
     > div {
       height: 100%;
@@ -307,7 +307,7 @@ export default {
     width: 120px;
   }
   .pso-picker__body-r {
-    width: calc(100% - 200px);
+    width: calc(100% - 320px);
   }
 }
 .pso-picker__ul {

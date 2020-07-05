@@ -6,14 +6,17 @@
     <el-form-item label="标签类型">
       <el-select size="small" v-model="data.tag_type">
         <el-option v-for="item in tagTypes" :key="item.v" :label="item.n" :value="item.v"></el-option>
-      </el-select> 
+      </el-select>
     </el-form-item>
     <el-form-item label="描述">
       <el-input size="small" v-model="data.tag_note" autocomplete="off"></el-input>
+    </el-form-item> 
+    <el-form-item label="规则" v-if="data.tag_type!=='searchtag'"> 
+      <el-input size="small" v-model="data.tag_rule" autocomplete="off"></el-input>
     </el-form-item>
     <el-form-item label="是否计量">
       <el-switch v-model="data.tag_meter" :active-value="1" :inactive-value="0"></el-switch>
-    </el-form-item> 
+    </el-form-item>
     <plug-set :data="data.tag_set" :node="data" @change="handleTagChange" field="tag_source"></plug-set>
   </el-form>
 </template>

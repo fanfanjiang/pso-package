@@ -1,7 +1,7 @@
 <template>
   <el-form label-position="left" label-width="80px">
     <el-form-item label="插件名称">
-      <el-input size="small" v-model="node.node_display" autocomplete="off"></el-input>
+      <el-input size="small" v-model="node.tp_name" autocomplete="off"></el-input>
     </el-form-item>
     <el-form-item label="插件类型">
       <el-select size="small" v-model="node.tp_type">
