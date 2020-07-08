@@ -244,6 +244,12 @@ export default class WfStore {
             this.log = log;
             this.setTableLogVal(log);
         }
+
+        try {
+            this.prepareMainTableVal(this.data);
+        } catch (error) {
+
+        }
     }
 
     setTableLogVal(data) {
@@ -266,7 +272,7 @@ export default class WfStore {
         }
     }
 
-    prepareMainTableVal() {
+    prepareMainTableVal(data) {
         for (let key in data) {
             if (typeof data[key] === "string") {
                 this.setTableVal({ cpnt: { data: { _fieldValue: `wf_${key}` } }, value: data[key] });

@@ -22,6 +22,9 @@ export const executor = {
     computed: {
         ...mapState(["base"]),
     },
+    watch: {
+  
+    },
     async created() {
         const parser = new UAParser();
         this.isMobile = parser.getResult().device.type === "mobile";
@@ -53,7 +56,7 @@ export const op = {
     },
     methods: {
         async saveForm() {
-            //暂存
+            //暂存 
             try {
                 const formData = await this.store.getFormData();
                 this.dispatch("PsoWfExecutorBox", "op-before-save", { optype: 0, formData });

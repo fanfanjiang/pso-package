@@ -12,7 +12,7 @@ export default class API {
         if (method === 'get') {
             url += `?${Qs.stringify(data)}`;
         }
-        try {
+        try { 
             if (method === 'delete') data = { data: data };
             const ret = await axios({ method, url, data });
             const message = ret.msg || ret.message;

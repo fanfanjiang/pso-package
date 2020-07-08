@@ -45,21 +45,21 @@ export default {
     displayable(cpnt) {
       if (this.forceShow) return true;
 
-      let show = true;
-
-      //字段权限判断
-      if (!_.isNull(cpnt.data.__auth__)) {
-        show = (cpnt.data.__auth__ & 8) === 8;
-      }
+      const show = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : true;
 
       //显示规则判断
+      let showInRules = true;
       if (typeof cpnt.data.showInRules !== "undefined") {
-        show = !!cpnt.data.showInRules;
+        showInRules = !!cpnt.data.showInRules;
       }
 
-      show = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : true;
+      //字段权限判断
+      let showInAuth = true;
+      if (!_.isNull(cpnt.data.__auth__)) {
+        showInAuth = (cpnt.data.__auth__ & 8) === 8;
+      }
 
-      return show;
+      return show && showInRules && showInAuth;
     }
   }
 };

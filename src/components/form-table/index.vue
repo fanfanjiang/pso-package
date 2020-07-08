@@ -573,7 +573,7 @@ export default {
       !this.initializing && this.getFormData();
     },
     getVal(val) {
-      return _.isNull(val) ? "" : decodeURIComponent(val);
+      return _.isNull(val) ? "" : val;
     },
     reset() {
       this.viewAuths = [];

@@ -79,6 +79,7 @@
         :edtail-editable="false"
         selectable
         :changable="false"
+        :stageable="false"
         @selection-confirm="handleAddSelection"
       ></pso-form-table>
     </el-dialog>
