@@ -24,7 +24,7 @@ export default {
                 if (!this.emitSilent) {
                     this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy });
                     this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy });
-                    this.cpnt.store.setShowByRules(this.cpnt);
+                    if (this.cpnt.store) this.cpnt.store.setShowByRules(this.cpnt);
                 }
             }
         }

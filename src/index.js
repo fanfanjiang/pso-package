@@ -123,7 +123,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     if (API && API.handleAuthError) {
         BASEAPI.handleAuthError = API.handleAuthError;
     }
-
+ 
     Vue.prototype.API = API || BASEAPI;
     Vue.prototype.API.URL_PREFIX = apiPrefix;
 

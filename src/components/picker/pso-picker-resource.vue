@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       treeOption: {
-        dimen: 6, 
+        dimen: 6,
         data_type: this.options.data_type,
         resource_type: this.options.resource_type,
         searchtype: "Resource"
@@ -59,8 +59,8 @@ export default {
       return await this.API.resource({
         data: {
           ...option,
-          keys: JSON.stringify({ node_id: { type: 1, value: this.currentNode.node_id } }),
-          start: option.start - 1
+          node_id: this.currentNode.node_id,
+          page: option.start - 1
         }
       });
     }

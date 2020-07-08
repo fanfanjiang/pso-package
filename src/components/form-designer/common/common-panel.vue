@@ -26,6 +26,12 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="字段存储类型">
+        <el-select size="small" v-model="cpnt.data._fieldType" placeholder="请选择">
+          <el-option label="字符串" value="String"></el-option>
+          <el-option label="Text" value="Text"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item v-if="needDefaultValue" :label="defalutValueLabel">
         <el-input size="small" v-model="cpnt.data._defaultValue" clearable></el-input>
       </el-form-item>

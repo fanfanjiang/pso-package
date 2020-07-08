@@ -282,7 +282,8 @@ const CPNT = {
     ],
     chart: true,
     table_show: true,
-    value_format_id: 'leaf_id'
+    value_format_id: 'leaf_id',
+    data: [{ n: '_limit', v: 5 }]
   },
   row: {
     icon: "el-icon-crop",

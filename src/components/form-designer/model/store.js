@@ -70,7 +70,6 @@ export default class FormStore {
             store: this
         });
 
-
         //必须添加的字段
         if (this.forceInsertSys) {
             const sysName = this.search({ options: { componentid: "text" }, dataOptions: { _fieldValue: 'd_name' } });

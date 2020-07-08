@@ -6,7 +6,11 @@
       :needPlaceholder="false"
       :needDefaultValue="false"
       :needUnique="false"
-    ></common-panel>
+    >
+      <el-form-item label="个数限制">
+        <el-input-number size="small" v-model="cpnt.data._limit" :min="1"></el-input-number>
+      </el-form-item>
+    </common-panel>
   </div>
 </template>
 <script>

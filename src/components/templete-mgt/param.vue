@@ -14,8 +14,20 @@
       </el-table-column>
       <el-table-column label="控件类型">
         <template slot-scope="scope">
-          <el-select v-model="scope.row.picker" size="mini">
+          <el-select v-model="scope.row.picker" size="mini" clearable>
             <el-option v-for="item in TP_CTL_TYPE" :key="item.v" :label="item.n" :value="item.v"></el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column label="关联参数">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.relateParam" size="mini" clearable>
+            <el-option
+              v-for="item in data"
+              :key="item.field"
+              :label="item.name"
+              :value="item.field"
+            ></el-option>
           </el-select>
         </template>
       </el-table-column>
@@ -42,13 +54,28 @@ export default {
       TP_CTL_TYPE: TP_CTL_TYPE
     };
   },
+  created() {
+    this.data.forEach(d => {
+      d = Object.assign(
+        {
+          field: "",
+          value: "",
+          picker: "",
+          name: "",
+          relateParam: ""
+        },
+        d
+      );
+    });
+  },
   methods: {
     addParam() {
       this.data.push({
         field: "",
         value: "",
         picker: "",
-        name: ""
+        name: "",
+        relateParam: ""
       });
     },
     delParam(index) {

@@ -84,6 +84,10 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 type: Boolean,
                 default: false
             },
+            checkAuth: {
+                type: Boolean,
+                default: false
+            },
             nodeEditLable: {
                 type: String,
                 default: ''
@@ -187,6 +191,10 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             async getNodeData(node, resolve) {
                 const options = { ...this.where, rootable: this.rootable, lazy: this.lazy };
 
+                if (this.checkAuth) {
+                    options.authtype = ''
+                }
+
                 if (node) {
                     options.node_level = node.level
                 }
@@ -215,8 +223,14 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     id: "node_id",
                     afterPush: (node, pnode) => {
                         pnode.children = _.orderBy(pnode.children, ...this.sortOptions);
+                    },
+                    beforePush: (node, pnode) => {
+                        console.log(node.node_auth);
+                        if (this.checkAuth && node.node_auth === '0') return false;
+                        return true;
                     }
                 });
+
                 //如果是懒加载
                 if (resolve) {
                     resolve(data);

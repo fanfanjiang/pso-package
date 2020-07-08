@@ -76,6 +76,7 @@ export default {
   computed: {
     showFields: {
       get() {
+        console.log(this.cpnt.data._showFields);
         return !this.cpnt.data._showFields ? [] : this.cpnt.data._showFields.split(",");
       },
       set(val) {
@@ -91,7 +92,7 @@ export default {
   created() {
     this.getFormList();
     this.setCache();
-    if (this.cpnt.data._option) this.formChangeHandler(this.cpnt.data._option);
+    if (this.cpnt.data._option) this.formChangeHandler(this.cpnt.data._option, true);
   },
   beforeUpdate() {
     this.setCache();
@@ -135,11 +136,10 @@ export default {
 
       this.loading = false;
     },
-    async formChangeHandler(id) {
+    async formChangeHandler(id, notReset = false) {
       this.loading = true;
 
       this.cpnt.cache.defaultEl._option = "";
-      this.cpnt.data._showFields = "";
       this.cpnt.data._outputFormat = id;
 
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
@@ -154,7 +154,10 @@ export default {
 
       this.cpnt.cache.defaultEl._option = id;
 
-      this.cpnt.data._showFields = _.map(this.cpnt.cache.fieldOptions, "_fieldValue").join(",");
+      if (!notReset) {
+        this.cpnt.data._showFields = "";
+        this.cpnt.data._showFields = _.map(this.cpnt.cache.fieldOptions, "_fieldValue").join(",");
+      }
       this.loading = false;
     }
   }

@@ -18,16 +18,20 @@
         <div class="pso-page-body__wrapper" v-if="curNode&&!loadingInfo">
           <div class="pso-page-body__header">
             <pso-title :size="16">菜单：{{curNode.node_display}}</pso-title>
-            <div class="pso-page-body__btns"></div>
+            <div class="pso-page-body__btns">
+              <el-button size="mini" type="primary" plain @click="updateNode">保存设置</el-button>
+            </div>
           </div>
           <div class="pso-page-body__tab">
             <el-tabs v-model="curTab">
               <el-tab-pane label="属性" name="param"></el-tab-pane>
               <el-tab-pane v-if="!params.hide" label="权限" name="auth"></el-tab-pane>
+              <el-tab-pane v-if="!params.hide" label="权限参数" name="view"></el-tab-pane>
             </el-tabs>
           </div>
           <div class="pso-page-body__body">
             <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+            <view-set v-if="curTab==='view'" :data="viewData"></view-set>
             <div class="pso-menu-param" v-if="curTab==='param'" v-loading="saving||loadingInfo">
               <el-form label-position="left" label-width="80px">
                 <template v-if="!params.hide">
@@ -104,10 +108,11 @@
 <script>
 import PsoNodeauth from "../node-auth";
 import PlugSet from "./plug-set";
+import ViewSet from "./view";
 import { MENU_TYPE, OPEN_TYPE, MENU_LEAF_AUTH } from "../../const/menu";
 import PsoPickerIcon from "../picker/pso-picker-icon";
 export default {
-  components: { PsoNodeauth, PlugSet, PsoPickerIcon },
+  components: { PsoNodeauth, PlugSet, ViewSet, PsoPickerIcon },
   props: {
     params: {
       type: Object,
@@ -133,7 +138,8 @@ export default {
       loadingInfo: false,
       showIconBox: false,
       initTpCode: "",
-      leafAuthcfg: MENU_LEAF_AUTH
+      leafAuthcfg: MENU_LEAF_AUTH,
+      viewData: []
     };
   },
   computed: {
@@ -180,6 +186,11 @@ export default {
           if (this.curNode.param_value) {
             this.curTpDetail = JSON.parse(this.curNode.param_value);
           }
+          if (this.curNode.auth_config) {
+            this.viewData = JSON.parse(this.curNode.auth_config);
+          } else {
+            this.viewData = [];
+          }
         } else {
           // this.curTab = "auth";
         }
@@ -193,7 +204,8 @@ export default {
           ..._.pickBy(this.curNode, _.identity),
           dimen: this.curNode.node_dimen,
           code: this.curNode.node_name,
-          param_value: JSON.stringify(this.curTpDetail)
+          param_value: JSON.stringify(this.curTpDetail),
+          auth_config: JSON.stringify(this.viewData)
         },
         method: "put"
       });

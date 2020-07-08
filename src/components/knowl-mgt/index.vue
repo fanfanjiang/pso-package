@@ -12,13 +12,13 @@
       </div>
       <div class="pso-page-body__content">
         <div class="pso-page-body__wrapper" v-if="curNode" v-loading="loading">
-          <div class="pso-page-body__header">
+          <div class="pso-page-body__header" v-if="params.mgtable==='1'">
             <pso-title>资源分类：{{curNode.node_display}}</pso-title>
             <div class="pso-page-body__btns">
               <el-button size="small" type="primary" plain @click="saveTp">保存设置</el-button>
             </div>
           </div>
-          <div class="pso-page-body__tab">
+          <div class="pso-page-body__tab" v-if="params.mgtable==='1'">
             <el-tabs v-model="curTab">
               <template v-if="!!curNode.is_leaf">
                 <el-tab-pane label="资源" name="base"></el-tab-pane>
@@ -29,7 +29,13 @@
           </div>
           <div class="pso-page-body__tabbody">
             <template v-if="!!curNode.is_leaf">
-              <pso-knowl-table v-if="curTab==='base'" :node="curNode" @go="$emit('go',$event)"></pso-knowl-table>
+              <pso-knowl-table
+                v-if="curTab==='base'"
+                :node="curNode"
+                :auth="params.auth"
+                :def-keys="params.defKeys"
+                @go="$emit('go',$event)"
+              ></pso-knowl-table>
             </template>
             <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
           </div>
@@ -47,9 +53,7 @@ export default {
   props: {
     params: {
       type: Object,
-      default: () => {
-        data_type: "";
-      }
+      default: () => ({ data_type: "", auth: 0, mgtable: "0" })
     }
   },
   data() {

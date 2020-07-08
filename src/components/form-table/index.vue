@@ -12,23 +12,44 @@
           </el-tabs>
         </div>
       </div>
-      <div class="pso-formTable-status" v-if="statuses.length">
-        <el-badge
-          :hidden="status.total==='0'"
-          :value="status.total"
-          class="item"
-          :type="index>3?'info':''"
-          :max="99"
-          v-for="(status,index) in statuses"
-          :key="index"
-        >
-          <el-tag
-            size="medium"
-            :effect="curStatus===status?'dark':'plain'"
-            @click="handleStatusClick(status)"
-          >{{status.name}}</el-tag>
-        </el-badge>
-        <el-tag size="medium" @click="handleStatusClick()" :effect="!curStatus?'dark':'plain'">全部</el-tag>
+      <div class="pso-formTable-tagfilter">
+        <div class="pso-formTable-status" v-if="statuses.length">
+          <el-badge
+            :hidden="status.total==='0'"
+            :value="status.total"
+            class="item"
+            :type="index>3?'info':''"
+            :max="99"
+            v-for="(status,index) in statuses"
+            :key="index"
+          >
+            <el-tag
+              size="medium"
+              :effect="curStatus===status?'dark':'plain'"
+              @click="handleStatusClick(status)"
+            >{{status.name}}</el-tag>
+          </el-badge>
+          <el-tag size="medium" @click="handleStatusClick()" :effect="!curStatus?'dark':'plain'">全部</el-tag>
+        </div>
+        <el-divider direction="vertical" v-if="stages.length"></el-divider>
+        <div class="pso-formTable-status" v-if="stages.length">
+          <el-badge
+            :hidden="status.total==='0'"
+            :value="status.total"
+            class="item"
+            :type="index>3?'info':''"
+            :max="99"
+            v-for="(status,index) in stages"
+            :key="index"
+          >
+            <el-tag
+              size="medium"
+              :effect="curStage===status?'dark':'plain'"
+              @click="handleStageClick(status)"
+            >{{status.name}}</el-tag>
+          </el-badge>
+          <el-tag size="medium" @click="handleStageClick()" :effect="!curStage?'dark':'plain'">全部</el-tag>
+        </div>
       </div>
       <div class="pso-formTable-sort" v-if="sorts.length">
         <el-tag
@@ -299,6 +320,10 @@ import FormIcon from "./form-icon";
 export default {
   components: { PsoFormView: () => import("../form-interpreter"), PsoDataFilter, FormIcon },
   props: {
+    params: {
+      type: Object,
+      default: () => ({})
+    },
     cfgId: String,
     autoSubmit: {
       type: Boolean,
@@ -407,7 +432,10 @@ export default {
         copy: "复制",
         stage: "更改阶段"
       },
-      stages: []
+      stages: [],
+      curStage: "",
+      defSearchType: "",
+      viewCfg: []
     };
   },
   computed: {
@@ -466,9 +494,19 @@ export default {
     }
   },
   async created() {
+    //处理searchType,特别笨的办法
     if (typeof this.defOpauth !== "undefined") {
       this.opAuth = this.defOpauth;
     }
+
+    if (this.params.searchType) {
+      this.defSearchType = this.params.searchType;
+    }
+
+    if (this.params.auth_config && this.params.auth_config.length) {
+      this.viewCfg = this.params.auth_config;
+    }
+
     await this.getFormCfg();
   },
   methods: {
@@ -522,6 +560,15 @@ export default {
         this.$set(this.keys, "d_status", { value: status.value, type: 1 });
       } else {
         delete this.keys.d_status;
+      }
+      !this.initializing && this.getFormData();
+    },
+    handleStageClick(stage) {
+      this.curStage = stage;
+      if (stage) {
+        this.$set(this.keys, "d_stage", { value: stage.value, type: 1 });
+      } else {
+        delete this.keys.d_stage;
       }
       !this.initializing && this.getFormData();
     },
@@ -619,7 +666,13 @@ export default {
       if (this.viewAuth) {
         MENU_LEAF_AUTH.forEach(a => {
           if ((a.v & this.viewAuth) === a.v) {
-            this.viewAuths.push(a);
+            const viewCfg = _.find(this.viewCfg, { v: a.v });
+            const viewItem = { ...a };
+            if (viewCfg) {
+              if (viewCfg.text) viewItem.n = viewCfg.text;
+              viewItem.field = viewCfg.field;
+            }
+            this.viewAuths.push(viewItem);
           }
         });
         this.viewAuths = _.orderBy(this.viewAuths, ["v"], ["desc"]);
@@ -634,12 +687,25 @@ export default {
 
       this.initializing = false;
     },
+    appendSearchType(data) {
+      if (this.defSearchType) {
+        const viewTarget = _.find(this.viewAuths, { v: parseInt(this.activeView) });
+        if (viewTarget && viewTarget.field) {
+          data.search_type = this.defSearchType;
+          data.field_name = viewTarget.field;
+        }
+      }
+    },
     async getFormStatus() {
-      const ret = await this.API.getFormStatus({
+      const params = {
         leaf_auth: this.activeView,
         data_code: this.cfg.data_code,
         keys: JSON.stringify({ ...this.defaultKeys })
-      });
+      };
+
+      this.appendSearchType(params);
+
+      const ret = await this.API.getFormStatus(params);
 
       //状态设置
       if (ret.success && ret.data) {
@@ -673,6 +739,8 @@ export default {
       }
 
       parameters.keys = JSON.stringify(parameters.keys);
+
+      this.appendSearchType(parameters);
 
       const ret = await this.API.form({
         data: parameters,

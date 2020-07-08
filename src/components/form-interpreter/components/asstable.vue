@@ -13,28 +13,36 @@
         @selection-change="handleSelectionChange"
         v-show="proxy.valList.length"
       >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          :prop="tableField._fieldValue"
-          :label="tableField._fieldName"
-          v-for="(tableField) of showFields"
-          :key="tableField.fid"
-        >
-          <template slot-scope="scope">
-            <el-tag
-              disable-transitions
-              v-if="tableField.componentid === 'attachment'"
-              size="mini"
-            >附件</el-tag>
-            <el-tag
-              disable-transitions
-              v-else-if="tableField.componentid === 'table'"
-              size="mini"
-            >{{tableField.name}}</el-tag>
-            <div v-else>{{decodeURIComponent(scope.row[tableField._fieldValue])}}</div>
-          </template>
-        </el-table-column>
+        <template #default>
+          <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
+          <el-table-column
+            type="index"
+            label="序号"
+            :index="1"
+            width="50"
+            header-align="center"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            resizable
+            show-overflow-tooltip
+            min-width="120"
+            v-for="field of showFieldsReal"
+            :prop="field.field_name"
+            :label="field.display"
+            :key="field.field_name"
+            :width="field.width"
+            :align="field.align"
+            header-align="center"
+          >
+            <template slot-scope="scope">
+              <span>{{getVal(scope.row[field.field_name])}}</span>
+            </template>
+          </el-table-column>
+        </template>
+        <template #empty>
+          <pso-empty></pso-empty>
+        </template>
       </el-table>
     </div>
     <el-button
@@ -62,11 +70,11 @@
     >
       <pso-form-table
         :cfgId="cpnt.data._option"
-        checkbox  
+        checkbox
         :deletable="deletable"
         :operate="deletable"
         :selection-type="selectionType"
-        :view-auth="4"
+        :view-auth="cpnt.data.__auth__||0"
         :addable="cpnt.data._new"
         :edtail-editable="false"
         selectable
@@ -152,21 +160,16 @@ export default {
       },
       showFormViewer: false,
       dataId: "",
-      selectedList: []
+      selectedList: [],
+      fields: []
     };
   },
   computed: {
     selectionType() {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";
     },
-    showFields() {
-      return this.store.search
-        ? this.store.search({
-            options: { table_show: true },
-            onlyData: true,
-            beforePush: item => !item.parent.CPNT.host_db
-          })
-        : [];
+    showFieldsReal() {
+      return this.fields.filter(item => item.show === "1");
     }
   },
   watch: {
@@ -199,6 +202,33 @@ export default {
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
       ret.data.data_id = this.cpnt.data._option;
       this.store = new FormStore(ret.data);
+
+      if (ret.data.display_columns) {
+        this.fields = JSON.parse(ret.data.display_columns).filter(item => {
+          if (this.cpnt.data._showFields) {
+            const exist = this.store.search({ options: { db: true }, dataOptions: { _fieldValue: item.field_name }, onlyData: true });
+            if (exist.length) {
+              return this.cpnt.data._showFields.split(",").indexOf(item.field_name) !== -1 && item.using === "1";
+            }
+          }
+          return item.using === "1";
+        });
+      }
+
+      if (!this.fields.length) {
+        this.fields = this.store.search({
+          options: { table_show: true },
+          onlyMain: true,
+          onlyData: true,
+          beforePush: item => {
+            this.$set(item.data, "display", item.data._fieldName);
+            this.$set(item.data, "field_name", item.data._fieldValue);
+            this.$set(item.data, "show", "1");
+            return true;
+          }
+        });
+      }
+
       this.loading = false;
     },
     async getFormData(value) {
@@ -224,6 +254,9 @@ export default {
     },
     handleSelectionChange(data) {
       this.selectedList = data;
+    },
+    getVal(val) {
+      return _.isNull(val) ? "" : decodeURIComponent(val);
     },
     handleClickAdd() {
       if (this.cpnt.data._relate) {

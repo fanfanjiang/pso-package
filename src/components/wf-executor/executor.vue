@@ -52,7 +52,7 @@
       <div class="pso-wf-executor__extend-body" v-bar>
         <div>
           <div class="pso-wf-executor__content" v-show="store.activeExtendTab==='data'">
-            <pso-wf-mainform :store="store"></pso-wf-mainform>
+            <pso-wf-mainform :store="store" v-if="!store.configing"></pso-wf-mainform>
             <pso-wf-form :store="store"></pso-wf-form>
             <slot name="data" :store="store"></slot>
           </div>

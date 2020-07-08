@@ -9,7 +9,7 @@
       >
         <el-card>
           <h4>{{log.step_name}}</h4>
-          <p>操作人：{{log.op_user}}</p>
+          <p>操作人：{{log.user_name}}</p>
           <p>评论：{{log.op_note}}</p>
         </el-card>
       </el-timeline-item>

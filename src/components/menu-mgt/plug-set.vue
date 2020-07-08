@@ -20,7 +20,8 @@
                 v-if="tpItem.picker==='picker-form'"
                 filterable
                 clearable
-                size="small"
+                size="mini"
+                @change="handleFormChange($event,tpItem)"
                 v-model="tpItem.value"
               >
                 <el-option
@@ -34,7 +35,8 @@
                 v-if="tpItem.picker==='picker-wf'"
                 filterable
                 clearable
-                size="small"
+                size="mini"
+                @change="handleWfChange($event,tpItem)"
                 v-model="tpItem.value"
               >
                 <el-option
@@ -50,7 +52,7 @@
               v-if="tpItem.picker==='picker-tag'"
               filterable
               clearable
-              size="small"
+              size="mini"
               v-model="tpItem.value"
             >
               <el-option
@@ -63,17 +65,31 @@
             <el-input
               v-if="tpItem.picker==='input'"
               v-model="tpItem.value"
-              size="small"
+              size="mini"
               autocomplete="off"
             ></el-input>
             <el-select
               v-if="tpItem.picker==='picker-text'"
               filterable
               clearable
-              size="small"
+              size="mini"
               v-model="tpItem.value"
             >
               <el-option v-for="item in text" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+            <el-select
+              v-if="tpItem.picker==='picker-field'&&!loadingFields"
+              filterable
+              clearable
+              size="mini"
+              v-model="tpItem.value"
+            >
+              <el-option
+                v-for="item in formFields[getRelateItem(tpItem)]"
+                :key="item.field_name"
+                :label="item.field_display"
+                :value="item.field_name"
+              ></el-option>
             </el-select>
           </el-form-item>
         </div>
@@ -83,7 +99,9 @@
   </div>
 </template>
 <script>
+import { formOp } from "../form-designer/mixin.js";
 export default {
+  mixins: [formOp],
   props: ["data", "node", "field"],
   data() {
     return {
@@ -91,7 +109,9 @@ export default {
       forms: [],
       workflows: [],
       tags: [],
-      text: []
+      text: [],
+      formFields: {},
+      loadingFields: false
     };
   },
   async created() {
@@ -104,6 +124,17 @@ export default {
     const tagRet = await this.API.getTreeDimen();
     this.tags = tagRet.data;
     this.getTpDetail(this.node[this.field], this.data);
+
+    //初始获取表单和流程字段
+    this.data.forEach(d => {
+      if (d.picker === "picker-wf" && d.value) {
+        this.handleWfChange(d.value);
+      }
+      if (d.picker === "picker-form" && d.value) {
+        this.handleFormChange(d.value);
+      }
+    });
+
     this.initializing = false;
   },
   methods: {
@@ -136,6 +167,33 @@ export default {
         this.data = [];
       }
       this.$emit("change", this.data);
+    },
+    handleFormChange(val, tpItem) {
+      if (!this.formFields[val]) {
+        this.getFormFields(val);
+      }
+    },
+    getRelateItem(tpItem) {
+      console.log(_.find(this.data, { field: tpItem.relateParam }).value);
+      return _.find(this.data, { field: tpItem.relateParam }).value;
+    },
+    async handleWfChange(val, tpItem) {
+      const wfRet = await this.API.workflowcfg({ data: { node_id: val } });
+      const data_code = wfRet.data.map_data_code;
+      if (!this.formFields[data_code]) {
+        this.getFormFields(data_code, val);
+      }
+    },
+    async getFormFields(value, field) {
+      this.loadingFields = true;
+      const formStore = await this.makeFormStore(value);
+      const ret = await this.API.getFormDict({ data_code: value });
+      ret.data.forEach(item => {
+        const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+        item.field_display = (field ? field._fieldName : "系统字段") + `(${item.field_name})`;
+      });
+      this.formFields[field || value] = ret.data;
+      this.loadingFields = false;
     }
   }
 };

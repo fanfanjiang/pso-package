@@ -69,6 +69,10 @@ export default {
     },
     confirm(fileList) {
       this.proxy = this.proxy.concat(fileList);
+      if (this.proxy.length > this.cpnt.data._limit) {
+        this.proxy.splice(0, this.proxy.length - this.cpnt.data._limit);
+        this.$message({ message: "超过最大文件个数限制" });
+      }
       this.showUpload = false;
     },
     deleteFile(file) {

@@ -215,7 +215,7 @@ export default class WfStore {
 
         //设置基本实例参数
         const { instance, steps, file, log } = instanceRet.data;
-        Object.keys(instance).forEach(key => (this.data.hasOwnProperty(key) && (this.data[key] = instance[key])))
+        Object.keys(instance).forEach(key => (this.data.hasOwnProperty(key) && (this.data[key] = instance[key])));
         this.data.filetype = this.data.filetype || instance.fileType;
         this.data.name = this.data.name || instance.instanceName;
         this.data.status = instance.instance_status;
@@ -309,13 +309,19 @@ export default class WfStore {
 
     //创建流程实例数据
     async newInstanceData({ nextStep = false, formData }) {
-        // if (this.show.file && !this.data.filetype) throw new Error('请选择文号');
         // if (this.show.urgent && !this.data.urgent) throw new Error('请选择紧急程度');
         // if (this.show.import && !this.data.import) throw new Error('请选择重要等级');
         // if (this.show.secret && !this.data.secret) throw new Error('请选择秘密等级');
+        let filetype;
+        try {
+            filetype = this.data.filetype || this.cfg.files[0].wf_filetype;
+            if (!filetype) throw new Error('请选择文号');
+        } catch (error) {
+            throw new Error('请配置流程文号');
+        }
 
         const data = {
-            filetype: this.data.filetype,
+            filetype,
             wf_code: this.cfg.wf_code,
             wfid: this.cfg.wf_code,
             name: this.data.name,
