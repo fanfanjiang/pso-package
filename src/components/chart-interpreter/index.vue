@@ -24,6 +24,7 @@ import dayjs from "dayjs";
 import { transCMapToCondition } from "../../tool/form";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
+import debounce from "throttle-debounce/debounce";
 
 export default {
   components: { VeTable, VeCard },
@@ -117,6 +118,9 @@ export default {
       }
     }
   },
+  created() {
+    this.deGetForm = debounce(500, this.getFormCfg);
+  },
   mounted() {
     this.setHeight();
   },
@@ -135,13 +139,13 @@ export default {
     async getChartCfg() {
       this.loaded = false;
       let ret = await this.API.templates({ data: { tp_type: "0", tp_code: this.chartId }, method: "get" });
-      this.chartCfg = Object.assign(this.chartCfg, JSON.parse(ret.data.tp_set));
-      this.getFormCfg();
+      this.chartCfg = Object.assign(this.chartCfg, JSON.parse(ret.data.tp.data_list));
+      this.deGetForm();
     },
     async reLoadChart(chartCfg) {
       //手动配置图表
       this.chartCfg = _.cloneDeep(Object.assign(this.chartCfg, chartCfg));
-      this.getFormCfg();
+      this.deGetForm();
     },
     async getFormCfg() {
       //加载表单配置
@@ -149,7 +153,7 @@ export default {
       this.loaded = false;
       let ret = await this.API.formsCfg({ data: { id: this.chartCfg.formId }, method: "get" });
       if (!ret.success) return;
-      const store = new FormStore(ret.data); 
+      const store = new FormStore(ret.data);
       ret.data.data_config = store.search({
         options: { db: true },
         onlyData: true,
@@ -163,7 +167,7 @@ export default {
     async loadFormData() {
       //加载表单数据
       this.loaded = false;
-      const data = { form_code: this.formCfg.data_code };
+      const data = { data_code: this.formCfg.data_code, leaf_auth: 4 };
 
       if (this.chartCfg.filter.length) {
         data.condition = transCMapToCondition(this.chartCfg.filter);
@@ -174,15 +178,15 @@ export default {
       this.setHeight();
     },
     async fetchAllData(options) {
-      let { limit = 10000, start = 0 } = options;
+      let { limit = 1000, page = 0 } = options;
       let data = [];
       while (1) {
-        const ret = await this.API.form({ data: Object.assign(options, { limit, start }), method: "get" });
+        const ret = await this.API.form({ data: Object.assign(options, { limit, page }), method: "get" });
         if (ret.data && ret.data.length) {
           data = data.concat(ret.data);
-          start = start + limit;
+          page = page + limit;
         }
-        if (ret.total < start || !ret.data.length) break;
+        if (ret.total < page || !ret.data.length) break;
       }
       return data;
     },
@@ -320,29 +324,31 @@ export default {
     },
     setRows(ary) {
       let row = ary[0];
-      for (let mItem of this.chartCfg.metrics) {
-        switch (mItem.op) {
-          case FIGER_OP.SUM:
-            row[mItem._fieldValue] = _.sumBy(ary, a => {
-              return parseInt(a[mItem._fieldValue]);
-            });
-            break;
-          case FIGER_OP.COUNT:
-            let count = ary.length;
-            if (mItem.uniq) {
-              count = Object.keys(_.groupBy(ary, mItem._fieldValue)).length;
-            }
-            row[mItem._fieldValue] = count;
-            break;
-          case FIGER_OP.AVG:
-            row[mItem._fieldValue] =
-              _.sumBy(ary, a => {
+      if (row) {
+        for (let mItem of this.chartCfg.metrics) {
+          switch (mItem.op) {
+            case FIGER_OP.SUM:
+              row[mItem._fieldValue] = _.sumBy(ary, a => {
                 return parseInt(a[mItem._fieldValue]);
-              }) / ary.length;
-            break;
+              });
+              break;
+            case FIGER_OP.COUNT:
+              let count = ary.length;
+              if (mItem.uniq) {
+                count = Object.keys(_.groupBy(ary, mItem._fieldValue)).length;
+              }
+              row[mItem._fieldValue] = count;
+              break;
+            case FIGER_OP.AVG:
+              row[mItem._fieldValue] =
+                _.sumBy(ary, a => {
+                  return parseInt(a[mItem._fieldValue]);
+                }) / ary.length;
+              break;
+          }
         }
+        this.chartData.rows = this.chartData.rows.concat(row);
       }
-      this.chartData.rows = this.chartData.rows.concat(row);
     }
   }
 };

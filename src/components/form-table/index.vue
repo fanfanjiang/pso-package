@@ -75,8 +75,8 @@
           </el-popover>
           <el-divider direction="vertical"></el-divider>
           <el-popover v-model="showSetting" placement="bottom-start" width="300" trigger="click">
-            <div class="pso-formTable__setting">
-              <div class="pso-formTable__setting-item" v-for="fItem of fields" :key="fItem.fid">
+            <div class="pso-switch-panel">
+              <div class="pso-switch-panel__item" v-for="fItem of fields" :key="fItem.fid">
                 <el-switch
                   v-model="fItem.show"
                   :inactive-text="fItem.display"

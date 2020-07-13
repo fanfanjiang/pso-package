@@ -96,7 +96,7 @@ export default {
         tpSet = this.data;
       } else if (this.cfgId) {
         const ret = await this.API.templates({ data: { tp_type: "103", tp_code: this.cfgId } });
-        tpSet = JSON.parse(ret.data.tp_set);
+        tpSet = JSON.parse(ret.data.tp.data_list);
       }
       if (tpSet) {
         this.formNodeId = tpSet.formId || "";
@@ -134,7 +134,7 @@ export default {
           tp_status: 1,
           tp_name: this.tp_name,
           tp_data: "1",
-          tp_set: JSON.stringify({
+          data_list: JSON.stringify({
             formId: this.formNodeId,
             showFields: this.showFields,
             condition: this.condition

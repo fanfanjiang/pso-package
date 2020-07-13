@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-view-designer" v-loading="loading">
+  <div class="pso-view-designer" v-loading="initializing">
     <div class="pso-view-designer__header">
       <pso-header title="页面设计" @back="$emit('back')" v-if="storeReady">
         <template v-slot:btn>
@@ -33,29 +33,29 @@
       </pso-header>
     </div>
     <div class="pso-view-designer__body">
-      <pso-form-designer
+      <designer-body
         @store-ready="formReadyHandler"
         :components="formMenu"
         :data="formCfg"
-        v-if="step===1"
-      ></pso-form-designer>
+        v-if="step===1&&!initializing"
+      ></designer-body>
       <pso-script-designer :cpnts="cpnts" :code="code" v-if="step===2"></pso-script-designer>
     </div>
   </div>
 </template>
 <script>
-import PsoFormDesigner from "../form-designer";
 import PsoHeader from "../header";
 import PsoScriptDesigner from "../script-designer";
+import DesignerBody from "../form-designer/designer-body";
 
 export default {
   props: ["params"],
-  components: { PsoFormDesigner, PsoHeader, PsoScriptDesigner },
+  components: { DesignerBody, PsoHeader, PsoScriptDesigner },
   data() {
     return {
       saving: false,
       storeReady: false,
-      loading: false,
+      initializing: true,
       formCfg: {},
       formStore: {},
       formMenu: {
@@ -63,7 +63,8 @@ export default {
         基础组件: ["carousel", "chart", "graphiccard"]
       },
       step: 1,
-      code: null
+      code: null,
+      tpType: 2
     };
   },
   computed: {
@@ -72,34 +73,33 @@ export default {
     }
   },
   async created() {
-    if (this.params.tpCode && this.params.tpType) {
-      this.loading = true;
-      let ret = await this.API.templates({ data: { tp_type: this.params.tpType, tp_code: this.params.tpCode } });
-      if (!ret.success) return;
-      const data = JSON.parse(ret.data.tp_set);
-      if (Array.isArray(data)) {
-        this.formCfg = data;
-      } else {
-        this.code = data;
-        this.step = 2;
+    this.initializing = true;
+    if (this.params.tpCode) {
+      const ret = await this.API.templates({ data: { tp_type: this.tpType, tp_code: this.params.tpCode } });
+      if (ret.success && ret.data.tp.data_list) {
+        const data = JSON.parse(ret.data.tp.data_list);
+        if (Array.isArray(data)) {
+          this.formCfg.data_config = data;
+        } else {
+          this.code = data;
+          this.step = 2;
+        }
       }
-      this.loading = false;
     }
+    this.formCfg.forceInsertSys = false;
+    this.initializing = false;
   },
   methods: {
     async formSaveHandler() {
       this.saving = true;
       let data = {
         tp_code: this.params.tpCode,
-        tp_type: this.params.tpType,
-        tp_status: 1,
-        tp_name: this.formEditor.formName,
-        tp_data: "1"
+        tp_type: this.tpType
       };
       if (this.step === 1) {
-        data.tp_set = JSON.stringify(this.formEditor.children);
+        data.data_list = JSON.stringify(this.formStore.root.data.children);
       } else {
-        data.tp_set = JSON.stringify({
+        data.data_list = JSON.stringify({
           jsCode: this.viewEidtor.jsCode,
           htmlCode: this.viewEidtor.htmlCode,
           cssCode: this.viewEidtor.cssCode

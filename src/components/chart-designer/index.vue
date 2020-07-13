@@ -42,6 +42,7 @@
                   v-model="chartDesigner.formId"
                   @change="formChangeHandler"
                   placeholder="请选择"
+                  filterable
                 >
                   <el-option
                     v-for="item in formOptions"
@@ -62,7 +63,7 @@
             <pso-cd-dimension></pso-cd-dimension>
             <pso-cd-figure></pso-cd-figure>
             <div class="pso-cd-chart">
-              <pso-chart-viewer ref="chartV" v-show="chartDesigner.formId"></pso-chart-viewer>
+              <pso-chart-interpreter ref="chartV" v-show="chartDesigner.formId"></pso-chart-interpreter>
             </div>
           </div>
         </div>
@@ -196,9 +197,9 @@ export default {
       this.watchRegistered = true;
     },
     async loadChartCfg() {
-      let ret = await this.API.templates({ data: { tp_type: this.params.tpType, tp_code: this.params.tpCode } });
-      if (ret.data && ret.data.tp_set) {
-        const chartCfg = JSON.parse(ret.data.tp_set);
+      let ret = await this.API.templates({ data: { tp_type: this.params.tpType || 3, tp_code: this.params.tpCode } });
+      if (ret.data && ret.data.tp.data_list) {
+        const chartCfg = JSON.parse(ret.data.tp.data_list);
 
         this.$store.commit(CD_INIT, {
           formId: chartCfg.formId,
@@ -247,11 +248,11 @@ export default {
       let ret = await this.API.templates({
         data: {
           tp_code: this.params.tpCode,
-          tp_type: this.params.tpType,
+          tp_type: this.params.tpType || 3,
           tp_status: 1,
           tp_name: this.chartDesigner.chartName,
           tp_data: "1",
-          tp_set: JSON.stringify(this.getChartViewData())
+          data_list: JSON.stringify(this.getChartViewData())
         },
         method: "put"
       });

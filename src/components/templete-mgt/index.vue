@@ -32,6 +32,13 @@
             <pso-title>插件：{{curNode.node_display}}</pso-title>
             <div class="pso-page-body__btns">
               <el-button size="small" type="primary" plain @click="saveTp">保存设置</el-button>
+              <el-button
+                v-if="curNode.tp_type===2||curNode.tp_type===3"
+                size="small"
+                type="primary"
+                plain
+                @click="editTp"
+              >编辑模板</el-button>
             </div>
           </div>
           <div class="pso-page-body__tab">
@@ -50,7 +57,11 @@
             <template v-if="!!curNode.is_leaf">
               <pso-tp-base v-if="curTab==='base'" :node="curNode"></pso-tp-base>
               <pso-tp-param v-if="curTab==='param'" :data="paramData"></pso-tp-param>
-              <pso-tp-column v-if="curTab==='column'" :data="columnData"></pso-tp-column>
+              <pso-tp-column
+                v-if="curTab==='column'&&!loading"
+                :data="columnData"
+                :header="tpHeader"
+              ></pso-tp-column>
               <pso-tp-textdef v-if="curTab==='textdef'" :data="tpButtons"></pso-tp-textdef>
               <pso-tp-text v-if="curTab==='text'" :data="tpText" :def-text="tpButtons"></pso-tp-text>
             </template>
@@ -73,7 +84,8 @@ const _DATA = {
   columnData: [],
   paramData: [],
   tpText: [],
-  tpButtons: []
+  tpButtons: [],
+  tpHeader: []
 };
 
 export default {
@@ -100,6 +112,14 @@ export default {
         {
           name: "统计插件",
           value: 1
+        },
+        {
+          name: "自定义插件",
+          value: 2
+        },
+        {
+          name: "图表插件",
+          value: 3
         }
       ],
       ..._DATA
@@ -146,14 +166,25 @@ export default {
                 name: "",
                 width: 120,
                 show: "1",
-                cal: "0", 
+                cal: "0",
                 align: "left",
                 number: 0,
                 formulable: "0",
                 formula: "",
+                searchable: "0",
+                searchList: [],
                 ...item
               });
             });
+          }
+
+          if (cfg.tp_head) {
+            this.tpHeader = JSON.parse(cfg.tp_head);
+            if (!Array.isArray(this.tpHeader)) {
+              this.tpHeader = [];
+            }
+          } else {
+            this.tpHeader = [];
           }
 
           if (cfg.tp_buttons) {
@@ -187,7 +218,8 @@ export default {
           route_setting: JSON.stringify(this.paramData),
           tp_content: JSON.stringify(this.columnData),
           tp_text: JSON.stringify(this.tpText),
-          tp_buttons: JSON.stringify(this.tpButtons)
+          tp_buttons: JSON.stringify(this.tpButtons),
+          tp_head: JSON.stringify(this.tpHeader)
         },
         method: "put"
       });
@@ -198,6 +230,9 @@ export default {
       if (data.is_leaf) {
         data.tp_type = this.tpType;
       }
+    },
+    editTp() {
+      this.$emit("edit-tp", { node: this.curNode });
     }
   }
 };

@@ -15,6 +15,8 @@ import WfStore from './components/wf-executor/store';
 //store
 import store from './store';
 
+import { genComponentData } from "./components/form-designer/helper";
+
 //组件
 import PsoEmpty from "./components/empty";
 import PsoSkeleton from "./components/skeleton";
@@ -64,6 +66,9 @@ import PsoScriptOut from "./components/script-designer/output";
 import PsoUpload from "./components/upload";
 
 import PsoChartDesigner from "./components/chart-designer";
+import PsoChartInterpreter from "./components/chart-interpreter";
+
+import PsoTagEditor from "./components/tag-editor";
 
 const components = {
     PsoEmpty,
@@ -93,6 +98,7 @@ const components = {
     PsoTempleteMgt,
     PsoDataMgt,
     PsoChartDesigner,
+    PsoChartInterpreter,
     PsoViewDesigner,
     PsoScriptOut,
     PsoUpload,
@@ -102,7 +108,8 @@ const components = {
     PsoTreeDimen,
     PsoTagMgt,
     PsoKnowlMgt,
-    PsoDataFilter
+    PsoDataFilter,
+    PsoTagEditor
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', selfUrl } = {}) {
@@ -123,7 +130,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     if (API && API.handleAuthError) {
         BASEAPI.handleAuthError = API.handleAuthError;
     }
- 
+
     Vue.prototype.API = API || BASEAPI;
     Vue.prototype.API.URL_PREFIX = apiPrefix;
 
@@ -139,7 +146,7 @@ if (typeof window !== 'undefined' && window.Vue) {
     install(window.Vue);
 }
 
-export { BASEAPI, store, WfStore, FormStore }
+export { BASEAPI, store, WfStore, FormStore, genComponentData }
 
 export default {
     install

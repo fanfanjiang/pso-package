@@ -11,7 +11,7 @@
                   <div class="fd__menu-section-title">{{cpnList.title}}</div>
                   <div class="fd__menu-section-body" v-if="!roloadingMenu">
                     <el-row
-                      :gutter="1"
+                      :gutter="5"
                       class="dropable"
                       id="formDesignerMenu"
                       put="false"
@@ -19,7 +19,7 @@
                       sort="false"
                     >
                       <el-col
-                        :span="8"
+                        :span="12"
                         :class="['dragable',...cpnt.class]"
                         v-for="cpnt in cpnList.children"
                         :key="cpnt.name"
@@ -264,19 +264,18 @@ export default {
       width: 300px;
       background-color: #f1f2f3;
       .form-designer__menu-body {
-        padding: 15px 5px;
+        padding: 10px;
         .fd__menu-section {
-          margin-top: 0;
-          margin-bottom: 10px;
+          margin-top: 15px;
           .fd__menu-section-title {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             color: #666;
           }
           .fd__menu-section-body {
             .dragable {
-              margin-bottom: 1px;
+              margin-bottom: 5px;
               &:active {
                 padding: 0;
               }

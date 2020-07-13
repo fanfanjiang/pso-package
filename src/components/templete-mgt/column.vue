@@ -38,6 +38,16 @@
           <el-switch v-model="scope.row.formulable" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
+      <el-table-column label="是否查询" width="100">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.searchable" active-value="1" inactive-value="0"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column label="查询参数" width="200">
+        <template slot-scope="scope">
+          <pso-tag-editor :data="scope.row.searchList"></pso-tag-editor>
+        </template>
+      </el-table-column>
       <el-table-column label="对齐方式" width="120">
         <template slot-scope="scope">
           <el-select size="small" v-model="scope.row.align">
@@ -64,6 +74,47 @@
         </template>
       </el-table-column>
     </el-table>
+    <div>
+      <pso-title>表头设置</pso-title>
+      <el-tree :data="header" node-key="id" default-expand-all :expand-on-click-node="false">
+        <span class="tree-node" slot-scope="{ node, data }">
+          <span>{{ node.label }}</span>
+          <span>
+            <el-button type="text" size="mini" @click="() => append(data)">添加</el-button>
+            <el-button
+              v-if="data.id!=='0'"
+              type="text"
+              size="mini"
+              @click="() => remove(node, data)"
+            >删除</el-button>
+          </span>
+        </span>
+      </el-tree>
+    </div>
+    <el-dialog title="设置表头" append-to-body :visible.sync="showHEditor" :width="'400px'">
+      <el-form label-width="80px" v-if="showHEditor">
+        <el-form-item label="真实字段">
+          <el-switch size="small" v-model="hData.isField" active-value="1" inactive-value="0"></el-switch>
+        </el-form-item>
+        <el-form-item label="名称" v-if="hData.isField==='0'">
+          <el-input size="small" v-model="hData.label" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="选择字段" v-else>
+          <el-select filterable size="small" v-model="hData.field">
+            <el-option
+              v-for="item in data"
+              :key="item.field"
+              :label="item.name"
+              :value="item.field"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="showHEditor = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="save()">确 定</el-button>
+      </div>
+    </el-dialog>
     <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner=false">
       <template v-slot:whole>
         <formula-designer
@@ -80,15 +131,28 @@
 <script>
 import formulaDesigner from "../form-designer/formula-designer";
 import { genComponentData } from "../form-designer/helper";
+import shortid from "shortid";
 export default {
-  props: ["data"],
+  props: ["data", "header"],
   components: { formulaDesigner },
   data() {
     return {
       showDesigner: false,
+      showHEditor: false,
       cpnts: [],
-      curCol: null
+      curCol: null,
+      curNode: null,
+      hData: {
+        isField: "1",
+        label: "",
+        field: ""
+      }
     };
+  },
+  created() {
+    if (!this.header.length) {
+      this.header.push({ label: "表头", id: "0", field: "0", children: [] });
+    }
   },
   methods: {
     handleAdd() {
@@ -129,7 +193,41 @@ export default {
         return this.$message(error.message);
       }
       this.showDesigner = true;
+    },
+    append(data) {
+      this.curNode = data;
+      this.showHEditor = true;
+    },
+    remove(node, data) {
+      const parent = node.parent;
+      const children = parent.data.children || parent.data;
+      const index = children.findIndex(d => d.id === data.id);
+      children.splice(index, 1);
+    },
+    save() {
+      const newChild = { id: shortid.generate(), ...this.hData };
+      if (this.hData.isField === "1" && this.hData.field) {
+        const f = _.find(this.data, { field: this.hData.field });
+        if (f) {
+          newChild.label = f.name;
+        }
+      }
+      if (!this.curNode.children) {
+        this.$set(this.curNode, "children", []);
+      }
+      this.curNode.children.push(newChild);
+      this.showHEditor = false;
     }
   }
 };
 </script>
+<style scoped>
+.tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+</style>

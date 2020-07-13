@@ -12,7 +12,7 @@ export default class API {
         if (method === 'get') {
             url += `?${Qs.stringify(data)}`;
         }
-        try { 
+        try {
             if (method === 'delete') data = { data: data };
             const ret = await axios({ method, url, data });
             const message = ret.msg || ret.message;
@@ -310,10 +310,10 @@ export default class API {
         }
     }
 
-    static async getTempleteTree() {
+    static async getTempleteTree(type = [0, 1, 2, 3]) {
         try {
             const ret = await this.trees({ data: { dimen: "4" } });
-            return ret.data.tagtree.filter(node => [0, 1, 2].includes(node.tp_type) && node.is_leaf);
+            return ret.data.tagtree.filter(node => type.includes(node.tp_type) && node.is_leaf);
         } catch (error) {
             throw error;
         }

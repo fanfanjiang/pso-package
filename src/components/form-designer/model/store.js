@@ -26,6 +26,8 @@ export default class FormStore {
 
         this.copyMode = false;
 
+        this.is_pub = 0;
+
 
         this.rule_config;
 
