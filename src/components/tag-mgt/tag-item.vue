@@ -193,7 +193,7 @@ export default {
       delete data.tag_source;
       delete data.tag_set;
 
-      if (this.curTag.tag_type === "searchtag") {
+      if (data.tag_type === "searchtag") {
         const tagRule = [];
         if (data.optype !== 2) {
           data.tag_rule.forEach(item => {

@@ -35,6 +35,8 @@ export default class FormStore {
 
         this.cpntsDataMps = {};
 
+        this.sub_config; //关联表配置
+
         for (let option in options) {
             if (options.hasOwnProperty(option)) {
                 this[option] = options[option];
@@ -49,6 +51,10 @@ export default class FormStore {
 
         if (this.rule_config && typeof this.rule_config === 'string') {
             this.rule_config = JSON.parse(this.rule_config);
+        }
+
+        if (this.sub_config && typeof this.sub_config === 'string') {
+            this.sub_config = JSON.parse(this.sub_config);
         }
 
         //对原始表单配置进行保存

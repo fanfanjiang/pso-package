@@ -173,6 +173,7 @@ export default {
                 formula: "",
                 searchable: "0",
                 searchList: [],
+                timerange: "0",
                 ...item
               });
             });

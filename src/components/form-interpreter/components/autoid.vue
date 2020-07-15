@@ -26,7 +26,7 @@ export default {
     }
     if (!this.cpnt.data._val && !instance_id) {
       if (this.cpnt.data._fieldFormat !== FIELD_FORMAT.autotag.value) {
-        let source = this.cpnt.data._source || `#date##no#`;
+        let source = this.cpnt.data._outputFormat || `#date##no#`;
         this.cpnt.data._val = source
           .replace(/#date#/g, `[date(${this.cpnt.data._format})]`)
           .replace(/#no#/g, `%0${this.cpnt.data._digit}d`);

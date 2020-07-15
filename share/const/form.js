@@ -654,6 +654,30 @@ const CPNT = {
     name: "图文列表",
     componentid: "graphiccard",
     data: [{ n: '_selectedTable', v: '' }, { n: '_titleField', v: '' }, { n: '_imgField', v: '' }, { n: '_infoField', v: '' }]
+  },
+  userform: {
+    icon: "el-icon-user",
+    name: "用户表单",
+    componentid: "userform",
+    class: 'unSubTable',
+    layout: false,
+    db: true,
+    host_db: false,
+    chart: false,
+    table_show: true,
+    ass_db: false,
+    op: [
+      Object.assign({ match: 1 }, OP_TYPE.op1),
+      Object.assign({ match: 1 }, OP_TYPE.op2),
+      Object.assign({ match: 1 }, OP_TYPE.op3),
+      Object.assign({ match: 1 }, OP_TYPE.op4),
+      Object.assign({ match: 1 }, OP_TYPE.op5),
+      Object.assign({ match: 1 }, OP_TYPE.op6),
+      Object.assign({ match: 1 }, OP_TYPE.op7),
+      Object.assign({ match: 1 }, OP_TYPE.op8),
+      Object.assign({ match: 1 }, OP_TYPE.op9),
+    ],
+    data: [{ n: '_option', v: '' }, { n: '_type', v: 1 }, { n: '_showFields', v: '' }, { n: '_new', v: true }, { n: '_relate', v: true }]
   }
 }
 

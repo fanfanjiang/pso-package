@@ -91,6 +91,17 @@ export default {
       });
     }
   },
+  watch: {
+    "cpnt.data._source"() {
+      this.format();
+    },
+    "cpnt.data._digit"() { 
+      this.format();
+    },
+    "cpnt.data._format"() {
+      this.format();
+    }
+  },
   created() {
     if (!this.cpnt.data._format) {
       this.cpnt.data._format = this.dateFormat[0].v;
@@ -104,6 +115,15 @@ export default {
   methods: {
     digitName(d) {
       return `${d}位数`;
+    },
+    format() {
+      if (this.cpnt.data._source) {
+        this.cpnt.data._outputFormat = this.cpnt.data._source
+          .replace(/#date#/g, `[date(${this.cpnt.data._format})]`)
+          .replace(/#no#/g, `%0${this.cpnt.data._digit}d`);
+      } else {
+        this.cpnt.data._outputFormat = "";
+      }
     },
     dropClickHandler(cpnt) {
       this.coding = true;

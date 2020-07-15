@@ -51,20 +51,20 @@
       icon="el-icon-plus"
       size="mini"
       @click="handleClickAdd"
-    >添加{{cpnt.data._fieldName}}</el-button>
+    >添加用户{{cpnt.data._fieldName}}</el-button>
     <el-button
       v-show="selectedList.length"
       type="danger"
       icon="el-icon-delete"
       size="mini"
       @click="handleDelList(selectedList)"
-    >取消所选关联数据</el-button>
+    >取消所选用户</el-button>
     <el-dialog
       width="70%"
       append-to-body
       close-on-click-modal
       custom-class="form-table-dialog"
-      title="选择关联数据"
+      title="选择用户"
       @close="showTable=false"
       :visible="showTable"
     >
@@ -74,13 +74,12 @@
         :deletable="deletable"
         :operate="deletable"
         :selection-type="selectionType"
-        :view-auth="formTableViewAuth"
+        :view-auth="4"
         :addable="cpnt.data._new"
         :edtail-editable="false"
         selectable
         :changable="false"
         :stageable="false"
-        :params="formTableCfg"
         @selection-confirm="handleAddSelection"
       ></pso-form-table>
     </el-dialog>
@@ -163,7 +162,8 @@ export default {
       showFormViewer: false,
       dataId: "",
       selectedList: [],
-      fields: []
+      fields: [],
+      saveField: "user_id"
     };
   },
   computed: {
@@ -172,28 +172,12 @@ export default {
     },
     showFieldsReal() {
       return this.fields.filter(item => item.show === "1");
-    },
-    authCfg() {
-      if (this.cpnt.store.sub_config) {
-        return _.find(this.cpnt.store.sub_config, { id: this.cpnt.data._fieldValue }) || {};
-      }
-      return {};
-    },
-    formTableViewAuth() {
-      if (this.authCfg.authable) {
-        return this.cpnt.data.__auth__ || 4;
-      } else {
-        return 0;
-      }
-    },
-    formTableCfg() {
-      return { searchType: this.authCfg.searchType, auth_config: this.authCfg.authCfg };
     }
   },
   watch: {
     "proxy.valList"(val) {
-      this.cpnt.data._val = _.map(val, "leaf_id").join(",");
-      this.dispatch("PsoformInterpreter", "asstable-selected", { cpnt: this.cpnt, data: val, store: this.store });
+      this.cpnt.data._val = _.map(val, this.saveField).join(",");
+      this.dispatch("PsoformInterpreter", "userform-selected", { cpnt: this.cpnt, data: val, store: this.store });
     },
     "cpnt.data._type": {
       handler(val) {
@@ -257,7 +241,7 @@ export default {
         start: 0,
         leaf_auth: 4,
         keys: {
-          leaf_id: {
+          [this.saveField]: {
             type: 1,
             value
           }

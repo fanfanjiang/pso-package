@@ -92,6 +92,7 @@ export default {
             "autoid",
             // "unit",
             "rate",
+            "userform",
             // "timerange",
             // "credential",
             // "cascader",

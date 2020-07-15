@@ -22,6 +22,7 @@
         :key="opt._optionValue"
       >{{opt._optionName||opt._optionValue}}</el-radio>
     </el-radio-group>
+    {{cpnt.data._val}}
   </el-form-item>
 </template>
 <script>

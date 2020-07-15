@@ -67,7 +67,7 @@
         </span>
       </el-tree>
       <el-popover placement="top-start" width="240" trigger="click" v-if="editMode">
-        <div class="pso-tree__trash-body">
+        <div class="pso-tree__trash-body" v-loading="loading">
           <div class="pso-tree__trash-btns">
             <el-button size="mini" @click="restoreTrash" :disabled="canTrash">还 原</el-button>
             <el-button size="mini" type="danger" @click="emptyTrash" :disabled="canTrash">清 空</el-button>

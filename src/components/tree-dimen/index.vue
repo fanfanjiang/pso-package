@@ -3,10 +3,12 @@
     <div class="tree-dimen__controller">
       <el-button @click="newDimen" size="small">新增维度</el-button>
     </div>
-    <el-table key="status" :data="data" style="width: 100%" :loading="loading">
+    <el-table key="status" :data="data" style="width: 100%" :loading="loading" size="small">
       <el-table-column prop="tag_name" label="维度标签名"></el-table-column>
       <el-table-column prop="dimen_tag" label="维度标签值"></el-table-column>
-      <el-table-column prop="node_dimen" label="维度"></el-table-column>
+      <el-table-column prop="node_dimen" label="维度">
+        <template slot-scope="scope">{{getDname(scope.row.node_dimen)}}</template>
+      </el-table-column>
       <el-table-column label="操作" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" @click.stop.prevent="editDimen(scope.row)">编辑</el-button>
@@ -145,6 +147,9 @@ export default {
     },
     checkRet(ret) {
       this.$notify({ title: ret.success ? "成功" : "失败", type: ret.success ? "success" : "warning" });
+    },
+    getDname(v) {
+      return _.find(DIMEN_TYPE, { v }).n;
     }
   }
 };

@@ -1,5 +1,5 @@
 <template>
-  <el-table key="status" :data="data" style="width: 100%">
+  <el-table key="status" :data="data" style="width: 100%" v-loading="initializing">
     <el-table-column prop="n" label="视图项" width="100" fixed="left"></el-table-column>
     <el-table-column label="显示值">
       <template slot-scope="scope">
@@ -50,27 +50,32 @@ import { MENU_LEAF_AUTH } from "../../const/menu";
 const _DATA = { text: "", form: "", field: "" };
 export default {
   mixins: [formOp],
-  props: ["data"],
+  props: ["data", "defForm"],
   data() {
     return {
+      initializing: false,
       forms: [],
       loadingFields: false,
       formFields: {}
     };
   },
   async created() {
+    this.initializing = true;
     this.forms = await this.API.getFormTree();
     for (let item of MENU_LEAF_AUTH) {
       const exist = _.find(this.data, { v: item.v });
+      let temp = exist;
       if (exist) {
         Object.assign(exist, { ..._DATA, ...exist });
-        if (exist.form) {
-          this.handleFormChange(exist.form);
-        }
       } else {
-        this.data.push({ ...item, ..._DATA });
+        temp = { ...item, ..._DATA, form: this.defForm || "" };
+        this.data.push(temp);
+      }
+      if (temp.form) {
+        this.handleFormChange(temp.form);
       }
     }
+    this.initializing = false;
   },
   methods: {
     handleFormChange(val) {

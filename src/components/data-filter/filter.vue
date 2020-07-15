@@ -34,7 +34,7 @@
           <el-option
             v-for="item in dataOptions"
             :key="item._optionValue"
-            :label="item._optionValue"
+            :label="item._optionName||item._optionValue"
             :value="item._optionValue"
           ></el-option>
         </el-select>

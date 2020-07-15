@@ -32,6 +32,7 @@
               <el-tab-pane label="显示" name="rule"></el-tab-pane>
               <el-tab-pane label="提交" name="submit"></el-tab-pane>
               <el-tab-pane label="阶段" name="stage"></el-tab-pane>
+              <el-tab-pane label="子表" name="asstable"></el-tab-pane>
             </template>
             <el-tab-pane label="权限" name="auth"></el-tab-pane>
           </el-tabs>
@@ -64,6 +65,11 @@
             ></form-property>
             <form-rule v-if="curTab==='rule'&&formStore" :store="formStore" :rules="rules"></form-rule>
             <form-submit v-if="curTab==='submit'" :data="subCfg" :fields="tableData"></form-submit>
+            <form-asstable
+              v-if="curTab==='asstable'&&formStore"
+              :store="formStore"
+              :data="asstable"
+            ></form-asstable>
           </template>
           <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
         </div>
@@ -112,6 +118,7 @@ import FormProperty from "./form-property";
 import FormRule from "./form-rule";
 import FormSubmit from "./form-submit";
 import FormStage from "./form-stage";
+import FormAsstable from "./form-asstable";
 
 const _DATA = {
   tableData: [],
@@ -139,7 +146,8 @@ const _DATA = {
   },
   rules: [],
   subCfg: [],
-  stageData: []
+  stageData: [],
+  asstable: []
 };
 
 export default {
@@ -156,7 +164,8 @@ export default {
     FormProperty,
     FormRule,
     FormSubmit,
-    FormStage
+    FormStage,
+    FormAsstable
   },
   props: {
     params: {
@@ -258,6 +267,10 @@ export default {
         if (cfg.submit_config) {
           this.subCfg = JSON.parse(cfg.submit_config);
         }
+
+        if (cfg.sub_config) {
+          this.asstable = JSON.parse(cfg.sub_config);
+        }
       }
     },
     nodeClickHandler(data) {
@@ -348,6 +361,7 @@ export default {
         rule_config: JSON.stringify(rules),
         submit_config: JSON.stringify(subCfgData),
         stage_config: JSON.stringify(this.stageData),
+        sub_config: JSON.stringify(this.asstable),
         ...this.property
       });
       this.saving = false;

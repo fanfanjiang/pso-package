@@ -659,7 +659,16 @@ export default {
             this.defaultKeys[key[0]] = { value: key[1], type: key[2] };
           });
         }
-      } catch (error) {}
+
+        //默认参数
+        if (this.defForm) {
+          for (let key in this.defForm) {
+            this.defaultKeys[key] = { value: this.defForm[key], type: 1 };
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
 
       //视图权限
       let lastActiveView = this.activeView;

@@ -43,9 +43,9 @@
           <el-switch v-model="scope.row.searchable" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="查询参数" width="200">
+      <el-table-column label="是否时间段" width="100">
         <template slot-scope="scope">
-          <pso-tag-editor :data="scope.row.searchList"></pso-tag-editor>
+          <el-switch v-model="scope.row.timerange" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="对齐方式" width="120">
@@ -67,8 +67,9 @@
           ></el-input-number>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="200">
+      <el-table-column fixed="right" label="操作" width="280">
         <template slot-scope="scope">
+          <el-button size="mini" plain @click="handleParams(scope.$index)">设置参数</el-button>
           <el-button size="mini" plain @click="formulaHandler(scope.$index)">设置公式</el-button>
           <el-button size="mini" plain @click="handleDel(scope.$index)">删除</el-button>
         </template>
@@ -115,6 +116,29 @@
         <el-button size="mini" type="primary" @click="save()">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="设置查询参数" append-to-body :visible.sync="showParamsditor" :width="'600px'">
+      <template v-if="curCol">
+        <el-button size="mini" plain @click="handleParamsAdd()">添加参数</el-button>
+        <el-table key="params" :data="curCol.searchList" style="width: 100%" height="300">
+          <el-table-column label="字段">{{curCol.name}}</el-table-column>
+          <el-table-column label="参数名" width="140">
+            <template slot-scope="scope">
+              <el-input size="small" v-model="scope.row.n" placeholder></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="参数值" width="140">
+            <template slot-scope="scope">
+              <el-input size="small" v-model="scope.row.v" placeholder></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column fixed="right" label="操作" width="90">
+            <template slot-scope="scope">
+              <el-button size="mini" plain @click="handleParamsDel(scope.$index)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-dialog>
     <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner=false">
       <template v-slot:whole>
         <formula-designer
@@ -139,6 +163,7 @@ export default {
     return {
       showDesigner: false,
       showHEditor: false,
+      showParamsditor: false,
       cpnts: [],
       curCol: null,
       curNode: null,
@@ -165,7 +190,10 @@ export default {
         align: "left",
         number: 0,
         formulable: "0",
-        formula: ""
+        formula: "",
+        searchable: "0",
+        searchList: [],
+        timerange: "0"
       });
     },
     handleDel(index) {
@@ -217,6 +245,19 @@ export default {
       }
       this.curNode.children.push(newChild);
       this.showHEditor = false;
+    },
+    handleParams(index) {
+      this.curCol = this.data[index];
+      if (this.curCol.searchList.length && typeof this.curCol.searchList[0] === "string") {
+        this.curCol.searchList = [];
+      }
+      this.showParamsditor = true;
+    },
+    handleParamsAdd() {
+      this.curCol.searchList.push({ n: "", v: "" });
+    },
+    handleParamsDel(index) {
+      this.curCol.searchList.splice(index, 1);
     }
   }
 };

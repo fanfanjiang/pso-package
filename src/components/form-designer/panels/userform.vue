@@ -1,6 +1,6 @@
 <template>
   <div>
-    <common-panel :cpnt="cpnt" info="关联相关工作表，可以从中引用或创建记录，如：订单关联商品" :needDefaultValue="false">
+    <common-panel :cpnt="cpnt" info="用户表单" :needDefaultValue="false">
       <el-form-item label="选择工作表" v-loading="loading">
         <el-select
           size="small"
