@@ -38,8 +38,8 @@
         ></el-pagination>
       </div>
     </div>
-    <div class="pso-tag__r" v-loading="loading">
-      <div class="pso-tag__contet" v-if="curTag">
+    <pso-drawer size="48%" :visible="showTagEditor" title="标签属性" @close="showTagEditor=false">
+      <div class="pso-tag__contet" v-if="curTag" v-loading="loading">
         <div class="pso-tag__tab">
           <el-tabs v-model="curTab">
             <el-tab-pane label="属性" name="base"></el-tab-pane>
@@ -60,7 +60,7 @@
           <tag-search v-if="curTab==='search'" :tag="curTag"></tag-search>
         </div>
       </div>
-    </div>
+    </pso-drawer>
     <el-dialog title="新增标签" append-to-body :visible.sync="showEditor" :width="'480px'">
       <tag-editor key="0" :data="newTag"></tag-editor>
       <div slot="footer" class="dialog-footer">
@@ -100,7 +100,8 @@ export default {
         tag_source: "",
         optype: 0
       },
-      showEditor: false
+      showEditor: false,
+      showTagEditor: false
     };
   },
   computed: {
@@ -130,11 +131,7 @@ export default {
       if (ret.success) {
         this.data = ret.data;
         this.dataTotal = ret.count;
-        if (this.data.length) {
-          this.instanceClick(this.data[0]);
-        } else {
-          this.curTag = null;
-        }
+        this.curTag = null;
       }
       this.loadingTable = false;
     },
@@ -156,6 +153,7 @@ export default {
       tag.tag_set = cfg.tag_set || [];
       tag.tag_source = cfg.tag_source || "";
       this.curTag = tag;
+      this.showTagEditor = true;
     },
     prevClickHandler() {
       this.page -= 1;

@@ -8,7 +8,7 @@
           :default-node-data="defaultNodeData"
           :auto-edit="true"
           @node-click="nodeClickHandler"
-        ></pso-tree-common>
+        ></pso-tree-common> 
       </div>
       <div class="pso-page-body__content">
         <div class="pso-page-body__wrapper" v-if="curNode" v-loading="loading">

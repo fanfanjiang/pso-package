@@ -12,44 +12,48 @@
           </el-tabs>
         </div>
       </div>
-      <div class="pso-formTable-tagfilter">
+      <div class="pso-formTable-tagfilter" v-if="showAllStatusBar||stages.length">
         <div class="pso-formTable-status" v-if="statuses.length">
-          <el-badge
-            :hidden="status.total==='0'"
-            :value="status.total"
-            class="item"
-            :type="index>3?'info':''"
-            :max="99"
-            v-for="(status,index) in statuses"
-            :key="index"
-          >
-            <el-tag
-              size="medium"
-              :effect="curStatus===status?'dark':'plain'"
-              @click="handleStatusClick(status)"
-            >{{status.name}}</el-tag>
-          </el-badge>
-          <el-tag size="medium" @click="handleStatusClick()" :effect="!curStatus?'dark':'plain'">全部</el-tag>
+          <el-tag
+            v-if="showAllStatusBar"
+            size="medium"
+            @click="handleStatusClick()"
+            :effect="!curStatus?'dark':'plain'"
+          >全部</el-tag>
+          <template v-for="(status,index) in statuses">
+            <el-badge
+              :hidden="status.total==='0'"
+              :value="status.total"
+              class="item"
+              :type="index>3?'info':''"
+              :max="99"
+              :key="index"
+              v-if="status.total!=='0'"
+            >
+              <el-tag
+                size="medium"
+                :effect="curStatus===status?'dark':'plain'"
+                @click="handleStatusClick(status)"
+              >{{status.name}}</el-tag>
+            </el-badge>
+          </template>
         </div>
-        <el-divider direction="vertical" v-if="stages.length"></el-divider>
-        <div class="pso-formTable-status" v-if="stages.length">
-          <el-badge
-            :hidden="status.total==='0'"
-            :value="status.total"
-            class="item"
-            :type="index>3?'info':''"
-            :max="99"
-            v-for="(status,index) in stages"
-            :key="index"
-          >
-            <el-tag
-              size="medium"
-              :effect="curStage===status?'dark':'plain'"
-              @click="handleStageClick(status)"
-            >{{status.name}}</el-tag>
-          </el-badge>
-          <el-tag size="medium" @click="handleStageClick()" :effect="!curStage?'dark':'plain'">全部</el-tag>
-        </div>
+        <el-divider direction="vertical" v-if="showAllStatusBar&&stages.length"></el-divider>
+        <el-select
+          v-if="stages.length"
+          v-model="curStage"
+          placeholder="请选择阶段"
+          size="mini"
+          @change="handleStageClick"
+        >
+          <el-option label="全部阶段" value="all"></el-option>
+          <el-option
+            v-for="stage in stages"
+            :key="stage.value"
+            :label="stage.name"
+            :value="stage.value"
+          ></el-option>
+        </el-select>
       </div>
       <div class="pso-formTable-sort" v-if="sorts.length">
         <el-tag
@@ -172,6 +176,7 @@
               <el-dropdown-item v-if="opAddable">导入</el-dropdown-item>
               <el-dropdown-item command="export" v-if="opExportable">导出EXCEL</el-dropdown-item>
               <el-dropdown-item v-if="opExportable">全部导出</el-dropdown-item>
+              <el-dropdown-item command="saveColWidth" v-if="opAddable">保存列宽</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -191,6 +196,7 @@
           @row-click="instanceClick"
           @selection-change="handleSelectionChange"
           @sort-change="handleSort"
+          @header-dragend="handleHeaderDrag"
         >
           <template #default>
             <el-table-column
@@ -284,7 +290,6 @@
           :data-id="dataId"
           :data-instance="instance"
           :data-default="defForm"
-          :bind-userpicker="bindUserpicker"
           :editable="dataId?edtailEditable:addable"
         ></pso-form-view>
       </div>
@@ -433,9 +438,10 @@ export default {
         stage: "更改阶段"
       },
       stages: [],
-      curStage: "",
+      curStage: "all",
       defSearchType: "",
-      viewCfg: []
+      viewCfg: [],
+      oriColData: null
     };
   },
   computed: {
@@ -467,6 +473,9 @@ export default {
     },
     opStatuses() {
       return this.statuses.filter(item => item.value !== "0");
+    },
+    showAllStatusBar() {
+      return _.sumBy(this.statuses, item => parseInt(item.total)) > 0;
     }
   },
   watch: {
@@ -563,10 +572,10 @@ export default {
       }
       !this.initializing && this.getFormData();
     },
-    handleStageClick(stage) {
-      this.curStage = stage;
-      if (stage) {
-        this.$set(this.keys, "d_stage", { value: stage.value, type: 1 });
+    handleStageClick(stageVal) {
+      this.curStage = stageVal;
+      if (stageVal !== "all") {
+        this.$set(this.keys, "d_stage", { value: stageVal, type: 1 });
       } else {
         delete this.keys.d_stage;
       }
@@ -601,6 +610,7 @@ export default {
       });
 
       if (this.cfg.display_columns) {
+        this.oriColData = JSON.parse(this.cfg.display_columns);
         this.fields = JSON.parse(this.cfg.display_columns).filter(item => item.using === "1");
       }
 
@@ -694,6 +704,7 @@ export default {
         this.getFormStatus();
       }
 
+      this.$emit("initialized", { store: this.store, cfg: this.cfg, defForm: this.defForm });
       this.initializing = false;
     },
     appendSearchType(data) {
@@ -719,11 +730,7 @@ export default {
       //状态设置
       if (ret.success && ret.data) {
         this.statuses = ret.data;
-        if (this.statuses.length) {
-          this.handleStatusClick(this.statuses[0]);
-        } else {
-          this.handleStatusClick();
-        }
+        this.handleStatusClick();
       }
     },
     async getFormData() {
@@ -898,6 +905,23 @@ export default {
         }
       }
       return indexs;
+    },
+    handleHeaderDrag(newWidth, oldWidth, column, event) {
+      if (this.oriColData) {
+        const exist = _.find(this.oriColData, { field_name: column.property });
+        if (exist) {
+          exist.width = newWidth;
+        }
+      }
+    },
+    async saveColWidth() {
+      if (this.oriColData) {
+        const ret = await this.API.updateFormTree({
+          data_code: this.cfg.data_code,
+          display_columns: JSON.stringify(this.oriColData)
+        });
+        this.ResultNotify(ret);
+      }
     }
   }
 };

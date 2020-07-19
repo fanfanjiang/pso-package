@@ -181,9 +181,9 @@ export default {
     },
     formTableViewAuth() {
       if (this.authCfg.authable) {
-        return this.cpnt.data.__auth__ || 4;
+        return this.cpnt.data.__auth__ || 0;
       } else {
-        return 0;
+        return 4;
       }
     },
     formTableCfg() {

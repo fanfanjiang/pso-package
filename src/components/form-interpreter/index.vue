@@ -39,7 +39,8 @@ export default {
   data() {
     return {
       loading: false,
-      store: null
+      store: null,
+      watchFun: []
     };
   },
   watch: {
@@ -89,10 +90,16 @@ export default {
       } else {
         this.store.updateInstance(this.dataDefault);
       }
-      this.loading = false;
       this.$emit("data-loaded", this.store);
+      this.loading = false;
     },
     async getFormCfg() {
+      //如果已经监听了，则先停止监听
+      if (this.watchFun.length) {
+        this.watchFun.forEach(f => f());
+        this.watchFun = [];
+      }
+
       //获取表单配置
       if (this.formEntity) {
         this.store = new FormStore(this.formEntity);
@@ -102,15 +109,19 @@ export default {
         this.store = new FormStore({ copyMode: this.copyMode, ...ret.data });
       }
       this.store.editable = this.editable;
-      this.$watch("dataId", () => {
-        this.getFormData();
-      });
-      this.$watch("dataInstance", {
-        deep: true,
-        handler: () => {
+      
+      this.watchFun.push(
+        this.$watch("dataId", () => {
           this.getFormData();
-        }
-      });
+        }),
+        this.$watch("dataInstance", {
+          deep: true,
+          handler: () => {
+            this.getFormData();
+          }
+        })
+      );
+
       await this.getFormData();
     },
     async makeData() {

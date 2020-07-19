@@ -11,8 +11,8 @@
         @node-click="nodeClickHandler"
       ></pso-tree-common>
     </div>
-    <div class="pso-data-mgmt__content">
-      <div class="pso-dd" v-if="curNode">
+    <div class="pso-data-mgmt__content" v-loading="initializing">
+      <div class="pso-dd" v-if="curNode&&!initializing">
         <div class="pso-dd-header">
           <pso-title>工作表：{{curNode.node_display}}</pso-title>
           <div class="pso-dd-header__btns">
@@ -51,9 +51,10 @@
             <form-status v-if="curTab==='status'" :data="staData" @save="saveConfig"></form-status>
             <form-stage v-if="curTab==='stage'" :data="stageData" @save="saveConfig"></form-stage>
             <form-publish
-              v-if="curTab==='publish'"
+              v-if="curTab==='publish'&&formStore"
               :data="pubCfg"
               :node="curNode"
+              :store="formStore"
               @save="saveConfig"
             ></form-publish>
             <form-property
@@ -132,7 +133,9 @@ const _DATA = {
     },
     name: "",
     subBtnText: "",
-    doneText: ""
+    doneText: "",
+    qrList: [],
+    rules: []
   },
   property: {
     cal_mark: 0,
@@ -177,6 +180,7 @@ export default {
   },
   data() {
     return {
+      initializing: true,
       appid: "Main",
       key: 0,
       worksheetMenu: SHEET_MENU,
@@ -216,6 +220,7 @@ export default {
       }
     },
     async setSelect(data, tab = "preview") {
+      this.initializing = true;
       this.reset();
       if (!data.is_leaf) tab = "auth";
 
@@ -230,6 +235,7 @@ export default {
         await this.getFields(formStore);
         await this.getFormInfo();
       }
+      this.initializing = false;
     },
     async getFormInfo() {
       const ret = await this.API.getTreeNode({ code: this.curNode.node_name });
@@ -341,6 +347,26 @@ export default {
         rules.push(rule);
       });
 
+      //发布规则
+      const pubdata = {
+        isPublic: this.pubCfg.isPublic,
+        attach: this.pubCfg.attach,
+        name: this.pubCfg.name,
+        subBtnText: this.pubCfg.subBtnText,
+        doneText: this.pubCfg.doneText,
+        qrList: this.pubCfg.qrList,
+        rules: []
+      };
+
+      this.pubCfg.rules.forEach(item => {
+        pubdata.rules.push({
+          id: item.id,
+          name: item.name,
+          cid: item.cid,
+          val: item.val
+        });
+      });
+
       //提交规则
       const subCfgData = [];
       this.subCfg.forEach(item => {
@@ -357,7 +383,7 @@ export default {
         data_code: this.curNode.node_name,
         display_columns: JSON.stringify(colData),
         status_config: JSON.stringify(this.staData),
-        pub_config: JSON.stringify(this.pubCfg),
+        pub_config: JSON.stringify(pubdata),
         rule_config: JSON.stringify(rules),
         submit_config: JSON.stringify(subCfgData),
         stage_config: JSON.stringify(this.stageData),

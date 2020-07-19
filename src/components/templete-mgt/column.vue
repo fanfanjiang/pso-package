@@ -77,11 +77,18 @@
     </el-table>
     <div>
       <pso-title>表头设置</pso-title>
-      <el-tree :data="header" node-key="id" default-expand-all :expand-on-click-node="false">
+      <el-tree
+        :data="header"
+        node-key="id"
+        default-expand-all
+        :expand-on-click-node="false"
+        draggable
+      >
         <span class="tree-node" slot-scope="{ node, data }">
           <span>{{ node.label }}</span>
           <span>
             <el-button type="text" size="mini" @click="() => append(data)">添加</el-button>
+            <el-button v-if="data.id!=='0'" type="text" size="mini" @click="() => edit(data)">编辑</el-button>
             <el-button
               v-if="data.id!=='0'"
               type="text"
@@ -171,7 +178,8 @@ export default {
         isField: "1",
         label: "",
         field: ""
-      }
+      },
+      op: ""
     };
   },
   created() {
@@ -223,7 +231,15 @@ export default {
       this.showDesigner = true;
     },
     append(data) {
+      this.op = "1";
       this.curNode = data;
+      this.showHEditor = true;
+    },
+    edit(data) {
+      this.op = "2";
+      this.curNode = data;
+      Object.assign(this.hData, data);
+      delete this.hData.children;
       this.showHEditor = true;
     },
     remove(node, data) {
@@ -233,17 +249,28 @@ export default {
       children.splice(index, 1);
     },
     save() {
-      const newChild = { id: shortid.generate(), ...this.hData };
-      if (this.hData.isField === "1" && this.hData.field) {
-        const f = _.find(this.data, { field: this.hData.field });
-        if (f) {
-          newChild.label = f.name;
+      if (this.op === "1") {
+        const newChild = { id: shortid.generate(), ...this.hData };
+        if (this.hData.isField === "1" && this.hData.field) {
+          const f = _.find(this.data, { field: this.hData.field });
+          if (f) {
+            newChild.label = f.name;
+          }
         }
+        if (!this.curNode.children) {
+          this.$set(this.curNode, "children", []);
+        }
+        this.curNode.children.push(newChild);
+      } else if (this.op === "2") {
+        if (this.hData.isField === "1" && this.hData.field) {
+          const f = _.find(this.data, { field: this.hData.field });
+          if (f) {
+            this.hData.label = f.name;
+          }
+        }
+        Object.assign(this.curNode, { ...this.hData });
       }
-      if (!this.curNode.children) {
-        this.$set(this.curNode, "children", []);
-      }
-      this.curNode.children.push(newChild);
+
       this.showHEditor = false;
     },
     handleParams(index) {
