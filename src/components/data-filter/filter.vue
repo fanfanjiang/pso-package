@@ -11,7 +11,7 @@
         <el-option
           v-for="item in fieldsOptions"
           :key="item.fid"
-          :label="item.displayName"
+          :label="item.displayName||item._fieldName"
           :value="item.fid"
         ></el-option>
       </el-select>

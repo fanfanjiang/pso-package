@@ -183,6 +183,7 @@ export default {
     editHandler(data) {
       data.optype = 1;
       this.saveHandler(data);
+      this.showTagEditor = false;
     },
     async saveHandler(subData) {
       this.loading = true;

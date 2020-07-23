@@ -20,20 +20,13 @@
   </el-form>
 </template>
 <script>
+import { TP_TYPES } from "../../const/sys";
+
 export default {
   props: ["node"],
   data() {
     return {
-      tpTypes: [
-        {
-          name: "页面插件",
-          value: 0
-        },
-        {
-          name: "统计插件",
-          value: 1
-        }
-      ]
+      tpTypes: TP_TYPES
     };
   }
 };

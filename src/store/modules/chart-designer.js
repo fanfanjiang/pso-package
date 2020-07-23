@@ -97,6 +97,7 @@ export default {
     },
     actions: {
         async  [MUT_TYPES.CD_SOURCE_GET]({ state, getters, commit, dispatch }, reset = false) {
+            console.log(state.filter);
             state.initializing = true;
 
             if (reset) {
@@ -111,7 +112,7 @@ export default {
                 options: { db: true },
                 onlyData: true,
                 beforePush: item => !item.parent.CPNT.host_db
-            });
+            }); 
             commit(MUT_TYPES.CD_SOURCE_SET, fields);
             state.conditionOptions = fields;
             state.initializing = false;

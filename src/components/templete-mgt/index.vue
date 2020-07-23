@@ -79,7 +79,7 @@ import PsoTpParam from "./param";
 import PsoTpColumn from "./column";
 import PsoTpText from "./text";
 import PsoTpTextdef from "./text-def";
-
+import { TP_TYPES } from "../../const/sys";
 const _DATA = {
   columnData: [],
   paramData: [],
@@ -104,24 +104,7 @@ export default {
       curNode: null,
       curTab: "base",
       tpType: "",
-      tpTypes: [
-        {
-          name: "页面插件",
-          value: 0
-        },
-        {
-          name: "统计插件",
-          value: 1
-        },
-        {
-          name: "自定义插件",
-          value: 2
-        },
-        {
-          name: "图表插件",
-          value: 3
-        }
-      ],
+      tpTypes: TP_TYPES,
       ..._DATA
     };
   },
@@ -230,6 +213,7 @@ export default {
     beforeNodeUpdate(data) {
       if (data.is_leaf) {
         data.tp_type = this.tpType;
+        data.tp_head = "";
       }
     },
     editTp() {

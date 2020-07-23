@@ -168,7 +168,6 @@ export default {
       //加载表单数据
       this.loaded = false;
       const data = { data_code: this.formCfg.data_code, leaf_auth: 4 };
-
       if (this.chartCfg.filter.length) {
         data.condition = transCMapToCondition(this.chartCfg.filter);
       }
@@ -184,9 +183,9 @@ export default {
         const ret = await this.API.form({ data: Object.assign(options, { limit, page }), method: "get" });
         if (ret.data && ret.data.length) {
           data = data.concat(ret.data);
-          page = page + limit;
+          page++;
         }
-        if (ret.total < page || !ret.data.length) break;
+        if (ret.total < page * limit || !ret.data.length) break;
       }
       return data;
     },

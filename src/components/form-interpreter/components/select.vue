@@ -16,13 +16,12 @@
     </el-select>
     <el-radio-group size="small" v-else v-model="cpnt.data._val">
       <el-radio
-        :label="opt._optionName||opt._optionValue"
+        :label="opt._optionValue||opt._optionName"
         :disabled="!cpnt.store.editable||cpnt.data._read"
         v-for="opt in cpnt.data._option"
         :key="opt._optionValue"
       >{{opt._optionName||opt._optionValue}}</el-radio>
     </el-radio-group>
-    {{cpnt.data._val}}
   </el-form-item>
 </template>
 <script>

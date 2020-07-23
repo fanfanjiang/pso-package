@@ -240,7 +240,7 @@ export default class FormStore {
                             const op = _cpnt.CPNT.fop[f.op];
                             switch (op.id) {
                                 case 'op1':
-                                    condition = _cpnt.data._val === f.val
+                                    condition = _cpnt.data._val == f.val
                                     break;
                             }
                         }

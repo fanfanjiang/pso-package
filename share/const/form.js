@@ -678,6 +678,36 @@ const CPNT = {
       Object.assign({ match: 1 }, OP_TYPE.op9),
     ],
     data: [{ n: '_option', v: '' }, { n: '_type', v: 1 }, { n: '_showFields', v: '' }, { n: '_new', v: true }, { n: '_relate', v: true }]
+  },
+  pscript: {
+    icon: "el-icon-monitor",
+    name: "脚本数据",
+    componentid: "pscript",
+    class: 'unSubTable',
+    layout: false,
+    db: true,
+    host_db: false,
+    chart: false,
+    table_show: true,
+    ass_db: false,
+    op: [
+      Object.assign({ match: 1 }, OP_TYPE.op1),
+      Object.assign({ match: 1 }, OP_TYPE.op2),
+      Object.assign({ match: 1 }, OP_TYPE.op3),
+      Object.assign({ match: 1 }, OP_TYPE.op4),
+      Object.assign({ match: 1 }, OP_TYPE.op5),
+      Object.assign({ match: 1 }, OP_TYPE.op6),
+      Object.assign({ match: 1 }, OP_TYPE.op7),
+      Object.assign({ match: 1 }, OP_TYPE.op8),
+      Object.assign({ match: 1 }, OP_TYPE.op9),
+    ],
+    data: [
+      { n: '_script', v: '' },
+      { n: '_type', v: '1' },
+      { n: '_option', v: '' },
+      { n: '_column', v: '' },
+      { n: '_saveField', v: '' }
+    ]
   }
 }
 

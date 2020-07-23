@@ -223,10 +223,12 @@ export default {
             state.initializing = false;
         },
         async [MUT_TYPES.WF_FORM_SELECT]({ state, getters, commit }, { id, reset = true }) {
-            console.log(state.formsList);
-            state.formName = _.find(state.formsList, { node_name: id }).node_display;
-            state.loading = true;
+            try {
+                state.formName = _.find(state.formsList, { node_name: id }).node_display;
+            } catch (error) {
 
+            }
+            state.loading = true;
             if (reset) {
                 state.node[0].children = [];
             }

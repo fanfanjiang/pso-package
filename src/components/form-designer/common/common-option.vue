@@ -77,7 +77,6 @@ export default {
   watch: {
     "cpnt.data._defaultValueList": {
       deep: true,
-      immediate: true,
       handler(val) {
         this.cpnt.data._defaultValue = val.join(",");
       }

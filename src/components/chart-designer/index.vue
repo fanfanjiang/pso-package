@@ -25,6 +25,7 @@
                       <pso-datafilter
                         v-if="!chartDesigner.initializing"
                         v-model="chartDesigner.filter"
+                        :condition="chartDesigner.filter"
                         :auto-trans="false"
                         :fieldsOptions="chartDesigner.conditionOptions"
                       ></pso-datafilter>
@@ -207,9 +208,9 @@ export default {
           dimension: chartCfg.dimension,
           chartRemark: chartCfg.chartRemark,
           chartName: ret.data.tp_name,
-          dataLimit: chartCfg.dataLimit
+          dataLimit: chartCfg.dataLimit,
+          filter: chartCfg.filter
         });
-
         await this.$store.dispatch(CD_SOURCE_GET);
 
         if (chartCfg.chartType) {

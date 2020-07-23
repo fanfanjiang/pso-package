@@ -96,6 +96,7 @@ export default {
             // "timerange",
             // "credential",
             // "cascader",
+            "pscript",
             "signature"
           ],
           特殊控件: ["section", "remark", "aiw", "phone", "email"]

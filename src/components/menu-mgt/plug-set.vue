@@ -111,7 +111,7 @@ export default {
       tags: [],
       text: [],
       formFields: {},
-      loadingFields: false
+      loadingFields: false,
     };
   },
   async created() {
@@ -126,7 +126,7 @@ export default {
     this.getTpDetail(this.node[this.field], this.data);
 
     //初始获取表单和流程字段
-    this.data.forEach(d => {
+    this.data.forEach((d) => {
       if (d.picker === "picker-wf" && d.value) {
         this.handleWfChange(d.value);
       }
@@ -147,7 +147,7 @@ export default {
 
           if (originData) {
             const data = [];
-            setting.forEach(item => {
+            setting.forEach((item) => {
               const exist = _.find(originData, { field: item.field }) || {};
               data.push({ ...item, ...exist });
             });
@@ -174,7 +174,6 @@ export default {
       }
     },
     getRelateItem(tpItem) {
-      console.log(_.find(this.data, { field: tpItem.relateParam }).value);
       return _.find(this.data, { field: tpItem.relateParam }).value;
     },
     async handleWfChange(val, tpItem) {
@@ -188,13 +187,13 @@ export default {
       this.loadingFields = true;
       const formStore = await this.makeFormStore(value);
       const ret = await this.API.getFormDict({ data_code: value });
-      ret.data.forEach(item => {
+      ret.data.forEach((item) => {
         const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
         item.field_display = (field ? field._fieldName : "系统字段") + `(${item.field_name})`;
       });
       this.formFields[field || value] = ret.data;
       this.loadingFields = false;
-    }
-  }
+    },
+  },
 };
 </script>

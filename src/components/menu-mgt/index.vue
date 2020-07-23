@@ -201,7 +201,7 @@ export default {
       this.saving = true;
       const ret = await this.API.trees({
         data: {
-          ..._.pickBy(this.curNode, _.identity),
+          ...this.curNode,
           dimen: this.curNode.node_dimen,
           code: this.curNode.node_name,
           param_value: JSON.stringify(this.curTpDetail),
@@ -214,7 +214,7 @@ export default {
     check(ret) {
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
       this.saving = false;
-    },
+    }, 
     handleIcon() {
       this.showIconBox = true;
     },

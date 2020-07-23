@@ -225,7 +225,6 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                         pnode.children = _.orderBy(pnode.children, ...this.sortOptions);
                     },
                     beforePush: (node, pnode) => {
-                        console.log(node.node_auth);
                         if (this.checkAuth && node.node_auth === '0') return false;
                         return true;
                     }

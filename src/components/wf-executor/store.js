@@ -228,7 +228,7 @@ export default class WfStore {
                 this.cfg.wf_map_tp.executingNodes = steps;
             }
 
-            const ret = this.getFlowNode({ nid: this.data.step, cb: tiem => tiem.done = true })
+            const ret = this.getFlowNode({ nid: this.data.step, cb: item => item.done = true })
             if (ret && ret.target) {
                 this.setCurStep(ret.target);
             }

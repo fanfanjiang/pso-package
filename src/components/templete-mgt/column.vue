@@ -23,6 +23,16 @@
           ></el-input-number>
         </template>
       </el-table-column>
+      <el-table-column label="顺序" width="160">
+        <template slot-scope="scope">
+          <el-input-number
+            size="small"
+            v-model="scope.row.number"
+            controls-position="right"
+            :min="0"
+          ></el-input-number>
+        </template>
+      </el-table-column>
       <el-table-column label="显示" width="100">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.show" active-value="1" inactive-value="0"></el-switch>
@@ -33,7 +43,7 @@
           <el-switch v-model="scope.row.cal" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="计算字段" width="100">
+      <el-table-column label="计算字段" width="100" v-if="formulable">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.formulable" active-value="1" inactive-value="0"></el-switch>
         </template>
@@ -57,25 +67,15 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="顺序" width="160">
-        <template slot-scope="scope">
-          <el-input-number
-            size="small"
-            v-model="scope.row.number"
-            controls-position="right"
-            :min="0"
-          ></el-input-number>
-        </template>
-      </el-table-column>
       <el-table-column fixed="right" label="操作" width="280">
         <template slot-scope="scope">
           <el-button size="mini" plain @click="handleParams(scope.$index)">设置参数</el-button>
-          <el-button size="mini" plain @click="formulaHandler(scope.$index)">设置公式</el-button>
+          <el-button v-if="formulable" size="mini" plain @click="formulaHandler(scope.$index)">设置公式</el-button>
           <el-button size="mini" plain @click="handleDel(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div>
+    <div v-if="header">
       <pso-title>表头设置</pso-title>
       <el-tree
         :data="header"
@@ -99,7 +99,13 @@
         </span>
       </el-tree>
     </div>
-    <el-dialog title="设置表头" append-to-body :visible.sync="showHEditor" :width="'400px'">
+    <el-dialog
+      v-if="header"
+      title="设置表头"
+      append-to-body
+      :visible.sync="showHEditor"
+      :width="'400px'"
+    >
       <el-form label-width="80px" v-if="showHEditor">
         <el-form-item label="真实字段">
           <el-switch size="small" v-model="hData.isField" active-value="1" inactive-value="0"></el-switch>
@@ -146,7 +152,13 @@
         </el-table>
       </template>
     </el-dialog>
-    <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner=false">
+    <pso-drawer
+      v-if="formulable"
+      size="50%"
+      :visible="showDesigner"
+      title="设计脚本"
+      @close="showDesigner=false"
+    >
       <template v-slot:whole>
         <formula-designer
           v-if="curCol"
@@ -164,7 +176,22 @@ import formulaDesigner from "../form-designer/formula-designer";
 import { genComponentData } from "../form-designer/helper";
 import shortid from "shortid";
 export default {
-  props: ["data", "header"],
+  props: {
+    data: {
+      type: Array
+    },
+    header: {
+      type: Array
+    },
+    formulable: {
+      type: Boolean,
+      default: true
+    },
+    extend: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   components: { formulaDesigner },
   data() {
     return {
@@ -183,7 +210,7 @@ export default {
     };
   },
   created() {
-    if (!this.header.length) {
+    if (this.header && !this.header.length) {
       this.header.push({ label: "表头", id: "0", field: "0", children: [] });
     }
   },
@@ -201,7 +228,8 @@ export default {
         formula: "",
         searchable: "0",
         searchList: [],
-        timerange: "0"
+        timerange: "0",
+        ...this.extend
       });
     },
     handleDel(index) {

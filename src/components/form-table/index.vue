@@ -181,7 +181,26 @@
           </el-dropdown>
         </div>
       </div>
-      <div class="pso-formTable-table">
+      <div class="pso-formTable-box" v-if="params.displayMode==='box'" v-loading="loadingTable">
+        <el-row :gutter="10">
+          <el-col :xs="6" :sm="6" v-for="(d,index) in formData" :key="index">
+            <div class="pso-formTable-box__item">
+              <div v-if="params.headPicture" class="pso-formTable-box__item-pic">
+                <img :src="d[params.headPicture]" alt="图片" />
+              </div>
+              <div class="pso-formTable-box__item-info">
+                <div v-for="f of showFieldsReal" :key="f.field_name">
+                  <template v-if="f.field_name!==params.headPicture">
+                    <span>{{f.display}}</span>
+                    <span>{{getTrueVal(d,f)}}</span>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="pso-formTable-table" v-else>
         <el-table
           id="pso-formTable-table"
           ref="table"
@@ -232,8 +251,8 @@
                   v-if="field.url"
                   href="javascript:;"
                   @click.stop.prevent="handleUrlClick({row:scope.row,field})"
-                >{{getVal(scope.row[field.field_name])}}</a>
-                <span v-else>{{getVal(scope.row[field.field_name])}}</span>
+                >{{getTrueVal(scope.row,field)}}</a>
+                <span v-else>{{getTrueVal(scope.row,field)}}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -327,74 +346,74 @@ export default {
   props: {
     params: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     cfgId: String,
     autoSubmit: {
       type: Boolean,
-      default: true
+      default: true,
     },
     columnFilter: Array,
     operate: {
       type: Boolean,
-      default: false
+      default: false,
     },
     operateWidth: {
       type: String,
-      default: "100"
+      default: "100",
     },
     addable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     edtailEditable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     deletable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     checkbox: {
       type: Boolean,
-      default: true
+      default: true,
     },
     readOnly: {
       type: Boolean,
-      default: false
+      default: false,
     },
     selectable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     changable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     stageable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     selectionType: {
       type: String,
-      default: "checkbox"
+      default: "checkbox",
     },
     dataPovider: Function,
     opText: {
       type: String,
-      default: "操作"
+      default: "操作",
     },
     where: Object,
     viewAuth: {
       type: Number,
-      default: 0
+      default: 0,
     },
     defOpauth: Number,
     textGroup: String,
     plug_code: String,
     defKeys: String,
     defForm: Object,
-    bindUserpicker: Object
+    bindUserpicker: Object,
   },
   data() {
     return {
@@ -403,7 +422,7 @@ export default {
       showFormViewer: false,
       cfg: {
         data_code: "",
-        data_design: []
+        data_design: [],
       },
       fields: [],
       formData: [],
@@ -435,19 +454,19 @@ export default {
         add: "新增",
         change: "更改",
         copy: "复制",
-        stage: "更改阶段"
+        stage: "更改阶段",
       },
       stages: [],
       curStage: "all",
       defSearchType: "",
       viewCfg: [],
-      oriColData: null
+      oriColData: null,
     };
   },
   computed: {
     showFieldsReal() {
       return this.fields.filter(
-        item => item.show === "1" && (this.columnFilter ? this.columnFilter.indexOf(item.field_name) === -1 : true)
+        (item) => item.show === "1" && (this.columnFilter ? this.columnFilter.indexOf(item.field_name) === -1 : true)
       );
     },
     showSummary() {
@@ -468,15 +487,15 @@ export default {
     defWhere() {
       return {
         limit: this.limit,
-        page: this.page - 1
+        page: this.page - 1,
       };
     },
     opStatuses() {
-      return this.statuses.filter(item => item.value !== "0");
+      return this.statuses.filter((item) => item.value !== "0");
     },
     showAllStatusBar() {
-      return _.sumBy(this.statuses, item => parseInt(item.total)) > 0;
-    }
+      return _.sumBy(this.statuses, (item) => parseInt(item.total)) > 0;
+    },
   },
   watch: {
     showKeywords(val) {
@@ -490,7 +509,7 @@ export default {
       deep: true,
       handler() {
         !this.initializing && this.getFormData();
-      }
+      },
     },
     cfgId() {
       this.getFormCfg();
@@ -500,7 +519,7 @@ export default {
     },
     defKeys() {
       this.getFormCfg();
-    }
+    },
   },
   async created() {
     //处理searchType,特别笨的办法
@@ -543,7 +562,7 @@ export default {
       const ret = await this.API.updateFormStatus({
         data_code: this.cfg.data_code,
         d_status: status.value,
-        leafids: this.selectedList.map(item => item.leaf_id).join(",")
+        leafids: this.selectedList.map((item) => item.leaf_id).join(","),
       });
 
       this.ResultNotify(ret);
@@ -557,7 +576,7 @@ export default {
       const ret = await this.API.updateFormStage({
         data_code: this.cfg.data_code,
         d_stage: data.value,
-        leafids: this.selectedList.map(item => item.leaf_id).join(",")
+        leafids: this.selectedList.map((item) => item.leaf_id).join(","),
       });
 
       this.ResultNotify(ret);
@@ -603,35 +622,44 @@ export default {
         options: { db: true },
         onlyMain: true,
         onlyData: true,
-        beforePush: item => {
+        beforePush: (item) => {
           item.data.displayName = `[${item.CPNT.name}]${item.data._fieldName}`;
           return true;
-        }
+        },
       });
 
       if (this.cfg.display_columns) {
         this.oriColData = JSON.parse(this.cfg.display_columns);
-        this.fields = JSON.parse(this.cfg.display_columns).filter(item => item.using === "1");
+        this.fields = JSON.parse(this.cfg.display_columns).filter((item) => item.using === "1");
       }
 
       if (this.cfg.stage_config) {
         this.stages = JSON.parse(this.cfg.stage_config);
       }
 
-      if (!this.fields.length) {
-        this.fields = this.store.search({
-          options: { table_show: true },
-          onlyMain: true,
-          onlyData: true,
-          beforePush: item => {
-            this.$set(item.data, "display", item.data._fieldName);
-            this.$set(item.data, "field_name", item.data._fieldValue);
-            this.$set(item.data, "show", "1");
-            return true;
+      const storeFields = this.store.search({
+        options: { table_show: true },
+        onlyMain: true,
+        onlyData: true,
+        beforePush: (item) => {
+          this.$set(item.data, "display", item.data._fieldName);
+          this.$set(item.data, "field_name", item.data._fieldValue);
+          this.$set(item.data, "show", "1");
+          return true;
+        },
+      });
+
+      if (this.fields.length) {
+        this.fields.forEach((f) => {
+          const exist = _.find(storeFields, { field_name: f.field_name });
+          if (exist) {
+            Object.assign(f, exist, { show: f.show });
           }
         });
+      } else {
+        this.fields = storeFields;
       }
-      this.fields = _.orderBy(this.fields, ["number"], ["asc"]);
+      this.fields = _.orderBy(this.fields, ["show", "number"], ["asc", "asc"]);
 
       //获取操作权限
       if (this.cfg.opAuth) {
@@ -647,7 +675,7 @@ export default {
             const text = JSON.parse(tpCfg.tp_text);
             const selectedText = _.find(text, { id: this.textGroup });
             if (selectedText) {
-              selectedText.list.forEach(item => {
+              selectedText.list.forEach((item) => {
                 this.cpntText[item.id] = item.value || item.name;
               });
             }
@@ -664,7 +692,7 @@ export default {
         }
         if (this.defKeys) {
           let keyList = this.defKeys.split(";");
-          keyList.forEach(item => {
+          keyList.forEach((item) => {
             const key = item.split(",");
             this.defaultKeys[key[0]] = { value: key[1], type: key[2] };
           });
@@ -683,7 +711,7 @@ export default {
       //视图权限
       let lastActiveView = this.activeView;
       if (this.viewAuth) {
-        MENU_LEAF_AUTH.forEach(a => {
+        MENU_LEAF_AUTH.forEach((a) => {
           if ((a.v & this.viewAuth) === a.v) {
             const viewCfg = _.find(this.viewCfg, { v: a.v });
             const viewItem = { ...a };
@@ -720,7 +748,7 @@ export default {
       const params = {
         leaf_auth: this.activeView,
         data_code: this.cfg.data_code,
-        keys: JSON.stringify({ ...this.defaultKeys })
+        keys: JSON.stringify({ ...this.defaultKeys }),
       };
 
       this.appendSearchType(params);
@@ -736,14 +764,14 @@ export default {
     async getFormData() {
       this.loadingTable = true;
 
-      const order = this.sorts.map(item => `${item.prop} ${item.order}`).join(",");
+      const order = this.sorts.map((item) => `${item.prop} ${item.order}`).join(",");
 
       const parameters = {
         ...this.defWhere,
         leaf_auth: this.activeView,
         orderby: order ? `order by ${order}` : "",
         data_code: this.cfg.data_code,
-        keys: { ...this.keys, ...this.defaultKeys }
+        keys: { ...this.keys, ...this.defaultKeys },
       };
 
       if (this.condition !== "【】") {
@@ -760,7 +788,7 @@ export default {
 
       const ret = await this.API.form({
         data: parameters,
-        method: "get"
+        method: "get",
       });
 
       if (this.dataPovider) {
@@ -814,7 +842,7 @@ export default {
       this.loadingTable = true;
       const ret = await this.API.form({
         data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
-        method: "delete"
+        method: "delete",
       });
       this.$notify({ title: "删除成功", type: "success" });
       this.getFormStatus();
@@ -866,7 +894,7 @@ export default {
       try {
         FileSaver.saveAs(
           new Blob([etout], {
-            type: "application/octet-stream"
+            type: "application/octet-stream",
           }),
           "trade-publish.xlsx"
         );
@@ -918,11 +946,20 @@ export default {
       if (this.oriColData) {
         const ret = await this.API.updateFormTree({
           data_code: this.cfg.data_code,
-          display_columns: JSON.stringify(this.oriColData)
+          display_columns: JSON.stringify(this.oriColData),
         });
         this.ResultNotify(ret);
       }
-    }
-  }
+    },
+    getTrueVal(d, f) {
+      if ((f.componentid === "select" || f.componentid === "checkbox") && f._option) {
+        const opt = _.find(f._option, { _optionValue: d[f.field_name] });
+        if (opt) {
+          return opt._optionName;
+        }
+      }
+      return this.getVal(d[f.field_name]);
+    },
+  },
 };
 </script>

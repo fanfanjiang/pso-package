@@ -174,7 +174,7 @@ export default {
       return this.fields.filter(item => item.show === "1");
     },
     authCfg() {
-      if (this.cpnt.store.sub_config) {
+      if (this.cpnt.store && this.cpnt.store.sub_config) {
         return _.find(this.cpnt.store.sub_config, { id: this.cpnt.data._fieldValue }) || {};
       }
       return {};

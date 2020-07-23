@@ -8,7 +8,11 @@
           :default-node-data="defaultNodeData"
           :auto-edit="true"
           @node-click="nodeClickHandler"
-        ></pso-tree-common> 
+        >
+          <template v-slot:default="nodeData">
+            <slot v-bind:data="nodeData"></slot>
+          </template> 
+        </pso-tree-common>
       </div>
       <div class="pso-page-body__content">
         <div class="pso-page-body__wrapper" v-if="curNode" v-loading="loading">
