@@ -5,7 +5,7 @@
     placement="top-end"
     width="400"
     @show="opened=true"
-   @after-leave="afterHandler"
+    @after-leave="afterHandler"
     v-model="show"
   >
     <div class="pso-picker-tree" v-if="opened">
@@ -35,7 +35,7 @@
     </div>
     <template slot="reference">
       <slot>
-        <el-button icon="el-icon-plus" plain size="small">{{btnText}}</el-button>
+        <el-button icon="el-icon-plus" plain size="mini">{{btnText}}</el-button>
       </slot>
     </template>
   </el-popover>
@@ -45,37 +45,37 @@ export default {
   props: {
     appid: {
       type: String,
-      default: "3"
+      default: "3",
     },
     pattern: {
       type: String,
-      default: "radio"
+      default: "radio",
     },
     show: {
       type: Boolean,
-      default: false
+      default: false,
     },
     rootable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     requestOptions: Object,
     btnText: {
       type: String,
-      default: ""
+      default: "",
     },
-    filter: Function
+    filter: Function,
   },
   data() {
     return {
       opened: false,
-      selectedData: []
+      selectedData: [],
     };
   },
   computed: {
     showCheckbox() {
       return this.pattern === "checkbox";
-    }
+    },
   },
   methods: {
     nodeClickHandler(data) {
@@ -98,8 +98,8 @@ export default {
     afterHandler() {
       this.opened = false;
       this.selectedData = [];
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

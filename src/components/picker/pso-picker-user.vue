@@ -100,7 +100,7 @@
     </div>
     <template slot="reference">
       <slot>
-        <el-button icon="el-icon-plus" plain size="small">选择用户</el-button>
+        <el-button icon="el-icon-plus" plain size="mini">选择用户</el-button>
       </slot>
     </template>
   </el-popover>
@@ -110,12 +110,12 @@ export default {
   props: {
     appid: {
       type: String,
-      default: "3"
+      default: "3",
     },
     pattern: {
       type: String,
-      default: "radio"
-    }
+      default: "radio",
+    },
   },
   data() {
     return {
@@ -127,14 +127,14 @@ export default {
       treeOptions: {
         appid: this.appid,
         dbconfig: "",
-        dimen: 2
+        dimen: 2,
       },
       TABS: {
         all: "0",
         org: "99",
         post: "2",
         duty: "1",
-        looser: "91"
+        looser: "91",
       },
       options: {
         start: 1,
@@ -147,15 +147,15 @@ export default {
         keys: {
           user_name: {
             type: "2",
-            value: ""
-          }
+            value: "",
+          },
         },
-        type: "GetOfficeUserPage"
+        type: "GetOfficeUserPage",
       },
       dataTotal: 0,
       postData: [],
       dutyData: [],
-      show: false
+      show: false,
     };
   },
   watch: {
@@ -180,7 +180,7 @@ export default {
         });
         this.options.start = 1;
         this.loadUser();
-      }
+      },
     },
     show(val) {
       if (val) this.loadUser();
@@ -193,7 +193,7 @@ export default {
     },
     "options.keys.user_name.value"(val) {
       if (!val) this.loadUser();
-    }
+    },
   },
   async created() {
     const postRet = await this.API.getOrgs("post");
@@ -258,8 +258,8 @@ export default {
     afterHandler() {
       this.opened = false;
       this.selected = [];
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

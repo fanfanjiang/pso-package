@@ -39,8 +39,8 @@
         text="打回"
         @confirm="reject"
       ></pso-wf-confirm>
-    </div> 
-    <el-dropdown @command="handleCommand"  v-if="store.data.instanceId">
+    </div>
+    <el-dropdown @command="handleCommand" v-if="store.data.instanceId">
       <el-button size="small">
         更多
         <i class="el-icon-more"></i>
@@ -66,8 +66,8 @@ export default {
   props: {
     store: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   computed: {
     superable() {
@@ -86,7 +86,7 @@ export default {
     },
     superpower() {
       return this.hasCreatorPower;
-    }
+    },
   },
   methods: {
     handleCommand(command) {
@@ -107,7 +107,11 @@ export default {
       }
     },
     async confirm() {
-      await this.nextStep(this.REVIEW_OP_TYPE.confirm.type);
+      if (this.store.isNextEmpty) {
+        this.openUserOp({ text: "下一步", op: this.REVIEW_OP_TYPE.confirm.type });
+      } else {
+        await this.nextStep(this.REVIEW_OP_TYPE.confirm.type);
+      }
     },
     async reject() {
       await this.nextStep(this.REVIEW_OP_TYPE.reject.type);
@@ -145,7 +149,7 @@ export default {
     },
     print() {
       this.$emit("print");
-    }
-  }
+    },
+  },
 };
 </script>

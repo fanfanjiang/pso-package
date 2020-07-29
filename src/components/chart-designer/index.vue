@@ -137,19 +137,19 @@ export default {
       selectedChart: {},
       formOptions: [],
       showFilter: false,
-      watchRegistered: false
+      watchRegistered: false,
     };
   },
   computed: {
-    ...mapState(["chartDesigner"])
+    ...mapState(["chartDesigner"]),
   },
   watch: {
     "params.tpCode": {
       immediate: true,
       handler(val) {
         val && this.loadChartCfg();
-      }
-    }
+      },
+    },
   },
   created() {
     this.getFormList();
@@ -181,19 +181,19 @@ export default {
         deep: true,
         handler() {
           this.loadChart();
-        }
+        },
       });
       this.$watch("chartDesigner.figure", {
         deep: true,
         handler() {
           this.loadChart();
-        }
+        },
       });
       this.$watch("chartDesigner.dataLimit", {
         deep: true,
         handler() {
           this.loadChart();
-        }
+        },
       });
       this.watchRegistered = true;
     },
@@ -207,9 +207,9 @@ export default {
           figure: chartCfg.metrics,
           dimension: chartCfg.dimension,
           chartRemark: chartCfg.chartRemark,
-          chartName: ret.data.tp_name,
+          chartName: ret.data.tp.tp_name,
           dataLimit: chartCfg.dataLimit,
-          filter: chartCfg.filter
+          filter: chartCfg.filter,
         });
         await this.$store.dispatch(CD_SOURCE_GET);
 
@@ -241,7 +241,7 @@ export default {
         chartType: this.selectedChart.id,
         chartRemark: this.chartDesigner.chartRemark,
         dataLimit: this.chartDesigner.dataLimit,
-        filter: this.chartDesigner.filter
+        filter: this.chartDesigner.filter,
       };
     },
     async save() {
@@ -253,17 +253,17 @@ export default {
           tp_status: 1,
           tp_name: this.chartDesigner.chartName,
           tp_data: "1",
-          data_list: JSON.stringify(this.getChartViewData())
+          data_list: JSON.stringify(this.getChartViewData()),
         },
-        method: "put"
+        method: "put",
       });
       if (ret.success) {
         this.$notify({ title: "成功", message: "成功保存", type: "success" });
         this.$emit("save");
       }
       this.chartDesigner.initializing = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less">

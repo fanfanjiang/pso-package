@@ -60,17 +60,17 @@ export default {
       formStore: {},
       formMenu: {
         布局组件: ["row", "div"],
-        基础组件: ["carousel", "chart", "graphiccard"]
+        基础组件: ["carousel", "chart", "graphiccard"],
       },
       step: 1,
       code: null,
-      tpType: 2
+      tpType: 2,
     };
   },
   computed: {
     cpnts() {
       return this.code ? null : (this.formStore.root && this.formStore.root.data) || null;
-    }
+    },
   },
   async created() {
     this.initializing = true;
@@ -94,7 +94,7 @@ export default {
       this.saving = true;
       let data = {
         tp_code: this.params.tpCode,
-        tp_type: this.tpType
+        tp_type: this.tpType,
       };
       if (this.step === 1) {
         data.data_list = JSON.stringify(this.formStore.root.data.children);
@@ -102,17 +102,19 @@ export default {
         data.data_list = JSON.stringify({
           jsCode: this.viewEidtor.jsCode,
           htmlCode: this.viewEidtor.htmlCode,
-          cssCode: this.viewEidtor.cssCode
+          cssCode: this.viewEidtor.cssCode,
         });
       }
       const ret = await this.API.templates({ data, method: "put" });
+      this.ResultNotify(ret);
       this.$emit("saved", data);
+      this.saving = false;
     },
     formReadyHandler(store) {
       this.formStore = store;
       this.storeReady = true;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

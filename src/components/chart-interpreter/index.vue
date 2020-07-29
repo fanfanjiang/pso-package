@@ -20,12 +20,19 @@
 import VeTable from "./table";
 import VeCard from "./card";
 import { CHART, FIGER_OP, DIMEN_OP, SORT_VAL } from "../../const/chart";
-import dayjs from "dayjs";
 import { transCMapToCondition } from "../../tool/form";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
 import debounce from "throttle-debounce/debounce";
 
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import weekYear from "dayjs/plugin/weekYear";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+dayjs.extend(weekYear);
+dayjs.extend(weekOfYear);
+dayjs.extend(advancedFormat);
+  
 export default {
   components: { VeTable, VeCard },
   props: ["chartId"],
@@ -34,10 +41,10 @@ export default {
       loaded: false,
       chartData: {
         columns: [],
-        rows: []
+        rows: [],
       },
       formCfg: {
-        data_config: []
+        data_config: [],
       },
       chartCfg: {
         formId: "",
@@ -47,13 +54,13 @@ export default {
         chartName: "",
         chartRemark: "",
         dataLimit: {},
-        filter: []
+        filter: [],
       },
       group: {},
       fields: [],
       chartHeight: "400px",
       conflict: [],
-      colors: ["#065279", "#ffc773", "#426666", "#493131", "#f47983"]
+      colors: ["#065279", "#ffc773", "#426666", "#493131", "#f47983"],
     };
   },
   computed: {
@@ -75,7 +82,7 @@ export default {
 
       //设置维度
       if (this.chartCfg.dimension && this.chartCfg.dimension.length) {
-        const dimension = this.chartCfg.dimension.map(m => m._fieldValue);
+        const dimension = this.chartCfg.dimension.map((m) => m._fieldValue);
         if (this.CHARTMODEL.dimensionType === "string") {
           setting.dimension = dimension.join(",");
         } else {
@@ -85,7 +92,7 @@ export default {
 
       //设置指标
       if (this.chartCfg.metrics && this.chartCfg.metrics.length) {
-        const metrics = this.chartCfg.metrics.map(m => m._fieldValue);
+        const metrics = this.chartCfg.metrics.map((m) => m._fieldValue);
         if (this.CHARTMODEL.metricsType === "string") {
           setting.metrics = metrics.join(",");
         } else {
@@ -94,12 +101,12 @@ export default {
       }
 
       //设置别名
-      this.formCfg.data_config.forEach(fieldItem => {
+      this.formCfg.data_config.forEach((fieldItem) => {
         setting.labelMap[fieldItem._fieldValue] = this.getSlias(fieldItem._fieldValue) || fieldItem._fieldName;
       });
 
       //根据冲突设置别名
-      this.conflict.forEach(fieldItem => {
+      this.conflict.forEach((fieldItem) => {
         setting.labelMap[fieldItem._fieldValue] = this.getSlias(fieldItem._fieldValue) || fieldItem._fieldName;
       });
 
@@ -108,15 +115,15 @@ export default {
       }
 
       return setting;
-    }
+    },
   },
   watch: {
     chartId: {
       immediate: true,
       handler(val) {
         if (typeof val !== "undefined") this.getChartCfg();
-      }
-    }
+      },
+    },
   },
   created() {
     this.deGetForm = debounce(500, this.getFormCfg);
@@ -157,7 +164,7 @@ export default {
       ret.data.data_config = store.search({
         options: { db: true },
         onlyData: true,
-        beforePush: item => !item.parent.CPNT.host_db
+        beforePush: (item) => !item.parent.CPNT.host_db,
       });
       this.formCfg = ret.data;
       this.chartData.columns = _.map(this.formCfg.data_config, "_fieldValue");
@@ -177,7 +184,7 @@ export default {
       this.setHeight();
     },
     async fetchAllData(options) {
-      let { limit = 1000, page = 0 } = options;
+      let { limit = 2000, page = 0 } = options;
       let data = [];
       while (1) {
         const ret = await this.API.form({ data: Object.assign(options, { limit, page }), method: "get" });
@@ -199,7 +206,7 @@ export default {
       //维度和数字冲突处理
 
       if (this.chartCfg.dimension && this.chartCfg.dimension.length && this.chartCfg.metrics && this.chartCfg.metrics.length) {
-        this.chartCfg.metrics.forEach(mItem => {
+        this.chartCfg.metrics.forEach((mItem) => {
           const sameDimen = _.find(this.chartCfg.dimension, { _fieldValue: mItem._fieldValue });
 
           if (sameDimen) {
@@ -212,15 +219,15 @@ export default {
 
       //数据预处理
       if (this.chartCfg.dimension && this.chartCfg.dimension.length) {
-        formData.forEach(d => {
+        formData.forEach((d) => {
           //冲突赋值
 
-          this.conflict.forEach(cfItem => {
+          this.conflict.forEach((cfItem) => {
             d[cfItem._fieldValue] = d[cfItem.copyFieldValue];
             cfItem._fieldName = d._fieldName;
           });
 
-          this.chartCfg.dimension.forEach(dim => {
+          this.chartCfg.dimension.forEach((dim) => {
             if (dim.op) {
               switch (dim.op) {
                 case DIMEN_OP.YEAR:
@@ -267,7 +274,7 @@ export default {
 
       //排序处理
       const sortList = [[], []];
-      this.chartCfg.dimension.concat(this.chartCfg.metrics).forEach(item => {
+      this.chartCfg.dimension.concat(this.chartCfg.metrics).forEach((item) => {
         if (item.chartSort && SORT_VAL[item.chartSort]) {
           sortList[0].push(item._fieldValue);
           sortList[1].push(SORT_VAL[item.chartSort]);
@@ -279,7 +286,7 @@ export default {
 
       //去重
       if (this.chartCfg.dimension && this.chartCfg.dimension.length) {
-        this.chartCfg.dimension.forEach(dim => {
+        this.chartCfg.dimension.forEach((dim) => {
           if (dim.uniq) {
             let uList = [];
             const uRet = _.groupBy(this.chartData.rows, dim._fieldValue);
@@ -327,7 +334,7 @@ export default {
         for (let mItem of this.chartCfg.metrics) {
           switch (mItem.op) {
             case FIGER_OP.SUM:
-              row[mItem._fieldValue] = _.sumBy(ary, a => {
+              row[mItem._fieldValue] = _.sumBy(ary, (a) => {
                 return parseInt(a[mItem._fieldValue]);
               });
               break;
@@ -340,16 +347,21 @@ export default {
               break;
             case FIGER_OP.AVG:
               row[mItem._fieldValue] =
-                _.sumBy(ary, a => {
+                _.sumBy(ary, (a) => {
                   return parseInt(a[mItem._fieldValue]);
                 }) / ary.length;
+              break;
+            case FIGER_OP.FIRST:
+              row[mItem._fieldValue] = ary.sort((a, b) => {
+                return a[mItem._fieldValue] > b[mItem._fieldValue] ? 1 : -1;
+              })[0][mItem._fieldValue];
               break;
           }
         }
         this.chartData.rows = this.chartData.rows.concat(row);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less">

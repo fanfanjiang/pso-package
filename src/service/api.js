@@ -517,6 +517,14 @@ export default class API {
             throw error;
         }
     }
+
+    static async getPscriptData(data = {}) {
+        try {
+            return await this.request('/api/form/script', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

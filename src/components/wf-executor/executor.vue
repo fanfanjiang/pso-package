@@ -67,7 +67,7 @@
 <script>
 import shortid from "shortid";
 
-import { REVIEW_OP_TYPE, REVIEW_OP_APPEND, REVIEW_STATUS } from "../../const/workflow";
+import { REVIEW_OP_TYPE, REVIEW_STATUS } from "../../const/workflow";
 
 import PsoWfMainform from "./form-main";
 import PsoWfop from "./op";
@@ -84,18 +84,18 @@ export default {
   mixins: [executor, op],
   data() {
     return {
-      REVIEW_OP_TYPE: REVIEW_OP_TYPE
+      REVIEW_OP_TYPE: REVIEW_OP_TYPE,
     };
   },
   computed: {
     extendClass() {
       return {
-        "pso-wf-executor__extend__expend": !this.store.showBody
+        "pso-wf-executor__extend__expend": !this.store.showBody,
       };
     },
     executorClass() {
       return {
-        "pso-wf-executor__m": this.isMobile
+        "pso-wf-executor__m": this.isMobile,
       };
     },
     stamp() {
@@ -108,19 +108,19 @@ export default {
     stampStyle() {
       return {
         color: this.stamp.color,
-        "border-color": this.stamp.color
+        "border-color": this.stamp.color,
       };
-    }
+    },
   },
   async created() {},
   methods: {
-    async append() {
-      await this.nextStep(REVIEW_OP_APPEND);
+    async append(op) {
+      await this.nextStep(op);
     },
     doPrint() {
       this.print($("#executorMain")[0]);
-    }
-  }
+    },
+  },
 };
 </script>
 

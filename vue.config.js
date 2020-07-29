@@ -1,5 +1,6 @@
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const MonacoEditorPlugin = require('monaco-editor-webpack-plugin');
 
 let config = {};
 if (process.env.BABEL_ENV === 'development') {
@@ -29,13 +30,13 @@ if (process.env.BABEL_ENV === 'development') {
                 })
         },
         css: {
-            extract: false, 
+            extract: false,
             sourceMap: false,
         }
     }
 } else {
     config = {
-        configureWebpack: { 
+        configureWebpack: {
             externals: {
                 vue: 'Vue',
                 'element-ui': 'ELEMENT',
@@ -43,9 +44,11 @@ if (process.env.BABEL_ENV === 'development') {
                 jquery: "jQuery",
                 lodash: '_',
                 xlsx: 'XLSX',
-                'video.js': 'videojs'
+                'video.js': 'videojs' 
             },
-            // plugins: [new BundleAnalyzerPlugin()],
+            plugins: [
+                new BundleAnalyzerPlugin()
+            ],
         },
         chainWebpack: config => {
             config.plugins.delete('prefetch');

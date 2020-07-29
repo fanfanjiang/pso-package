@@ -45,7 +45,6 @@ export default {
   data() {
     return {
       showDesigner: false,
-      coding: false,
       code: ""
     };
   },

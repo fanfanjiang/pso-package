@@ -43,12 +43,6 @@ const OP_TYPE = {
         name: '包含',
         value: ['LIKE(', ')'],
         id: 'op9'
-    },
-    op10: {
-        name: '动态范围',
-        value: '10',
-        id: 'op10'
     }
 }
-
 module.exports = OP_TYPE;

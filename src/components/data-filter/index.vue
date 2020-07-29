@@ -1,26 +1,19 @@
 <template>
-  <div class="wf-panel-branchitem">
-    <div
-      class="wf-panel-branchitem__or"
-      v-for="(orCondition,orIndex) in conditionMap"
-      :key="orIndex"
-    >
-      <el-divider v-if="orIndex!==0" content-position="center">或</el-divider>
-      <div
-        class="wf-panel-branchitem__and"
-        v-for="(andCondition,andIndex) in orCondition"
-        :key="andIndex"
-      >
-        <el-divider v-if="andIndex!==0" content-position="left">且</el-divider>
-        <div class="wf-panel-branchitem__picker">
-          <pso-datafilteritem :pick="andCondition" :fieldsOptions="fieldsOptions"></pso-datafilteritem>
+  <div class="data-filter" :class="classObj">
+    <div class="data-filter__or" v-for="(orCondition,orIndex) in conditionMap" :key="orIndex">
+      <el-divider v-if="orIndex!==0&&!fixed" content-position="center">或</el-divider>
+      <div class="data-filter__and" v-for="(andCondition,andIndex) in orCondition" :key="andIndex">
+        <el-divider v-if="andIndex!==0&&!fixed" content-position="left">且</el-divider>
+        <div class="data-filter__picker">
+          <pso-datafilteritem :fixed="fixed" :pick="andCondition" :fieldsOptions="fieldsOptions"></pso-datafilteritem>
           <i
-            class="wf-panel-branchitem__del el-icon-delete-solid"
+            v-if="!fixed"
+            class="data-filter__del el-icon-delete-solid"
             @click="delCondition({orIndex,andIndex})"
           ></i>
         </div>
       </div>
-      <div class="wf-panel-branchitem__andbtn">
+      <div class="data-filter__andbtn" v-if="!fixed">
         <el-button
           @click="addCondition(orIndex)"
           size="mini"
@@ -30,7 +23,7 @@
         >且</el-button>
       </div>
     </div>
-    <div class="wf-panel-branchitem__orbtn">
+    <div class="data-filter__orbtn" v-if="!fixed">
       <el-button
         @click="addCondition()"
         size="mini"
@@ -50,32 +43,42 @@ export default {
     value: [String, Array],
     condition: {
       type: Array,
-      default: function() {
+      default: function () {
         return [];
-      }
+      },
     },
     fieldsOptions: {
       type: Array,
-      default: function() {
+      default: function () {
         return [];
-      }
+      },
     },
     autoTrans: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
+    fixed: {
+      type: Boolean,
+      default: false,
+    },
   },
   model: {
     prop: "value",
-    event: "change"
+    event: "change",
   },
   components: { PsoDatafilteritem },
   data() {
     return {
-      conditionMap: []
+      conditionMap: [],
     };
   },
-  computed: {},
+  computed: {
+    classObj() {
+      return {
+        fixed: this.fixed,
+      };
+    },
+  },
   created() {
     this.conditionMap = _.cloneDeep(this.condition);
   },
@@ -84,14 +87,14 @@ export default {
       deep: true,
       handler(val, oldVal) {
         this.$emit("change", this.autoTrans ? transCMapToCondition(val) : val);
-      }
+      },
     },
     fieldsOptions: {
       deep: true,
       handler(val, oldVal) {
         this.conditionMap = [];
-      }
-    }
+      },
+    },
   },
   methods: {
     addCondition(orIndex) {
@@ -105,40 +108,7 @@ export default {
     delCondition({ orIndex, andIndex }) {
       this.conditionMap[orIndex].splice(andIndex, 1);
       if (!this.conditionMap[orIndex].length) this.conditionMap.splice(orIndex, 1);
-    }
-  }
+    },
+  },
 };
 </script>
-<style lang="less" scoped>
-.wf-panel-branchitem {
-  .wf-panel-branchitem__and {
-    margin-top: 10px;
-  }
-  .wf-panel-branchitem__andbtn {
-    margin-top: 10px;
-  }
-  .wf-panel-branchitem__orbtn {
-    margin-top: 10px;
-  }
-  .wf-panel-branchitem__picker {
-    display: flex;
-    > div {
-      flex: 1;
-    }
-  }
-  .wf-panel-branchitem__del {
-    font-size: 20px;
-    color: rgb(182, 182, 182);
-    margin-left: 5px;
-    padding-top: 5px;
-    height: 30px;
-    cursor: pointer;
-    transition: color 0.2s ease-in-out;
-
-    &:hover {
-      color: #f56c6c;
-      transition: color 0.2s ease-in-out;
-    }
-  }
-}
-</style>

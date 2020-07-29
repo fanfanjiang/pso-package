@@ -2,11 +2,12 @@
   <div class="branch-picker">
     <div class="branch-picker__name">
       <el-select
-        size="small"
+        :size="size"
         filterable
         v-model="pick.field"
         @change="fieldChange"
         placeholder="请选择"
+        :disabled="fixed"
       >
         <el-option
           v-for="item in fieldsOptions"
@@ -17,15 +18,21 @@
       </el-select>
     </div>
     <div class="branch-picker__body">
-      <div class="branch-picker__op">
-        <el-select size="small" filterable v-model="pick.op" @change="opChange" placeholder="请选择">
+      <div class="branch-picker__op" v-if="!fixed">
+        <el-select :size="size" filterable v-model="pick.op" @change="opChange" placeholder="请选择">
           <el-option v-for="item in opOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </div>
       <div class="branch-picker__value">
-        <el-input size="small" v-if="pick.match===1" v-model="pick.data" placeholder="请输入内容"></el-input>
+        <el-input
+          :size="size"
+          v-if="pick.match===1"
+          v-model="pick.data"
+          placeholder="请输入内容"
+          clearable
+        ></el-input>
         <el-select
-          size="small"
+          :size="size"
           v-else-if="pick.match===2||pick.match===3"
           v-model="pick.data"
           placeholder="请选择"
@@ -40,16 +47,54 @@
         </el-select>
         <el-date-picker
           v-else-if="pick.match===4"
-          size="small"
+          :size="size"
           v-model="pick.data"
           type="datetime"
-          placeholder="选择日期时间"
-          format="yyyy 年 MM 月 dd 日"
+          format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
           align="right"
+          clearable
         ></el-date-picker>
+        <div class="branch-picker__split" v-else-if="pick.match===5">
+          <el-input-number :size="size" v-model="minNum" controls-position="right" clearable></el-input-number>
+          <span class="branch-picker__split-line">-</span>
+          <el-input-number :size="size" v-model="maxNum" controls-position="right" clearable></el-input-number>
+        </div>
+        <el-date-picker
+          :size="size"
+          v-else-if="pick.match===6"
+          v-model="pick.data"
+          :type="curOp.type||'daterange'"
+          :value-format="curOp.vformat||curOp.format||'yyyy-MM-dd'"
+          :format="curOp.format||'yyyy-MM-dd'"
+        ></el-date-picker>
+        <div class="branch-picker__checkbox" v-else-if="pick.match===7">
+          <el-checkbox
+            :size="size"
+            :indeterminate="isIndeterminate"
+            v-model="checkAll"
+            @change="handleCheckAllChange"
+          >全选</el-checkbox>
+          <el-checkbox-group v-model="pick.data" @change="handleCheckItemChange">
+            <el-checkbox
+              v-for="o in dataOptions"
+              :label="o._optionValue||o._optionName"
+              :key="o._optionValue||o._optionName"
+              :size="size"
+            >{{o._optionName||o._optionValue}}</el-checkbox>
+          </el-checkbox-group>
+        </div>
+        <div v-else-if="pick.match===99">
+          <el-form>
+            <pso-form-component
+              :force-show="true"
+              :cpnt="pick.cpnt"
+              @value-change="valueChangeHandler"
+            ></pso-form-component>
+          </el-form>
+        </div>
         <div v-else>
-          <el-input size="small" :disabled="true" placeholder></el-input>
+          <el-input :size="size" :disabled="true" placeholder></el-input>
         </div>
       </div>
     </div>
@@ -57,57 +102,118 @@
 </template> 
 <script>
 import { CPNT } from "../../const/form";
+import PsoFormComponent from "../form-interpreter/cpnt";
+import FormStore from "../form-designer/model/store.js";
 
 export default {
-  props: ["pick", "fieldsOptions"],
+  components: { PsoFormComponent },
+  props: {
+    pick: {
+      type: Object,
+    },
+    fieldsOptions: {
+      type: Array,
+    },
+    size: {
+      type: String,
+      default: "mini",
+    },
+    fixed: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
-      opOptions: [],
-      dataOptions: []
+      proxy: [],
+      minNum: 0,
+      maxNum: 0,
+      checkAll: false,
+      isIndeterminate: false,
+      store: null,
     };
   },
-  methods: {
-    fieldChange(fid) {
-      this.pick.cpnt = _.find(this.fieldsOptions, { fid });
-      this.opOptions = CPNT[this.pick.cpnt.componentid].op;
-      this.pick.op = "";
-      this.pick.data = "";
-      this.pick.match = "";
+  computed: {
+    opOptions() {
+      return (this.pick.cpnt && this.pick.cpnt.componentid && CPNT[this.pick.cpnt.componentid].op) || [];
     },
-    opChange(id) {
-      let op = _.find(CPNT[this.pick.cpnt.componentid].op, { id });
-      this.pick.match = op.match;
-      if (this.pick.match === 3 || this.pick.match === 2) {
-        this.dataOptions = this.pick.cpnt._option;
+    dataOptions() { 
+      return (this.pick.cpnt && this.pick.cpnt.data._option) || [];
+    },
+    curOp() {
+      if (this.pick.cpnt && this.pick.op) {
+        const exist = _.find(CPNT[this.pick.cpnt.componentid].op, { id: this.pick.op });
+        if (exist) {
+          return exist;
+        }
       }
-      if (this.pick.match === 3) {
-        this.pick.data = [];
-      } else {
-        this.pick.data = "";
+      return {};
+    },
+  },
+  watch: {
+    minNum(val) {
+      this.pick.data.splice(0, 1, val);
+    },
+    maxNum(val) {
+      this.pick.data.splice(1, 1, val);
+    },
+  },
+  created() {
+    this.store = new FormStore({
+      data_name: "0",
+      data_code: "0",
+      data_id: "0",
+      data_config: this.fieldsOptions,
+      designMode: false,
+      forceInsertSys: false,
+    });
+    if (this.pick.cpnt) {
+      this.makeCpnt(this.pick.cpnt.fid);
+      if (this.pick.op && !this.pick.match) {
+        this.opChange();
       }
     }
-  }
+  },
+  methods: {
+    makeCpnt(fid) {
+      this.pick.cpnt = this.store.search({ options: { fid } });
+      this.pick.cpnt.data._fieldName = "";
+      this.pick.cpnt.data._hideForever = false;
+      this.pick.cpnt.data._hideOnNew = false;
+    },
+    fieldChange(fid) {
+      this.makeCpnt(fid);
+      this.pick.op = "";
+      this.pick.match = "";
+      this.pick.data = "";
+    },
+    opChange(change) {
+      this.pick.match = this.curOp.match;
+      if (this.curOp.arraytype) {
+        if (!Array.isArray(this.pick.data) || change) {
+          this.pick.data = [];
+        }
+      } else {
+        if (change) {
+          this.pick.data = "";
+        }
+      }
+      if (this.curOp.defaultVal) {
+        this.pick.data = _.cloneDeep(this.curOp.defaultVal);
+      }
+    },
+    handleCheckAllChange(isCheckAll) {
+      this.pick.data = isCheckAll ? _.map(this.dataOptions, "_optionValue") : [];
+      this.isIndeterminate = false;
+    },
+    handleCheckItemChange(value) {
+      const checkedCount = value.length;
+      this.checkAll = checkedCount === this.dataOptions.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.dataOptions.length;
+    },
+    valueChangeHandler({ value }) {
+      this.pick.data = value;
+    },
+  },
 };
 </script>
-<style lang="less" scoped>
-@deep: ~">>>";
-.branch-picker {
-  .branch-picker__body {
-    display: flex;
-    margin-top: 5px;
-    .branch-picker__op {
-      width: 120px;
-    }
-    .branch-picker__value {
-      flex: 1;
-      margin-left: 5px;
-    }
-  }
-  @{deep} {
-    .el-input,
-    .el-select {
-      width: 100%;
-    }
-  }
-}
-</style>

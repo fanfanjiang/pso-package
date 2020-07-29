@@ -1,0 +1,154 @@
+.data-filter {
+    .el-form-item {
+        margin: 0;
+    }
+
+    &.fixed {
+        .branch-picker {
+            display: flex;
+            align-items: center;
+        }
+
+        .branch-picker__name {
+            width: 140px;
+
+            .el-input {
+                input {
+                    font-size: 13px;
+                    padding-left: 0;
+                }
+            }
+        }
+
+        .data-filter__and {
+            margin-top: 5px;
+
+            &+.data-filter__and {
+                margin-top: 8px;
+            }
+        }
+
+        .branch-picker__body {
+            margin-top: 0px !important;
+
+            .el-input-number {
+                width: 160px !important;
+
+                .el-input {
+                    width: 100% !important;
+                }
+            }
+
+            .el-date-editor {
+                width: 240px !important;
+
+            }
+
+            .el-input,
+            .el-select {
+                width: 160px !important;
+            }
+        }
+
+    }
+
+    .data-filter__and {
+        margin-top: 10px;
+    }
+
+    .data-filter__andbtn {
+        margin-top: 10px;
+    }
+
+    .data-filter__orbtn {
+        margin-top: 10px;
+    }
+
+    .data-filter__picker {
+        display: flex;
+
+        >div {
+            flex: 1;
+        }
+    }
+
+    .data-filter__del {
+        font-size: 20px;
+        color: rgb(182, 182, 182);
+        margin-left: 5px;
+        padding-top: 5px;
+        height: 30px;
+        cursor: pointer;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+            color: #f56c6c;
+            transition: color 0.2s ease-in-out;
+        }
+    }
+
+    .branch-picker {
+
+        .el-date-editor,
+        .el-input,
+        .el-select {
+            width: 100%;
+        }
+
+        .branch-picker__body {
+            display: flex;
+            margin-top: 5px;
+
+            .branch-picker__op {
+                width: 120px;
+            }
+
+            .branch-picker__value {
+                flex: 1;
+                margin-left: 5px;
+            }
+        }
+
+        .branch-picker__split {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .branch-picker__split-line {
+                margin: 0 5px;
+            }
+
+            .el-input-number {
+                width: 44%;
+            }
+        }
+
+        .branch-picker__checkbox {
+            display: flex;
+            align-items: center;
+            height: 100%;
+
+            >.el-checkbox {
+                margin-right: 30px;
+            }
+        }
+
+    }
+}
+
+.pso-fixed-filter {
+    .el-collapse-item__content {
+        padding-bottom: 10px;
+    }
+
+    .el-collapse-item__header {
+        height: 36px;
+        line-height: 36px;
+        font-size: 14px;
+        color: @main-color;
+
+        i {
+            margin-right: 5px;
+        }
+    }
+}

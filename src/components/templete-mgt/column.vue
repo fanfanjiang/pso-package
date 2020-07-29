@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button size="mini" type="primary" plain @click="handleAdd">添加列</el-button>
-    <el-table key="list" :data="data" style="width: 100%" height="300">
+    <el-table key="list" :data="data" style="width: 100%" height="500">
       <el-table-column type="index" :index="1"></el-table-column>
       <el-table-column label="字段" width="140">
         <template slot-scope="scope">
@@ -51,11 +51,6 @@
       <el-table-column label="是否查询" width="100">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.searchable" active-value="1" inactive-value="0"></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="是否时间段" width="100">
-        <template slot-scope="scope">
-          <el-switch v-model="scope.row.timerange" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="对齐方式" width="120">
@@ -131,25 +126,60 @@
     </el-dialog>
     <el-dialog title="设置查询参数" append-to-body :visible.sync="showParamsditor" :width="'600px'">
       <template v-if="curCol">
-        <el-button size="mini" plain @click="handleParamsAdd()">添加参数</el-button>
-        <el-table key="params" :data="curCol.searchList" style="width: 100%" height="300">
-          <el-table-column label="字段">{{curCol.name}}</el-table-column>
-          <el-table-column label="参数名" width="140">
-            <template slot-scope="scope">
-              <el-input size="small" v-model="scope.row.n" placeholder></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="参数值" width="140">
-            <template slot-scope="scope">
-              <el-input size="small" v-model="scope.row.v" placeholder></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column fixed="right" label="操作" width="90">
-            <template slot-scope="scope">
-              <el-button size="mini" plain @click="handleParamsDel(scope.$index)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <pso-title>{{curCol.name}}</pso-title>
+        <el-form label-position="left" label-width="80px">
+          <el-form-item label="值类型">
+            <el-select filterable size="mini" v-model="curCol.searchType">
+              <el-option
+                v-for="item in FILTER_TYPE_ARY"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="操作" v-if="curCol.searchType">
+            <el-select filterable size="mini" v-model="curCol.searchOp">
+              <el-option
+                v-for="item in getOpTypes(curCol.searchType)"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="默认值" v-if="curCol.searchType">
+            <el-input size="mini" v-model="curCol.defaultVal"></el-input>
+          </el-form-item>
+        </el-form>
+        <template v-if="curCol.searchType==='select'">
+          <el-button size="mini" plain @click="handleParamsAdd()">添加参数</el-button>
+          <el-table key="params" :data="curCol.searchList" style="width: 100%" height="300">
+            <el-table-column label="参数名" width="140">
+              <template slot-scope="scope">
+                <el-input size="small" v-model="scope.row.n" placeholder></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="参数值" width="140">
+              <template slot-scope="scope">
+                <el-input size="small" v-model="scope.row.v" placeholder></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="作为默认" width="140">
+              <template slot-scope="scope">
+                <el-switch v-model="scope.row.d"></el-switch>
+              </template>
+            </el-table-column>
+            <el-table-column fixed="right" label="操作" width="90">
+              <template slot-scope="scope">
+                <el-button size="mini" plain @click="handleParamsDel(scope.$index)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </template>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="mini" type="primary" @click="$emit('save')">保存</el-button>
+        </span>
       </template>
     </el-dialog>
     <pso-drawer
@@ -174,23 +204,26 @@
 <script>
 import formulaDesigner from "../form-designer/formula-designer";
 import { genComponentData } from "../form-designer/helper";
+import { STATIC_COLUMN_FIELDS } from "../../const/sys";
+const { FILTER_TYPE_ARY } = require("../../../share/const/filter");
+
 import shortid from "shortid";
 export default {
   props: {
     data: {
-      type: Array
+      type: Array,
     },
     header: {
-      type: Array
+      type: Array,
     },
     formulable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     extend: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   components: { formulaDesigner },
   data() {
@@ -204,9 +237,10 @@ export default {
       hData: {
         isField: "1",
         label: "",
-        field: ""
+        field: "",
       },
-      op: ""
+      op: "",
+      FILTER_TYPE_ARY: FILTER_TYPE_ARY,
     };
   },
   created() {
@@ -217,19 +251,8 @@ export default {
   methods: {
     handleAdd() {
       this.data.push({
-        field: "",
-        name: "",
-        width: 120,
-        show: "1",
-        cal: "0",
-        align: "left",
-        number: 0,
-        formulable: "0",
-        formula: "",
-        searchable: "0",
-        searchList: [],
-        timerange: "0",
-        ...this.extend
+        ...STATIC_COLUMN_FIELDS,
+        ...this.extend,
       });
     },
     handleDel(index) {
@@ -237,7 +260,7 @@ export default {
     },
     makeCpnts() {
       const cpnts = [];
-      this.data.forEach(item => {
+      this.data.forEach((item) => {
         if (item.formulable === "0") {
           if (!item.field) throw new Error("请填写字段");
           cpnts.push(genComponentData({ componentid: "text", fid: item.field, _fieldName: item.name }));
@@ -273,7 +296,7 @@ export default {
     remove(node, data) {
       const parent = node.parent;
       const children = parent.data.children || parent.data;
-      const index = children.findIndex(d => d.id === data.id);
+      const index = children.findIndex((d) => d.id === data.id);
       children.splice(index, 1);
     },
     save() {
@@ -309,12 +332,15 @@ export default {
       this.showParamsditor = true;
     },
     handleParamsAdd() {
-      this.curCol.searchList.push({ n: "", v: "" });
+      this.curCol.searchList.push({ n: "", v: "", d: false });
     },
     handleParamsDel(index) {
       this.curCol.searchList.splice(index, 1);
-    }
-  }
+    },
+    getOpTypes(id) {
+      return _.find(FILTER_TYPE_ARY, { id }).op;
+    },
+  },
 };
 </script>
 <style scoped>

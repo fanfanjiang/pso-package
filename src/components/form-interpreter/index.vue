@@ -1,7 +1,13 @@
 <template>
   <div class="pso-form">
     <transition name="el-fade-in">
-      <el-form v-if="!loading&&store" label-width="80px" label-position="top" size="medium">
+      <el-form
+        v-if="!loading&&store"
+        label-width="80px"
+        label-position="top"
+        size="medium"
+        v-loading="store.storeLoading"
+      >
         <pso-form-component v-for="cpnt in store.root.childComponents" :key="cpnt.fid" :cpnt="cpnt"></pso-form-component>
       </el-form>
     </transition>
@@ -28,19 +34,19 @@ export default {
     formEntity: Object,
     editable: {
       type: Boolean, //是否可编辑
-      default: true
+      default: true,
     },
     copyMode: {
       type: Boolean, //是否可编辑
-      default: false
+      default: false,
     },
-    dataDefault: Object
+    dataDefault: Object,
   },
   data() {
     return {
       loading: false,
       store: null,
-      watchFun: []
+      watchFun: [],
     };
   },
   watch: {
@@ -48,34 +54,34 @@ export default {
       immediate: true,
       handler(val) {
         if (val) this.getFormCfg();
-      }
+      },
     },
     formEntity: {
       immediate: true,
       handler(val) {
         if (val) this.getFormCfg();
-      }
+      },
     },
     editable(val) {
       if (this.store) this.store.editable = val;
-    }
+    },
   },
   created() {
     this.isInterpreter = true;
-    this.$on("asstable-selected", val => {
+    this.$on("asstable-selected", (val) => {
       this.broadcast("PsoformItem", "asstable-selected", val);
     });
-    this.$on("table-selected", val => {
+    this.$on("table-selected", (val) => {
       this.broadcast("PsoformItem", "table-selected", val);
     });
-    this.$on("cpnt-value-changed", val => {
+    this.$on("cpnt-value-changed", (val) => {
       this.broadcast("PsoformItem", "cpnt-value-changed", val);
       this.$emit("value-change", val);
     });
-    this.$on("cpnt-user-changed", val => {
+    this.$on("cpnt-user-changed", (val) => {
       this.$emit("value-change", val);
     });
-    this.$on("cpnt-dept-changed", val => {
+    this.$on("cpnt-dept-changed", (val) => {
       this.$emit("value-change", val);
     });
   },
@@ -96,7 +102,7 @@ export default {
     async getFormCfg() {
       //如果已经监听了，则先停止监听
       if (this.watchFun.length) {
-        this.watchFun.forEach(f => f());
+        this.watchFun.forEach((f) => f());
         this.watchFun = [];
       }
 
@@ -109,7 +115,7 @@ export default {
         this.store = new FormStore({ copyMode: this.copyMode, ...ret.data });
       }
       this.store.editable = this.editable;
-      
+
       this.watchFun.push(
         this.$watch("dataId", () => {
           this.getFormData();
@@ -118,7 +124,7 @@ export default {
           deep: true,
           handler: () => {
             this.getFormData();
-          }
+          },
         })
       );
 
@@ -128,7 +134,7 @@ export default {
       const cpnts = this.store.cpntsMap;
 
       //主表数据
-      const mainData = { d_status: 0, optype: this.store.instance_id ? 1 : 0 };
+      const mainData = { optype: this.store.instance_id ? 1 : 0 };
       if (this.store.instance_id) {
         mainData.leaf_id = this.store.instance_id;
       }
@@ -139,7 +145,7 @@ export default {
         node_id: this.store.node_id,
         data_code: this.store.data_code,
         children: [],
-        dataArr: [mainData]
+        dataArr: [mainData],
       };
 
       try {
@@ -148,7 +154,7 @@ export default {
           if (cpnt.CPNT.host_db && cpntData._val.dataArr.length) {
             data.children.push({
               data_code: cpntData._val.data_code,
-              dataArr: cpntData._val.dataArr.filter(subItem => subItem.optype !== 3)
+              dataArr: cpntData._val.dataArr.filter((subItem) => subItem.optype !== 3),
             });
           } else if (cpnt.CPNT.db && !cpnt.parent.CPNT.host_db) {
             //空值检查
@@ -171,7 +177,7 @@ export default {
                 keys[cpntData._fieldValue] = { type: 3, value: cpntData._val };
 
                 if (cpntData._relatedField) {
-                  cpntData._relatedField.split(",").forEach(fid => {
+                  cpntData._relatedField.split(",").forEach((fid) => {
                     const relateField = cpnts[fid];
                     if (relateField) {
                       keys[relateField.data._fieldValue] = { type: 2, value: relateField.data._val };
@@ -184,7 +190,7 @@ export default {
 
               const ret = await this.API.form({
                 data: { keys: JSON.stringify(keys), data_code: this.store.data_code, limit: 9999999999, page: 0 },
-                method: "get"
+                method: "get",
               });
 
               if (ret.data.length) {
@@ -201,7 +207,7 @@ export default {
         throw error;
       }
       return data;
-    }
-  }
+    },
+  },
 };
 </script>

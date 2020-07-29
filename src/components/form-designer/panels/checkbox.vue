@@ -9,19 +9,22 @@
       <el-form-item label="选项设置">
         <common-option :cpnt="cpnt" :key="cpnt.fid" :multiple="true"></common-option>
       </el-form-item>
+      <common-prefix :cpnt="cpnt"></common-prefix>
     </common-panel>
   </div>
 </template>
 <script>
 import commonPanel from "../common/common-panel";
 import commonOption from "../common/common-option";
+import commonPrefix from "../common/common-prefix";
 
 export default {
   props: ["cpnt"],
   components: {
     commonPanel,
-    commonOption
-  }
+    commonOption,
+    commonPrefix,
+  },
 };
 </script>
 <style lang="less" scoped>

@@ -65,12 +65,12 @@ export default {
   props: ["cpnt"],
   components: {
     commonPanel,
-    FormAsstable
+    FormAsstable,
   },
   data() {
     return {
       options: [],
-      loading: false
+      loading: false,
     };
   },
   computed: {
@@ -80,13 +80,13 @@ export default {
       },
       set(val) {
         this.cpnt.data._showFields = val.join(",");
-      }
-    }
+      },
+    },
   },
   watch: {
     "cpnt.data._type"(type) {
       this.cpnt.cache.defaultEl._type = type;
-    }
+    },
   },
   created() {
     this.getFormList();
@@ -112,19 +112,19 @@ export default {
             _required: false,
             _val: "",
             _relate: this.cpnt.data._relate,
-            _new: this.cpnt.data._new
+            _new: this.cpnt.data._new,
           })
         );
 
-        this.$watch(`cpnt.cache.defaultEl._val`, val => {
+        this.$watch(`cpnt.cache.defaultEl._val`, (val) => {
           this.cpnt.data._defaultValue = val;
         });
 
-        this.$watch(`cpnt.data._relate`, val => {
+        this.$watch(`cpnt.data._relate`, (val) => {
           this.cpnt.cache.defaultEl._relate = val;
         });
 
-        this.$watch(`cpnt.data._new`, val => {
+        this.$watch(`cpnt.data._new`, (val) => {
           this.cpnt.cache.defaultEl._new = val;
         });
       }
@@ -148,7 +148,10 @@ export default {
       this.cpnt.cache.fieldOptions = store.search({
         options: { table_show: true },
         onlyData: true,
-        beforePush: item => !item.parent.CPNT.host_db
+        beforePush: (item) => {
+          item.data.fieldDisplay = `[${store.data_name}]${item.data._fieldName}`;
+          return !item.parent.CPNT.host_db;
+        },
       });
 
       this.cpnt.cache.defaultEl._option = id;
@@ -158,8 +161,8 @@ export default {
         this.cpnt.data._showFields = _.map(this.cpnt.cache.fieldOptions, "_fieldValue").join(",");
       }
       this.loading = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

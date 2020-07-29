@@ -1,24 +1,28 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <div class="pso-form-selectedlist" v-if="!loading&&proxy.list.length">
-      <el-tag
-        v-for="item in proxy.list"
-        :key="item[tagIdName]"
-        :closable="cpnt.store.editable&&!cpnt.data._read"
-        @close="handleDelSelection(item)"
-      >{{item[tagDisplayName]}}</el-tag>
+    <div style="display:flex">
+      <div class="pso-form-selectedlist" v-if="!loading&&proxy.list.length">
+        <el-tag
+          v-for="item in proxy.list"
+          :key="item[tagIdName]"
+          :closable="cpnt.store.editable&&!cpnt.data._read"
+          @close="handleDelSelection(item)"
+        >{{item[tagDisplayName]}}</el-tag>
+      </div>
+      <pso-skeleton v-if="loading" :lines="1"></pso-skeleton>
+      <pso-picker-tag
+        v-if="cpnt.store.editable&&!cpnt.data._read"
+        ref="selector"
+        :show="show"
+        :tree-option="cpnt.data._treeOptions"
+        :pattern="cpnt.data._type"
+        :source="cpnt.data._source"
+        @cancel="show=false"
+        @confirm="handleTagAdd"
+      >
+        <el-button size="mini" icon="el-icon-plus" circle></el-button>
+      </pso-picker-tag>
     </div>
-    <pso-skeleton v-if="loading" :lines="1"></pso-skeleton>
-    <pso-picker-tag
-      v-if="cpnt.store.editable&&!cpnt.data._read"
-      ref="selector"
-      :show="show"
-      :tree-option="cpnt.data._treeOptions"
-      :pattern="cpnt.data._type"
-      :source="cpnt.data._source"
-      @cancel="show=false"
-      @confirm="handleTagAdd"
-    ></pso-picker-tag>
   </el-form-item>
 </template>
 <script>
@@ -32,8 +36,8 @@ export default {
       loading: false,
       proxy: {
         list: [],
-        type: this.cpnt.data._type
-      }
+        type: this.cpnt.data._type,
+      },
     };
   },
   computed: {
@@ -42,7 +46,7 @@ export default {
     },
     tagDisplayName() {
       return this.cpnt.data._source === "tree" ? "node_display" : "tag_name";
-    }
+    },
   },
   watch: {
     "proxy.list"(val) {
@@ -51,7 +55,7 @@ export default {
       } else {
         this.cpnt.data._val = "";
       }
-    }
+    },
   },
   async created() {
     this.resetPicker({ idName: this.tagIdName });
@@ -64,12 +68,12 @@ export default {
       if (this.cpnt.data._source === "tree") {
         ret = await this.API.trees({ data: { dimen: 5 } });
         idName = "node_id";
-        tagData = tagData.map(val => parseInt(val));
+        tagData = tagData.map((val) => parseInt(val));
       } else {
         ret = await this.API.tag({ data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } });
         idName = "tag_no";
       }
-      ret.data.forEach(item => {
+      ret.data.forEach((item) => {
         if (tagData.indexOf(item[idName]) !== -1) this.proxy.list.push(item);
       });
 
@@ -85,15 +89,15 @@ export default {
     },
     handleCopy(tobeCopy) {
       if (!this.cpnt.data._copy || this.cpnt.data._source !== "data") return;
-      this.cpnt.store._forEach(cpnt => {
+      this.cpnt.store._forEach((cpnt) => {
         for (let key in tobeCopy) {
           if (cpnt.data._fieldValue === key) {
             cpnt.data._val = tobeCopy[key];
           }
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

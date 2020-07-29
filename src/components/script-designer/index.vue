@@ -30,7 +30,7 @@
       <script-output :code="store"></script-output>
     </div>
   </div>
-</template>
+</template> 
 <script>
 import ScriptOutput from "./output";
 import VueMaker from "./vue-maker";
@@ -44,9 +44,9 @@ export default {
       options: {
         contextmenu: false,
         minimap: {
-          enabled: false
-        }
-      }
+          enabled: false,
+        },
+      },
     };
   },
   created() {
@@ -57,11 +57,11 @@ export default {
       code = {
         htmlCode: maker.getHtml(),
         jsCode: maker.getJs(),
-        cssCode: maker.getCss()
+        cssCode: maker.getCss(),
       };
     }
     this.store = Object.assign({ htmlCode: "", cssCode: "", jsCode: "" }, code);
-  }
+  },
 };
 </script>
 <style lang="less" scoped>

@@ -138,14 +138,14 @@ export default {
       typeName: "_type",
       idName: "leaf_id",
       radioVal: 1,
-      checkboxVal: 2
-    })
+      checkboxVal: 2,
+    }),
   ],
   props: {
     deletable: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
@@ -158,12 +158,12 @@ export default {
       store: {},
       proxy: {
         valList: [],
-        _type: this.cpnt.data._type
+        _type: this.cpnt.data._type,
       },
       showFormViewer: false,
       dataId: "",
       selectedList: [],
-      fields: []
+      fields: [],
     };
   },
   computed: {
@@ -171,7 +171,7 @@ export default {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";
     },
     showFieldsReal() {
-      return this.fields.filter(item => item.show === "1");
+      return this.fields.filter((item) => item.show === "1");
     },
     authCfg() {
       if (this.cpnt.store && this.cpnt.store.sub_config) {
@@ -188,7 +188,7 @@ export default {
     },
     formTableCfg() {
       return { searchType: this.authCfg.searchType, auth_config: this.authCfg.authCfg };
-    }
+    },
   },
   watch: {
     "proxy.valList"(val) {
@@ -198,8 +198,8 @@ export default {
     "cpnt.data._type": {
       handler(val) {
         this.proxy._type = val;
-      }
-    }
+      },
+    },
   },
   async created() {
     await this.getFormCfg();
@@ -210,8 +210,10 @@ export default {
         const ret = await this.getFormData(id);
         if (ret && ret.leaf_id) list.push(ret);
       }
-      this.proxy.valList = list;
+      this.handleAddSelection(list);
       this.loading = false;
+    } else {
+      this.proxy.valList = [];
     }
   },
   methods: {
@@ -222,7 +224,7 @@ export default {
       this.store = new FormStore(ret.data);
 
       if (ret.data.display_columns) {
-        this.fields = JSON.parse(ret.data.display_columns).filter(item => {
+        this.fields = JSON.parse(ret.data.display_columns).filter((item) => {
           if (this.cpnt.data._showFields) {
             const exist = this.store.search({ options: { db: true }, dataOptions: { _fieldValue: item.field_name }, onlyData: true });
             if (exist.length) {
@@ -238,12 +240,12 @@ export default {
           options: { table_show: true },
           onlyMain: true,
           onlyData: true,
-          beforePush: item => {
+          beforePush: (item) => {
             this.$set(item.data, "display", item.data._fieldName);
             this.$set(item.data, "field_name", item.data._fieldValue);
             this.$set(item.data, "show", "1");
             return true;
-          }
+          },
         });
       }
 
@@ -259,9 +261,9 @@ export default {
         keys: {
           leaf_id: {
             type: 1,
-            value
-          }
-        }
+            value,
+          },
+        },
       });
       this.loadingTable = false;
       return ret.data[0];
@@ -296,27 +298,28 @@ export default {
             const index = _.findIndex(proxy.valList, { leaf_id });
             this.proxy.valList.splice(index, 1, formData.dataArr[0]);
           } else {
-            this.proxy.valList.push(formData.dataArr[0]);
+            formData.dataArr[0].leaf_id = ret.data.data;
+            this.handleAddSelection(formData.dataArr);
           }
         }
         this.savingFrom = false;
+        this.showFormViewer = false;
       } catch (error) {}
-      this.showFormViewer = false;
     },
     async handleDeleteForm() {
       this.deletingFrom = true;
       const leaf_id = this.dataId;
       const ret = await this.API.form({
         data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
-        method: "delete"
+        method: "delete",
       });
       if (ret.success) {
         this.$notify({ title: "删除成功", type: "success" });
       }
       this.deletingFrom = false;
       this.showFormViewer = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

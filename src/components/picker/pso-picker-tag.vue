@@ -92,7 +92,7 @@
     </div>
     <template slot="reference">
       <slot>
-        <el-button icon="el-icon-plus" plain size="small">选择标签</el-button>
+        <el-button icon="el-icon-plus" plain size="mini">选择标签</el-button>
       </slot>
     </template>
   </el-popover>

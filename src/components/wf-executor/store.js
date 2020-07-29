@@ -20,7 +20,8 @@ const BASEDADA = {
     attach: {
         _fieldName: "附件",
         _val: ''
-    }
+    },
+    nextUser: null
 }
 
 export default class WfStore {
@@ -58,7 +59,8 @@ export default class WfStore {
             wf_body_tp: "",
             wf_status: "",
             map_data_code: "",
-            files: []
+            files: [],
+            nextUser: null //只是第一步审核的下一步审核人，此时流程实例还未建立
         }
 
         this.TEXT = {
@@ -101,7 +103,7 @@ export default class WfStore {
         this.loading = true;
         this.configing = true;
 
-        const ret = await API.workflowcfg({ data: { node_id: cfgId } });
+        const ret = await API.workflowcfg({ data: { node_id: cfgId, nextUser: true } });
         if (ret.success && ret.data) {
 
             //设置流程图参数
@@ -143,6 +145,11 @@ export default class WfStore {
 
     get startNode() {
         return this.cfg.wf_map_tp.node[0];
+    }
+
+    get isNextEmpty() {
+        const nextUser = this.data.instanceId ? this.data.nextUser : this.cfg.nextUser;
+        return nextUser && nextUser.auth_user === 'Empty';
     }
 
     // 新建流程实例
@@ -214,7 +221,7 @@ export default class WfStore {
         this.data.instanceId = instanceId;
 
         //设置基本实例参数
-        const { instance, steps, file, log } = instanceRet.data;
+        const { instance, steps, file, log, nextUser } = instanceRet.data;
         Object.keys(instance).forEach(key => (this.data.hasOwnProperty(key) && (this.data[key] = instance[key])));
         this.data.filetype = this.data.filetype || instance.fileType;
         this.data.name = this.data.name || instance.instanceName;
@@ -233,6 +240,8 @@ export default class WfStore {
                 this.setCurStep(ret.target);
             }
         }
+
+        this.data.nextUser = nextUser;
 
         //设置附件
         if (file.length) {
@@ -314,7 +323,7 @@ export default class WfStore {
     }
 
     //创建流程实例数据
-    async newInstanceData({ nextStep = false, formData }) {
+    async newInstanceData({ nextStep = false, formData, doNextUsers }) {
         // if (this.show.urgent && !this.data.urgent) throw new Error('请选择紧急程度');
         // if (this.show.import && !this.data.import) throw new Error('请选择重要等级');
         // if (this.show.secret && !this.data.secret) throw new Error('请选择秘密等级');
@@ -339,6 +348,7 @@ export default class WfStore {
             d_tag: this.data.d_tag,
             attids: this.data.attach._val,
             nextStep,
+            doNextUsers,
             ...this.extend,
         };
         return await API.workflow({ data, method: "post" });
@@ -391,12 +401,19 @@ export default class WfStore {
             throw new Error('参数错误');
         }
 
+        let doNextUsers;
+        //下一步是空白人
+        if (this.isNextEmpty) {
+            doNextUsers = this.userOp.users;
+        }
+
         const data = {
             ...this.extend,
             wf_code: this.cfg.wf_code,
             instanceId: this.data.instanceId,
             note: this.data.opinion,
             stepid: this.curStep.nid,
+            doNextUsers,
             optype
         }
 
@@ -450,7 +467,7 @@ export default class WfStore {
 
             return await API.workflow({ data, method: "put" });
         } else {
-            return await this.newInstanceData({ nextStep: true, formData })
+            return await this.newInstanceData({ nextStep: true, formData, doNextUsers })
         }
     }
 }

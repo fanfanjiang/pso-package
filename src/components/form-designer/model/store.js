@@ -25,6 +25,8 @@ export default class FormStore {
         this.designMode = true; //设计模式
 
         this.copyMode = false;
+        
+        this.storeLoading = false;
 
         this.is_pub = 0;
 

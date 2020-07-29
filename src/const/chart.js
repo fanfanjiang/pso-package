@@ -26,13 +26,14 @@ export const DIMEN_OP_LIST = {
 export const FIGER_OP = {
     SUM: '求和',
     COUNT: "计数",
-    AVG: '平均值'
+    AVG: '平均值',
+    FIRST: '首位'
 }
 
 export const FIGER_OP_LIST = {
     decimal: [FIGER_OP.SUM, FIGER_OP.COUNT, FIGER_OP.AVG],
     string: [FIGER_OP.COUNT],
-    datetime: [FIGER_OP.COUNT]
+    datetime: [FIGER_OP.COUNT, FIGER_OP.FIRST]
 }
 
 export const FIGER_DEFALUT_OP = {

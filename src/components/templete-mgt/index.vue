@@ -61,6 +61,7 @@
                 v-if="curTab==='column'&&!loading"
                 :data="columnData"
                 :header="tpHeader"
+                @save="saveTp"
               ></pso-tp-column>
               <pso-tp-textdef v-if="curTab==='textdef'" :data="tpButtons"></pso-tp-textdef>
               <pso-tp-text v-if="curTab==='text'" :data="tpText" :def-text="tpButtons"></pso-tp-text>
@@ -79,13 +80,15 @@ import PsoTpParam from "./param";
 import PsoTpColumn from "./column";
 import PsoTpText from "./text";
 import PsoTpTextdef from "./text-def";
-import { TP_TYPES } from "../../const/sys";
+import { TP_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
+import { formatJSONList } from "../../utils/util";
+
 const _DATA = {
   columnData: [],
   paramData: [],
   tpText: [],
   tpButtons: [],
-  tpHeader: []
+  tpHeader: [],
 };
 
 export default {
@@ -95,8 +98,8 @@ export default {
       type: Object,
       default: () => {
         data_type: "";
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -105,21 +108,21 @@ export default {
       curTab: "base",
       tpType: "",
       tpTypes: TP_TYPES,
-      ..._DATA
+      ..._DATA,
     };
   },
   computed: {
     treeOptions() {
       return {
         dimen: 4,
-        data_type: this.params.data_type
+        data_type: this.params.data_type,
       };
     },
     defaultNodeData() {
       return {
-        node_dimen: 4
+        node_dimen: 4,
       };
-    }
+    },
   },
   methods: {
     reset() {
@@ -142,26 +145,8 @@ export default {
           }
 
           if (this.curNode.tp_content) {
-            const columnData = JSON.parse(this.curNode.tp_content);
-            columnData.forEach(item => {
-              this.columnData.push({
-                field: "",
-                name: "",
-                width: 120,
-                show: "1",
-                cal: "0",
-                align: "left",
-                number: 0,
-                formulable: "0",
-                formula: "",
-                searchable: "0",
-                searchList: [],
-                timerange: "0",
-                ...item
-              });
-            });
+            this.columnData = formatJSONList(this.curNode.tp_content, STATIC_COLUMN_FIELDS);
           }
-
           if (cfg.tp_head) {
             this.tpHeader = JSON.parse(cfg.tp_head);
             if (!Array.isArray(this.tpHeader)) {
@@ -178,7 +163,7 @@ export default {
           if (cfg.tp_text) {
             const text = JSON.parse(cfg.tp_text);
 
-            text.forEach(item => {
+            text.forEach((item) => {
               let subList = [];
               for (let i = 0; i < this.tpButtons.length; i++) {
                 const exist = _.find(item.list, { id: this.tpButtons[i].id }) || this.tpButtons[i];
@@ -203,22 +188,23 @@ export default {
           tp_content: JSON.stringify(this.columnData),
           tp_text: JSON.stringify(this.tpText),
           tp_buttons: JSON.stringify(this.tpButtons),
-          tp_head: JSON.stringify(this.tpHeader)
+          tp_head: JSON.stringify(this.tpHeader),
         },
-        method: "put"
+        method: "put",
       });
-      this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
+      this.ResultNotify(ret);
       this.loading = false;
-    },
+    }, 
     beforeNodeUpdate(data) {
       if (data.is_leaf) {
         data.tp_type = this.tpType;
         data.tp_head = "";
+        data.tp_route = TP_TYPES[this.tpType].router || "";
       }
     },
     editTp() {
       this.$emit("edit-tp", { node: this.curNode });
-    }
-  }
+    },
+  },
 };
 </script>

@@ -69,3 +69,19 @@ export async function checkUniq(data, field) {
     let fieldNames = _.map(data, field);
     return (_.uniq(fieldNames).length !== fieldNames.length) ? false : true;
 }
+
+export function formatJSONList(list, fieldObj) {
+    let data = list;
+    if (typeof list === 'string') {
+        data = JSON.parse(list);
+    }
+    for (let item of data) {
+        for (let key in item) {
+            if (!fieldObj.hasOwnProperty(key)) {
+                delete item.key
+            }
+        }
+        Object.assign(item, { ...fieldObj }, { ...item });
+    }
+    return data;
+}

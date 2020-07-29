@@ -1,19 +1,23 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <div class="pso-form-user-selectedlist" v-if="!loading&&proxy.list.length">
-      <el-tag
-        v-for="item in proxy.list"
-        :key="item.user_id"
-        :closable="storeEditable&&!cpnt.data._read"
-        @close="handleDelSelection(item)"
-      >{{item.user_name}}</el-tag>
+    <div style="display:flex">
+      <div class="pso-form-user-selectedlist" v-if="!loading&&proxy.list.length">
+        <el-tag
+          v-for="item in proxy.list"
+          :key="item.user_id"
+          :closable="storeEditable&&!cpnt.data._read"
+          @close="handleDelSelection(item)"
+        >{{item.user_name}}</el-tag>
+      </div>
+      <pso-skeleton v-if="loading" :lines="1"></pso-skeleton>
+      <pso-picker-user
+        v-if="storeEditable&&!cpnt.data._read"
+        :pattern="cpnt.data._type"
+        @confirm="handleAddSelection"
+      >
+        <el-button size="mini" icon="el-icon-plus" circle></el-button>
+      </pso-picker-user>
     </div>
-    <pso-skeleton v-if="loading" :lines="1"></pso-skeleton>
-    <pso-picker-user
-      v-if="storeEditable&&!cpnt.data._read"
-      :pattern="cpnt.data._type"
-      @confirm="handleAddSelection"
-    ></pso-picker-user>
   </el-form-item>
 </template>
 <script>
@@ -27,8 +31,8 @@ export default {
       loading: false,
       proxy: {
         list: [],
-        type: this.cpnt.data._type
-      }
+        type: this.cpnt.data._type,
+      },
     };
   },
   watch: {
@@ -38,7 +42,7 @@ export default {
       } else {
         this.cpnt.data._val = "";
       }
-    }
+    },
   },
   async created() {
     if (this.cpnt.data._val) {
@@ -55,8 +59,8 @@ export default {
   methods: {
     async getUser(user_id) {
       return await this.API.user({ data: { user_id }, method: "get" });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

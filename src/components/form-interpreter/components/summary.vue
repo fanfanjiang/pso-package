@@ -1,6 +1,6 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-input  size="small" readonly :value="cpnt.data._val" :placeholder="cpnt.data._placeholder"></el-input>
+    <el-input size="small" readonly :value="cpnt.data._val" :placeholder="cpnt.data._placeholder"></el-input>
   </el-form-item>
 </template>
 <script>
@@ -34,14 +34,20 @@ export default {
     });
   },
   methods: {
+    timeSort(data, field, type = 1) {
+      let list = data.map((d) => d[field]);
+      return list.sort(function (a, b) {
+        return a < b ? type : -type;
+      })[0];
+    },
     figure(data, field) {
       const op = this.cpnt.data._selectedOp;
       switch (op) {
         case SUMMARY_OP_TYPE.COUNT_FILLED:
-          this.cpnt.data._val = data.filter(item => item[field]).length;
+          this.cpnt.data._val = data.filter((item) => item[field]).length;
           break;
         case SUMMARY_OP_TYPE.COUNT_UNDERFILL:
-          this.cpnt.data._val = data.filter(item => typeof item[field] === "undefined" || item[field] === "").length;
+          this.cpnt.data._val = data.filter((item) => typeof item[field] === "undefined" || item[field] === "").length;
           break;
         case SUMMARY_OP_TYPE.MAX:
           this.cpnt.data._val = _.maxBy(data, field)[field];
@@ -50,12 +56,18 @@ export default {
           this.cpnt.data._val = _.minBy(data, field)[field];
           break;
         case SUMMARY_OP_TYPE.FIRST:
+          if (data.length) {
+            this.cpnt.data._val = this.timeSort(data, field, -1);
+          }
           break;
         case SUMMARY_OP_TYPE.LAST:
+          if (data.length) {
+            this.cpnt.data._val = this.timeSort(data, field);
+          }
           break;
       }
       if (op === SUMMARY_OP_TYPE.SUM || op === SUMMARY_OP_TYPE.AVG) {
-        this.cpnt.data._val = _.sumBy(data, item => {
+        this.cpnt.data._val = _.sumBy(data, (item) => {
           try {
             return Math.floor(item[field]);
           } catch (error) {
@@ -66,7 +78,7 @@ export default {
           this.cpnt.data._val = this.cpnt.data._val / data.length;
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>

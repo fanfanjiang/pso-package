@@ -43,7 +43,7 @@
             :key="index"
             @click="handleClickCpnt(cpnt)"
           >
-            <div>{{cpnt._fieldName}}</div>
+            <div>{{cpnt.fieldDisplay||cpnt._fieldName}}</div>
             <div>{{getCPNT(cpnt).name}}</div>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default {
   components: { codemirror },
   props: {
     cpnts: Array,
-    value: String
+    value: String,
   },
   data() {
     return {
@@ -102,28 +102,28 @@ export default {
       activeFormula: "",
       code: "",
       mirrorCursor: {
-        cursorHeight: 0.8
+        cursorHeight: 0.8,
       },
       cmOptions: {
         lineWrapping: true,
         extraKeys: { Ctrl: "autocomplete" },
         hintOptions: {
           hint: this.handleHint,
-          completeSingle: false
-        }
+          completeSingle: false,
+        },
       },
       showHint: true,
       example: "",
-      result: ""
+      result: "",
     };
   },
   computed: {
     codeRef() {
       return this.$refs.codemirror.codemirror;
-    }
+    },
   },
   created() {
-    Object.keys(formulajs).forEach(key => {
+    Object.keys(formulajs).forEach((key) => {
       window[key] = formulajs[key];
     });
   },
@@ -137,7 +137,7 @@ export default {
     handleTest() {
       try {
         let codeCopy = this.code;
-        this.cpnts.forEach(item => {
+        this.cpnts.forEach((item) => {
           let tempVal;
           switch (item._fieldRealType) {
             case "decimal":
@@ -176,7 +176,7 @@ export default {
 
       let n = 0;
       const matches = [];
-      codeRef.eachLine(line => {
+      codeRef.eachLine((line) => {
         const reg = /@[0-9a-zA-Z-_]+@/g;
         while (true) {
           const match = reg.exec(line.text);
@@ -192,9 +192,11 @@ export default {
             { line: n, ch: match.index },
             { line: n, ch: match.index + match[0].length },
             {
-              replacedWith: $(`<span class="code-widget"><span>${cpnt._fieldName}</span><span>${cpnt._defaultValue}</span></span>`)[0],
+              replacedWith: $(
+                `<span class="code-widget"><span>${cpnt.fieldDisplay || cpnt._fieldName}</span><span>${cpnt._defaultValue}</span></span>`
+              )[0],
               selectLeft: true,
-              selectRight: true
+              selectRight: true,
             }
           );
         }
@@ -209,10 +211,12 @@ export default {
         this.mirrorCursor,
         { line: this.mirrorCursor.line, ch: this.mirrorCursor.ch + text.length },
         {
-          replacedWith: $(`<span class="code-widget"><span>${cpnt._fieldName}</span><span>${cpnt._defaultValue}</span></span>`)[0],
+          replacedWith: $(
+            `<span class="code-widget"><span>${cpnt.fieldDisplay || cpnt._fieldName}</span><span>${cpnt._defaultValue}</span></span>`
+          )[0],
           selectLeft: true,
           selectRight: true,
-          handleMouseEvents: true
+          handleMouseEvents: true,
         }
       );
       this.mirrorCursor = codeRef.getCursor();
@@ -260,8 +264,8 @@ export default {
     },
     handleKey(editor, key) {
       this.showHint = !(key === "Enter");
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

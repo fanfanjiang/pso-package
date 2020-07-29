@@ -13,7 +13,7 @@
             </div>
             <div class="pso-wf-executor__flowchart">
               <pso-wf-chart :store="store" display-small></pso-wf-chart>
-            </div> -->
+            </div>-->
             <div>
               <div class="pso-wf-executor__content">
                 <pso-wf-mainform :store="store"></pso-wf-mainform>
@@ -41,7 +41,7 @@
 <script>
 import shortid from "shortid";
 
-import { REVIEW_OP_TYPE, REVIEW_OP_APPEND } from "../../const/workflow";
+import { REVIEW_OP_TYPE } from "../../const/workflow";
 
 import PsoWfMainform from "./form-main";
 import PsoWfop from "./op";
@@ -58,27 +58,27 @@ export default {
   mixins: [executor, op],
   data() {
     return {
-      REVIEW_OP_TYPE: REVIEW_OP_TYPE
+      REVIEW_OP_TYPE: REVIEW_OP_TYPE,
     };
   },
   computed: {
     extendClass() {
       return {
-        "pso-wf-executor__extend__expend": !this.store.showBody
+        "pso-wf-executor__extend__expend": !this.store.showBody,
       };
     },
     executorClass() {
       return {
-        "pso-wf-executor__m": this.isMobile
+        "pso-wf-executor__m": this.isMobile,
       };
-    }
+    },
   },
   async created() {},
   methods: {
-    async append() {
-      await this.nextStep(REVIEW_OP_APPEND);
-    }
-  }
+    async append(op) {
+      await this.nextStep(op);
+    },
+  },
 };
 </script>
 

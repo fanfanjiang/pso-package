@@ -693,7 +693,7 @@ export default {
         if (this.defKeys) {
           let keyList = this.defKeys.split(";");
           keyList.forEach((item) => {
-            const key = item.split(",");
+            const key = item.split("#");
             this.defaultKeys[key[0]] = { value: key[1], type: key[2] };
           });
         }
@@ -908,10 +908,20 @@ export default {
       this.getFormData();
     },
     handleSort({ column, prop, order }) {
-      order = order === "descending" ? "desc" : "asc";
-      const sort = _.find(this.sorts, { prop });
-      if (sort) {
-        sort.order = order;
+      if (order === "descending") {
+        order = "desc";
+      } else if (order === "ascending") {
+        order = "asc";
+      }
+      const sortIndex = _.findIndex(this.sorts, { prop });
+      if (!order && sortIndex === -1) {
+        return;
+      }
+      if (!order && sortIndex !== -1) {
+        return this.handleDelSort(sortIndex);
+      }
+      if (sortIndex !== -1) {
+        this.sorts[sortIndex].order = order;
       } else {
         this.sorts.push({ prop, order, name: _.find(this.fields, { field_name: prop }).display });
       }
