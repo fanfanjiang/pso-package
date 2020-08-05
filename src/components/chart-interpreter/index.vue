@@ -24,6 +24,7 @@ import { transCMapToCondition } from "../../tool/form";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
 import debounce from "throttle-debounce/debounce";
+import { makeFormByScript } from "../../tool/form";
 
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
@@ -32,13 +33,14 @@ import weekOfYear from "dayjs/plugin/weekOfYear";
 dayjs.extend(weekYear);
 dayjs.extend(weekOfYear);
 dayjs.extend(advancedFormat);
-  
+
 export default {
   components: { VeTable, VeCard },
   props: ["chartId"],
   data() {
     return {
       loaded: false,
+      sourceType: "",
       chartData: {
         columns: [],
         rows: [],
@@ -158,15 +160,21 @@ export default {
       //加载表单配置
       if (!this.chartCfg.dimension || !this.chartCfg.metrics) return;
       this.loaded = false;
-      let ret = await this.API.formsCfg({ data: { id: this.chartCfg.formId }, method: "get" });
-      if (!ret.success) return;
-      const store = new FormStore(ret.data);
-      ret.data.data_config = store.search({
-        options: { db: true },
-        onlyData: true,
-        beforePush: (item) => !item.parent.CPNT.host_db,
-      });
-      this.formCfg = ret.data;
+
+      if (this.chartCfg.sourceType === "1") {
+        const ret = await this.API.formsCfg({ data: { id: this.chartCfg.formId }, method: "get" });
+        const store = new FormStore(ret.data);
+        const data_config = store.search({
+          options: { db: true },
+          onlyData: true,
+          beforePush: (item) => !item.parent.CPNT.host_db,
+        });
+        this.formCfg = { data_config, data_code: ret.data.data_code };
+      } else {
+        const { data_config, tp_code } = await makeFormByScript({ code: this.chartCfg.formId });
+        this.formCfg = { data_config, code: tp_code };
+      }
+
       this.chartData.columns = _.map(this.formCfg.data_config, "_fieldValue");
 
       await this.loadFormData();
@@ -174,7 +182,7 @@ export default {
     async loadFormData() {
       //加载表单数据
       this.loaded = false;
-      const data = { data_code: this.formCfg.data_code, leaf_auth: 4 };
+      const data = { leaf_auth: 4 };
       if (this.chartCfg.filter.length) {
         data.condition = transCMapToCondition(this.chartCfg.filter);
       }
@@ -186,13 +194,18 @@ export default {
     async fetchAllData(options) {
       let { limit = 2000, page = 0 } = options;
       let data = [];
-      while (1) {
-        const ret = await this.API.form({ data: Object.assign(options, { limit, page }), method: "get" });
-        if (ret.data && ret.data.length) {
-          data = data.concat(ret.data);
-          page++;
+      if (this.chartCfg.sourceType === "1") {
+        while (1) {
+          const ret = await this.API.form({ data: { ...options, data_code: this.formCfg.data_code, limit, page }, method: "get" });
+          if (ret.data && ret.data.length) {
+            data = data.concat(ret.data);
+            page++;
+          }
+          if (ret.total < page * limit || !ret.data.length) break;
         }
-        if (ret.total < page * limit || !ret.data.length) break;
+      } else {
+        const navRet = await this.API.getStatisticData({ tp_code: this.formCfg.code, search_type: "init" });
+        data = navRet.data.DATA;
       }
       return data;
     },
@@ -335,7 +348,7 @@ export default {
           switch (mItem.op) {
             case FIGER_OP.SUM:
               row[mItem._fieldValue] = _.sumBy(ary, (a) => {
-                return parseInt(a[mItem._fieldValue]);
+                return parseInt(a[mItem._fieldValue]||0);
               });
               break;
             case FIGER_OP.COUNT:

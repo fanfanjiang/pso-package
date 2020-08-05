@@ -212,7 +212,7 @@
           :data="formData"
           :summary-method="handleSummary"
           :show-summary="showSummary"
-          @row-click="instanceClick"
+          @row-click="rowClickHandler"
           @selection-change="handleSelectionChange"
           @sort-change="handleSort"
           @header-dragend="handleHeaderDrag"
@@ -414,6 +414,7 @@ export default {
     defKeys: String,
     defForm: Object,
     bindUserpicker: Object,
+    tableRowClick: Function,
   },
   data() {
     return {
@@ -826,6 +827,12 @@ export default {
     },
     async reload() {
       await this.getFormData();
+    },
+    rowClickHandler(row) {
+      const autoOpen = this.tableRowClick && this.tableRowClick(row);
+      if (!autoOpen) {
+        this.instanceClick(row);
+      }
     },
     instanceClick(row) {
       this.currentRow = row;

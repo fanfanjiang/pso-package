@@ -74,7 +74,7 @@ export default {
   components: { DesignerCpnt, DesignerPanel },
   props: {
     data: {
-      type: Object
+      type: Object,
     },
     components: {
       type: Object,
@@ -97,23 +97,23 @@ export default {
             // "credential",
             // "cascader",
             "pscript",
-            "signature"
+            "signature",
           ],
-          特殊控件: ["section", "remark", "aiw", "phone", "email"]
+          特殊控件: ["section", "remark", "aiw", "phone", "email"],
         };
-      }
+      },
     },
     stageName: {
       type: String,
-      default: "表单设计"
-    }
+      default: "表单设计",
+    },
   },
   data() {
     return {
       store: null,
       root: null,
       dragAndDrop: null,
-      roloadingMenu: false
+      roloadingMenu: false,
     };
   },
   computed: {
@@ -122,28 +122,29 @@ export default {
       for (let key in this.components) {
         menus.push({
           title: key,
-          children: this.components[key].map(cpntName => _.cloneDeep(CPNT[cpntName]))
+          children: this.components[key].map((cpntName) => _.cloneDeep(CPNT[cpntName])),
         });
       }
       return menus;
-    }
+    },
   },
   created() {
     this.store = new FormStore(this.data);
     this.root = this.store.root;
+    this.store.__menu__ = _.union(..._.map(this.menu, "children"));
     this.$emit("store-ready", this.store);
 
     this.dragAndDrop = DragAndDrop.init({
-      onAdd: evt => {
+      onAdd: (evt) => {
         this.cpntAddHandler(evt);
         $(evt.item).remove();
       },
-      onUpdate: evt => {
+      onUpdate: (evt) => {
         this.cpntAddHandler(evt);
       },
-      onShowclone: evt => {
+      onShowclone: (evt) => {
         this.reloadMenu();
-      }
+      },
     });
   },
   methods: {
@@ -153,7 +154,7 @@ export default {
         newIndex: evt.newIndex,
         to: getComponentParams(evt.to),
         from: isMenu(evt.from) ? null : getComponentParams(evt.from),
-        target: getComponentParams(evt.item)
+        target: getComponentParams(evt.item),
       });
     },
     reloadMenu() {
@@ -166,13 +167,9 @@ export default {
       this.store.setCurrentCpnt(this.root);
     },
     menuClickHandler(cpnt, evt) {
-      const target = $(evt.target)
-        .parents(".dragable")
-        .get(0);
+      const target = $(evt.target).parents(".dragable").get(0);
 
-      const tParent = $(evt.target)
-        .parents(".dropable")
-        .get(0);
+      const tParent = $(evt.target).parents(".dropable").get(0);
 
       const clone = $(target).clone(true);
 
@@ -183,9 +180,7 @@ export default {
       const dragContainer = getDragableByFid(this.store.fid);
       let dropContainer = getDropableByFid(this.store.fid);
       if (!dropContainer) {
-        dropContainer = $(dragContainer)
-          .parents(".dropable")
-          .get(0);
+        dropContainer = $(dragContainer).parents(".dropable").get(0);
 
         if (!isRoot(dropContainer) && $(dropContainer).children().length > 1) {
           dropContainer = getRoot();
@@ -206,11 +201,11 @@ export default {
           newIndex: $(dropContainer).children().length,
           to: getComponentParams(dropContainer),
           from: null,
-          target: getComponentParams(target)
+          target: getComponentParams(target),
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

@@ -8,11 +8,23 @@ const defalutCpntData = [
     { n: '_fieldLen', v: 300 }, { n: '_required', v: false }, { n: '_read', v: false },
     { n: '_hideOnNew', v: false }, { n: '_hideForever', v: false }, { n: '_placeholder', v: '' },
     { n: '_fieldInfo', v: '' }, { n: '_unique', v: false }, { n: '_auth', v: [] }, { n: '_regular', v: '' },
-    { n: '_fieldFormat', v: 'common' }, { n: '_outputFormat', v: '' }, { n: '_transFields', v: '' }
+    { n: '_fieldFormat', v: 'common' }, { n: '_outputFormat', v: '' }, { n: '_transFields', v: '' },
+    { n: '_height', v: '' }
 ]
 
+export function transferCpnt(target, componentid) {
+    for (let key in target) {
+        if (!_.find(defalutCpntData, { n: key })) {
+            Vue.delete(target, key);
+            delete target[key];
+        }
+    }
+    target.componentid = componentid;
+    genComponentData(target);
+}
+
 export function genComponentData(target) {
-    
+
     if (!target.componentid) throw new Error('componentid required');
     const _CPNT = CPNT[target.componentid];
     if (!_CPNT) return null;
@@ -27,12 +39,12 @@ export function genComponentData(target) {
         } else {
             do {
                 target.fid = shortid.generate();
-
             } while (target.fid.indexOf('-') !== -1)
+            Vue.set(target, '_fieldValue', target.fid);
         }
     }
 
-    Vue.set(target, '_fieldName', target._fieldName || target.name);
+    Vue.set(target, '_fieldName', target._fieldName || target.name || _CPNT.name);
 
     if (_CPNT.data) {
         _CPNT.data.forEach(field => {

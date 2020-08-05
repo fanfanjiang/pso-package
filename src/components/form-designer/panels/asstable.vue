@@ -22,9 +22,19 @@
         <el-radio v-model="cpnt.data._type" :label="2">多条</el-radio>
       </el-form-item>
       <el-form-item label="选择显示字段" v-loading="loading">
-        <el-select size="mini" multiple v-model="showFields" placeholder="请选择" :key="cpnt.fid">
+        <el-select size="mini" multiple v-model="showFields" placeholder="请选择">
           <el-option
             v-for="item in cpnt.cache.fieldOptions"
+            :key="item._fieldValue"
+            :label="item._fieldName"
+            :value="item._fieldValue"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="cpnt.data._type===1" label="选择单选显示字段" v-loading="loading">
+        <el-select size="mini" v-model="cpnt.data._radioField" placeholder="请选择">
+          <el-option
+            v-for="item in cpnt.cache.fieldOptions" 
             :key="item._fieldValue"
             :label="item._fieldName"
             :value="item._fieldValue"

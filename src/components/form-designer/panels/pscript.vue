@@ -119,6 +119,9 @@ export default {
       this.$delete(data, key);
     },
     addScriptItem(field, row) {
+      if (!field) {
+        return this.$message.error("未设置字段");
+      }
       this.$set(row.param, field, "");
     },
     getName(key) {

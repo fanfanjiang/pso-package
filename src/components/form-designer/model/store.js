@@ -25,7 +25,7 @@ export default class FormStore {
         this.designMode = true; //设计模式
 
         this.copyMode = false;
-        
+
         this.storeLoading = false;
 
         this.is_pub = 0;
@@ -60,7 +60,7 @@ export default class FormStore {
         }
 
         //对原始表单配置进行保存
-        if (this.data_id && this.data_config && this.designMode) {
+        if (this.data_code && this.data_config && this.designMode) {
             this.traverse(this.data_config, (cpnt, parent) => {
                 if (CPNT[cpnt.componentid].db || CPNT[cpnt.componentid].host_db) {
                     const cloned = _.cloneDeep(cpnt);
@@ -114,7 +114,6 @@ export default class FormStore {
         return {
             data_name: this.data_name,
             data_code: this.data_code,
-            data_id: this.data_id,
             data_config: this.data_config
         }
     }
@@ -224,41 +223,51 @@ export default class FormStore {
 
         const rules = this.rule_config;
 
+        const check = (r, show = true) => {
+            const conditions = [];
+            r.filters.forEach(f => {
+                let condition = false;
+                const _cpnt = this.search({ options: { fid: f.id } });
+
+                if (_cpnt) {
+                    const op = _cpnt.CPNT.fop[f.op];
+                    switch (op.id) {
+                        case 'op1':
+                            condition = _cpnt.data._val == f.val
+                            break;
+                    }
+                }
+
+                conditions.push(condition);
+            })
+
+            show = conditions[r.type === 1 ? 'every' : "some"](i => i);
+
+            r.controlIds.forEach(fid => {
+                const _cpnt = this.search({ options: { fid } });
+                if (_cpnt) {
+                    Vue.set(_cpnt.data, 'showInRules', show)
+                }
+            })
+        }
+
         if (rules && rules.length) {
-            rules.forEach(r => {
+            for (let r of rules) {
+
                 if (!r.filtersIds) {
                     r.filtersIds = _.map(r.filters, 'id');
                 }
 
-                let show = false;
-
-                if (cpnt && r.filtersIds.indexOf(cpnt.data._fieldValue) !== -1) {
-                    const conditions = [];
-                    r.filters.forEach(f => {
-                        let condition = false;
-                        const _cpnt = this.search({ options: { fid: f.id } });
-
-                        if (_cpnt) {
-                            const op = _cpnt.CPNT.fop[f.op];
-                            switch (op.id) {
-                                case 'op1':
-                                    condition = _cpnt.data._val == f.val
-                                    break;
-                            }
-                        }
-
-                        conditions.push(condition);
-                    })
-                    show = conditions[r.type === 1 ? 'every' : "some"](i => i);
-                }
-
-                r.controlIds.forEach(fid => {
-                    const _cpnt = this.search({ options: { fid } });
-                    if (_cpnt) {
-                        Vue.set(_cpnt.data, 'showInRules', show)
+                if (cpnt) {
+                    if (r.filtersIds.indexOf(cpnt.data._fieldValue) !== -1) {
+                        check(r, true);
+                    } else {
+                        continue;
                     }
-                })
-            })
+                } else {
+                    check(r, false);
+                }
+            }
         }
     }
 

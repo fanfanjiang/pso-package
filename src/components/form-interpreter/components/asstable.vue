@@ -1,123 +1,153 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required" v-loading="loading">
-    <div class="pso-form-asstable-table">
-      <el-table
-        ref="table"
-        border
-        v-loading="loadingTable"
-        :data="proxy.valList"
-        style="width: 100%"
-        size="mini"
-        max-height="500"
-        @row-click="instanceClick"
-        @selection-change="handleSelectionChange"
-        v-show="proxy.valList.length"
-      >
-        <template #default>
-          <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
-          <el-table-column
-            type="index"
-            label="序号"
-            :index="1"
-            width="50"
-            header-align="center"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            resizable
-            show-overflow-tooltip
-            min-width="120"
-            v-for="field of showFieldsReal"
-            :prop="field.field_name"
-            :label="field.display"
-            :key="field.field_name"
-            :width="field.width"
-            :align="field.align"
-            header-align="center"
-          >
-            <template slot-scope="scope">
-              <span>{{getVal(scope.row[field.field_name])}}</span>
-            </template>
-          </el-table-column>
-        </template>
-        <template #empty>
-          <pso-empty></pso-empty>
-        </template>
-      </el-table>
-    </div>
-    <el-button
-      type="primary"
-      plain
-      icon="el-icon-plus"
-      size="mini"
-      @click="handleClickAdd"
-    >添加{{cpnt.data._fieldName}}</el-button>
-    <el-button
-      v-show="selectedList.length"
-      type="danger"
-      icon="el-icon-delete"
-      size="mini"
-      @click="handleDelList(selectedList)"
-    >取消所选关联数据</el-button>
-    <el-dialog
-      width="70%"
-      append-to-body
-      close-on-click-modal
-      custom-class="form-table-dialog"
-      title="选择关联数据"
-      @close="showTable=false"
-      :visible="showTable"
-    >
-      <pso-form-table
-        :cfgId="cpnt.data._option"
-        checkbox
-        :deletable="deletable"
-        :operate="deletable"
-        :selection-type="selectionType"
-        :view-auth="formTableViewAuth"
-        :addable="cpnt.data._new"
-        :edtail-editable="false"
-        selectable
-        :changable="false"
-        :stageable="false"
-        :params="formTableCfg"
-        @selection-confirm="handleAddSelection"
-      ></pso-form-table>
-    </el-dialog>
-    <pso-drawer
-      size="40%"
-      :visible="showFormViewer"
-      :title="store.data_name"
-      @close="showFormViewer=false"
-    >
-      <div class="pso-formTable-formViewer" v-if="store.data_code">
-        <pso-form-interpreter
-          ref="formImage"
-          :form-id="store.data_id"
-          :data-id="dataId"
-          :editable="!dataId"
-        ></pso-form-interpreter>
-      </div>
-      <template v-slot:footer>
-        <div class="pso-drawer-footer__body">
-          <el-button
-            v-if="dataId"
-            type="danger"
-            size="small"
-            @click="handleDeleteForm"
-            :disabled="deletingFrom"
-            :loading="deletingFrom"
-          >删除</el-button>
-          <el-button
-            type="primary"
-            size="small"
-            @click="handleSaveForm"
-            :disabled="savingFrom"
-            :loading="savingFrom"
-          >保存</el-button>
-        </div>
+  <el-form-item
+    :label="cpnt.data._fieldName"
+    :required="cpnt.data._required"
+    v-loading="initializing||loading"
+  >
+    <template v-if="!initializing">
+      <template v-if="asseditable">
+        <el-button
+          v-if="cpnt.data._relate"
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="showTable=true"
+        >选择{{cpnt.data._fieldName}}</el-button>
+        <el-button
+          v-if="cpnt.data._new"
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleClickAdd"
+        >添加{{cpnt.data._fieldName}}</el-button>
+        <el-button
+          v-show="selectedList.length"
+          type="danger"
+          icon="el-icon-delete"
+          size="mini"
+          @click="handleDelList(selectedList)"
+        >取消所选关联数据</el-button>
       </template>
-    </pso-drawer>
+      <div class="pso-form-asstable-table">
+        <el-tag
+          v-if="selectionType==='radio'&&proxy.valList.length"
+          :closable="asseditable"
+          @close="handleDelList(proxy.valList)"
+        >{{proxy.valList[0][`${cpnt.data._radioField}_x`]||proxy.valList[0][cpnt.data._radioField||'leaf_id']}}</el-tag>
+        <el-table
+          v-if="selectionType==='checkbox'"
+          ref="table"
+          border
+          v-loading="loadingTable"
+          :data="proxy.valList"
+          style="width: 100%"
+          size="mini"
+          max-height="500"
+          @row-click="instanceClick"
+          @selection-change="handleSelectionChange"
+          v-show="proxy.valList.length"
+        >
+          <template #default>
+            <el-table-column
+              v-if="asseditable"
+              type="selection"
+              width="40"
+              header-align="center"
+              align="center"
+            ></el-table-column>
+            <el-table-column
+              type="index"
+              label="序号"
+              :index="1"
+              width="50"
+              header-align="center"
+              align="center"
+            ></el-table-column>
+            <el-table-column
+              resizable
+              show-overflow-tooltip
+              min-width="120"
+              v-for="field of showFieldsReal"
+              :prop="field.field_name"
+              :label="field.display"
+              :key="field.field_name"
+              :width="field.width"
+              :align="field.align"
+              header-align="center"
+            >
+              <template slot-scope="scope">
+                <span>{{getVal(scope.row[field.field_name])}}</span>
+              </template>
+            </el-table-column>
+          </template>
+          <template #empty>
+            <pso-empty></pso-empty>
+          </template>
+        </el-table>
+      </div>
+      <el-dialog
+        width="70%"
+        append-to-body
+        close-on-click-modal
+        custom-class="form-table-dialog"
+        title="选择关联数据"
+        @close="showTable=false"
+        :visible="showTable"
+      >
+        <pso-form-table
+          :cfgId="cpnt.data._option"
+          checkbox
+          :deletable="deletable"
+          :operate="deletable"
+          :selection-type="selectionType"
+          :view-auth="formTableViewAuth"
+          :addable="false"
+          :edtail-editable="false"
+          selectable
+          :changable="false"
+          :stageable="false"
+          :params="formTableCfg"
+          @selection-confirm="handleAddSelection"
+        ></pso-form-table>
+      </el-dialog>
+      <pso-drawer
+        size="40%"
+        :visible="showFormViewer"
+        :title="store.data_name"
+        @close="showFormViewer=false"
+      >
+        <div class="pso-formTable-formViewer" v-if="store.data_code">
+          <pso-form-interpreter
+            ref="formImage"
+            :form-id="store.data_code"
+            :data-id="dataId"
+            :data-default="defForm"
+            :editable="!dataId"
+          ></pso-form-interpreter>
+        </div>
+        <template v-slot:footer>
+          <div class="pso-drawer-footer__body" v-if="asseditable">
+            <el-button
+              v-if="dataId"
+              type="danger"
+              size="small"
+              @click="handleDeleteForm"
+              :disabled="deletingFrom"
+              :loading="deletingFrom"
+            >删除</el-button>
+            <el-button
+              type="primary"
+              size="small"
+              @click="handleSaveForm"
+              :disabled="savingFrom"
+              :loading="savingFrom"
+            >保存</el-button>
+          </div>
+        </template>
+      </pso-drawer>
+    </template>
   </el-form-item>
 </template> 
 <script>
@@ -149,6 +179,7 @@ export default {
   },
   data() {
     return {
+      initializing: true,
       loading: false,
       showTable: false,
       selecedList: [],
@@ -164,9 +195,13 @@ export default {
       dataId: "",
       selectedList: [],
       fields: [],
+      defForm: null,
     };
   },
   computed: {
+    asseditable() {
+      return this.storeEditable && !this.cpnt.data._read;
+    },
     selectionType() {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";
     },
@@ -218,9 +253,8 @@ export default {
   },
   methods: {
     async getFormCfg() {
-      this.loading = true;
+      this.initializing = true;
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
-      ret.data.data_id = this.cpnt.data._option;
       this.store = new FormStore(ret.data);
 
       if (ret.data.display_columns) {
@@ -248,8 +282,22 @@ export default {
           },
         });
       }
+      if (this.cpnt.store && this.cpnt.store.instance_id) {
+        const asstables = this.store.search({
+          options: { componentid: "asstable" },
+          onlyMain: true,
+          onlyData: true,
+          beforePush: (item) => {
+            return item.data._option === this.cpnt.store.data_code;
+          },
+        });
 
-      this.loading = false;
+        if (asstables.length) {
+          this.defForm = { [asstables[0]._fieldValue]: this.cpnt.store.instance_id };
+        }
+      }
+
+      this.initializing = false;
     },
     async getFormData(value) {
       this.loadingTable = true;
@@ -278,13 +326,12 @@ export default {
     getVal(val) {
       return _.isNull(val) ? "" : decodeURIComponent(val);
     },
+    handleSelect() {
+      this.showTable = true;
+    },
     handleClickAdd() {
-      if (this.cpnt.data._relate) {
-        this.showTable = true;
-      } else if (this.cpnt.data._new) {
-        this.dataId = "";
-        this.showFormViewer = true;
-      }
+      this.dataId = "";
+      this.showFormViewer = true;
     },
     async handleSaveForm() {
       const leaf_id = this.dataId || shortid.generate();

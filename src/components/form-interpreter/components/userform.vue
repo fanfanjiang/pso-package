@@ -92,7 +92,7 @@
       <div class="pso-formTable-formViewer" v-if="store.data_code">
         <pso-form-interpreter
           ref="formImage"
-          :form-id="store.data_id"
+          :form-id="store.data_code"
           :data-id="dataId"
           :editable="!dataId"
         ></pso-form-interpreter>
@@ -202,7 +202,6 @@ export default {
     async getFormCfg() {
       this.loading = true;
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
-      ret.data.data_id = this.cpnt.data._option;
       this.store = new FormStore(ret.data);
 
       if (ret.data.display_columns) {

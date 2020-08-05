@@ -106,6 +106,7 @@ export default {
   data() {
     return {
       initializing: true,
+      templetes: [],
       forms: [],
       workflows: [],
       tags: [],

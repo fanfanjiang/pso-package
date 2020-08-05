@@ -34,7 +34,8 @@ const STATE = {
     loading: false,
     initializing: true,
     formStore: {},
-    displaySmall: false
+    displaySmall: false,
+    fieldsOptions: []
 }
 
 export default {
@@ -168,7 +169,6 @@ export default {
                 }
             }
             traverse(node);
-
             const data = {
                 pid: state.pid,
                 node_id: state.node_id,
@@ -235,7 +235,15 @@ export default {
 
             const ret = await API.formsCfg({ data: { id }, method: "get" });
             state.formStore = new FormStore(ret.data);
-
+            state.fieldsOptions = state.formStore.search({
+                options: { db: true },
+                onlyMain: true,
+                onlyData: true,
+                beforePush: (item) => {
+                    item.data.displayName = `[${item.CPNT.name}]${item.data._fieldName}`;
+                    return true;
+                },
+            });
             state.loading = false;
         }
     },

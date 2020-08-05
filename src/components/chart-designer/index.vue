@@ -37,6 +37,18 @@
                   <el-button type="text" icon="fa fa-filter" slot="reference">筛选</el-button>
                 </el-popover>
               </h4>
+              <div style="margin-bottom:10px">
+                <el-select
+                  size="small"
+                  v-model="chartDesigner.sourceType"
+                  placeholder="请选择"
+                  filterable
+                  @change="chartDesigner.formId=''"
+                >
+                  <el-option label="表单" value="1"></el-option>
+                  <el-option label="统计" value="2"></el-option>
+                </el-select>
+              </div>
               <div>
                 <el-select
                   size="small"
@@ -46,7 +58,7 @@
                   filterable
                 >
                   <el-option
-                    v-for="item in formOptions"
+                    v-for="item in sourceOptions"
                     :key="item.node_name"
                     :label="item.node_display"
                     :value="item.node_name"
@@ -136,12 +148,16 @@ export default {
       chartType: _.cloneDeep(Object.values(CHART)),
       selectedChart: {},
       formOptions: [],
+      sqlOptions: [],
       showFilter: false,
       watchRegistered: false,
     };
   },
   computed: {
     ...mapState(["chartDesigner"]),
+    sourceOptions() {
+      return this.chartDesigner.sourceType === "1" ? this.formOptions : this.sqlOptions;
+    },
   },
   watch: {
     "params.tpCode": {
@@ -151,9 +167,11 @@ export default {
       },
     },
   },
-  created() {
-    this.getFormList();
+  async created() {
+    this.chartDesigner.initializing = true;
+    await this.getFormList();
     this.selectedChart = this.chartType[0];
+    this.chartDesigner.initializing = false;
   },
   mounted() {
     SVGInjector(document.querySelectorAll(".pso-svg"));
@@ -165,6 +183,7 @@ export default {
     },
     async getFormList() {
       this.formOptions = await this.API.getFormTree();
+      this.sqlOptions = await this.API.getTempleteTree([1]);
     },
     loadChart() {
       if (this.selectedChart.disabled) return;
@@ -204,6 +223,7 @@ export default {
 
         this.$store.commit(CD_INIT, {
           formId: chartCfg.formId,
+          sourceType: chartCfg.sourceType,
           figure: chartCfg.metrics,
           dimension: chartCfg.dimension,
           chartRemark: chartCfg.chartRemark,
@@ -235,6 +255,7 @@ export default {
     getChartViewData() {
       return {
         formId: this.chartDesigner.formId,
+        sourceType: this.chartDesigner.sourceType,
         dimension: this.chartDesigner.dimension,
         metrics: this.chartDesigner.figure,
         chartName: this.chartDesigner.chartName,

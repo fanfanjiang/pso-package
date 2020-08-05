@@ -17,6 +17,7 @@
       >取消所选数据</el-button>
     </template>
     <el-table
+      v-if="proxy.valList.length"
       border
       :data="proxy.valList"
       size="mini"

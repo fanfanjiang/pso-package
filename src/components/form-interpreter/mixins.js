@@ -68,7 +68,7 @@ export const cpntFix = {
             });
             this.$on("asstable-selected", ({ cpnt, data, store }) => {
                 const astData = data[0] || {};
-                this.$set(this.asstables, store.data_id, store
+                this.$set(this.asstables, store.data_code, store
                     .search({ options: { db: true }, onlyData: true })
                     .map((c) => ({ _val: typeof astData[c._fieldValue] !== "undefined" ? astData[c._fieldValue] : "", fid: c.fid })))
                 this.makeOptions(this.figure(this.allFields))

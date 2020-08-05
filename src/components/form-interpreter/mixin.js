@@ -20,7 +20,7 @@ export default {
     },
     watch: {
         'cpnt.data._val': {
-            handler(value) {
+            handler(value) { 
                 if (!this.emitSilent) {
                     this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy });
                     this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy });
@@ -31,7 +31,6 @@ export default {
     },
     created() {
         const parent = this.$parent;
-
         if (parent.isInterpreter) {
             this.interpreter = parent;
         } else {

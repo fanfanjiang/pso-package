@@ -43,10 +43,11 @@
         </div>
       </div>
       <el-table
+        ref="table"
         v-loading="loading"
         border
         :data="data"
-        :height="600"
+        :height="400"
         size="small"
         style="width: 100%"
         @selection-change="handleSelectionChange"

@@ -1,32 +1,27 @@
 <template>
-  <div>
+  <div v-loading="initializing">
     <el-button size="mini" type="primary" plain @click="handleAdd">添加列</el-button>
     <el-table key="list" :data="data" style="width: 100%" height="500">
       <el-table-column type="index" :index="1"></el-table-column>
       <el-table-column label="字段" width="140">
         <template slot-scope="scope">
-          <el-input size="small" v-model="scope.row.field" placeholder></el-input>
+          <el-input size="mini" v-model="scope.row.field" placeholder></el-input>
         </template>
       </el-table-column>
       <el-table-column label="显示名名称" width="140">
         <template slot-scope="scope">
-          <el-input size="small" v-model="scope.row.name" placeholder></el-input>
+          <el-input size="mini" v-model="scope.row.name" placeholder></el-input>
         </template>
       </el-table-column>
       <el-table-column label="列宽" width="140">
         <template slot-scope="scope">
-          <el-input-number
-            size="small"
-            v-model="scope.row.width"
-            controls-position="right"
-            :min="0"
-          ></el-input-number>
+          <el-input-number size="mini" v-model="scope.row.width" controls-position="right" :min="0"></el-input-number>
         </template>
       </el-table-column>
       <el-table-column label="顺序" width="160">
         <template slot-scope="scope">
           <el-input-number
-            size="small"
+            size="mini"
             v-model="scope.row.number"
             controls-position="right"
             :min="0"
@@ -55,7 +50,7 @@
       </el-table-column>
       <el-table-column label="对齐方式" width="120">
         <template slot-scope="scope">
-          <el-select size="small" v-model="scope.row.align">
+          <el-select size="mini" v-model="scope.row.align">
             <el-option label="居中" value="center"></el-option>
             <el-option label="居左" value="left"></el-option>
             <el-option label="居右" value="right"></el-option>
@@ -64,8 +59,9 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="280">
         <template slot-scope="scope">
-          <el-button size="mini" plain @click="handleParams(scope.$index)">设置参数</el-button>
-          <el-button v-if="formulable" size="mini" plain @click="formulaHandler(scope.$index)">设置公式</el-button>
+          <el-button size="mini" plain @click="handleParams(scope.$index)">参数</el-button>
+          <el-button size="mini" plain @click="handleDrill(scope.$index)">钻取</el-button>
+          <el-button v-if="formulable" size="mini" plain @click="formulaHandler(scope.$index)">公式</el-button>
           <el-button size="mini" plain @click="handleDel(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
@@ -103,13 +99,13 @@
     >
       <el-form label-width="80px" v-if="showHEditor">
         <el-form-item label="真实字段">
-          <el-switch size="small" v-model="hData.isField" active-value="1" inactive-value="0"></el-switch>
+          <el-switch size="mini" v-model="hData.isField" active-value="1" inactive-value="0"></el-switch>
         </el-form-item>
-        <el-form-item label="名称" v-if="hData.isField==='0'">
-          <el-input size="small" v-model="hData.label" autocomplete="off"></el-input>
+        <el-form-item label="名称">
+          <el-input size="mini" v-model="hData.label" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="选择字段" v-else>
-          <el-select filterable size="small" v-model="hData.field">
+        <el-form-item label="选择字段" v-if="hData.isField==='1'">
+          <el-select filterable size="mini" v-model="hData.field">
             <el-option
               v-for="item in data"
               :key="item.field"
@@ -119,6 +115,64 @@
           </el-select>
         </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="showHEditor = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="save()">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="设置钻取参数" append-to-body :visible.sync="showDrill" :width="'600px'">
+      <el-form label-width="110px" v-if="showDrill">
+        <el-form-item label="统计插件">
+          <el-select
+            clearable
+            filterable
+            size="mini"
+            v-model="curCol.drillTarget"
+            @change="drillChange"
+          >
+            <el-option
+              v-for="tp in templetes"
+              :key="tp.node_name"
+              :label="tp.node_display"
+              :value="tp.node_name"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template v-if="curCol&&curCol.drillTarget">
+        <el-button size="mini" plain @click="drillAdd()">添加参数</el-button>
+        <el-table key="params" :data="curCol.drillParams" style="width: 100%" height="300">
+          <el-table-column label="原字段">
+            <template slot-scope="scope">
+              <el-select clearable filterable size="mini" v-model="scope.row.s">
+                <el-option
+                  v-for="item in data"
+                  :key="item.field"
+                  :label="item.name"
+                  :value="item.field"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="目标字段">
+            <template slot-scope="scope">
+              <el-select clearable filterable size="mini" v-model="scope.row.t">
+                <el-option
+                  v-for="item in tempFields"
+                  :key="item.field"
+                  :label="item.name"
+                  :value="item.field"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="90">
+            <template slot-scope="scope">
+              <el-button size="mini" plain @click="drillDel(scope.$index)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="showHEditor = false">取 消</el-button>
         <el-button size="mini" type="primary" @click="save()">确 定</el-button>
@@ -157,12 +211,12 @@
           <el-table key="params" :data="curCol.searchList" style="width: 100%" height="300">
             <el-table-column label="参数名" width="140">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.n" placeholder></el-input>
+                <el-input size="mini" v-model="scope.row.n" placeholder></el-input>
               </template>
             </el-table-column>
             <el-table-column label="参数值" width="140">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.v" placeholder></el-input>
+                <el-input size="mini" v-model="scope.row.v" placeholder></el-input>
               </template>
             </el-table-column>
             <el-table-column label="作为默认" width="140">
@@ -206,6 +260,7 @@ import formulaDesigner from "../form-designer/formula-designer";
 import { genComponentData } from "../form-designer/helper";
 import { STATIC_COLUMN_FIELDS } from "../../const/sys";
 const { FILTER_TYPE_ARY } = require("../../../share/const/filter");
+import { formatJSONList } from "../../utils/util";
 
 import shortid from "shortid";
 export default {
@@ -228,9 +283,11 @@ export default {
   components: { formulaDesigner },
   data() {
     return {
+      initializing: true,
       showDesigner: false,
       showHEditor: false,
       showParamsditor: false,
+      showDrill: false,
       cpnts: [],
       curCol: null,
       curNode: null,
@@ -240,13 +297,20 @@ export default {
         field: "",
       },
       op: "",
+      templetes: [],
+      tempFields: [],
+      tempCache: {},
       FILTER_TYPE_ARY: FILTER_TYPE_ARY,
     };
   },
-  created() {
+  async created() {
+    this.initializing = true;
     if (this.header && !this.header.length) {
       this.header.push({ label: "表头", id: "0", field: "0", children: [] });
     }
+
+    this.templetes = (await this.API.getTempleteTree()).filter((i) => i.tp_type === 1);
+    this.initializing = false;
   },
   methods: {
     handleAdd() {
@@ -316,7 +380,7 @@ export default {
         if (this.hData.isField === "1" && this.hData.field) {
           const f = _.find(this.data, { field: this.hData.field });
           if (f) {
-            this.hData.label = f.name;
+            this.hData.label = this.hData.label || f.name; 
           }
         }
         Object.assign(this.curNode, { ...this.hData });
@@ -339,6 +403,31 @@ export default {
     },
     getOpTypes(id) {
       return _.find(FILTER_TYPE_ARY, { id }).op;
+    },
+    handleDrill(index) {
+      this.curCol = this.data[index];
+      this.showDrill = true;
+    },
+    drillAdd() {
+      this.curCol.drillParams.push({ s: "", t: "" });
+    },
+    drillDel(index) {
+      this.curCol.drillParams.splice(index, 1);
+    },
+    async drillChange(code) {
+      this.curCol.drillParams.forEach((d) => (d.t = ""));
+      if (this.tempCache[code]) {
+        this.tempFields = this.tempCache[code];
+      } else {
+        const ret = await this.API.getTreeNode({ code });
+        if (ret.success) {
+          if (ret.data.data.tp_content) {
+            this.tempFields = formatJSONList(ret.data.data.tp_content, STATIC_COLUMN_FIELDS);
+            return (this.tempCache[code] = this.tempFields);
+          }
+        }
+        this.tempFields = [];
+      }
     },
   },
 };

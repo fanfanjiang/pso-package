@@ -86,11 +86,7 @@
         </div>
         <div v-else-if="pick.match===99">
           <el-form>
-            <pso-form-component
-              :force-show="true"
-              :cpnt="pick.cpnt"
-              @value-change="valueChangeHandler"
-            ></pso-form-component>
+            <pso-form-component :force-show="true" :cpnt="cpnt" @value-change="valueChangeHandler"></pso-form-component>
           </el-form>
         </div>
         <div v-else>
@@ -125,7 +121,7 @@ export default {
   },
   data() {
     return {
-      proxy: [],
+      cpnt: {},
       minNum: 0,
       maxNum: 0,
       checkAll: false,
@@ -135,14 +131,14 @@ export default {
   },
   computed: {
     opOptions() {
-      return (this.pick.cpnt && this.pick.cpnt.componentid && CPNT[this.pick.cpnt.componentid].op) || [];
+      return (this.cpnt && this.cpnt.componentid && CPNT[this.cpnt.componentid].op) || [];
     },
-    dataOptions() { 
-      return (this.pick.cpnt && this.pick.cpnt.data._option) || [];
+    dataOptions() {
+      return (this.cpnt && this.cpnt.data._option) || [];
     },
     curOp() {
-      if (this.pick.cpnt && this.pick.op) {
-        const exist = _.find(CPNT[this.pick.cpnt.componentid].op, { id: this.pick.op });
+      if (this.cpnt && this.pick.op) {
+        const exist = _.find(CPNT[this.cpnt.componentid].op, { id: this.pick.op });
         if (exist) {
           return exist;
         }
@@ -176,10 +172,16 @@ export default {
   },
   methods: {
     makeCpnt(fid) {
-      this.pick.cpnt = this.store.search({ options: { fid } });
-      this.pick.cpnt.data._fieldName = "";
-      this.pick.cpnt.data._hideForever = false;
-      this.pick.cpnt.data._hideOnNew = false;
+      //生成真实CPNT
+      this.cpnt = this.store.search({ options: { fid } });
+      this.store.updateInstance({ [this.cpnt.data._fieldValue]: this.pick.data || "" });
+      const { _fieldName, _fieldValue, componentid } = this.cpnt.data;
+      this.cpnt.data._fieldName = "";
+      this.cpnt.data._hideForever = false;
+      this.cpnt.data._hideOnNew = false;
+
+      if (!this.pick.cpnt) this.pick.cpnt = {};
+      Object.assign(this.pick.cpnt, { fid, componentid, _fieldName, _fieldValue });
     },
     fieldChange(fid) {
       this.makeCpnt(fid);

@@ -257,7 +257,14 @@ const CPNT = {
     chart: false,
     table_show: true,
     ass_db: true,
-    data: [{ n: '_option', v: '' }, { n: '_type', v: 1 }, { n: '_showFields', v: '' }, { n: '_new', v: true }, { n: '_relate', v: true }]
+    data: [
+      { n: '_option', v: '' },
+      { n: '_type', v: 1 },
+      { n: '_showFields', v: '' },
+      { n: '_new', v: true },
+      { n: '_relate', v: true },
+      { n: '_radioField', v: '' },
+    ]
   },
   assfield: {
     icon: "el-icon-view",

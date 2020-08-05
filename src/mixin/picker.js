@@ -41,7 +41,6 @@ export function pickerMixin({
             handleAddSelection(data) {
                 if (data.length) {
                     this.baseObj[dataListName] = _.uniqBy(this.baseObj[dataListName].concat(data), this.idName);
-                    console.log(this.idName);
                     if (this.baseObj[typeName] === radioVal) {
                         this.checkRadio(data[0]);
                     }

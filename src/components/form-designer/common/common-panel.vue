@@ -101,7 +101,7 @@
         <el-input
           size="small"
           v-model.trim="cpnt.data._fieldValue"
-          :disabled="!cpnt.data._fvEditable||(!!cpnt.store.data_id&&!cpnt.add&&cpnt.store.is_pub)"
+          :disabled="!cpnt.data._fvEditable||(!!cpnt.store.data_code&&!cpnt.add&&cpnt.store.is_pub)"
           clearable
         ></el-input>
       </el-form-item>

@@ -50,7 +50,7 @@ export default {
   props: ["node", "pnode", "readMode", "workflowImage"],
   components: { CommonNode },
   computed: {
-    ...mapState(["wfDesigner"])
+    ...mapState(["wfDesigner"]),
   },
   methods: {
     getOpName(opid) {
@@ -59,8 +59,8 @@ export default {
     getData(data) {
       if (Array.isArray(data)) return data.join(" , ");
       return data;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

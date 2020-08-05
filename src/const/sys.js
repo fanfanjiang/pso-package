@@ -34,5 +34,7 @@ export const STATIC_COLUMN_FIELDS = {
     searchList: [],
     searchType: '',
     searchOp: '',
-    defaultVal: ''
+    defaultVal: '',
+    drillTarget: '',
+    drillParams: []
 }

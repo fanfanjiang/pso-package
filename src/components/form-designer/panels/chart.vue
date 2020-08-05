@@ -12,8 +12,11 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="高度">
+        <el-input-number size="mini" v-model="cpnt.data._height" :min="0"></el-input-number>
+      </el-form-item>
     </el-form>
-  </div>
+  </div> 
 </template>
 <script>
 import panelHeader from "../common/panel-header";
@@ -21,11 +24,11 @@ import panelHeader from "../common/panel-header";
 export default {
   props: ["cpnt"],
   components: {
-    panelHeader
+    panelHeader,
   },
   data() {
     return {
-      options: []
+      options: [],
     };
   },
   created() {
@@ -34,8 +37,8 @@ export default {
   methods: {
     async getcharts() {
       this.options = await this.API.getTempleteTree([3]);
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

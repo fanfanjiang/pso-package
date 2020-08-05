@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     addCondition(orIndex) {
-      let condition = { cpnt: "", field: "", op: "", data: "", match: "" };
+      const condition = { cpnt: "", field: "", op: "", data: "", match: "" };
       if (typeof orIndex === "undefined") {
         this.conditionMap.push([condition]);
       } else {
