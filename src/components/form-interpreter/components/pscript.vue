@@ -165,7 +165,6 @@ export default {
     async fetchData() {
       //获取数据
       this.cpnt.store.storeLoading = true;
-      console.log({ script: this.cpnt.data._script, params: this.scriptParams });
       const ret = await this.API.getPscriptData({ script: this.cpnt.data._script, params: this.scriptParams });
       // const ret = { success: true, data: [{ wb1: "3", sz1: 5 }] };
       this.cpnt.store.storeLoading = false;

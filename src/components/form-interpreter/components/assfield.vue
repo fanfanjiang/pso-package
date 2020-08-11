@@ -16,12 +16,12 @@ export default {
   props: {
     cpnt: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   data() {
     return {
-      showVal: ""
+      showVal: "",
     };
   },
   created() {
@@ -35,6 +35,6 @@ export default {
         }
       }
     });
-  }
+  },
 };
 </script>

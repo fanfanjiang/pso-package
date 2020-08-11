@@ -12,22 +12,14 @@
 </template>
 <script>
 import cpntMixin from "../mixin";
-import { cpntFix } from "../mixins";
 
 export default {
-  mixins: [cpntMixin, cpntFix],
+  mixins: [cpntMixin],
   props: {
     type: {
       type: String,
       default: "",
     },
-  },
-  created() {
-    if (!this.cpnt.store.instance_id && this.fixable) {
-      this.$watch("fixValue", (val) => {
-        this.cpnt.data._val = val;
-      });
-    }
   },
 };
 </script>

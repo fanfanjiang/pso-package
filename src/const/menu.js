@@ -37,6 +37,14 @@ export const TP_CTL_TYPE = [
         v: 'picker-field'
     },
     {
+        n: '列表选择器',
+        v: 'picker-column'
+    },
+    {
+        n: '是否',
+        v: 'picker-yes'
+    },
+    {
         n: '文本',
         v: 'input'
     }

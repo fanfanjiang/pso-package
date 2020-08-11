@@ -22,8 +22,8 @@ export function transCMapToCondition(map) {
                     })
                 } else {
                     if (Array.isArray(conditionAnd.data)) {
-                        if (conditionAnd.data.length) {
-                            datas.push({ op: FilterOp.value, data: conditionAnd.data.map(dv => `[${dataType}${dv}]`).join('') });
+                        if (conditionAnd.data.length) { 
+                            datas.push({ op: FilterOp.value, data: conditionAnd.data.map(dv => `[${dataType}${dv}]`).join(',') });
                         }
                     } else if (conditionAnd.data || conditionAnd.data === 0) {
                         datas.push({ op: FilterOp.value, data: `[${dataType}${conditionAnd.data}]` });

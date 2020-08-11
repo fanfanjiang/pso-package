@@ -18,10 +18,7 @@ const CPNT = {
     data: [
       { n: '_type', v: 'text' },
       { n: '_scannable', v: false },
-      { n: '_scanType', v: 'qr' },
-      { n: '_datasource', v: '' },
-      { n: '_prefix', v: false },
-      { n: '_prefixType', v: '' },
+      { n: '_scanType', v: 'qr' }
     ]
   },
   number: {
@@ -173,7 +170,7 @@ const CPNT = {
     host_db: false,
     chart: true,
     table_show: true,
-    data: [{ n: '_digit', v: '3' }, { n: '_format', v: '' }, { n: '_bind', v: '' }, { n: '_source', v: '#date##no#' }]
+    data: [{ n: '_read', v: true }, { n: '_digit', v: '3' }, { n: '_format', v: '' }, { n: '_bind', v: '' }, { n: '_source', v: '@__date__@@__no__@' }]
   },
   email: {
     icon: "fa fa-envelope",

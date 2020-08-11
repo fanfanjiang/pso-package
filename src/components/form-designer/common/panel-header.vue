@@ -2,7 +2,9 @@
   <div class="actor-panel-header">
     <div class="actor-panel-header__title">
       <span :class="icon"></span>
-      <span v-if="!$parent.$props||$parent.$props.cpnt.CPNT.layout">{{name}}</span>
+      <span
+        v-if="!$parent.$props||$parent.$props.cpnt.CPNT.layout||$parent.$props.cpnt.componentid==='stage'"
+      >{{name}}</span>
       <el-dropdown
         v-else-if="$parent.$props.cpnt"
         @command="changeHandler"

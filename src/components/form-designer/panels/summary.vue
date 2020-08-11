@@ -1,7 +1,7 @@
 <template>
   <common-panel :cpnt="cpnt" info="统计关联的记录中的数据。" :needDefaultValue="false">
     <el-form-item label="关联表">
-      <el-select v-model="cpnt.data._selectedTable" placeholder="请选择">
+      <el-select size="mini" v-model="cpnt.data._selectedTable" placeholder="请选择">
         <el-option
           v-for="item in tableOptions"
           :key="item.fid"
@@ -11,7 +11,7 @@
       </el-select>
     </el-form-item>
     <el-form-item label="选择字段">
-      <el-select v-model="cpnt.data._selectedField" placeholder="请选择">
+      <el-select size="mini" v-model="cpnt.data._selectedField" placeholder="请选择">
         <el-option
           v-for="item in fieldOptions"
           :key="item.fid"
@@ -21,15 +21,15 @@
       </el-select>
     </el-form-item>
     <el-form-item label="选择操作">
-      <el-select v-model="cpnt.data._selectedOp" placeholder="请选择">
+      <el-select size="mini" v-model="cpnt.data._selectedOp" placeholder="请选择">
         <el-option v-for="item in opOtions" :key="item" :label="item" :value="item"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="单位">
-      <el-input v-model="cpnt.data._unit"></el-input>
+      <el-input size="mini" v-model="cpnt.data._unit"></el-input>
     </el-form-item>
     <el-form-item label="小数点">
-      <el-input-number v-model="cpnt.data._decimalPlaces" :min="0" :max="5"></el-input-number>
+      <el-input-number size="mini" v-model="cpnt.data._decimalPlaces" :min="0" :max="5"></el-input-number>
     </el-form-item>
   </common-panel>
 </template>
@@ -41,11 +41,11 @@ import FormStore from "../../form-designer/model/store.js";
 export default {
   props: ["cpnt"],
   components: {
-    commonPanel
+    commonPanel,
   },
   data() {
     return {
-      asstableCaching: false
+      asstableCaching: false,
     };
   },
   computed: {
@@ -55,7 +55,7 @@ export default {
         options: { ass_db: true },
         dataOptions: { _type: 2 },
         onlyData: true,
-        beforePush: item => item.data._option
+        beforePush: (item) => item.data._option,
       });
       return tables.concat(asstables);
     },
@@ -92,7 +92,7 @@ export default {
         }
       }
       return [];
-    }
+    },
   },
   watch: {
     tableOptions: {
@@ -106,7 +106,7 @@ export default {
             this.cpnt.data._selectedOp = "";
           }
         }
-      }
+      },
     },
     fieldOptions: {
       deep: true,
@@ -118,8 +118,8 @@ export default {
             this.cpnt.data._selectedOp = "";
           }
         }
-      }
-    }
-  }
+      },
+    },
+  },
 };
 </script>

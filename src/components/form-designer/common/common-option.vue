@@ -12,8 +12,8 @@
       :key="idx"
     >
       <i class="el-icon-sort act-select__option__handle"></i>
-      <el-input v-model="option._optionName" placeholder="选项名"></el-input>
-      <el-input v-model="option._optionValue" placeholder="选项值"></el-input>
+      <el-input size="mini" v-model="option._optionName" placeholder="选项名"></el-input>
+      <el-input size="mini" v-model="option._optionValue" placeholder="选项值"></el-input>
       <el-tooltip
         effect="dark"
         content="设为默认"
@@ -21,8 +21,14 @@
         :enterable="false"
         :hide-after="500"
       >
-        <el-radio v-if="!multiple" v-model="cpnt.data._defaultValue" :label="option._optionValue"></el-radio>
+        <el-radio
+          size="mini"
+          v-if="!multiple"
+          v-model="cpnt.data._defaultValue"
+          :label="option._optionValue"
+        ></el-radio>
         <el-checkbox
+          size="mini"
           v-else
           :true-label="option._optionValue"
           :false-label="false"
@@ -51,12 +57,12 @@ import draggable from "vuedraggable";
 export default {
   props: {
     cpnt: {
-      type: Object
+      type: Object,
     },
     multiple: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   components: { draggable },
   data() {
@@ -64,9 +70,9 @@ export default {
       dragOption: {
         props: {
           type: "transition",
-          name: "flip-list"
-        }
-      }
+          name: "flip-list",
+        },
+      },
     };
   },
   created() {
@@ -79,8 +85,8 @@ export default {
       deep: true,
       handler(val) {
         this.cpnt.data._defaultValue = val.join(",");
-      }
-    }
+      },
+    },
   },
   methods: {
     addOption() {
@@ -89,8 +95,8 @@ export default {
     delOption(index) {
       this.cpnt.data._option.splice(index, 1);
       this.cpnt.data._defaultValueList.splice(index, 1);
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

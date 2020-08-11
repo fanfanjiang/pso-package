@@ -19,6 +19,18 @@ export const TP_TYPES = [
     }
 ]
 
+export const FORM_COLUMN_FIELDS = {
+    width: "",
+    using: "1",
+    show: "1",
+    align: "left",
+    number: 0,
+    sortable: "0",
+    url: "",
+    cal: "0",
+    res_dimen: "",
+    target_form: {}
+}
 
 export const STATIC_COLUMN_FIELDS = {
     field: "",

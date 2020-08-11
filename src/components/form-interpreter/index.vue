@@ -41,6 +41,7 @@ export default {
       default: false,
     },
     dataDefault: Object,
+    mockAsstables: Object,
   },
   data() {
     return {
@@ -78,12 +79,6 @@ export default {
       this.broadcast("PsoformItem", "cpnt-value-changed", val);
       this.$emit("value-change", val);
     });
-    this.$on("cpnt-user-changed", (val) => {
-      this.$emit("value-change", val);
-    });
-    this.$on("cpnt-dept-changed", (val) => {
-      this.$emit("value-change", val);
-    });
   },
   methods: {
     async getFormData() {
@@ -94,7 +89,11 @@ export default {
         const ret = await this.API.form({ data: { leaf_id: this.dataId, form_code: this.store.data_code } });
         this.store.updateInstance(ret.data);
       } else {
-        this.store.updateInstance(this.dataDefault);
+        if (this.dataDefault) {
+          this.store.updateInstance(this.dataDefault);
+        } else if (this.mockAsstables) {
+          this.store.mockAsstables = this.mockAsstables;
+        }
       }
       this.$emit("data-loaded", this.store);
       this.loading = false;
@@ -135,9 +134,8 @@ export default {
 
       //主表数据
       const mainData = { optype: this.store.instance_id ? 1 : 0 };
-      if (this.store.instance_id) {
-        mainData.leaf_id = this.store.instance_id;
-      }
+      
+      mainData.leaf_id = this.store.instance_id || this.store.beInstanceId;
 
       //最终组合的数据
       const data = {

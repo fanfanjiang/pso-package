@@ -17,7 +17,7 @@
         :pattern="cpnt.data._type"
         @cancel="show=false"
         @confirm="handleAddSelection"
-      > 
+      >
         <el-button size="mini" icon="el-icon-plus" circle></el-button>
       </pso-picker-dept>
     </div>
@@ -51,14 +51,17 @@ export default {
     const orgTree = await this.API.getOrgTree();
     if (this.cpnt.data._val) {
       this.loading = true;
+      const list = [];
       for (let node_id of this.cpnt.data._val.split(",")) {
         const node = _.find(orgTree, { node_id: parseInt(node_id) });
-        if (node) this.proxy.list.push(node);
+        if (node) list.push(node);
       }
+      this.handleAddSelection(list);
       this.loading = false;
     } else if (this.cpnt.data._defaultValType === "current") {
+    } else {
+      this.proxy.valList = [];
     }
-    this.dispatch("PsoformInterpreter", "cpnt-dept-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   },
 };
 </script>

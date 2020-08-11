@@ -68,6 +68,7 @@
               size="mini"
               autocomplete="off"
             ></el-input>
+            <el-switch v-if="tpItem.picker==='picker-yes'" v-model="tpItem.value"></el-switch>
             <el-select
               v-if="tpItem.picker==='picker-text'"
               filterable
@@ -82,13 +83,28 @@
               filterable
               clearable
               size="mini"
+              :multiple="tpItem.saveType==='2'"
               v-model="tpItem.value"
             >
               <el-option
-                v-for="item in formFields[getRelateItem(tpItem)]"
+                v-for="item in formCfg[getRelateItem(tpItem)].fields"
                 :key="item.field_name"
                 :label="item.field_display"
                 :value="item.field_name"
+              ></el-option>
+            </el-select>
+            <el-select
+              v-if="tpItem.picker==='picker-column'&&!loadingFields"
+              filterable
+              clearable
+              size="mini"
+              v-model="tpItem.value"
+            >
+              <el-option
+                v-for="item in formCfg[getRelateItem(tpItem)].column"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -111,8 +127,8 @@ export default {
       workflows: [],
       tags: [],
       text: [],
-      formFields: {},
-      loadingFields: false,
+      formCfg: {},
+      loadingFields: true,
     };
   },
   async created() {
@@ -170,8 +186,8 @@ export default {
       this.$emit("change", this.data);
     },
     handleFormChange(val, tpItem) {
-      if (!this.formFields[val]) {
-        this.getFormFields(val);
+      if (!this.formCfg[val]) {
+        this.getFormCfg(val);
       }
     },
     getRelateItem(tpItem) {
@@ -180,11 +196,11 @@ export default {
     async handleWfChange(val, tpItem) {
       const wfRet = await this.API.workflowcfg({ data: { node_id: val } });
       const data_code = wfRet.data.map_data_code;
-      if (!this.formFields[data_code]) {
-        this.getFormFields(data_code, val);
+      if (!this.formCfg[data_code]) {
+        this.getFormCfg(data_code, val);
       }
     },
-    async getFormFields(value, field) {
+    async getFormCfg(value, field) {
       this.loadingFields = true;
       const formStore = await this.makeFormStore(value);
       const ret = await this.API.getFormDict({ data_code: value });
@@ -192,7 +208,8 @@ export default {
         const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
         item.field_display = (field ? field._fieldName : "系统字段") + `(${item.field_name})`;
       });
-      this.formFields[field || value] = ret.data;
+      const column = formStore.display_columns ? JSON.parse(formStore.display_columns).column : [];
+      this.formCfg[field || value] = { fields: ret.data, column };
       this.loadingFields = false;
     },
   },

@@ -47,14 +47,17 @@ export default {
   async created() {
     if (this.cpnt.data._val) {
       this.loading = true;
+      const list = [];
       for (let uid of this.cpnt.data._val.split(",")) {
         const userRet = await this.getUser(uid);
-        if (userRet && userRet.user_id) this.proxy.list.push(userRet);
+        if (userRet && userRet.user_id) list.push(userRet);
       }
+      this.handleAddSelection(list);
       this.loading = false;
     } else if (this.cpnt.data._defaultValType === "current") {
+    } else {
+      this.proxy.valList = [];
     }
-    this.dispatch("PsoformInterpreter", "cpnt-user-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   },
   methods: {
     async getUser(user_id) {

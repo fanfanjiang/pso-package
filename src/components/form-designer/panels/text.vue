@@ -12,19 +12,16 @@
           <el-radio v-model="cpnt.data._scanType" label="bar">条形码</el-radio>
         </div>
       </el-form-item>
-      <common-prefix :cpnt="cpnt" :fixtype="false"></common-prefix>
     </common-panel>
   </div>
 </template>
 <script>
 import commonPanel from "../common/common-panel";
-import commonPrefix from "../common/common-prefix";
 
 export default {
   props: ["cpnt"],
   components: {
     commonPanel,
-    commonPrefix,
   },
 };
 </script>

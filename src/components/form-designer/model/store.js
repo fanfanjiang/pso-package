@@ -2,6 +2,7 @@ import Component from './cpnt'
 import { setSelectedActor } from "../helper/dom.js";
 import { CPNT } from "../../../const/form";
 import Vue from 'vue';
+import shortid from 'shortid';
 
 export default class FormStore {
     constructor(options) {
@@ -18,6 +19,7 @@ export default class FormStore {
         this.data_code = ""; //表单配置code
         this.templateId = ''; //模板node_id
 
+        this.beInstanceId = shortid.generate();
         this.instance_id = "";  //数据实例id
         this.editable = true;
         this.forceInsertSys = true;
@@ -82,8 +84,8 @@ export default class FormStore {
 
         //必须添加的字段
         if (this.forceInsertSys) {
-            const sysName = this.search({ options: { componentid: "text" }, dataOptions: { _fieldValue: 'd_name' } });
-            const sysTag = this.search({ options: { componentid: "tag" }, dataOptions: { _fieldValue: 'd_tag' } });
+            const sysName = this.search({ options: { db: true }, dataOptions: { _fieldValue: 'd_name' } });
+            const sysTag = this.search({ options: { db: true }, dataOptions: { _fieldValue: 'd_tag' } });
             if (!sysTag.length) {
                 this.append({ manual: true, newIndex: 0, to: { fid: '0' }, target: { componentid: 'tag', _fieldValue: "d_tag", _deletable: false, _fvEditable: false } });
             }
@@ -142,7 +144,7 @@ export default class FormStore {
             const cpntData = this.cpntsMap[key].data;
             if (cpntData._fieldValue) {
                 if (instance) {
-                    if (typeof instance[cpntData._fieldValue] !== 'undefined') {
+                    if (typeof instance[cpntData._fieldValue] !== 'undefined' && !_.isNull(instance[cpntData._fieldValue])) {
                         Vue.set(cpntData, '_val', instance[cpntData._fieldValue]);
                     } else {
                         Vue.set(cpntData, '_val', cpntData._defaultValue || "");

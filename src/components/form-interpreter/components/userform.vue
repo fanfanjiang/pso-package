@@ -205,7 +205,7 @@ export default {
       this.store = new FormStore(ret.data);
 
       if (ret.data.display_columns) {
-        this.fields = JSON.parse(ret.data.display_columns).filter(item => {
+        this.fields = JSON.parse(ret.data.display_columns).column[0].data.filter(item => {
           if (this.cpnt.data._showFields) {
             const exist = this.store.search({ options: { db: true }, dataOptions: { _fieldValue: item.field_name }, onlyData: true });
             if (exist.length) {

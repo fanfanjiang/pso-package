@@ -8,13 +8,13 @@
     >
       <el-form label-position="top" label-width="80px">
         <el-form-item label="自定义脚本">
-          <el-button icon="el-icon-plus" plain size="small" @click="showDesigner=true">编辑脚本</el-button>
+          <el-button icon="el-icon-plus" plain size="mini" @click="showDesigner=true">编辑脚本</el-button>
         </el-form-item>
         <el-form-item label="单位">
-          <el-input v-model="cpnt.data._unit"></el-input>
+          <el-input size="mini" v-model="cpnt.data._unit"></el-input>
         </el-form-item>
         <el-form-item label="小数点">
-          <el-input-number v-model="cpnt.data._decimalPlaces" :min="0" :max="5"></el-input-number>
+          <el-input-number size="mini" v-model="cpnt.data._decimalPlaces" :min="0" :max="5"></el-input-number>
         </el-form-item>
       </el-form>
     </common-panel>
@@ -32,41 +32,28 @@
 </template>
 <script>
 import commonPanel from "../common/common-panel";
-import { common } from "../mixin";
+import { common, FormulaMixin } from "../mixin";
 import formulaDesigner from "../../form-designer/formula-designer";
 
 export default {
   props: ["cpnt"],
-  mixins: [common],
+  mixins: [common, FormulaMixin],
   components: {
     commonPanel,
-    formulaDesigner
+    formulaDesigner,
   },
   data() {
     return {
       showDesigner: false,
-      code: ""
+      code: "",
     };
-  },
-  computed: {
-    numOptions() {
-      return this.cpnt.store.search({
-        options: { db: true },
-        onlyData: true,
-        beforePush: item => {
-          if (item.fid === this.cpnt.fid) return false;
-          if (item.parent.CPNT.host_db) return false;
-          return true;
-        }
-      });
-    }
   },
   methods: {
     handleConfirm(code) {
       this.cpnt.data._datasource = code;
       this.showDesigner = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -6,13 +6,16 @@
           <form-icon></form-icon>
           <span>{{cfg.data_name}}</span>
         </div>
-        <div class="pso-formTable-view" v-if="viewAuths.length>1">
+        <div class="pso-formTable-view" v-if="viewAuths.length>1&&!params.hideAuthTab">
           <el-tabs v-model="activeView">
             <el-tab-pane :label="auth.n" :name="auth.v+''" v-for="auth in viewAuths" :key="auth.v"></el-tab-pane>
           </el-tabs>
         </div>
       </div>
-      <div class="pso-formTable-tagfilter" v-if="showAllStatusBar||stages.length">
+      <div
+        class="pso-formTable-tagfilter"
+        v-if="(showAllStatusBar||stages.length)&&!params.hideStatusTab"
+      >
         <div class="pso-formTable-status" v-if="statuses.length">
           <el-tag
             v-if="showAllStatusBar"
@@ -114,10 +117,15 @@
           <el-button type="text" icon="el-icon-refresh" @click="getFormData">刷新</el-button>
         </div>
         <div class="pso-formTable-header__right">
-          <el-button v-if="opAddable" type="primary" size="mini" @click="newData">{{cpntText.add}}</el-button>
+          <el-button
+            v-if="opAddable&&!params.hideNewBtn"
+            type="primary"
+            size="mini"
+            @click="newData"
+          >{{cpntText.add}}</el-button>
           <el-button v-if="selectable" type="primary" size="mini" @click="selectConfirmHandler">确定</el-button>
           <slot name="op"></slot>
-          <el-dropdown size="small" trigger="click" v-if="opChangable">
+          <el-dropdown size="small" trigger="click" v-if="opChangable&&!params.hideChangeBtn">
             <el-button
               type="primary"
               size="mini"
@@ -160,13 +168,13 @@
             </el-dropdown-menu>
           </el-dropdown>
           <el-button
-            v-if="opAddable"
+            v-if="opAddable&&!params.hideCopyBtn"
             type="primary"
             size="mini"
             @click="handleCopy"
             :disabled="selectedList.length !== 1"
           >{{cpntText.copy}}</el-button>
-          <el-dropdown size="small" @command="handleMore">
+          <el-dropdown size="small" @command="handleMore" v-if="!params.hideMoreBtn">
             <el-button class="el-dropdown-link" size="mini" type="text">
               更多
               <i class="el-icon-arrow-down el-icon--right"></i>
@@ -176,7 +184,7 @@
               <el-dropdown-item v-if="opAddable">导入</el-dropdown-item>
               <el-dropdown-item command="export" v-if="opExportable">导出EXCEL</el-dropdown-item>
               <el-dropdown-item v-if="opExportable">全部导出</el-dropdown-item>
-              <el-dropdown-item command="saveColWidth" v-if="opAddable">保存列宽</el-dropdown-item>
+              <el-dropdown-item command="saveColCfg" v-if="opAddable">保存列宽</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -283,7 +291,7 @@
           <el-pagination
             background
             layout="total, sizes, prev, pager, next, jumper"
-            :page-sizes="[limit,50,100,200,500]"
+            :page-sizes="[limit,20,50,100,200,500]"
             :total="dataTotal"
             :page-size="limit"
             :current-page="page"
@@ -340,9 +348,11 @@ import XLSX from "xlsx";
 import Qs from "qs";
 import { MENU_LEAF_AUTH } from "../../const/menu";
 import FormIcon from "./form-icon";
+import { FormListMixin } from "../../mixin/list";
 
 export default {
   components: { PsoFormView: () => import("../form-interpreter"), PsoDataFilter, FormIcon },
+  mixins: [FormListMixin],
   props: {
     params: {
       type: Object,
@@ -415,6 +425,7 @@ export default {
     defForm: Object,
     bindUserpicker: Object,
     tableRowClick: Function,
+    defLimit: Number,
   },
   data() {
     return {
@@ -425,7 +436,6 @@ export default {
         data_code: "",
         data_design: [],
       },
-      fields: [],
       formData: [],
       currentRow: {},
       conditionOptions: [],
@@ -461,7 +471,6 @@ export default {
       curStage: "all",
       defSearchType: "",
       viewCfg: [],
-      oriColData: null,
     };
   },
   computed: {
@@ -523,6 +532,10 @@ export default {
     },
   },
   async created() {
+    if (this.defLimit) {
+      this.limit = this.defLimit;
+    }
+
     //处理searchType,特别笨的办法
     if (typeof this.defOpauth !== "undefined") {
       this.opAuth = this.defOpauth;
@@ -618,6 +631,7 @@ export default {
 
       this.store = new FormStore(ret.data);
       this.cfg = Object.assign({}, this.cfg, ret.data);
+      this.formCode = this.store.data_name;
 
       this.conditionOptions = this.store.search({
         options: { db: true },
@@ -630,8 +644,7 @@ export default {
       });
 
       if (this.cfg.display_columns) {
-        this.oriColData = JSON.parse(this.cfg.display_columns);
-        this.fields = JSON.parse(this.cfg.display_columns).filter((item) => item.using === "1");
+        this.analyzeColumn(this.cfg.display_columns, this.params.useCloumn);
       }
 
       if (this.cfg.stage_config) {
@@ -773,6 +786,7 @@ export default {
         orderby: order ? `order by ${order}` : "",
         data_code: this.cfg.data_code,
         keys: { ...this.keys, ...this.defaultKeys },
+        column: this.usedFormCol,
       };
 
       if (this.condition !== "【】") {
@@ -795,6 +809,7 @@ export default {
       if (this.dataPovider) {
         await this.dataPovider(ret.data);
       }
+
       this.loadingTable = false;
       if (ret.success) {
         this.formData = ret.data;
@@ -807,7 +822,7 @@ export default {
         }
       }
 
-      this.$emit("data-loaded");
+      this.$emit("data-loaded", this.formData);
     },
     sizeChangeHandler(size) {
       this.limit = size;
@@ -851,7 +866,7 @@ export default {
         data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
         method: "delete",
       });
-      this.$notify({ title: "删除成功", type: "success" });
+      this.savedForm(ret, { leaf_id, op: 3 });
       this.getFormStatus();
       this.loadingTable = false;
       this.showFormViewer = false;
@@ -859,11 +874,12 @@ export default {
     startSave() {
       this.saving = true;
     },
-    savedForm() {
+    savedForm(ret, msgObj) {
       this.showFormViewer = false;
       this.saving = false;
-      this.$notify({ title: "成功", type: "success" });
+      this.$notify(ret);
       this.getFormStatus();
+      this.$emit("data-changed", msgObj);
     },
     handleSelectionChange(val) {
       if (this.selectionType === "radio" && val.length > 1) {
@@ -885,11 +901,11 @@ export default {
       }
     },
     async updateFormData({ leaf_id, formData }) {
-      leaf_id = leaf_id || shortid.generate();
+      const id = leaf_id || shortid.generate();
       if (this.autoSubmit) {
         this.startSave();
-        const ret = await this.API.form({ data: { leaf_id, formData }, method: "put" });
-        this.savedForm();
+        const ret = await this.API.form({ data: { leaf_id: id, formData }, method: "put" });
+        this.savedForm(ret, { leaf_id: leaf_id || ret.data.data, op: leaf_id ? 2 : 1 });
       } else {
         this.$emit("submit", { leaf_id: this.dataId, formData });
       }
@@ -950,23 +966,6 @@ export default {
         }
       }
       return indexs;
-    },
-    handleHeaderDrag(newWidth, oldWidth, column, event) {
-      if (this.oriColData) {
-        const exist = _.find(this.oriColData, { field_name: column.property });
-        if (exist) {
-          exist.width = newWidth;
-        }
-      }
-    },
-    async saveColWidth() {
-      if (this.oriColData) {
-        const ret = await this.API.updateFormTree({
-          data_code: this.cfg.data_code,
-          display_columns: JSON.stringify(this.oriColData),
-        });
-        this.ResultNotify(ret);
-      }
     },
     getTrueVal(d, f) {
       if ((f.componentid === "select" || f.componentid === "checkbox") && f._option) {

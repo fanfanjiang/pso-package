@@ -3,12 +3,12 @@
     <div class="formula-designer__menu">
       <div class="formula-designer__menu-header">
         <el-tabs v-model="activeTab">
-          <el-tab-pane label="公式" name="formula"></el-tab-pane>
+          <el-tab-pane label="公式" name="formula" v-if="formulable"></el-tab-pane>
           <el-tab-pane label="字段" name="field"></el-tab-pane>
         </el-tabs>
       </div>
       <div class="formula-designer__menu-body">
-        <div class="formula-designer__formula" v-show="activeTab==='formula'">
+        <div class="formula-designer__formula" v-if="formulable" v-show="activeTab==='formula'">
           <el-collapse v-model="activeFormula">
             <el-collapse-item
               v-for="f in FORMULA_LIST"
@@ -94,6 +94,10 @@ export default {
   props: {
     cpnts: Array,
     value: String,
+    formulable: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -126,6 +130,9 @@ export default {
     Object.keys(formulajs).forEach((key) => {
       window[key] = formulajs[key];
     });
+    if (!this.formulable) {
+      this.activeTab = "field";
+    }
   },
   mounted() {
     if (this.value) {

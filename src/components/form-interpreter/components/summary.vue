@@ -10,15 +10,20 @@ import Big from "big.js/big.mjs";
 
 export default {
   mixins: [cpntMixin],
+  data() {
+    return {
+      emitSilent: true,
+    };
+  },
   created() {
-    this.cpnt.data._val = this.cpnt.data._val || 0;
-
+    this.setVal(this.cpnt.data._val);
+    this.watchCpntVal();
     this.$on("asstable-selected", ({ cpnt, data, store }) => {
       if (cpnt.fid === this.cpnt.data._selectedTable) {
         if (data.length) {
           this.figure(data, store.search({ options: { fid: this.cpnt.data._selectedField } }).data._fieldValue);
         } else {
-          this.cpnt.data._val = 0;
+          this.setVal(0);
         }
       }
     });
@@ -28,12 +33,19 @@ export default {
         if (data.length) {
           this.figure(data, store.search({ options: { fid: this.cpnt.data._selectedField } }).data._fieldValue);
         } else {
-          this.cpnt.data._val = 0;
+          this.setVal(0);
         }
       }
     });
   },
   methods: {
+    setVal(val) {
+      if (this.cpnt.data._selectedOp === SUMMARY_OP_TYPE.FIRST || this.cpnt.data._selectedOp === SUMMARY_OP_TYPE.LAST) {
+        this.cpnt.data._val = val || "";
+      } else {
+        this.cpnt.data._val = parseInt(val || 0);
+      }
+    },
     timeSort(data, field, type = 1) {
       let list = data.map((d) => d[field]);
       return list.sort(function (a, b) {

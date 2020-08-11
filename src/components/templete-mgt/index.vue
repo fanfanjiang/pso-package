@@ -180,6 +180,7 @@ export default {
     },
     async saveTp() {
       this.loading = true;
+      console.log(JSON.stringify(this.paramData));
       const ret = await this.API.templates({
         data: {
           ...this.curNode,

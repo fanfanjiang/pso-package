@@ -4,8 +4,8 @@
     :required="cpnt.data._required"
     v-loading="initializing||loading"
   >
-    <template v-if="!initializing">
-      <template v-if="asseditable">
+    <div class="pso-ip__ast" v-if="!initializing">
+      <div class="pso-ip__ast-btns" style="margin-bottom:5px" v-if="asseditable">
         <el-button
           v-if="cpnt.data._relate"
           type="primary"
@@ -29,7 +29,7 @@
           size="mini"
           @click="handleDelList(selectedList)"
         >取消所选关联数据</el-button>
-      </template>
+      </div>
       <div class="pso-form-asstable-table">
         <el-tag
           v-if="selectionType==='radio'&&proxy.valList.length"
@@ -47,7 +47,6 @@
           max-height="500"
           @row-click="instanceClick"
           @selection-change="handleSelectionChange"
-          v-show="proxy.valList.length"
         >
           <template #default>
             <el-table-column
@@ -124,7 +123,8 @@
             :form-id="store.data_code"
             :data-id="dataId"
             :data-default="defForm"
-            :editable="!dataId"
+            :editable="asseditable"
+            :mock-asstables="unsavedSelf"
           ></pso-form-interpreter>
         </div>
         <template v-slot:footer>
@@ -147,7 +147,7 @@
           </div>
         </template>
       </pso-drawer>
-    </template>
+    </div>
   </el-form-item>
 </template> 
 <script>
@@ -196,6 +196,8 @@ export default {
       selectedList: [],
       fields: [],
       defForm: null,
+      unsavedSelf: null,
+      subAsstables: [],
     };
   },
   computed: {
@@ -248,7 +250,11 @@ export default {
       this.handleAddSelection(list);
       this.loading = false;
     } else {
-      this.proxy.valList = [];
+      if (this.cpnt.store && this.cpnt.store.mockAsstables && this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]) {
+        this.handleAddSelection([this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]]);
+      } else {
+        this.proxy.valList = [];
+      }
     }
   },
   methods: {
@@ -258,7 +264,7 @@ export default {
       this.store = new FormStore(ret.data);
 
       if (ret.data.display_columns) {
-        this.fields = JSON.parse(ret.data.display_columns).filter((item) => {
+        this.fields = JSON.parse(ret.data.display_columns).column[0].data.filter((item) => {
           if (this.cpnt.data._showFields) {
             const exist = this.store.search({ options: { db: true }, dataOptions: { _fieldValue: item.field_name }, onlyData: true });
             if (exist.length) {
@@ -282,8 +288,11 @@ export default {
           },
         });
       }
-      if (this.cpnt.store && this.cpnt.store.instance_id) {
-        const asstables = this.store.search({
+
+      this.fields = _.orderBy(this.fields, ["number"], ["asc"]);
+
+      if (this.cpnt.store) {
+        this.subAsstables = this.store.search({
           options: { componentid: "asstable" },
           onlyMain: true,
           onlyData: true,
@@ -292,8 +301,10 @@ export default {
           },
         });
 
-        if (asstables.length) {
-          this.defForm = { [asstables[0]._fieldValue]: this.cpnt.store.instance_id };
+        if (this.subAsstables.length) {
+          if (this.cpnt.store.instance_id) {
+            this.defForm = { [this.subAsstables[0]._fieldValue]: this.cpnt.store.instance_id };
+          }
         }
       }
 
@@ -331,6 +342,20 @@ export default {
     },
     handleClickAdd() {
       this.dataId = "";
+
+      if (this.subAsstables.length) {
+        if (!this.cpnt.store.instance_id) {
+          const data = { leaf_id: this.cpnt.store.beInstanceId };
+          for (let cpnt of Object.values(this.cpnt.store.cpntsMap)) {
+            if (cpnt.CPNT.layout || cpnt.componentid === "stage") continue;
+            data[cpnt.data._fieldValue] = cpnt.data._val;
+          }
+          this.unsavedSelf = { [this.subAsstables[0]._fieldValue]: data };
+        }
+      } else {
+        this.unsavedSelf = null;
+      }
+
       this.showFormViewer = true;
     },
     async handleSaveForm() {
@@ -341,17 +366,20 @@ export default {
         const ret = await this.API.form({ data: { leaf_id, formData }, method: "put" });
         if (ret.success) {
           this.$notify({ title: "保存成功", type: "success" });
+          let data;
           if (this.dataId) {
-            const index = _.findIndex(proxy.valList, { leaf_id });
-            this.proxy.valList.splice(index, 1, formData.dataArr[0]);
+            data = await this.getFormData(this.dataId);
+            this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
           } else {
-            formData.dataArr[0].leaf_id = ret.data.data;
-            this.handleAddSelection(formData.dataArr);
+            data = await this.getFormData(ret.data.data);
           }
+          this.handleAddSelection([data]);
         }
         this.savingFrom = false;
         this.showFormViewer = false;
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
     async handleDeleteForm() {
       this.deletingFrom = true;
@@ -361,6 +389,7 @@ export default {
         method: "delete",
       });
       if (ret.success) {
+        this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
         this.$notify({ title: "删除成功", type: "success" });
       }
       this.deletingFrom = false;

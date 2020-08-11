@@ -23,7 +23,7 @@ export const executor = {
         ...mapState(["base"]),
     },
     watch: {
-  
+
     },
     async created() {
         const parser = new UAParser();
@@ -69,8 +69,19 @@ export const op = {
             try {
                 const formData = await this.store.getFormData();
                 this.dispatch("PsoWfExecutorBox", "op-before-next", { optype, formData });
-                formData && this.excuted(await this.store.doNextStep({ optype, formData }), optype);
+                if (formData) {
+                    const ret = await this.store.doNextStep({ optype, formData });
+                    if (ret.data && ret.data.instance) {
+                        //必须选择下一步执行人
+                        this.store.setInstanceData(ret.data.instance);
+                        this.confirm();
+                        this.store.steping = false;
+                    } else {
+                        this.excuted(ret, optype);
+                    }
+                }
             } catch (error) {
+                console.log(error);
                 this.store.steping = false;
                 this.$message({ message: error.message, type: "warning" });
             }

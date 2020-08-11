@@ -18,6 +18,7 @@
           <div class="pso-dd-header__btns">
             <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
             <el-button size="mini" type="primary" plain @click="handleEditForm">设计表单</el-button>
+            <el-button size="mini" type="primary" plain @click="changeAllFormCol">转换所有列表配置</el-button>
           </div>
         </div>
         <div class="pso-dd-tab">
@@ -47,7 +48,7 @@
               :key="curNode.node_id"
             ></pso-form-table>
             <form-field v-if="curTab==='field'" :data="tableData" :code="curNode.node_name"></form-field>
-            <form-column v-if="curTab==='list'" :data="colData" @save="saveConfig"></form-column>
+            <form-column v-if="curTab==='list'" :data="colCfg" :def-col="colData"></form-column>
             <form-status v-if="curTab==='status'" :data="staData" @save="saveConfig"></form-status>
             <form-stage v-if="curTab==='stage'" :data="stageData" @save="saveConfig"></form-stage>
             <form-publish
@@ -120,22 +121,28 @@ import FormRule from "./form-rule";
 import FormSubmit from "./form-submit";
 import FormStage from "./form-stage";
 import FormAsstable from "./form-asstable";
+import { FORM_COLUMN_FIELDS } from "../../const/sys";
+import { formatJSONList } from "../../utils/util";
 
 const _DATA = {
   tableData: [],
   colData: [],
+  colCfg: {
+    def: "",
+    column: [],
+  },
   staData: [],
   pubCfg: {
     isPublic: false,
     attach: {
       _fieldName: "附件",
-      _val: ""
+      _val: "",
     },
     name: "",
     subBtnText: "",
     doneText: "",
     qrList: [],
-    rules: []
+    rules: [],
   },
   property: {
     cal_mark: 0,
@@ -145,12 +152,12 @@ const _DATA = {
     cal_parent_tag: "",
     cal_source_main_form: "",
     cal_source_leaf_form: "",
-    cal_end_leaf_form: ""
+    cal_end_leaf_form: "",
   },
   rules: [],
   subCfg: [],
   stageData: [],
-  asstable: []
+  asstable: [],
 };
 
 export default {
@@ -168,15 +175,15 @@ export default {
     FormRule,
     FormSubmit,
     FormStage,
-    FormAsstable
+    FormAsstable,
   },
   props: {
     params: {
       type: Object,
       default: () => {
         data_type: "";
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -188,10 +195,10 @@ export default {
       curWsMenu: {},
       treeOptions: {
         dimen: 3,
-        data_type: this.params.data_type
+        data_type: this.params.data_type,
       },
       defaultNodeData: {
-        node_dimen: 3
+        node_dimen: 3,
       },
       curNode: null,
       curTab: "preview",
@@ -201,12 +208,11 @@ export default {
         { n: "新增", v: 1 },
         { n: "更改", v: 2 },
         { n: "导出", v: 4 },
-        { n: "更改阶段", v: 8 }
+        { n: "更改阶段", v: 8 },
       ],
-      ..._DATA
+      ..._DATA,
     };
   },
-  computed: {},
   methods: {
     reset() {
       Object.assign(this.$data, _.cloneDeep(_DATA));
@@ -237,6 +243,49 @@ export default {
       }
       this.initializing = false;
     },
+    async changeAllFormCol() {
+      this.saving = true;
+      const trees = await this.API.getFormTree();
+      for (let tr of trees) {
+        const ret = await this.API.getTreeNode({ code: tr.node_name });
+        const cfg = ret.data.data;
+        if (cfg.display_columns) {
+          const colCfg = JSON.parse(cfg.display_columns);
+          if (Array.isArray(colCfg)) {
+            if (colCfg.length) {
+              await this.API.updateFormTree({
+                data_code: tr.node_name,
+                display_columns: JSON.stringify({
+                  def: "默认",
+                  column: [
+                    {
+                      name: "默认",
+                      data: this.compareCol(colCfg, FORM_COLUMN_FIELDS),
+                    },
+                  ],
+                }),
+              });
+            } else {
+              await this.API.updateFormTree({
+                data_code: tr.node_name,
+                display_columns: "",
+              });
+            }
+          }
+        }
+      }
+      this.saving = false;
+      this.$message.error("完成");
+    },
+    compareCol(list) {
+      const l = [];
+      for (let i of this.colData) {
+        const exist = _.find(list, { field_name: i.field_name }) || {};
+        l.push({ ...i, ...exist });
+      }
+      formatJSONList(l, FORM_COLUMN_FIELDS);
+      return l;
+    },
     async getFormInfo() {
       const ret = await this.API.getTreeNode({ code: this.curNode.node_name });
 
@@ -256,14 +305,21 @@ export default {
         }
 
         if (cfg.display_columns) {
-          const columns = JSON.parse(cfg.display_columns);
-          this.colData.forEach(item => {
-            const col = _.find(columns, { field_name: item.field_name });
-            if (col) {
-              item = Object.assign(item, col);
+          const colCfg = JSON.parse(cfg.display_columns);
+          if (Array.isArray(colCfg)) {
+            if (colCfg.length) {
+              this.colCfg.def = "默认";
+              this.colCfg.column.push({
+                name: "默认",
+                data: this.compareCol(colCfg, FORM_COLUMN_FIELDS),
+              });
             }
-          });
-          this.colData = _.orderBy(this.colData, ["number"], ["asc"]);
+          } else {
+            colCfg.column.forEach((c) => {
+              c.data = this.compareCol(c.data);
+            });
+            this.colCfg = colCfg;
+          }
         }
 
         if (cfg.rule_config) {
@@ -296,7 +352,7 @@ export default {
       let ret = await this.API.getFormDict({ data_code: this.curNode.node_name });
       if (!ret.success) return;
       this.tableData = ret.data;
-      this.tableData.forEach(item => {
+      this.tableData.forEach((item) => {
         const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
         item.field_display = field ? field._fieldName : "系统字段";
       });
@@ -304,23 +360,11 @@ export default {
     async getListTableData(formStore) {
       const ret = await this.API.getFormDict({ data_code: this.curNode.node_name });
       if (!ret.success) return;
-      ret.data.forEach(item => {
+      ret.data.forEach((item) => {
         if (item) {
           const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
           item.display = item.display_name || (field ? field._fieldName : "");
-          this.colData.push({
-            ...item,
-            width: "",
-            using: "1",
-            show: "1",
-            align: "left",
-            number: 0,
-            sortable: "0",
-            url: "",
-            cal: "0",
-            res_dimen: "",
-            target_form: {}
-          });
+          this.colData.push(item);
         }
       });
     },
@@ -329,19 +373,19 @@ export default {
 
       //提取规则参数
       const rules = [];
-      this.rules.forEach(item => {
+      this.rules.forEach((item) => {
         const rule = {
           controlIds: item.controlIds,
           filters: [],
-          type: item.type
+          type: item.type,
         };
-        item.filters.forEach(fitem => {
+        item.filters.forEach((fitem) => {
           rule.filters.push({
             id: fitem.id,
             name: fitem.name,
             cid: fitem.cid,
             op: fitem.op,
-            val: fitem.val
+            val: fitem.val,
           });
         });
         rules.push(rule);
@@ -355,44 +399,38 @@ export default {
         subBtnText: this.pubCfg.subBtnText,
         doneText: this.pubCfg.doneText,
         qrList: this.pubCfg.qrList,
-        rules: []
+        rules: [],
       };
 
-      this.pubCfg.rules.forEach(item => {
+      this.pubCfg.rules.forEach((item) => {
         pubdata.rules.push({
           id: item.id,
           name: item.name,
           cid: item.cid,
-          val: item.val
+          val: item.val,
         });
       });
 
       //提交规则
       const subCfgData = [];
-      this.subCfg.forEach(item => {
+      this.subCfg.forEach((item) => {
         subCfgData.push({ ...item, params: item.param.join(",") });
-      });
-
-      //列表规则
-      const colData = [];
-      this.colData.forEach(item => {
-        colData.push({ ...item, fields: [] });
       });
 
       const ret = await this.API.updateFormTree({
         data_code: this.curNode.node_name,
-        display_columns: JSON.stringify(colData),
+        display_columns: JSON.stringify(this.colCfg),
         status_config: JSON.stringify(this.staData),
         pub_config: JSON.stringify(pubdata),
         rule_config: JSON.stringify(rules),
         submit_config: JSON.stringify(subCfgData),
         stage_config: JSON.stringify(this.stageData),
         sub_config: JSON.stringify(this.asstable),
-        ...this.property
+        ...this.property,
       });
       this.saving = false;
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
-    }
-  }
+    },
+  },
 };
 </script>

@@ -20,8 +20,6 @@
   </el-dialog>
 </template>
 <script>
-import shortid from "shortid";
-
 export default {
   props: {
     params: Object,

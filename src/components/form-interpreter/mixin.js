@@ -18,23 +18,24 @@ export default {
             }
         }
     },
-    watch: {
-        'cpnt.data._val': {
-            handler(value) { 
-                if (!this.emitSilent) {
-                    this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy });
-                    this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy });
-                    if (this.cpnt.store) this.cpnt.store.setShowByRules(this.cpnt);
-                }
-            }
-        }
-    },
     created() {
         const parent = this.$parent;
         if (parent.isInterpreter) {
             this.interpreter = parent;
         } else {
             this.interpreter = parent.interpreter;
+        }
+        if (!this.emitSilent) {
+            this.watchCpntVal();
+        }
+    },
+    methods: {
+        watchCpntVal() {
+            this.$watch('cpnt.data._val', (value) => {
+                this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy });
+                this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy });
+                if (this.cpnt.store) this.cpnt.store.setShowByRules(this.cpnt);
+            })
         }
     }
 };

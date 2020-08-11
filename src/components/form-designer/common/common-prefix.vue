@@ -75,7 +75,7 @@ export default {
         astFields = astFields.concat(ast.cache.fieldOptions);
       });
       return mainCpnts.concat(astFields);
-    },
+    }
   },
   methods: {
     handleConfirm(code) {

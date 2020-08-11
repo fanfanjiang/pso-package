@@ -21,21 +21,25 @@ export default {
   props: {
     min: {
       type: Number,
-      default: -Infinity
+      default: -Infinity,
     },
     max: {
       type: Number,
-      default: Infinity
+      default: Infinity,
     },
     precision: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
+  },
+  data() {
+    return {
+      emitSilent: true,
+    };
   },
   created() {
-    if (this.cpnt.data._val === "") {
-      this.cpnt.data._val = 0;
-    }
+    this.cpnt.data._val = parseInt(this.cpnt.data._val || 0);
+    this.watchCpntVal(); 
   },
   computed: {
     minNum() {
@@ -46,8 +50,8 @@ export default {
     },
     precisionVal() {
       return typeof this.cpnt.data._decimalPlaces === "undefined" ? this.precision : this.cpnt.data._decimalPlaces;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

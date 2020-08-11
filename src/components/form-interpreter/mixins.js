@@ -21,12 +21,12 @@ export const formulaMixin = {
     },
     methods: {
         figure(data) {
-            let datasource = this.cpnt.data._datasource;
+            let datasource = this.cpnt.data[this.sourceField || '_datasource'];
             data.forEach(item => {
                 datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), item._val);
             });
             try {
-                // console.log(datasource);
+                console.log(datasource);
                 return eval(datasource);
             } catch (error) {
                 console.log(error);
@@ -45,9 +45,6 @@ export const cpntFix = {
         }
     },
     computed: {
-        fixable() {
-            return this.cpnt.data._prefix && this.cpnt.data._datasource && this.cpnt.data._prefixType;
-        },
         allFields() {
             let list = []
             for (let key in this.asstables) {
@@ -56,27 +53,25 @@ export const cpntFix = {
             return this.mainCpnts.concat(list);
         }
     },
-    created() {
-        if (this.fixable) {
+    methods: {
+        startWatch() {
             this.$watch("numProxy", {
                 deep: true,
                 immediate: true,
                 handler() {
                     this.mainCpnts = this.numProxy;
-                    this.makeOptions(this.figure(this.allFields))
-                },
+                    this.setFixValue(this.figure(this.allFields))
+                }
             });
             this.$on("asstable-selected", ({ cpnt, data, store }) => {
                 const astData = data[0] || {};
                 this.$set(this.asstables, store.data_code, store
                     .search({ options: { db: true }, onlyData: true })
-                    .map((c) => ({ _val: typeof astData[c._fieldValue] !== "undefined" ? astData[c._fieldValue] : "", fid: c.fid })))
-                this.makeOptions(this.figure(this.allFields))
+                    .map((c) => ({ _val: typeof astData[c._fieldValue] !== "undefined" ? astData[c._fieldValue] : "", fid: `${store.data_code}_${c.fid}` })))
+                this.setFixValue(this.figure(this.allFields))
             });
-        }
-    },
-    methods: {
-        makeOptions(fix) {
+        },
+        setFixValue(fix) {
             if (typeof fix === 'undefined') return;
             this.fixValue = fix;
         }
@@ -91,8 +86,16 @@ export const optionFix = {
             fixedOptions: []
         }
     },
+    computed: {
+        fixable() {
+            return this.cpnt.data._prefix && this.cpnt.data._datasource && this.cpnt.data._prefixType;
+        }
+    },
     created() {
         this.fixedOptions = _.cloneDeep(this.cpnt.data._option);
+        if (this.fixable) {
+            this.startWatch();
+        }
     },
     watch: {
         fixValue() {

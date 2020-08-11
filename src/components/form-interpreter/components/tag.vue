@@ -58,8 +58,7 @@ export default {
     },
   },
   async created() {
-    this.resetPicker({ idName: this.tagIdName });
-
+    this.resetPicker({ idName: this.tagIdName, reset: false });
     if (this.cpnt.data._val && typeof this.cpnt.data._val === "string") {
       this.loading = true;
       let tagData = this.cpnt.data._val.split(",");
@@ -73,14 +72,15 @@ export default {
         ret = await this.API.tag({ data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } });
         idName = "tag_no";
       }
+      const list = [];
       ret.data.forEach((item) => {
-        if (tagData.indexOf(item[idName]) !== -1) this.proxy.list.push(item);
+        if (tagData.indexOf(item[idName]) !== -1) list.push(item);
       });
-
+      this.handleAddSelection(list);
       this.loading = false;
+    } else {
+      this.proxy.valList = [];
     }
-
-    this.dispatch("PsoformInterpreter", "cpnt-tag-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   },
   methods: {
     handleTagAdd(data) {

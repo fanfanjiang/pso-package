@@ -3,21 +3,21 @@
     <panel-header :icon="cpnt.CPNT.icon" :name="cpnt.CPNT.name" :info="info"></panel-header>
     <el-form :label-position="'top'" label-width="80px" :model="cpnt.data">
       <el-form-item label="名称">
-        <el-input size="small" v-model.trim="cpnt.data._fieldName" clearable></el-input>
+        <el-input size="mini" v-model.trim="cpnt.data._fieldName" clearable></el-input>
       </el-form-item>
       <el-form-item v-if="needPlaceholder" label="引导文字">
-        <el-input size="small" v-model="cpnt.data._placeholder" clearable></el-input>
+        <el-input size="mini" v-model="cpnt.data._placeholder" clearable></el-input>
       </el-form-item>
-      <el-form-item label="字段长度">
+      <el-form-item label="字段长度"> 
         <el-input-number
-          size="small"
+          size="mini"
           v-model="cpnt.data._fieldLen"
           controls-position="right"
           :min="3"
         ></el-input-number>
       </el-form-item>
       <el-form-item label="字段类型">
-        <el-select size="small" v-model="cpnt.data._fieldFormat" placeholder="请选择">
+        <el-select size="mini" v-model="cpnt.data._fieldFormat" placeholder="请选择">
           <el-option
             v-for="item in FIELD_FORMAT"
             :key="item.value"
@@ -27,35 +27,35 @@
         </el-select>
       </el-form-item>
       <el-form-item label="字段存储类型">
-        <el-select size="small" v-model="cpnt.data._fieldType" placeholder="请选择">
+        <el-select size="mini" v-model="cpnt.data._fieldType" placeholder="请选择">
           <el-option label="字符串" value="String"></el-option>
           <el-option label="Text" value="Text"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item v-if="needDefaultValue" :label="defalutValueLabel">
-        <el-input size="small" v-model="cpnt.data._defaultValue" clearable></el-input>
+        <el-input size="mini" v-model="cpnt.data._defaultValue" clearable></el-input>
       </el-form-item>
       <slot></slot>
       <el-form-item label="验证">
         <el-checkbox
-          size="small"
+          size="mini"
           v-model="cpnt.data._required"
           :true-label="true"
           :false-label="false"
         >必填</el-checkbox>
         <el-checkbox
-          size="small"
+          size="mini"
           v-if="needUnique"
           v-model="cpnt.data._unique"
           :true-label="true"
           :false-label="false"
         >不允许重复</el-checkbox>
-        <el-input size="small" placeholder="正则验证" v-model="cpnt.data._regular" clearable></el-input>
+        <el-input size="mini" placeholder="正则验证" v-model="cpnt.data._regular" clearable></el-input>
       </el-form-item>
       <el-form-item label="权限">
         <div class="act-panel_check">
           <el-checkbox
-            size="small"
+            size="mini"
             v-model="cpnt.data._read"
             :true-label="true"
             :false-label="false"
@@ -70,7 +70,7 @@
         </div>
         <div class="act-panel_check">
           <el-checkbox
-            size="small"
+            size="mini"
             v-model="cpnt.data._hideOnNew"
             :true-label="true"
             :false-label="false"
@@ -86,7 +86,7 @@
         </div>
         <div class="act-panel_check">
           <el-checkbox
-            size="small"
+            size="mini"
             v-model="cpnt.data._hideForever"
             :true-label="true"
             :false-label="false"
@@ -99,7 +99,7 @@
       </el-form-item>
       <el-form-item label="字典名称">
         <el-input
-          size="small"
+          size="mini"
           v-model.trim="cpnt.data._fieldValue"
           :disabled="!cpnt.data._fvEditable||(!!cpnt.store.data_code&&!cpnt.add&&cpnt.store.is_pub)"
           clearable
@@ -107,7 +107,7 @@
       </el-form-item>
       <el-form-item label="输出格式">
         <el-input
-          size="small"
+          size="mini"
           :clearable="true"
           type="textarea"
           v-model.trim="cpnt.data._outputFormat"
@@ -115,14 +115,14 @@
       </el-form-item>
       <el-form-item label="转换字段集">
         <el-input
-          size="small"
+          size="mini"
           :clearable="true"
           type="textarea"
           v-model.trim="cpnt.data._transFields"
         ></el-input>
       </el-form-item>
       <el-form-item label="字段说明">
-        <el-input size="small" type="textarea" :rows="2" v-model="cpnt.data._fieldInfo" clearable></el-input>
+        <el-input size="mini" type="textarea" :rows="2" v-model="cpnt.data._fieldInfo" clearable></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -134,37 +134,37 @@ import { FIELD_FORMAT } from "../../../const/form";
 export default {
   props: {
     cpnt: {
-      type: Object
+      type: Object,
     },
     info: {
       type: String,
-      default: ""
+      default: "",
     },
     needDefaultValue: {
       type: Boolean,
-      default: true
+      default: true,
     },
     defalutValueLabel: {
       type: String,
-      default: "默认值"
+      default: "默认值",
     },
     needPlaceholder: {
       type: Boolean,
-      default: false
+      default: false,
     },
     needUnique: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   components: {
-    panelHeader
+    panelHeader,
   },
   data() {
     return {
-      FIELD_FORMAT: FIELD_FORMAT
+      FIELD_FORMAT: FIELD_FORMAT,
     };
-  }
+  },
 };
 </script>
 <style lang="less" scoped>
