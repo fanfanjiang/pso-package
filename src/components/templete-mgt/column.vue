@@ -131,10 +131,10 @@
             @change="drillChange"
           >
             <el-option
-              v-for="tp in templetes"
-              :key="tp.node_name"
+              v-for="tp in menus"
+              :key="tp.menu_link"
               :label="tp.node_display"
-              :value="tp.node_name"
+              :value="tp.menu_link"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -174,7 +174,7 @@
         </el-table>
       </template>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="showHEditor = false">取 消</el-button>
+        <el-button size="mini" @click="showDrill = false">取 消</el-button>
         <el-button size="mini" type="primary" @click="save()">确 定</el-button>
       </div>
     </el-dialog>
@@ -206,7 +206,7 @@
             <el-input size="mini" v-model="curCol.defaultVal"></el-input>
           </el-form-item>
         </el-form>
-        <template v-if="curCol.searchType==='select'">
+        <template>
           <el-button size="mini" plain @click="handleParamsAdd()">添加参数</el-button>
           <el-table key="params" :data="curCol.searchList" style="width: 100%" height="300">
             <el-table-column label="参数名" width="140">
@@ -261,6 +261,7 @@ import { genComponentData } from "../form-designer/helper";
 import { STATIC_COLUMN_FIELDS } from "../../const/sys";
 const { FILTER_TYPE_ARY } = require("../../../share/const/filter");
 import { formatJSONList } from "../../utils/util";
+import { MENU_TYPE } from "../../const/menu";
 
 import shortid from "shortid";
 export default {
@@ -300,6 +301,7 @@ export default {
       templetes: [],
       tempFields: [],
       tempCache: {},
+      menus: [],
       FILTER_TYPE_ARY: FILTER_TYPE_ARY,
     };
   },
@@ -309,7 +311,18 @@ export default {
       this.header.push({ label: "表头", id: "0", field: "0", children: [] });
     }
 
-    this.templetes = (await this.API.getTempleteTree()).filter((i) => i.tp_type === 1);
+    const templetes = (await this.API.getTempleteTree()).filter((i) => i.tp_type === 1);
+    const menus = await this.API.getAllMenu();
+    this.menus = menus.data.nav.filter((m) => {
+      return m.is_leaf && m.menu_type === MENU_TYPE[0].v && _.find(templetes, { node_name: m.menu_link });
+    });
+
+    for (let d of this.data) {
+      if (d.drillTarget) {
+        await this.drillChange(d.drillTarget);
+      }
+    }
+
     this.initializing = false;
   },
   methods: {
@@ -380,7 +393,7 @@ export default {
         if (this.hData.isField === "1" && this.hData.field) {
           const f = _.find(this.data, { field: this.hData.field });
           if (f) {
-            this.hData.label = this.hData.label || f.name; 
+            this.hData.label = this.hData.label || f.name;
           }
         }
         Object.assign(this.curNode, { ...this.hData });

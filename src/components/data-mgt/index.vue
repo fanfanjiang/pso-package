@@ -245,7 +245,7 @@ export default {
     },
     async changeAllFormCol() {
       this.saving = true;
-      const trees = await this.API.getFormTree();
+      const trees = await this.API.getFormTree(); 
       for (let tr of trees) {
         const ret = await this.API.getTreeNode({ code: tr.node_name });
         const cfg = ret.data.data;

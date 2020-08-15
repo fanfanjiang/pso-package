@@ -224,12 +224,11 @@ export default class FormStore {
     setShowByRules(cpnt) {
 
         const rules = this.rule_config;
-
         const check = (r, show = true) => {
             const conditions = [];
             r.filters.forEach(f => {
                 let condition = false;
-                const _cpnt = this.search({ options: { fid: f.id } });
+                const _cpnt = this.search({ options: { db: true }, dataOptions: { _fieldValue: f.id } })[0];
 
                 if (_cpnt) {
                     const op = _cpnt.CPNT.fop[f.op];
@@ -245,8 +244,8 @@ export default class FormStore {
 
             show = conditions[r.type === 1 ? 'every' : "some"](i => i);
 
-            r.controlIds.forEach(fid => {
-                const _cpnt = this.search({ options: { fid } });
+            r.controlIds.forEach(_fieldValue => {
+                const _cpnt = this.search({ options: { db: true }, dataOptions: { _fieldValue } })[0];
                 if (_cpnt) {
                     Vue.set(_cpnt.data, 'showInRules', show)
                 }

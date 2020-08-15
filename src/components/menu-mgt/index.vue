@@ -33,7 +33,7 @@
             <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
             <view-set v-if="curTab==='view'" :data="viewData"></view-set>
             <div class="pso-menu-param" v-if="curTab==='param'" v-loading="saving||loadingInfo">
-              <el-form label-position="left" label-width="110px">
+              <el-form label-position="left" label-width="180px">
                 <template v-if="!params.hide">
                   <pso-title>基本参数</pso-title>
                   <el-form-item label="菜单名称">

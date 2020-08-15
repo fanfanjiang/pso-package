@@ -81,6 +81,7 @@ export default {
     } else {
       this.proxy.valList = [];
     }
+    this.dispatch("PsoformInterpreter", "cpnt-tag-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   },
   methods: {
     handleTagAdd(data) {

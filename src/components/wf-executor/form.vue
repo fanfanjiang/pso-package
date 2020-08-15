@@ -7,7 +7,7 @@
     :form-id="store.cfg.map_data_code"
     :data-id="instanceId"
     :data-default="store.defForm"
-    :editable="isFormWriteable" 
+    :editable="isFormWriteable"
     :copy-mode="store.copy"
   ></pso-form-interpreter>
 </template>
@@ -21,8 +21,8 @@ export default {
   props: {
     store: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   computed: {
     instanceId() {
@@ -30,7 +30,7 @@ export default {
     },
     isFormWriteable() {
       return this.store.curStep && this.store.curStep.atype === "form";
-    }
+    },
   },
   methods: {
     async handleFormDataLoaded(formStore) {
@@ -45,7 +45,7 @@ export default {
     },
     formChangeHandler(data) {
       this.store.setTableVal(data);
-    }
-  }
+    },
+  },
 };
 </script>

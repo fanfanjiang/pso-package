@@ -58,6 +58,8 @@ export default {
     } else {
       this.proxy.valList = [];
     }
+    //初始化时
+    this.dispatch("PsoformInterpreter", "cpnt-user-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   },
   methods: {
     async getUser(user_id) {

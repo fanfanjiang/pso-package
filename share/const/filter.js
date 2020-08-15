@@ -80,7 +80,7 @@ const FILTER_OP = {
         type: 'year',
         format: 'yyyy'
     },
-    op15: {
+    op15: { 
         id: 'op15',
         name: '在月范围内(仅筛选月份值)',
         op: [OP_TYPE.op4, OP_TYPE.op6],
@@ -88,6 +88,15 @@ const FILTER_OP = {
         type: 'monthrange',
         format: 'yyyy-MM-dd',
         vformat: 'MM'
+    },
+    op16: {
+        id: 'op16',
+        name: '在周范围内',
+        op: [OP_TYPE.op4, OP_TYPE.op6],
+        arraytype: true,
+        type: 'week',
+        format: 'yyyy 第 WW 周',
+        vformat: 'yyyy-MM-dd'
     }
 }
 
@@ -151,6 +160,7 @@ const FILTER_TYPE = {
             { ...FILTER_OP.op13, match: 6 },
             { ...FILTER_OP.op14, match: 6 },
             { ...FILTER_OP.op15, match: 6 },
+            { ...FILTER_OP.op16, match: 8 },
         ]
     },
     asstable: {

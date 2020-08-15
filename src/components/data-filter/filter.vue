@@ -84,6 +84,7 @@
             >{{o._optionName||o._optionValue}}</el-checkbox>
           </el-checkbox-group>
         </div>
+        <date-week v-else-if="pick.match===8" v-model="pick.data" :size="size"></date-week>
         <div v-else-if="pick.match===99">
           <el-form>
             <pso-form-component :force-show="true" :cpnt="cpnt" @value-change="valueChangeHandler"></pso-form-component>
@@ -100,9 +101,10 @@
 import { CPNT } from "../../const/form";
 import PsoFormComponent from "../form-interpreter/cpnt";
 import FormStore from "../form-designer/model/store.js";
+import DateWeek from "../date/date-week";
 
 export default {
-  components: { PsoFormComponent },
+  components: { PsoFormComponent, DateWeek },
   props: {
     pick: {
       type: Object,
@@ -174,7 +176,9 @@ export default {
     makeCpnt(fid) {
       //生成真实CPNT
       this.cpnt = this.store.search({ options: { fid } });
-      this.store.updateInstance({ [this.cpnt.data._fieldValue]: this.pick.data || "" });
+      this.store.updateInstance({
+        [this.cpnt.data._fieldValue]: (Array.isArray(this.pick.data) ? this.pick.data.join(",") : this.pick.data) || "",
+      });
       const { _fieldName, _fieldValue, componentid } = this.cpnt.data;
       this.cpnt.data._fieldName = "";
       this.cpnt.data._hideForever = false;

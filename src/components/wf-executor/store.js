@@ -301,6 +301,7 @@ export default class WfStore {
         //人员和部门
         if (cpnt.componentid === "user" || cpnt.componentid === "department") {
             const name = cpnt.componentid === "user" ? "user_name" : "node_name";
+            console.log(name);
             if (proxy && proxy.list.length) {
                 value = _.map(proxy.list, name).join(",");
             } else {

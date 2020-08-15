@@ -24,7 +24,7 @@
         <h4>选择显示字段</h4>
         <div class="rule-set">
           <div class="rule-set__display">
-            <el-select size="small" v-model="curRule.controlIds" multiple placeholder="选择显示字段">
+            <el-select size="mini" v-model="curRule.controlIds" multiple placeholder="选择显示字段">
               <el-option
                 v-for="f in fields"
                 :key="f._fieldValue"
@@ -40,7 +40,7 @@
               <div class="rule-set__filter-item-wrapper">
                 <div class="rule-set__filter-item__op">
                   <div class="rule-set__filter-item__op-title">{{f.name}}</div>
-                  <el-select size="small" v-model="f.op" placeholder="选择操作">
+                  <el-select size="mini" v-model="f.op" placeholder="选择操作">
                     <el-option
                       v-for="(f,index) in getOp(f.cid)"
                       :key="index"
@@ -54,7 +54,7 @@
                   ></i>
                 </div>
                 <div class="rule-set__filter-item__val" v-if="f.op||f.op===0">
-                  <el-input size="small" v-if="getMatch(f)===1" v-model="f.val" placeholder="请输入内容"></el-input>
+                  <el-input size="mini" v-if="getMatch(f)===1" v-model="f.val" placeholder="请输入内容"></el-input>
                   <el-form v-else>
                     <pso-form-component
                       :force-show="true"
@@ -65,7 +65,7 @@
                 </div>
               </div>
               <div class="rule-set__filter-item__type" v-if="curRule.filters.length-1!==index">
-                <el-select size="small" v-model="curRule.type">
+                <el-select size="mini" v-model="curRule.type">
                   <el-option v-for="rt in ruleType" :key="rt.n" :label="rt.n" :value="rt.v"></el-option>
                 </el-select>
               </div>
@@ -76,7 +76,7 @@
                 trigger="click"
                 @command="handleFilterAdd"
               >
-                <el-button class="el-dropdown-link" size="small" icon="el-icon-plus">添加筛选条件</el-button>
+                <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus">添加筛选条件</el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
                     v-for="(f,index) in avlFilter"
@@ -107,8 +107,8 @@ export default {
       curRule: null,
       ruleType: [
         { n: "且", v: 1 },
-        { n: "或", v: 2 }
-      ]
+        { n: "或", v: 2 },
+      ],
     };
   },
   created() {
@@ -127,12 +127,12 @@ export default {
     },
     usedFields() {
       let f = [];
-      this.rules.forEach(item => (f = f.concat(item.controlIds)));
+      this.rules.forEach((item) => (f = f.concat(item.controlIds)));
       return f;
     },
     avlFilter() {
-      return this.fields.filter(f => this.curRule.controlIds.indexOf(f._fieldValue) === -1);
-    }
+      return this.fields.filter((f) => this.curRule.controlIds.indexOf(f._fieldValue) === -1);
+    },
   },
   methods: {
     isFieldDisabled(id) {
@@ -140,7 +140,7 @@ export default {
     },
     ruleListClass(index) {
       return {
-        active: this.curRule ? this.curRule === this.rules[index] : false
+        active: this.curRule ? this.curRule === this.rules[index] : false,
       };
     },
     handleRuleClick(index) {
@@ -154,7 +154,7 @@ export default {
       this.rules.push({
         controlIds: [],
         filters: [],
-        type: this.ruleType[0].v
+        type: this.ruleType[0].v,
       });
       this.handleRuleClick(this.rules.length - 1);
     },
@@ -168,7 +168,7 @@ export default {
         name: _fieldName,
         cid: componentid,
         op: "",
-        val: ""
+        val: "",
       };
       filter.cpnt = this.makeCpnt(filter);
       this.curRule.filters.push(filter);
@@ -179,7 +179,7 @@ export default {
     makeCpnt(proxy, data) {
       this.$set(proxy, "store", new FormStore({ ...this.store.getBaseInfo(), designMode: false }));
       proxy.store.updateInstance(data);
-      const cpnt = proxy.store.search({ options: { fid: proxy.id } });
+      const cpnt = proxy.store.search({ options: { db: true }, dataOptions: { _fieldValue: proxy.id } })[0];
       cpnt.data._hideForever = false;
       cpnt.data._hideOnNew = false;
       delete cpnt.data._fieldName;
@@ -190,7 +190,7 @@ export default {
     },
     getMatch({ cid, op }) {
       return CPNT[cid].fop[op].match;
-    }
-  }
+    },
+  },
 };
 </script>

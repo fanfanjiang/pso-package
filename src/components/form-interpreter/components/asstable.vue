@@ -108,6 +108,7 @@
           :changable="false"
           :stageable="false"
           :params="formTableCfg"
+          :def-keys="devKeysCfg"
           @selection-confirm="handleAddSelection"
         ></pso-form-table>
       </el-dialog>
@@ -223,8 +224,14 @@ export default {
         return 4;
       }
     },
+    devKeysCfg() {
+      return this.authCfg.status && this.authCfg.status.length ? `d_status#${this.authCfg.status.join(",")}#4` : "";
+    },
     formTableCfg() {
-      return { searchType: this.authCfg.searchType, auth_config: this.authCfg.authCfg };
+      return {
+        searchType: this.authCfg.searchType,
+        auth_config: this.authCfg.authCfg,
+      };
     },
   },
   watch: {

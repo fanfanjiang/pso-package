@@ -37,10 +37,6 @@ export default {
       emitSilent: true,
     };
   },
-  created() {
-    this.cpnt.data._val = parseInt(this.cpnt.data._val || 0);
-    this.watchCpntVal(); 
-  },
   computed: {
     minNum() {
       return typeof this.cpnt.data._min === "undefined" ? this.min : this.cpnt.data._min;
@@ -52,6 +48,10 @@ export default {
       return typeof this.cpnt.data._decimalPlaces === "undefined" ? this.precision : this.cpnt.data._decimalPlaces;
     },
   },
+  created() {
+    this.cpnt.data._val = parseInt(this.cpnt.data._val || 0);
+    this.watchCpntVal();
+  }
 };
 </script>
 <style lang="less" scoped>

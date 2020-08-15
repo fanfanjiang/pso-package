@@ -85,6 +85,14 @@ export default class API {
         }
     }
 
+    static async getAllMenu(data) {
+        try {
+            return await this.request('/api/tree/menu-all', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async templates(params) {
         try {
             return await this.RESTful('/api/templates', Object.assign({ idField: 'tp_code' }, params));
@@ -337,10 +345,10 @@ export default class API {
         }
     }
 
-    static async getMenuTree() {
+    static async getMenuTree(cb) {
         try {
             const ret = await this.trees({ data: { dimen: 1 } });
-            return ret.data.tagtree.filter(node => node.is_leaf);
+            return ret.data.tagtree.filter(node => node.is_leaf && (cb ? cb(node) : 1));
         } catch (error) {
             throw error;
         }

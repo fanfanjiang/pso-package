@@ -85,11 +85,10 @@ export default {
     },
     fieldOptions() {
       return this.cpnt.store.search({
-        options: { componentid: "tag" },
+        options: { db: true },
         onlyData: true,
         beforePush: (item) => {
           if (item.fid === this.cpnt.fid) return false;
-          if (item.parent.CPNT.host_db) return false;
           return true;
         },
       });

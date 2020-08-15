@@ -17,15 +17,22 @@
       >取消所选数据</el-button>
     </template>
     <el-table
-      v-if="proxy.valList.length"
+      v-show="proxy.valList.length"
       border
       :data="proxy.valList"
       size="mini"
       style="width: 100%"
+      max-height="500"
       @selection-change="handleSelectionChange"
     >
       <template #default>
-        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column
+          v-if="storeEditable && !cpnt.data._read"
+          type="selection"
+          width="40"
+          header-align="center"
+          align="center"
+        ></el-table-column>
         <el-table-column
           resizable
           show-overflow-tooltip
@@ -166,7 +173,6 @@ export default {
       //获取数据
       this.cpnt.store.storeLoading = true;
       const ret = await this.API.getPscriptData({ script: this.cpnt.data._script, params: this.scriptParams });
-      // const ret = { success: true, data: [{ wb1: "3", sz1: 5 }] };
       this.cpnt.store.storeLoading = false;
       if (ret.success) {
         this.table = ret.data;
@@ -193,6 +199,7 @@ export default {
       }
     },
     handleSelectionChange(data) {
+      console.log(data);
       this.selected = data;
     },
   },

@@ -68,7 +68,7 @@ const FORM = [
   { field: "textGroup", value: "", picker: "picker-text", name: "文本组", saveType: "1", relateParam: "" },
   { field: "defKeys", value: "", picker: "input", name: "初始keys", saveType: "1", relateParam: "" },
   { field: "searchType", value: "", picker: "input", name: "搜索参数", relateParam: "", saveType: "1" },
-  { field: "useCloumn", value: "", picker: "picker-column", name: "列表配置", relateParam: "cfgId", saveType: "2" },
+  { field: "useCloumn", value: "", picker: "picker-column", name: "列表配置", relateParam: "cfgId", saveType: "1" },
   { field: "hideAuthTab", value: "", picker: "picker-yes", name: "权限视图切换", saveType: "1", relateParam: "" },
   { field: "hideStatusTab", value: "", picker: "picker-yes", name: "状态视图切换", saveType: "1", relateParam: "" },
   { field: "hideNewBtn", value: "", picker: "picker-yes", name: "隐藏新增按钮", saveType: "1", relateParam: "" },
@@ -76,6 +76,23 @@ const FORM = [
   { field: "hideCopyBtn", value: "", picker: "picker-yes", name: "隐藏复制按钮", saveType: "1", relateParam: "" },
   { field: "hideMoreBtn", value: "", picker: "picker-yes", name: "隐藏更多按钮", saveType: "1", relateParam: "" },
 ];
+
+const WORKFLOW = [
+  { field: "wfId", value: "", picker: "picker-wf", name: "流程", saveType: "1", relateParam: "" },
+  { field: "textGroup", value: "", picker: "picker-text", name: "文本", saveType: "1", relateParam: "" },
+  { field: "defKeys", value: "", picker: "input", name: "初始keys", saveType: "1", relateParam: "" },
+  { field: "searchType", value: "", picker: "input", name: "项目参数", relateParam: "", saveType: "1" },
+  { field: "useCloumn", value: "", picker: "picker-column", name: "列表配置", relateParam: "wfId", saveType: "1" },
+  { field: "hideAuthTab", value: "", picker: "picker-yes", name: "权限视图切换", saveType: "1", relateParam: "" },
+  { field: "hideStatusTab", value: "", picker: "picker-yes", name: "状态视图切换", saveType: "1", relateParam: "" },
+  { field: "hideNewBtn", value: "", picker: "picker-yes", name: "隐藏新增按钮", saveType: "1", relateParam: "" },
+  { field: "hideChangeBtn", value: "", picker: "picker-yes", name: "隐藏更改按钮", saveType: "1", relateParam: "" },
+  { field: "hideCopyBtn", value: "", picker: "picker-yes", name: "隐藏复制按钮", saveType: "1", relateParam: "" },
+  { field: "hideMoreBtn", value: "", picker: "picker-yes", name: "隐藏更多按钮", saveType: "1", relateParam: "" },
+  { field: "hideArchiveBtn", value: "", picker: "picker-yes", name: "隐藏归档按钮", saveType: "1", relateParam: "" },
+  { field: "hideBackBtn", value: "", picker: "picker-yes", name: "隐藏撤销按钮", saveType: "1", relateParam: "" },
+];
+
 export default {
   props: ["data"],
   data() {
@@ -101,14 +118,19 @@ export default {
       }
     },
     addFormParam() {
-      FORM.forEach((d) => { 
+      this.addParams(FORM);
+    },
+    addFlowParam() {
+      this.addParams(WORKFLOW);
+    },
+    addParams(source) {
+      source.forEach((d) => {
         const exist = _.find(this.data, { field: d.field });
         if (!exist) {
           this.data.splice(this.data.length, 0, { ...d });
         }
       });
     },
-    addFlowParam() {},
   },
 };
 </script>

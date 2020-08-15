@@ -1,7 +1,7 @@
 <template>
   <div v-if="!init">
     <div class="pso-table-controller">
-      <el-button size="small" type="primary" plain @click="$emit('save')">保存</el-button>
+      <el-button size="mini" type="primary" plain @click="$emit('save')">保存</el-button>
     </div>
     <div>
       <span>是否对外开放</span>
@@ -12,7 +12,7 @@
       <el-form ref="form" label-width="80px" label-position="left">
         <el-form-item label="LOGO">
           <pso-form-attach :cpnt="{data:data.attach}">
-            <el-button icon="el-icon-paperclip" plain size="small">上传LOGO</el-button>
+            <el-button icon="el-icon-paperclip" plain size="mini">上传LOGO</el-button>
           </pso-form-attach>
         </el-form-item>
         <el-form-item label="标题">
@@ -108,13 +108,13 @@ export default {
     return {
       qrsrc: "",
       selectedList: [],
-      init: true
+      init: true,
     };
   },
   watch: {
     "node.node_name"() {
       this.genQR();
-    }
+    },
   },
   computed: {
     host() {
@@ -122,13 +122,13 @@ export default {
     },
     fields() {
       return this.store.search({ options: { db: true }, onlyData: true });
-    }
+    },
   },
   async created() {
     this.init = true;
     this.qrsrc = await this.genQR();
     if (this.data.rules) {
-      this.data.rules.forEach(f => {
+      this.data.rules.forEach((f) => {
         f.cpnt = this.makeCpnt(f, { [f.id]: f.val });
       });
     }
@@ -144,7 +144,7 @@ export default {
         id: _fieldValue,
         name: _fieldName,
         cid: componentid,
-        val: ""
+        val: "",
       };
       filter.cpnt = this.makeCpnt(filter);
       this.data.rules.push(filter);
@@ -165,7 +165,7 @@ export default {
       proxy.val = value;
     },
     handleSelectionChange(val) {
-      this.selectedList = val.map(item => {
+      this.selectedList = val.map((item) => {
         return this.data.rules.indexOf(item) + 1;
       });
     },
@@ -176,7 +176,7 @@ export default {
     },
     async updateRule(rule) {
       rule.value = this.selectedList.join(",");
-    }
-  }
+    },
+  },
 };
 </script> 

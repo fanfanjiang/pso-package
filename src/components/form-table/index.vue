@@ -4,7 +4,7 @@
       <div class="pso-formTable__top">
         <div class="pso-formTable__title">
           <form-icon></form-icon>
-          <span>{{cfg.data_name}}</span>
+          <span>{{listTitle}}</span>
         </div>
         <div class="pso-formTable-view" v-if="viewAuths.length>1&&!params.hideAuthTab">
           <el-tabs v-model="activeView">
@@ -426,6 +426,10 @@ export default {
     bindUserpicker: Object,
     tableRowClick: Function,
     defLimit: Number,
+    titleText: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -505,6 +509,9 @@ export default {
     },
     showAllStatusBar() {
       return _.sumBy(this.statuses, (item) => parseInt(item.total)) > 0;
+    },
+    listTitle() {
+      return this.titleText || this.cfg.data_name;
     },
   },
   watch: {
@@ -759,10 +766,13 @@ export default {
       }
     },
     async getFormStatus() {
+      console.log(this.params);
+
       const params = {
         leaf_auth: this.activeView,
         data_code: this.cfg.data_code,
         keys: JSON.stringify({ ...this.defaultKeys }),
+        dict_type: this.usedFormCol,
       };
 
       this.appendSearchType(params);
@@ -786,7 +796,7 @@ export default {
         orderby: order ? `order by ${order}` : "",
         data_code: this.cfg.data_code,
         keys: { ...this.keys, ...this.defaultKeys },
-        column: this.usedFormCol,
+        dict_type: this.usedFormCol,
       };
 
       if (this.condition !== "【】") {
@@ -796,7 +806,7 @@ export default {
       if (this.keywords !== "" && !parameters.keys.d_name) {
         parameters.keys.d_name = { value: this.keywords, type: 2 };
       }
-
+      console.log(parameters.keys); 
       parameters.keys = JSON.stringify(parameters.keys);
 
       this.appendSearchType(parameters);

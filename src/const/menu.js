@@ -45,6 +45,14 @@ export const TP_CTL_TYPE = [
         v: 'picker-yes'
     },
     {
+        n: '统计字段选择器',
+        v: 'picker-stafield'
+    },
+    {
+        n: '统计脚本编辑器',
+        v: 'picker-staFormula'
+    },
+    {
         n: '文本',
         v: 'input'
     }

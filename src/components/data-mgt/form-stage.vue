@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="pso-table-controller">
-      <el-button size="small" @click="$emit('save')">保存</el-button>
-      <el-button size="small" type="primary" plain @click="addHandler">添加属性</el-button>
+      <el-button size="mini" @click="$emit('save')">保存</el-button>
+      <el-button size="mini" type="primary" plain @click="addHandler">添加属性</el-button>
     </div>
     <el-table key="status" :data="data" style="width: 100%">
       <el-table-column label="状态值" width="160">
         <template slot-scope="scope">
           <el-input-number
-            size="small"
+            size="mini"
             v-model="scope.row.value"
             controls-position="right"
             :min="0"
@@ -17,17 +17,17 @@
       </el-table-column>
       <el-table-column label="显示名称" width="120">
         <template slot-scope="scope">
-          <el-input size="small" v-model="scope.row.name" placeholder></el-input>
+          <el-input size="mini" v-model="scope.row.name" placeholder></el-input>
         </template>
       </el-table-column>
       <el-table-column label="显示颜色" align="center" width="100">
         <template slot-scope="scope">
-          <el-color-picker size="small" v-model="scope.row.color"></el-color-picker>
+          <el-color-picker size="mini" v-model="scope.row.color"></el-color-picker>
         </template>
       </el-table-column>
       <el-table-column label="显示方式" width="140">
         <template slot-scope="scope">
-          <el-select size="small" v-model="scope.row.display">
+          <el-select size="mini" v-model="scope.row.display">
             <el-option label="仅自身文字" value="1"></el-option>
             <el-option label="整行文字" value="2"></el-option>
             <el-option label="整行背景色" value="3"></el-option>
@@ -36,7 +36,7 @@
       </el-table-column>
       <el-table-column label="执行脚本" width="600">
         <template slot-scope="scope">
-          <el-input type="textarea" :row="8" size="small" v-model="scope.row.script" placeholder></el-input>
+          <el-input type="textarea" :row="8" size="mini" v-model="scope.row.script" placeholder></el-input>
         </template>
       </el-table-column>
       <el-table-column label="操作" fixed="right">

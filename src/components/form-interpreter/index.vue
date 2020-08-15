@@ -79,6 +79,15 @@ export default {
       this.broadcast("PsoformItem", "cpnt-value-changed", val);
       this.$emit("value-change", val);
     });
+    this.$on("cpnt-user-changed", (val) => {
+      this.$emit("value-change", val);
+    });
+    this.$on("cpnt-dept-changed", (val) => {
+      this.$emit("value-change", val);
+    });
+    this.$on("cpnt-tag-changed", (val) => {
+      this.$emit("value-change", val);
+    });
   },
   methods: {
     async getFormData() {
@@ -92,7 +101,10 @@ export default {
         if (this.dataDefault) {
           this.store.updateInstance(this.dataDefault);
         } else if (this.mockAsstables) {
+          this.store.updateInstance();
           this.store.mockAsstables = this.mockAsstables;
+        } else {
+          this.store.updateInstance();
         }
       }
       this.$emit("data-loaded", this.store);
@@ -134,7 +146,7 @@ export default {
 
       //主表数据
       const mainData = { optype: this.store.instance_id ? 1 : 0 };
-      
+
       mainData.leaf_id = this.store.instance_id || this.store.beInstanceId;
 
       //最终组合的数据
