@@ -175,10 +175,12 @@ a {
         cursor: auto !important;
     }
 }
- 
+
 .el-dropdown-menu {
-    max-height: 400px;
-    overflow-x: auto;
+    &.el-dropdown-menu--mini {
+        max-height: 400px;
+        overflow-y: scroll;
+    }
 }
 
 /* 表单只读模式 */

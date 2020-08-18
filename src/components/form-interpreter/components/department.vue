@@ -26,6 +26,7 @@
 <script>
 import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
+import { mapState } from "vuex";
 
 export default {
   mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type", idName: "node_id" }), cpntMixin],
@@ -38,6 +39,9 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapState(["base"]),
+  },
   watch: {
     "proxy.list"(val) {
       if (val && val.length) {
@@ -48,21 +52,27 @@ export default {
     },
   },
   async created() {
-    const orgTree = await this.API.getOrgTree();
+    this.loading = true;
+    const orgs = await this.API.getOrgTree();
     if (this.cpnt.data._val) {
-      this.loading = true;
-      const list = [];
-      for (let node_id of this.cpnt.data._val.split(",")) {
-        const node = _.find(orgTree, { node_id: parseInt(node_id) });
-        if (node) list.push(node);
-      }
-      this.handleAddSelection(list);
-      this.loading = false;
-    } else if (this.cpnt.data._defaultValType === "current") {
+      this.checkDept(orgs, this.cpnt.data._val.split(","));
+    } else if (this.cpnt.data._defaultValType === "current" && this.base.user && this.base.user.deptid) {
+      this.checkDept(orgs, [this.base.user.deptid]);
     } else {
       this.proxy.valList = [];
     }
+    this.loading = false;
     this.dispatch("PsoformInterpreter", "cpnt-dept-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
+  },
+  methods: {
+    checkDept(orgs, depts) {
+      const list = [];
+      for (let node_id of depts) {
+        const node = _.find(orgs, { node_id: parseInt(node_id) });
+        if (node) list.push(node);
+      }
+      this.handleAddSelection(list);
+    },
   },
 };
 </script>

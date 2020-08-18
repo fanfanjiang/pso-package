@@ -73,6 +73,7 @@ export default class WfStore {
         this.formImage = null;
         this.showUserOp = false;
         this.showBody = true;
+        this.showExtend = true;
 
         this.curUser = {};
 
@@ -267,21 +268,30 @@ export default class WfStore {
 
     setTableLogVal(data) {
         //替换主体审核日志部分
-        const groupData = _.groupBy(data, "step_code");
-        for (let key in groupData) {
-            const logWrapper = $('<div class="pso-wf-logs"></div>');
-
-            groupData[key].forEach(item => {
-                logWrapper.append(`<div class="pso-wf-logs__item">
-                                          <div>步骤：${item.step_name}</div>
-                                          <div>审核人：${item.op_user}</div>
-                                          <div>审核时间：${item.op_time}</div>
-                                          <div>审核结果：${item.op_result}</div>
-                                          <div>审核意见：${item.op_note}</div>
-                                       </div>`);
-            });
-
-            $("#executorMain").find(`[field=${key}]`).empty().append(logWrapper);
+        const group = _.groupBy(data, "step_code");
+        for (let key in group) {
+            const $el = $("#executorMain").find(`[field=${key}]`);
+            if (!$el.get(0)) continue;
+            const $wrapper = $('<div class="pso-wf-logs"></div>');
+            let format = $el.attr('format');
+            if (format) {
+                const data = group[key][group[key].length - 1];
+                format = format.replace(new RegExp(`#man#`, "g"), data.user_name);
+                format = format.replace(new RegExp(`#time#`, "g"), data.op_time);
+                format = format.replace(new RegExp(`#content#`, "g"), data.op_note);
+                $wrapper.html(format);
+            } else {
+                group[key].forEach(item => {
+                    $wrapper.append(`<div class="pso-wf-logs__item">
+                            <div>步骤：${item.step_name}</div>
+                            <div>审核人：${item.op_user}</div>
+                            <div>审核时间：${item.op_time}</div>
+                            <div>审核结果：${item.op_result}</div>
+                            <div>审核意见：${item.op_note}</div>
+                           </div>`);
+                });
+            }
+            $el.empty().append($wrapper);
         }
     }
 
@@ -294,14 +304,15 @@ export default class WfStore {
     }
 
     //设置主体部分的值
-    setTableVal({ cpnt, value, proxy }) {
+    setTableVal({ cpnt, value, proxy, fields }) {
         const { data } = cpnt;
         if (!data._fieldValue) return;
+        const $el = $("#executorMain").find(`[field=${data._fieldValue}]`);
+        if (!$el.get(0)) return;
 
         //人员和部门
         if (cpnt.componentid === "user" || cpnt.componentid === "department") {
-            const name = cpnt.componentid === "user" ? "user_name" : "node_name";
-            console.log(name);
+            const name = cpnt.componentid === "user" ? "user_name" : "node_display";
             if (proxy && proxy.list.length) {
                 value = _.map(proxy.list, name).join(",");
             } else {
@@ -319,7 +330,72 @@ export default class WfStore {
             }
         }
 
-        $("#executorMain").find(`[field=${data._fieldValue}]`).html(value);
+        $el.html(value);
+
+        //关联表
+        if (cpnt.componentid === "asstable" && proxy && fields) {
+            const display = $el.attr('display');
+            $el.empty();
+            if (display === 'script') {
+                const format = $el.attr('format');
+                if (format) {
+                    const fieldObj = {};
+                    const $wrapper = $('<div class="pso-script"></div>');
+                    try {
+                        proxy.valList.forEach(d => {
+                            let datasource = format;
+                            for (let k in d) {
+                                if (!fieldObj[k]) {
+                                    const f = _.find(fields, { field_name: k });
+                                    if (f) fieldObj[k] = f.fid;
+                                }
+                                datasource = datasource.replace(new RegExp(`@${fieldObj[k]}@`, "g"), d[k]);
+                            }
+                            $wrapper.append(`<div>${datasource}</div>`)
+                        })
+                        $el.append($wrapper)
+                    } catch (error) {
+                        console.log('解析主体关联表错误', error)
+                    }
+                }
+            } else {
+                const sequence = $el.attr('sequence');
+                $el.append(this.makeStaticTable(fields, proxy.valList, sequence === '1'));
+                const parentTd = $('.pso-static-table').parentsUntil('td');
+                if (parentTd.get(0)) {
+                    $('.pso-static-table').addClass('outer-border-none');
+                    parentTd.parent().css('padding', 0);
+                }
+            }
+        }
+
+    }
+
+    makeStaticTable(allFields, data, showIndex = false) {
+        const fields = allFields.filter((f) => f.show === "1" && f.using === '1');
+        const $wrapper = $(`<table class="pso-static-table"><colgroup></colgroup><thead><tr></tr></thead><tbody></tbody></table>`);
+        const $colgroup = $wrapper.find('colgroup');
+        const $ftr = $wrapper.find('thead>tr');
+        const $tbody = $wrapper.find('tbody');
+        if (showIndex) {
+            $colgroup.append(`<col width="40">`);
+            $ftr.append(`<th>项次</th>`);
+        }
+        for (let f of fields) {
+            $colgroup.append(f.width ? `<col width="${f.width}">` : `<col>`);
+            $ftr.append(`<th>${f.display}</th>`);
+        }
+        for (let i = 0; i < data.length; i++) {
+            const $tr = $('<tr></tr>');
+            if (showIndex) {
+                $tr.append(`<td>${i + 1}</td>`)
+            }
+            for (let f of fields) {
+                $tr.append(`<td>${data[i][f.field_name]}</td>`)
+            }
+            $tbody.append($tr);
+        }
+        return $wrapper;
     }
 
     cancelPickreject(cancel) {

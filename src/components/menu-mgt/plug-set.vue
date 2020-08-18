@@ -164,7 +164,7 @@ export default {
       fields: [],
       showDesigner: false,
       curSet: null,
-      cpnts: [],
+      cpnts: []
     };
   },
   async created() {

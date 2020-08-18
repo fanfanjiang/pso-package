@@ -16,6 +16,9 @@ export default {
             } else {
                 return true
             }
+        },
+        cpntEditable() {
+            return this.storeEditable && !this.cpnt.data._read;
         }
     },
     created() {
@@ -32,8 +35,8 @@ export default {
     methods: {
         watchCpntVal() {
             this.$watch('cpnt.data._val', (value) => {
-                this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy });
-                this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy });
+                this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields });
+                this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields });
                 if (this.cpnt.store) this.cpnt.store.setShowByRules(this.cpnt);
             })
         }

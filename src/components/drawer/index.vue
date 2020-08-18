@@ -111,6 +111,9 @@ export default {
     opened() {
       this.bodyBottom = $(this.$refs.footer).height();
       $(".pso-draw-wrapper").on("mousedown", this.checkClick);
+    },
+    closed(){
+      
     }
   }
 };

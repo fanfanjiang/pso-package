@@ -1,3 +1,5 @@
+const formulajs = require("@handsontable/formulajs");
+
 import './assets/theme/index.css';
 
 import Vuebar from 'vuebar';
@@ -21,6 +23,7 @@ import { genComponentData } from "./components/form-designer/helper";
 import PsoEmpty from "./components/empty";
 import PsoSkeleton from "./components/skeleton";
 import PsoDrawer from "./components/drawer";
+import PsoDialog from "./components/dialog";
 
 import PsoPickerTag from "./components/picker/pso-picker-tag";
 import PsoPickerDept from "./components/picker/pso-picker-dept";
@@ -109,7 +112,8 @@ const components = {
     PsoTagMgt,
     PsoKnowlMgt,
     PsoDataFilter,
-    PsoTagEditor
+    PsoTagEditor,
+    PsoDialog
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', selfUrl } = {}) {
@@ -145,6 +149,10 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
 if (typeof window !== 'undefined' && window.Vue) {
     install(window.Vue);
 }
+
+Object.keys(formulajs).forEach(key => {
+    window[key] = formulajs[key];
+});
 
 export { BASEAPI, store, WfStore, FormStore, genComponentData }
 

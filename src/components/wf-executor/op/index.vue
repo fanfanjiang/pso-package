@@ -40,7 +40,12 @@
         @confirm="reject"
       ></pso-wf-confirm>
     </div>
-    <el-dropdown @command="handleCommand" v-if="store.data.instanceId">
+    <el-dropdown
+      @command="handleCommand"
+      v-if="store.data.instanceId"
+      placement="top-end"
+      trigger="click"
+    >
       <el-button size="small">
         更多
         <i class="el-icon-more"></i>

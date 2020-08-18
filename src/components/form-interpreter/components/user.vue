@@ -23,6 +23,7 @@
 <script>
 import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
+import { mapState } from "vuex";
 
 export default {
   mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" }), cpntMixin],
@@ -35,6 +36,9 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapState(["base"]),
+  },
   watch: {
     "proxy.list"(val) {
       if (val && val.length) {
@@ -45,25 +49,29 @@ export default {
     },
   },
   async created() {
+    this.loading = true;
     if (this.cpnt.data._val) {
-      this.loading = true;
-      const list = [];
-      for (let uid of this.cpnt.data._val.split(",")) {
-        const userRet = await this.getUser(uid);
-        if (userRet && userRet.user_id) list.push(userRet);
-      }
-      this.handleAddSelection(list);
-      this.loading = false;
-    } else if (this.cpnt.data._defaultValType === "current") {
+      await this.checkUser(this.cpnt.data._val.split(","));
+    } else if (this.cpnt.data._defaultValType === "current" && this.base.user && this.base.user.user_id) {
+      await this.checkUser([this.base.user.user_id]);
     } else {
       this.proxy.valList = [];
     }
+    this.loading = false;
     //初始化时
     this.dispatch("PsoformInterpreter", "cpnt-user-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   },
   methods: {
     async getUser(user_id) {
       return await this.API.user({ data: { user_id }, method: "get" });
+    },
+    async checkUser(users) {
+      const list = [];
+      for (let uid of users) {
+        const userRet = await this.getUser(uid);
+        if (userRet && userRet.user_id) list.push(userRet);
+      }
+      this.handleAddSelection(list);
     },
   },
 };

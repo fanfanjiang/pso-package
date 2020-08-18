@@ -1,6 +1,6 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <template v-if="cpnt.data._type === '2'">
+    <template v-if="cpnt.data._type === '2'&&cpntEditable">
       <el-button
         type="primary"
         plain

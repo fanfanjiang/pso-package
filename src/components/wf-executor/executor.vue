@@ -2,28 +2,26 @@
   <div class="pso-wf-executor" :class="executorClass" v-loading="store.loading||store.steping">
     <transition name="el-zoom-in-top">
       <div class="pso-wf-executor__body" v-show="store.showBody">
-        <div class="pso-wf-executor__main" v-bar>
-          <div>
-            <div class="pso-wf-executor__main-header">
-              <pso-wf-overview :store="store"></pso-wf-overview>
-            </div>
-            <div class="pso-wf-executor__main-content-wrapper" id="executorMain">
-              <slot name="content" :store="store"></slot>
-              <div
-                v-if="!isMobile"
-                ref="wfTable"
-                class="pso-wf-executor__main-content"
-                v-html="store.cfg.wf_body_tp"
-              ></div>
-              <div
-                class="pso-wf-executor__stamp"
-                v-if="!loading"
-                v-html="stamp.stamp"
-                :style="stampStyle"
-              ></div>
-              <div class="pso-wf-executor__main-log">
-                <pso-wf-log :store="store"></pso-wf-log>
-              </div>
+        <div class="pso-wf-executor__main">
+          <div class="pso-wf-executor__main-header">
+            <pso-wf-overview :store="store"></pso-wf-overview>
+          </div>
+          <div class="pso-wf-executor__main-content-wrapper" id="executorMain">
+            <slot name="content" :store="store"></slot>
+            <div
+              v-if="!isMobile"
+              ref="wfTable"
+              class="pso-wf-executor__main-content"
+              v-html="store.cfg.wf_body_tp"
+            ></div>
+            <div
+              class="pso-wf-executor__stamp"
+              v-if="!loading"
+              v-html="stamp.stamp"
+              :style="stampStyle"
+            ></div>
+            <div class="pso-wf-executor__main-log">
+              <pso-wf-log :store="store"></pso-wf-log>
             </div>
           </div>
           <transition name="el-zoom-in-bottom">
@@ -41,6 +39,9 @@
       </div>
     </transition>
     <div class="pso-wf-executor__extend" :class="extendClass">
+      <div class="pso-wf-executor__switch" @click="store.showExtend=!store.showExtend">
+        <i :class="switchClass"></i>
+      </div>
       <div class="pso-wf-executor__extend-header">
         <el-tabs v-model="store.activeExtendTab">
           <el-tab-pane v-if="store.showBody" label="数据" name="data"></el-tab-pane>
@@ -91,6 +92,7 @@ export default {
     extendClass() {
       return {
         "pso-wf-executor__extend__expend": !this.store.showBody,
+        "pso-wf-executor__extend__zoom": !this.store.showExtend,
       };
     },
     executorClass() {
@@ -111,6 +113,12 @@ export default {
         "border-color": this.stamp.color,
       };
     },
+    switchClass() {
+      return {
+        "el-icon-d-arrow-right": this.store.showExtend,
+        "el-icon-d-arrow-left": !this.store.showExtend,
+      };
+    },
   },
   async created() {},
   methods: {
@@ -118,7 +126,7 @@ export default {
       await this.nextStep(op);
     },
     doPrint() {
-      this.print($("#executorMain")[0]);
+      this.print($("#executorMain").get(0));
     },
   },
 };

@@ -175,7 +175,7 @@
       </template>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="showDrill = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="save()">确 定</el-button>
+        <el-button size="mini" type="primary" @click="saveDrill()">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="设置查询参数" append-to-body :visible.sync="showParamsditor" :width="'600px'">
@@ -427,8 +427,14 @@ export default {
     drillDel(index) {
       this.curCol.drillParams.splice(index, 1);
     },
+    saveDrill() {
+      this.$emit("save");
+      this.showDrill = false;
+    },
     async drillChange(code) {
-      this.curCol.drillParams.forEach((d) => (d.t = ""));
+      if (this.curCol) {
+        this.curCol.drillParams.forEach((d) => (d.t = ""));
+      }
       if (this.tempCache[code]) {
         this.tempFields = this.tempCache[code];
       } else {

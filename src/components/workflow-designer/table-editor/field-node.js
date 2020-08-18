@@ -22,6 +22,12 @@ export default class FieldNode extends Node {
                 },
                 format: {
                     default: '',
+                },
+                display: {
+                    default: '',
+                },
+                sequence: {
+                    default: '0',
                 }
             },
             parseDOM: [{
@@ -31,6 +37,8 @@ export default class FieldNode extends Node {
                         field: dom.getAttribute('field'),
                         fieldtext: dom.getAttribute('fieldtext'),
                         format: dom.getAttribute('format'),
+                        display: dom.getAttribute('display'),
+                        sequence: dom.getAttribute('sequence'),
                     }
                 },
             }],
@@ -56,10 +64,16 @@ export default class FieldNode extends Node {
             watch: {
                 'node.attrs.format'(format) {
                     this.updateAttrs({ format })
+                },
+                'node.attrs.display'(display) {
+                    this.updateAttrs({ display })
+                },
+                'node.attrs.sequence'(sequence) {
+                    this.updateAttrs({ sequence })
                 }
             },
             template: `
-            <span :field="node.attrs.field" :fieldtext="node.attrs.fieldtext" :format="node.attrs.format" @click="nodeClick">{{node.attrs.fieldtext}}</span>
+            <span :field="node.attrs.field" :fieldtext="node.attrs.fieldtext" :sequence="node.attrs.sequence" :format="node.attrs.format" :display="node.attrs.display" @click="nodeClick">{{node.attrs.fieldtext}}</span>
           `,
             methods: {
                 nodeClick() {
@@ -71,10 +85,10 @@ export default class FieldNode extends Node {
 
     commands({ type, schema }) {
         return {
-            createField: ({ name, value, format }) => (
+            createField: ({ name, value, format, display, sequence }) => (
                 (state, dispatch) => {
                     const offset = state.tr.selection.anchor + 1
-                    const node = type.create({ field: value, fieldtext: name, format })
+                    const node = type.create({ field: value, fieldtext: name, format, display, sequence })
                     const tr = state.tr.replaceSelectionWith(node).scrollIntoView()
                     const resolvedPos = tr.doc.resolve(offset)
                     tr.setSelection(TextSelection.near(resolvedPos))

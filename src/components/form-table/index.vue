@@ -214,7 +214,7 @@
           ref="table"
           v-loading="loadingTable"
           style="width: 100%"
-          size="small"
+          :size="tableSize"
           border
           :highlight-current-row="radio"
           :data="formData"
@@ -429,6 +429,10 @@ export default {
     titleText: {
       type: String,
       default: "",
+    },
+    tableSize: {
+      type: String,
+      default: "small",
     },
   },
   data() {
@@ -806,7 +810,7 @@ export default {
       if (this.keywords !== "" && !parameters.keys.d_name) {
         parameters.keys.d_name = { value: this.keywords, type: 2 };
       }
-      console.log(parameters.keys); 
+      console.log(parameters.keys);
       parameters.keys = JSON.stringify(parameters.keys);
 
       this.appendSearchType(parameters);

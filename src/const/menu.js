@@ -53,6 +53,10 @@ export const TP_CTL_TYPE = [
         v: 'picker-staFormula'
     },
     {
+        n: '菜单选择器',
+        v: 'picker-menu'
+    },
+    {
         n: '文本',
         v: 'input'
     }

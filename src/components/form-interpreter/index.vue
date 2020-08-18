@@ -88,6 +88,9 @@ export default {
     this.$on("cpnt-tag-changed", (val) => {
       this.$emit("value-change", val);
     });
+    this.$on("asstable-initialized", (val) => {
+      this.$emit("value-change", val);
+    });
   },
   methods: {
     async getFormData() {

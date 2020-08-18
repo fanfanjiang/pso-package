@@ -5,7 +5,7 @@
     v-loading="initializing||loading"
   >
     <div class="pso-ip__ast" v-if="!initializing">
-      <div class="pso-ip__ast-btns" style="margin-bottom:5px" v-if="asseditable">
+      <div class="pso-ip__ast-btns" style="margin-bottom:5px" v-if="cpntEditable">
         <el-button
           v-if="cpnt.data._relate"
           type="primary"
@@ -33,7 +33,7 @@
       <div class="pso-form-asstable-table">
         <el-tag
           v-if="selectionType==='radio'&&proxy.valList.length"
-          :closable="asseditable"
+          :closable="cpntEditable"
           @close="handleDelList(proxy.valList)"
         >{{proxy.valList[0][`${cpnt.data._radioField}_x`]||proxy.valList[0][cpnt.data._radioField||'leaf_id']}}</el-tag>
         <el-table
@@ -50,7 +50,7 @@
         >
           <template #default>
             <el-table-column
-              v-if="asseditable"
+              v-if="cpntEditable"
               type="selection"
               width="40"
               header-align="center"
@@ -124,12 +124,12 @@
             :form-id="store.data_code"
             :data-id="dataId"
             :data-default="defForm"
-            :editable="asseditable"
+            :editable="cpntEditable"
             :mock-asstables="unsavedSelf"
           ></pso-form-interpreter>
         </div>
         <template v-slot:footer>
-          <div class="pso-drawer-footer__body" v-if="asseditable">
+          <div class="pso-drawer-footer__body" v-if="cpntEditable">
             <el-button
               v-if="dataId"
               type="danger"
@@ -180,6 +180,7 @@ export default {
   },
   data() {
     return {
+      emitSilent: true,
       initializing: true,
       loading: false,
       showTable: false,
@@ -202,9 +203,6 @@ export default {
     };
   },
   computed: {
-    asseditable() {
-      return this.storeEditable && !this.cpnt.data._read;
-    },
     selectionType() {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";
     },
@@ -263,22 +261,29 @@ export default {
         this.proxy.valList = [];
       }
     }
+    this.dispatch("PsoformInterpreter", "asstable-initialized", {
+      cpnt: this.cpnt,
+      data: this.cpnt.data._val,
+      proxy: this.proxy,
+      fields: this.fields,
+    });
   },
   methods: {
     async getFormCfg() {
       this.initializing = true;
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
       this.store = new FormStore(ret.data);
-
+      this.fields = [];
       if (ret.data.display_columns) {
-        this.fields = JSON.parse(ret.data.display_columns).column[0].data.filter((item) => {
-          if (this.cpnt.data._showFields) {
-            const exist = this.store.search({ options: { db: true }, dataOptions: { _fieldValue: item.field_name }, onlyData: true });
-            if (exist.length) {
-              return this.cpnt.data._showFields.split(",").indexOf(item.field_name) !== -1 && item.using === "1";
+        JSON.parse(ret.data.display_columns).column[0].data.forEach((item) => {
+          const exist = this.store.search({ options: { db: true }, dataOptions: { _fieldValue: item.field_name }, onlyData: true });
+          if (exist.length) {
+            item.fid = exist[0].fid;
+            if (this.cpnt.data._showFields) {
+              item.show = this.cpnt.data._showFields.split(",").indexOf(item.field_name) !== -1 && item.using;
             }
+            this.fields.push(item);
           }
-          return item.using === "1";
         });
       }
 
