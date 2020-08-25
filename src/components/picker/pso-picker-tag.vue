@@ -144,7 +144,6 @@ export default {
       if (this.treeOption) {
         const treeOption = this.treeOption.split(",");
         options.data_type = treeOption[0];
-        options.node_id = treeOption[1];
       }
       return options;
     },

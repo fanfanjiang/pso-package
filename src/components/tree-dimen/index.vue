@@ -1,7 +1,9 @@
 <template>
-  <div class="tree-dimen">
-    <div class="tree-dimen__controller">
-      <el-button @click="newDimen" size="small">新增维度</el-button>
+  <div class="tree-dimen" ref="treeDimen">
+    <div class="tree-dimen__controller" style="z-index:99999;position: relative;">
+      <affix :target="getTarget" :bottom="100">
+        <el-button @click="newDimen" size="small">新增维度</el-button>
+      </affix>
     </div>
     <el-table key="status" :data="data" style="width: 100%" :loading="loading" size="small">
       <el-table-column prop="tag_name" label="维度标签名"></el-table-column>
@@ -62,13 +64,15 @@
 </template>
 <script>
 import { DIMEN_TYPE } from "../../const/tree.js";
+import Affix from "../affix";
 export default {
+  components: { Affix },
   data() {
     return {
       data: [],
       where: {
         page: 1,
-        limit: 30
+        limit: 30,
       },
       dataTotal: 0,
       loading: false,
@@ -76,10 +80,10 @@ export default {
       curDimen: {
         tag_name: "",
         dimen_tag: "",
-        node_dimen: ""
+        node_dimen: "",
       },
       saveing: false,
-      DIMEN_TYPE: DIMEN_TYPE
+      DIMEN_TYPE: DIMEN_TYPE,
     };
   },
   watch: {
@@ -87,8 +91,8 @@ export default {
       deep: true,
       handler() {
         this.getData();
-      }
-    }
+      },
+    },
   },
   created() {
     this.getData();
@@ -110,7 +114,7 @@ export default {
       this.loading = true;
       const ret = await this.API.getTreeDimen({
         ...this.where,
-        page: this.where.page - 1
+        page: this.where.page - 1,
       });
       if (ret.success) {
         this.data = ret.data;
@@ -122,7 +126,7 @@ export default {
       this.saving = true;
       const ret = await this.API.updateTreeDimen({
         ...this.curDimen,
-        optype
+        optype,
       });
       this.saving = false;
       this.showEditor = false;
@@ -133,7 +137,7 @@ export default {
       this.curDimen = {
         tag_name: "",
         dimen_tag: "",
-        node_dimen: ""
+        node_dimen: "",
       };
       this.showEditor = true;
     },
@@ -150,7 +154,10 @@ export default {
     },
     getDname(v) {
       return _.find(DIMEN_TYPE, { v }).n;
-    }
-  }
+    },
+    getTarget() {
+      return this.$refs.treeDimen;
+    },
+  },
 };
 </script>

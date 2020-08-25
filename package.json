@@ -1,8 +1,8 @@
 {
   "name": "pbpm",
-  "version": "0.1.18",
+  "version": "0.1.24",
   "main": "src/index.js",
-  "scripts": { 
+  "scripts": {
     "serve": "vue-cli-service serve example/main.js",
     "build": "vue-cli-service build --target lib --name pbpm src/index.js",
     "build:exam": "vue-cli-service build example/main.js",
@@ -40,6 +40,7 @@
     "node-sass": "^4.13.0",
     "normalize.css": "^8.0.1",
     "qs": "^6.9.1",
+    "resize-observer-polyfill": "^1.5.1",
     "sass-loader": "^8.0.2",
     "shortid": "^2.2.15",
     "signature_pad": "^3.0.0-beta.3",

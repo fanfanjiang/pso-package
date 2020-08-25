@@ -15,9 +15,9 @@
       <el-select size="small" v-model="dataType" clearable>
         <el-option
           v-for="item in treeTypes"
-          :key="item.data_type"
-          :label="item.feildname"
-          :value="item.data_type"
+          :key="item.dimen_tag"
+          :label="item.tag_name"
+          :value="item.dimen_tag"
         ></el-option>
       </el-select>
     </el-form-item>
@@ -53,16 +53,16 @@ export default {
   props: ["cpnt"],
   mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" })],
   components: {
-    commonPanel
+    commonPanel,
   },
   data() {
     return {
       treeTypes: [],
       proxy: {
         list: [],
-        type: this.cpnt.data._type
+        type: this.cpnt.data._type,
       },
-      dataType: ""
+      dataType: "",
     };
   },
   computed: {
@@ -71,37 +71,37 @@ export default {
     },
     tagDisplayName() {
       return this.cpnt.data._source === "tree" ? "node_display" : "tag_name";
-    }
+    },
   },
   watch: {
     "proxy.list": {
       deep: true,
       handler(val) {
-        this.cpnt.data._defaultValue = val.map(item => item[this.tagIdName]).join(",");
-      }
+        this.cpnt.data._defaultValue = val.map((item) => item[this.tagIdName]).join(",");
+      },
     },
     "cpnt.data._type": {
       handler(val) {
         this.proxy.type = val;
-      }
+      },
     },
     dataType: {
       handler(val) {
         if (val) {
-          const option = _.find(this.treeTypes, { data_type: val });
+          const option = _.find(this.treeTypes, { dimen_tag: val });
           if (option) {
-            this.cpnt.data._treeOptions = `${val},${option.feildvalue}`;
+            this.cpnt.data._treeOptions = `${val},${option.dimen_tag}`;
           }
         } else {
           this.cpnt.data._treeOptions = "";
         }
-      }
-    }
+      },
+    },
   },
   async created() {
     this.handleSourceChange();
-    const ret = await this.API.getCommonType({ skey: "GetTagTypeBar" });
-    this.treeTypes = ret.data;
+    const ret = await this.API.getTreeDimen({ limit: 999999, page: 0 });
+    this.treeTypes = ret.data.filter((d) => d.node_dimen === 5);
     this.init();
   },
   methods: {
@@ -117,18 +117,18 @@ export default {
       if (this.cpnt.data._source === "tree") {
         ret = await this.API.trees({ data: { dimen: 5 } });
         idName = "node_id";
-        defaultVal = defaultVal.map(val => parseInt(val));
+        defaultVal = defaultVal.map((val) => parseInt(val));
       } else {
         ret = await this.API.tag({ data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } });
         idName = "tag_no";
       }
-      ret.data.forEach(item => {
+      ret.data.forEach((item) => {
         if (defaultVal.indexOf(item[idName]) !== -1) this.proxy.list.push(item);
       });
     },
     handleSourceChange() {
       this.resetPicker({ idName: this.tagIdName });
-    }
-  }
+    },
+  },
 };
 </script>

@@ -98,8 +98,7 @@
         <pso-form-table
           :cfgId="cpnt.data._option"
           checkbox
-          :deletable="deletable"
-          :operate="deletable"
+          :deletable="false"
           :selection-type="selectionType"
           :view-auth="formTableViewAuth"
           :addable="false"
@@ -180,7 +179,6 @@ export default {
   },
   data() {
     return {
-      emitSilent: true,
       initializing: true,
       loading: false,
       showTable: false,
@@ -200,6 +198,7 @@ export default {
       defForm: null,
       unsavedSelf: null,
       subAsstables: [],
+      addDataCallback: null,
     };
   },
   computed: {
@@ -223,7 +222,27 @@ export default {
       }
     },
     devKeysCfg() {
-      return this.authCfg.status && this.authCfg.status.length ? `d_status#${this.authCfg.status.join(",")}#4` : "";
+      const params = [];
+      if (this.authCfg.status && this.authCfg.status.length) {
+        params.push(`d_status#${this.authCfg.status.join(",")}#4`);
+      }
+      if (this.cpnt.data._filter) {
+        this.cpnt.data._filter.forEach((f) => {
+          if (f.value || f.sid) {
+            let value = f.value;
+            if (f.sid) {
+              const source = this.cpnt.store.searchByField(f.sid);
+              if (source && source.data._val) {
+                value = source.data._val;
+              }
+            }
+            if (value) {
+              params.push(`${f.tid}#${value}#${f.op}`);
+            }
+          }
+        });
+      }
+      return params.join(";");
     },
     formTableCfg() {
       return {
@@ -241,6 +260,11 @@ export default {
       handler(val) {
         this.proxy._type = val;
       },
+    },
+    showFormViewer(val) {
+      if (!val) {
+        this.defForm = null;
+      }
     },
   },
   async created() {
@@ -352,8 +376,14 @@ export default {
     handleSelect() {
       this.showTable = true;
     },
-    handleClickAdd() {
+    handleClickAdd(callback) {
       this.dataId = "";
+
+      if (typeof callback === "function") {
+        this.addDataCallback = callback;
+      } else {
+        this.addDataCallback = null;
+      }
 
       if (this.subAsstables.length) {
         if (!this.cpnt.store.instance_id) {
@@ -384,6 +414,8 @@ export default {
             this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
           } else {
             data = await this.getFormData(ret.data.data);
+            //新增数据回调
+            this.addDataCallback && this.addDataCallback(data);
           }
           this.handleAddSelection([data]);
         }
@@ -406,6 +438,10 @@ export default {
       }
       this.deletingFrom = false;
       this.showFormViewer = false;
+    },
+    setDefForm(data) {
+      this.defForm = data;
+      console.log(this.defForm);
     },
   },
 };

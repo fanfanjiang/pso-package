@@ -34,18 +34,13 @@
       <el-form-item v-if="cpnt.data._type===1" label="选择单选显示字段" v-loading="loading">
         <el-select size="mini" v-model="cpnt.data._radioField" placeholder="请选择">
           <el-option
-            v-for="item in cpnt.cache.fieldOptions" 
+            v-for="item in cpnt.cache.fieldOptions"
             :key="item._fieldValue"
             :label="item._fieldName"
             :value="item._fieldValue"
           ></el-option>
         </el-select>
       </el-form-item>
-      <form-asstable
-        :key="cpnt.fid"
-        v-if="cpnt.cache.defaultEl._option"
-        :cpnt="{data:cpnt.cache.defaultEl}"
-      ></form-asstable>
       <el-form-item label="设置">
         <div class="act-panel_check">
           <el-checkbox v-model="cpnt.data._new" :true-label="true" :false-label="false">允许新增关联数据</el-checkbox>
@@ -62,25 +57,40 @@
           </el-tooltip>
         </div>
       </el-form-item>
+      <el-button
+        v-if="cpnt.data._relate" 
+        icon="el-icon-plus"
+        plain
+        size="mini"
+        @click="showDialog=true"
+      >筛选</el-button>
     </common-panel>
+    <el-dialog title="设置筛选条件" append-to-body :visible.sync="showDialog" width="30%">
+      <dynamic-filter
+        :targets="cpnt.cache.fieldOptions"
+        :sources="selfCpnts"
+        v-model="cpnt.data._filter"
+      ></dynamic-filter>
+    </el-dialog>
   </div>
 </template>
 <script>
 import commonPanel from "../common/common-panel";
-import FormAsstable from "../../form-interpreter/components/asstable";
 import { genComponentData } from "../helper";
 import FormStore from "../../form-designer/model/store.js";
+import DynamicFilter from "../../dynamic-filter";
 
 export default {
   props: ["cpnt"],
   components: {
     commonPanel,
-    FormAsstable,
+    DynamicFilter,
   },
   data() {
     return {
       options: [],
       loading: false,
+      showDialog: false,
     };
   },
   computed: {
@@ -91,6 +101,9 @@ export default {
       set(val) {
         this.cpnt.data._showFields = val.join(",");
       },
+    },
+    selfCpnts() {
+      return this.cpnt.store.search({ options: { db: true }, onlyData: true });
     },
   },
   watch: {

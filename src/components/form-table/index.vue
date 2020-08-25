@@ -400,6 +400,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    autoChange: {
+      type: Boolean,
+      default: true,
+    },
     stageable: {
       type: Boolean,
       default: true,
@@ -517,6 +521,9 @@ export default {
     listTitle() {
       return this.titleText || this.cfg.data_name;
     },
+    selectedIds() {
+      return this.selectedList.map((item) => item.leaf_id);
+    },
   },
   watch: {
     showKeywords(val) {
@@ -563,6 +570,13 @@ export default {
     await this.getFormCfg();
   },
   methods: {
+    setSelectedTableManually(row) {
+      // 手动设置选中行
+      if (this.$refs.table) {
+        this.$refs.table.clearSelection();
+        this.$refs.table.toggleRowSelection(row, true);
+      }
+    },
     handleKeywordsBlur() {
       if (this.keywords === "") {
         this.showKeywords = false;
@@ -584,14 +598,21 @@ export default {
         return this.$message("请先选择要更改的数据");
       }
 
-      const ret = await this.API.updateFormStatus({
-        data_code: this.cfg.data_code,
-        d_status: status.value,
-        leafids: this.selectedList.map((item) => item.leaf_id).join(","),
-      });
+      const handler = async () => {
+        const ret = await this.API.updateFormStatus({
+          data_code: this.cfg.data_code,
+          d_status: status.value,
+          leafids: this.selectedList.map((item) => item.leaf_id).join(","),
+        });
 
-      this.ResultNotify(ret);
-      this.getFormStatus();
+        this.ResultNotify(ret);
+        this.getFormStatus();
+      };
+
+      this.$emit("status-change", { handler, data: this.selectedList });
+      if (this.autoChange) {
+        handler();
+      }
     },
     async handleStageChange(data) {
       if (!this.selectedList.length) {
@@ -642,7 +663,7 @@ export default {
 
       this.store = new FormStore(ret.data);
       this.cfg = Object.assign({}, this.cfg, ret.data);
-      this.formCode = this.store.data_name;
+      this.formCode = this.store.data_code;
 
       this.conditionOptions = this.store.search({
         options: { db: true },
@@ -770,8 +791,6 @@ export default {
       }
     },
     async getFormStatus() {
-      console.log(this.params);
-
       const params = {
         leaf_auth: this.activeView,
         data_code: this.cfg.data_code,
@@ -780,7 +799,7 @@ export default {
       };
 
       this.appendSearchType(params);
-
+      console.log(params);
       const ret = await this.API.getFormStatus(params);
 
       //状态设置
@@ -891,7 +910,7 @@ export default {
     savedForm(ret, msgObj) {
       this.showFormViewer = false;
       this.saving = false;
-      this.$notify(ret);
+      this.ResultNotify(ret);
       this.getFormStatus();
       this.$emit("data-changed", msgObj);
     },
@@ -923,6 +942,27 @@ export default {
       } else {
         this.$emit("submit", { leaf_id: this.dataId, formData });
       }
+    },
+    async batchFormUpdates(data, idList) {
+      idList = idList || this.selectedIds;
+      if (!idList.length) return;
+      this.startSave();
+      let ret;
+      for (let id of idList) {
+        ret = await this.API.form({
+          data: {
+            leaf_id: id,
+            formData: {
+              data_name: this.store.data_name,
+              node_id: this.store.node_id,
+              data_code: this.store.data_code,
+              dataArr: [{ leaf_id: id, optype: 1, ...data }],
+            },
+          },
+          method: "put",
+        });
+      }
+      this.savedForm(ret, { idList: idList, op: 2 });
     },
     export() {
       const dom = $(".pso-formTable").find("#pso-formTable-table");

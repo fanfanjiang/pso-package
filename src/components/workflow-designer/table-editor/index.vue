@@ -149,9 +149,6 @@ import { genComponentData } from "../../form-designer/helper/index.js";
 import { WF_FIND_NODE } from "../../../store/mutation-types";
 import { REVIEW_LOG_FORMAT } from "../../../const/workflow";
 
-import { codemirror } from "vue-codemirror";
-import "codemirror/lib/codemirror.css";
-
 import { Editor, EditorContent, EditorFloatingMenu, EditorMenuBar } from "tiptap";
 import {
   Blockquote,
@@ -185,7 +182,7 @@ import FormulaDesigner from "../../form-designer/formula-designer";
 import { formOp } from "../../form-designer/mixin";
 
 export default {
-  components: { EditorMenuItem, EditorContent, EditorMenuBar, EditorFloatingMenu, codemirror, FormulaDesigner },
+  components: { EditorMenuItem, EditorContent, EditorMenuBar, EditorFloatingMenu, FormulaDesigner },
   componentName: "PsoWfEditorTable",
   mixins: [formOp],
   data() {

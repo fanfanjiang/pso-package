@@ -17,7 +17,7 @@
                 <span class="pso-upload__list-panel__item" @click="goShowViewer({index,file})">
                   <i class="el-icon-zoom-in"></i>
                 </span>
-                <span class="pso-upload__list-panel__item" @click="$emit('download',file)">
+                <span class="pso-upload__list-panel__item" @click="download(file)">
                   <i class="el-icon-download"></i>
                 </span>
                 <span class="pso-upload__list-panel__item" @click="$emit('delete',file)">
@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       showViewer: false,
-      fIndex: 0
+      fIndex: 0,
     };
   },
   methods: {
@@ -50,8 +50,17 @@ export default {
       this.fIndex = params.index;
       this.showViewer = true;
       this.$emit("check", params);
-    }
-  }
+    },
+    download(file) { 
+      const eleLink = document.createElement("a");
+      eleLink.href = file.url;   
+      eleLink.download = file.filename;
+      eleLink.style.display = 'none';
+      document.body.appendChild(eleLink);
+      eleLink.click();
+      document.body.removeChild(eleLink);
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

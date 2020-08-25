@@ -1,4 +1,5 @@
 const formulajs = require("@handsontable/formulajs");
+import debounce from "throttle-debounce/debounce";
 
 import './assets/theme/index.css';
 
@@ -116,10 +117,15 @@ const components = {
     PsoDialog
 }
 
+
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', selfUrl } = {}) {
     Object.keys(components).map(key => {
         Vue.component(key, components[key]);
     })
+
+    if (window.VueCodemirror) {
+        Vue.use(window.VueCodemirror);
+    }
 
     Vue.use(Vuebar);
     Vue.use(TextField);
@@ -140,9 +146,9 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
 
     Vue.prototype.DEFAULT_APP_ID = defaultAppId;
 
-    Vue.prototype.ResultNotify = function (ret, message) {
+    Vue.prototype.ResultNotify = debounce(500, function (ret, message) {
         this.$notify({ title: ret.success ? "成功" : '失败', message: message || ret.message, type: ret.success ? "success" : 'warning' });
-    };
+    });
 };
 
 // auto install

@@ -1,5 +1,5 @@
 import shortid from "shortid";
-import { html, js, css } from "js-beautify";
+// import { html, js, css } from "js-beautify";  
 
 function genId() {
     return `<${shortid.generate()}>`;
@@ -20,7 +20,8 @@ class VueMaker {
                 if (item.children) toHtml(item.children, subSolt);
             }
         })(this._data.children, parentSolt);
-        return html(parent, { indent_size: 2, space_in_empty_paren: true });
+        // return html(parent, { indent_size: 2, space_in_empty_paren: true });
+        return parent;
     }
 
     getJs() {
@@ -33,12 +34,14 @@ class VueMaker {
             mounted() {},
             methods: {}
           };`
-        return js(jsCode, { indent_size: 2, space_in_empty_paren: true });
+        // return js(jsCode, { indent_size: 2, space_in_empty_paren: true });
+        return jsCode;
     }
 
     getCss() {
         const cssCode = ``;
-        return css(cssCode, { indent_size: 2, space_in_empty_paren: true });
+        // return css(cssCode, { indent_size: 2, space_in_empty_paren: true });
+        return cssCode
     }
 
     static register(cls) {

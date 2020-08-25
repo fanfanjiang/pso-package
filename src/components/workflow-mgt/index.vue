@@ -36,7 +36,7 @@
             </el-tabs>
           </div>
           <div class="pso-page-body__tabbody">
-            <template v-if="!!curNode.is_leaf">
+            <template v-if="!!curNode.is_leaf&&!loading">
               <div class="pso-page-wf__stage" v-if="curTab==='preview'">
                 <pso-wf-stage :workflow-data="wfImage" read-mode v-if="wfImage"></pso-wf-stage>
               </div>
@@ -74,54 +74,54 @@ const _DATA = {
     {
       tagType: "通过",
       showTag: false,
-      tagVal: ["通过", "同意", "没问题"]
+      tagVal: ["通过", "同意", "没问题"],
     },
     {
       tagType: "退回",
       showTag: false,
-      tagVal: ["不同意", "请完善"]
-    }
+      tagVal: ["不同意", "请完善"],
+    },
   ],
   textData: [
     {
       type: "提交按钮",
       value: "提交",
       id: "submit",
-      show: true
+      show: true,
     },
     {
       type: "下一步按钮",
       value: "通过",
       id: "next",
-      show: true
+      show: true,
     },
     {
       type: "文件编号",
       value: "文件编号",
       id: "file",
-      show: false
+      show: false,
     },
     {
       type: "重要等级",
       value: "重要等级",
       id: "import",
-      show: false
+      show: false,
     },
     {
       type: "秘密等级",
       value: "秘密等级",
       id: "secret",
-      show: false
+      show: false,
     },
     {
       type: "加急程度",
       value: "加急程度",
       id: "urgent",
-      show: false
-    }
+      show: false,
+    },
   ],
   subWfData: [],
-  script: []
+  script: [],
 };
 
 export default {
@@ -131,8 +131,8 @@ export default {
       type: Object,
       default: () => {
         data_type: "";
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -145,9 +145,9 @@ export default {
         { n: "更改", v: 2 },
         { n: "导出", v: 4 },
         { n: "撤销", v: 8 },
-        { n: "归档", v: 16 }
+        { n: "归档", v: 16 },
       ],
-      ..._DATA
+      ..._DATA,
     };
   },
   computed: {
@@ -155,17 +155,17 @@ export default {
     treeOptions() {
       return {
         dimen: 7,
-        data_type: this.params.data_type
+        data_type: this.params.data_type,
       };
     },
     defaultNodeData() {
       return {
-        node_dimen: 7
+        node_dimen: 7,
       };
     },
     wfImage() {
       return this.wfCfg.wf_map_tp;
-    }
+    },
   },
   destroyed() {
     this.$store.commit(WF_RESET);
@@ -196,7 +196,7 @@ export default {
         if (cfg.wf_list_column) {
           const text = JSON.parse(cfg.wf_list_column);
           const tempText = [];
-          _DATA.textData.forEach(item => {
+          _DATA.textData.forEach((item) => {
             const exist = _.find(text, { id: item.id }) || item;
             tempText.push({ ...item, ...exist });
           });
@@ -245,13 +245,13 @@ export default {
 
       if (this.wfDesigner.formStore) {
         const subWfs = this.wfDesigner.formStore.search({ options: { componentid: "asstable" }, onlyData: true });
-        subWfs.forEach(item => {
+        subWfs.forEach((item) => {
           const isExist = _.find(this.subWfData, { subCode: item._option });
           if (!isExist) {
             this.subWfData.push({
               subForm: item._fieldName,
               subCode: item._option,
-              subWf: ""
+              subWf: "",
             });
           }
         });
@@ -266,13 +266,13 @@ export default {
           wf_list_column: JSON.stringify(this.textData),
           wf_auth_tag: JSON.stringify(this.tagData),
           wf_leaf_setting: JSON.stringify(this.subWfData),
-          wf_sql_setting: JSON.stringify(this.script)
+          wf_sql_setting: JSON.stringify(this.script),
         },
-        method: "put"
+        method: "put",
       });
       this.ResultNotify(ret);
       this.loading = false;
-    }
-  }
+    },
+  },
 };
 </script>

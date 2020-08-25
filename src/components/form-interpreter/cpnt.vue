@@ -19,7 +19,7 @@
 <script>
 const componentsMap = {};
 const requireComponent = require.context("./components", true);
-requireComponent.keys().forEach(fileName => {
+requireComponent.keys().forEach((fileName) => {
   const componentConfig = requireComponent(fileName);
   const componentName = _.upperFirst(
     _.camelCase(
@@ -39,7 +39,7 @@ export default {
   computed: {
     currentCpnt() {
       return `pso-form-${this.cpnt.componentid}`;
-    }
+    },
   },
   methods: {
     displayable(cpnt) {
@@ -58,9 +58,8 @@ export default {
       if (!_.isNull(cpnt.data.__auth__)) {
         showInAuth = (cpnt.data.__auth__ & 8) === 8;
       }
-
       return show && showInRules && showInAuth;
-    }
-  }
+    },
+  },
 };
 </script>

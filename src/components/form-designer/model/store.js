@@ -9,6 +9,7 @@ export default class FormStore {
 
         this.currentCpnt = null;
         this.cpntsMap = {};
+        this.cpntsFieldMap = {};
         this.permissionEntries = [];
         this.redoList = [];
         this.undoList = [];
@@ -162,6 +163,16 @@ export default class FormStore {
         this.data_config = data;
         this.root.data.children = data;
         this.root.updateChildren();
+    }
+
+    searchByField(fieldValue) {
+        //仅仅方便在使用表单的时候查询
+        if (_.isEmpty(this.cpntsFieldMap)) {
+            this._forEach(cpnt => {
+                this.cpntsFieldMap[cpnt.data.fieldValue] = cpnt;
+            })
+        }
+        return this.cpntsFieldMap[fieldValue];
     }
 
     search({ options, dataOptions, beforePush, onlyData = false, opType = 'and', onlyMain = false }) {

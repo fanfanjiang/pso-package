@@ -79,18 +79,10 @@
 <script>
 import { FORMULA, FORMULA_LIST } from "../../const/formula";
 import { CPNT } from "../../const/form";
-import { codemirror } from "vue-codemirror";
-import CodeMirror from "codemirror/lib/codemirror.js";
-import "codemirror/lib/codemirror.css";
-import "codemirror/addon/edit/matchbrackets";
-import "codemirror/addon/hint/show-hint.js";
-import "codemirror/addon/hint/show-hint.css";
 const FORMULA_KEY = Object.keys(FORMULA);
-const formulajs = require("@handsontable/formulajs");
 import dayjs from "dayjs";
 
 export default {
-  components: { codemirror },
   props: {
     cpnts: Array,
     value: String,
@@ -127,9 +119,6 @@ export default {
     },
   },
   created() {
-    Object.keys(formulajs).forEach((key) => {
-      window[key] = formulajs[key];
-    });
     if (!this.formulable) {
       this.activeTab = "field";
     }

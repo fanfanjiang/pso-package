@@ -312,20 +312,6 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             },
             async deleteNode(data) {
                 return this.moveToTrash(data);
-                const { node_id, children, node_dimen, data_code, node_name } = data;
-                if (typeof node_id === "undefined") return;
-                if (children && children.length) return this.$message({ message: "此节点有子节点，不能删除", type: "warning" });
-
-                this.loading = true;
-                const subData = { node_id, node_dimen, data_code, node_name, code: node_name };
-                this.$emit("before-node-delete-submit", { subData, data });
-                const ret = await this.API.trees({ data: subData, method: "delete" });
-                this.loading = false;
-
-                if (!ret.success) return;
-                this.$refs[treeRef].remove(node_id);
-                this.$notify({ title: "成功", message: "成功删除", type: "success" });
-                this.$emit("after-node-delete", data);
             },
             async editNode() {
 

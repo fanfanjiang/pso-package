@@ -7,7 +7,7 @@ export default function (ref, title = 'pdf') {
         allowTaint: true,
         dpi: '300',
         scale: '2',
-        taintTest: false,
+        taintTest: false, 
         background: '#fff'
     }).then(function (canvas) {
         let contentWidth = canvas.width;
@@ -19,11 +19,6 @@ export default function (ref, title = 'pdf') {
         let imgHeight = 592.28 / contentWidth * contentHeight;
         let pageData = canvas.toDataURL('image/jpeg', 1.0);
         let PDF = new jsPDF('', 'pt', 'a4');
-        console.log(contentWidth);
-        console.log(contentHeight);
-        console.log(pageHeight);
-        console.log(leftHeight);
-        console.log(imgHeight);
         if (leftHeight < pageHeight) {
             PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
         } else {
