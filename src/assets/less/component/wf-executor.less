@@ -67,6 +67,15 @@
 
             .pso-wf-executor__main-content-wrapper {
                 position: relative;
+                .richEditor();
+
+                table {
+
+                    td,
+                    th {
+                        border: 1px solid #666;
+                    }
+                }
 
                 .pso-wf-executor__stamp {
                     position: absolute;
@@ -106,15 +115,7 @@
 
             .pso-wf-executor__main-content {
                 padding: 10px 15px;
-                .richEditor();
 
-                table {
-
-                    td,
-                    th {
-                        border: 1px solid #666;
-                    }
-                }
             }
 
             .pso-wf-executor__main-log {
@@ -373,6 +374,14 @@
 }
 
 .pso-static-table {
+    font-size: 14px;
+
+    &+.pso-static-table {
+        th {
+            border-top: none !important;
+        }
+    }
+
     &.outer-border-none {
         th {
             border-top: none !important;
@@ -396,5 +405,9 @@
                 border-bottom: none !important;
             }
         }
+    }
+
+    th {
+        text-align: center !important;
     }
 }

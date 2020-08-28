@@ -30,37 +30,29 @@ export const common = {
     }
 };
 
-export const FormulaMixin = {
+export const FieldsMixin = {
     computed: {
-        numOptions() {
-            const mainCpnts = this.cpnt.store.search({
-                options: { db: true },
-                onlyData: true,
-                beforePush: (item) => {
-                    if (item.fid === this.cpnt.fid) return false;
-                    if (item.parent.CPNT.host_db) return false;
-                    if (item.CPNT.componentid === this.cpnt.CPNT.componentid) return false;
-                    return true;
-                },
-            });
-            const asstables = this.cpnt.store.search({
-                options: { componentid: "asstable" },
-                beforePush: (item) => {
-                    if (!item.data._option) return false;
-                    return true;
-                },
-            });
-            let astFields = [];
+        fieldsCollection() {
+            const mainCpnts = this.cpnt.store.search({ options: { db: true }, onlyData: true, beforePush: (item) => item.fid !== this.cpnt.fid });
+            const asstables = this.cpnt.store.search({ options: { componentid: "asstable" }, beforePush: (item) => item.data._option });
+            const astFields = [];
             asstables.forEach((ast) => {
                 if (ast.cache.fieldOptions) {
                     const fields = _.cloneDeep(ast.cache.fieldOptions);
-                    fields.forEach(f => {
-                        f.fid = `${ast.data._option}_${f.fid}`
-                    })
-                    astFields = astFields.concat(fields);
+                    fields.forEach(f => { f.fid = `${ast.data._option}_${f.fid}` });
+                    astFields.push({ n: `关联表${ast.data._fieldName}`, v: fields })
                 }
             });
-            return mainCpnts.concat(astFields);
+            return [{ n: '当前表', v: mainCpnts }].concat(astFields);
+        }
+    }
+};
+
+export const FormulaMixin = {
+    mixins: [FieldsMixin],
+    computed: {
+        numOptions() {
+            return _.flatten(_.map(this.fieldsCollection, 'v'));
         }
     }
 };

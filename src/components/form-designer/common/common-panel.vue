@@ -8,7 +8,7 @@
       <el-form-item v-if="needPlaceholder" label="引导文字">
         <el-input size="mini" v-model="cpnt.data._placeholder" clearable></el-input>
       </el-form-item>
-      <el-form-item label="字段长度"> 
+      <el-form-item label="字段长度">
         <el-input-number
           size="mini"
           v-model="cpnt.data._fieldLen"
@@ -34,6 +34,18 @@
       </el-form-item>
       <el-form-item v-if="needDefaultValue" :label="defalutValueLabel">
         <el-input size="mini" v-model="cpnt.data._defaultValue" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="动态默认值">
+        <el-select size="mini" v-model="cpnt.data._association" filterable clearable>
+          <el-option-group v-for="(g,index) in fieldsCollection" :key="index" :label="g.n">
+            <el-option
+              v-for="opt in g.v"
+              :key="opt.fid"
+              :label="opt._fieldName"
+              :value="opt.fid"
+            ></el-option>
+          </el-option-group>
+        </el-select>
       </el-form-item>
       <slot></slot>
       <el-form-item label="验证">
@@ -130,8 +142,10 @@
 <script>
 import panelHeader from "../common/panel-header";
 import { FIELD_FORMAT } from "../../../const/form";
+import { FieldsMixin } from "../mixin";
 
 export default {
+  mixins: [FieldsMixin],
   props: {
     cpnt: {
       type: Object,

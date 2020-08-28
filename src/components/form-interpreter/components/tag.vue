@@ -32,6 +32,8 @@ import cpntMixin from "../mixin";
 export default {
   mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" }), cpntMixin],
   data() {
+    this.tagTrees = [];
+    this.tagCollection = [];
     return {
       loading: false,
       proxy: {
@@ -59,17 +61,27 @@ export default {
   },
   async created() {
     this.resetPicker({ idName: this.tagIdName, reset: false });
-    if (this.cpnt.data._val && typeof this.cpnt.data._val === "string") {
+    if (this.cpnt.data._val) {
+      await this.setDataByIds(this.cpnt.data._val.split(","));
+    } else {
+      this.proxy.valList = [];
+    }
+    this.dispatch("PsoformInterpreter", "cpnt-tag-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
+  },
+  methods: {
+    async setDataByIds(tagData) {
       this.loading = true;
-      let tagData = this.cpnt.data._val.split(",");
       let ret = { data: [] };
       let idName = "";
+      if (!this.tagTrees.length || !this.tagCollection.length) {
+        await this.prepareData();
+      }
       if (this.cpnt.data._source === "tree") {
-        ret = await this.API.trees({ data: { dimen: 5 } });
+        ret = this.tagTrees;
         idName = "node_id";
         tagData = tagData.map((val) => parseInt(val));
       } else {
-        ret = await this.API.tag({ data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } });
+        ret = this.tagCollection;
         idName = "tag_no";
       }
       const list = [];
@@ -78,12 +90,11 @@ export default {
       });
       this.handleAddSelection(list);
       this.loading = false;
-    } else {
-      this.proxy.valList = [];
-    }
-    this.dispatch("PsoformInterpreter", "cpnt-tag-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
-  },
-  methods: {
+    },
+    async prepareData() {
+      this.tagTrees = await this.API.trees({ data: { dimen: 5 } });
+      this.tagCollection = await this.API.tag({ data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } });
+    },
     handleTagAdd(data) {
       this.handleAddSelection(data);
       this.handleCopy(this.proxy.list[this.proxy.list.length - 1]);

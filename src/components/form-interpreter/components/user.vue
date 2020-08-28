@@ -4,6 +4,7 @@
       <div class="pso-form-user-selectedlist" v-if="!loading&&proxy.list.length">
         <el-tag
           v-for="item in proxy.list"
+          size="medium"
           :key="item.user_id"
           :closable="storeEditable&&!cpnt.data._read"
           @close="handleDelSelection(item)"
@@ -15,7 +16,9 @@
         :pattern="cpnt.data._type"
         @confirm="handleAddSelection"
       >
-        <el-button size="mini" icon="el-icon-plus" circle></el-button>
+        <div style="margin-top: -4px;">
+          <el-button size="mini" icon="el-icon-plus" circle></el-button>
+        </div>
       </pso-picker-user>
     </div>
   </el-form-item>
@@ -50,10 +53,11 @@ export default {
   },
   async created() {
     this.loading = true;
+
     if (this.cpnt.data._val) {
-      await this.checkUser(this.cpnt.data._val.split(","));
+      await this.setDataByIds(this.cpnt.data._val.split(","));
     } else if (this.cpnt.data._defaultValType === "current" && this.base.user && this.base.user.user_id) {
-      await this.checkUser([this.base.user.user_id]);
+      await this.setDataByIds([this.base.user.user_id]);
     } else {
       this.proxy.valList = [];
     }
@@ -65,7 +69,7 @@ export default {
     async getUser(user_id) {
       return await this.API.user({ data: { user_id }, method: "get" });
     },
-    async checkUser(users) {
+    async setDataByIds(users) {
       const list = [];
       for (let uid of users) {
         const userRet = await this.getUser(uid);

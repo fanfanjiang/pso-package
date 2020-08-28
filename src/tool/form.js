@@ -12,28 +12,32 @@ export function transCMapToCondition(map) {
             conditionOr.forEach(conditionAnd => {
                 const fieldName = (conditionAnd.cpnt.tableName ? conditionAnd.cpnt.tableName + '.' : '') + conditionAnd.cpnt._fieldValue;
                 const dataType = CPNT[conditionAnd.cpnt.componentid].type === 'number' ? '@' : '#';
-                const FilterOp = FILTER_OP[conditionAnd.op].op;
                 const datas = [];
-                if (Array.isArray(FilterOp)) {
-                    FilterOp.forEach((op, i) => {
-                        if (conditionAnd.data && (conditionAnd.data[i] || conditionAnd.data[i] === 0)) {
-                            datas.push({ op: op.value, data: `[${dataType}${conditionAnd.data[i]}]` });
+                if (conditionAnd.op) {
+                    const FilterOp = FILTER_OP[conditionAnd.op].op;
+                    if (Array.isArray(FilterOp)) {
+                        FilterOp.forEach((op, i) => {
+                            if (conditionAnd.data && (conditionAnd.data[i] || conditionAnd.data[i] === 0)) {
+                                datas.push({ op: op.value, data: `[${dataType}${conditionAnd.data[i]}]` });
+                            }
+                        })
+                    } else {
+                        if (Array.isArray(conditionAnd.data)) {
+                            if (conditionAnd.data.length) {
+                                datas.push({ op: FilterOp.value, data: conditionAnd.data.map(dv => `[${dataType}${dv}]`).join(',') });
+                            }
+                        } else if (conditionAnd.data || conditionAnd.data === 0) {
+                            datas.push({ op: FilterOp.value, data: `[${dataType}${conditionAnd.data}]` });
                         }
-                    })
-                } else {
-                    if (Array.isArray(conditionAnd.data)) {
-                        if (conditionAnd.data.length) { 
-                            datas.push({ op: FilterOp.value, data: conditionAnd.data.map(dv => `[${dataType}${dv}]`).join(',') });
-                        }
-                    } else if (conditionAnd.data || conditionAnd.data === 0) {
-                        datas.push({ op: FilterOp.value, data: `[${dataType}${conditionAnd.data}]` });
                     }
                 }
                 datas.forEach(d => {
                     cdtAnd.push(`[${fieldName}] ${Array.isArray(d.op) ? (d.op[0] + d.data + d.op[1]) : (d.op + d.data)}`)
                 })
             })
-            condition.push(`【${cdtAnd.join(' AND ')}】`);
+            if (cdtAnd.length) {
+                condition.push(`【${cdtAnd.join(' AND ')}】`);
+            }
         })
         return `【${condition.join(' OR ')}】`;
     } catch (error) {

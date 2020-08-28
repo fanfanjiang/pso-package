@@ -4,7 +4,8 @@ import Vue from 'vue';
 
 const defalutCpntData = [
     { n: '_fieldType', v: 'String' }, { n: '_deletable', v: true }, { n: '_fvEditable', v: true },
-    { n: '_fieldRealType', v: 'string' }, { n: '_defaultValue', v: '' }, { n: '_fieldValue', v: '' },
+    { n: '_fieldRealType', v: 'string' }, { n: '_defaultValue', v: '' }, { n: '_association', v: '' },
+    { n: '_fieldValue', v: '' },
     { n: '_fieldLen', v: 50 }, { n: '_required', v: false }, { n: '_read', v: false },
     { n: '_hideOnNew', v: false }, { n: '_hideForever', v: false }, { n: '_placeholder', v: '' },
     { n: '_fieldInfo', v: '' }, { n: '_unique', v: false }, { n: '_auth', v: [] }, { n: '_regular', v: '' },
@@ -39,7 +40,7 @@ export function genComponentData(target) {
         } else {
             do {
                 target.fid = shortid.generate();
-            } while (target.fid.indexOf('-') !== -1)
+            } while (target.fid.indexOf('-') !== -1 || /^[0-9]/.test(target.fid)) 
             Vue.set(target, '_fieldValue', target.fid);
         }
     }

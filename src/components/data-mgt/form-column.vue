@@ -15,7 +15,14 @@
             <el-input size="mini" v-model="col.name"></el-input>
           </el-form-item>
         </el-form>
-        <el-table key="list" size="mini" :data="col.data" style="width: 100%" height="500">
+        <el-table
+          key="list"
+          size="mini"
+          :data="col.data"
+          style="width: 100%"
+          height="500"
+          :sort-by="['number']"
+        >
           <el-table-column type="index" :index="1" fixed="left"></el-table-column>
           <el-table-column prop="field_name" label="字段" width="100" fixed="left"></el-table-column>
           <el-table-column label="显示名名称" width="140" fixed="left">
@@ -23,7 +30,7 @@
               <el-input size="mini" v-model="scope.row.display"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="顺序" width="160">
+          <el-table-column prop="number" label="顺序" width="160" sortable>
             <template slot-scope="scope">
               <el-input-number
                 size="mini"
@@ -43,14 +50,19 @@
               ></el-input-number>
             </template>
           </el-table-column>
-          <el-table-column label="启用" width="60">
+          <el-table-column prop="using" label="启用" width="60" sortable>
             <template slot-scope="scope">
               <el-switch size="mini" v-model="scope.row.using" active-value="1" inactive-value="0"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="显示" width="60">
+          <el-table-column prop="show" label="显示" width="60" sortable>
             <template slot-scope="scope">
               <el-switch size="mini" v-model="scope.row.show" active-value="1" inactive-value="0"></el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column prop="show" label="筛选" width="60" sortable>
+            <template slot-scope="scope">
+              <el-switch size="mini" v-model="scope.row.searchable"></el-switch>
             </template>
           </el-table-column>
           <el-table-column label="排序" width="60">

@@ -114,8 +114,8 @@ export default {
   props: {
     params: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   components: { DesignerBody, PsoHeader },
   data() {
@@ -129,21 +129,21 @@ export default {
       showTempPop: false,
       savingCfg: false,
       treeOptions: {
-        dimen: 6
+        dimen: 6,
       },
       importTreeOption: {
-        dimen: 6
+        dimen: 6,
       },
       resource: {
         list: [],
-        type: "radio"
-      }
+        type: "radio",
+      },
     };
   },
   computed: {
     onlytemplate() {
       return !this.params.id && !this.params.pid;
-    }
+    },
   },
   async created() {
     if (this.params.id) {
@@ -169,9 +169,9 @@ export default {
           formName: store.data_name,
           children: store.root.data.children,
           dataMaps: store.cpntsDataMps,
-          permissionEntries: store.permissionEntries
+          permissionEntries: store.permissionEntries,
         },
-        method: this.params.id ? "put" : "post"
+        method: this.params.id ? "put" : "post",
       });
       if (!ret.success) return (this.saving = false);
       if (!this.params.id) {
@@ -213,13 +213,14 @@ export default {
       this.savingCfg = true;
       const ret = await this.API.resource({
         data: {
+          optype: data.leaf_id ? 1 : 0,
           ...data,
           r_data: {
             data_design: this.formStore.root.data.children,
-            permissionEntries: this.formStore.permissionEntries
-          }
+            permissionEntries: this.formStore.permissionEntries,
+          },
         },
-        method: data.leaf_id ? "put" : "post"
+        method: data.leaf_id ? "put" : "post",
       });
       this.savingCfg = false;
       this.showTempPop = false;
@@ -250,7 +251,7 @@ export default {
         permissionEntries: template.permissionEntries || [],
         data_name: r_name,
         data_id: this.formStore.data_id,
-        data_code: this.formStore.data_code
+        data_code: this.formStore.data_code,
       };
 
       this.$nextTick(() => {
@@ -258,9 +259,9 @@ export default {
       });
     },
     newTempFilter(nodes) {
-      return nodes.filter(node => node.is_leaf);
-    }
-  }
+      return nodes.filter((node) => node.is_leaf);
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

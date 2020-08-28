@@ -98,6 +98,13 @@ export default class WfStore {
         );
     }
 
+    get mustFillAsCreator() {
+        return this.isCreator && (
+            this.data.status === REVIEW_STATUS.reject.value ||
+            this.data.status === REVIEW_STATUS.backout.value
+        )
+    }
+
     //初始化流程配置
     async init({ cfgId, instanceId }) {
 
@@ -405,9 +412,6 @@ export default class WfStore {
 
     //创建流程实例数据
     async newInstanceData({ nextStep = false, formData, doNextUsers, doNextStep }) {
-        // if (this.show.urgent && !this.data.urgent) throw new Error('请选择紧急程度');
-        // if (this.show.import && !this.data.import) throw new Error('请选择重要等级');
-        // if (this.show.secret && !this.data.secret) throw new Error('请选择秘密等级');
         let filetype;
         try {
             filetype = this.data.filetype || this.cfg.files[0].wf_filetype;
@@ -486,12 +490,15 @@ export default class WfStore {
         let doNextUsers;
         let doNextStep;
         //下一步是空白人
-        if (this.isNextEmpty) {
+        if (this.isNextEmpty && optype === REVIEW_OP_TYPE.confirm.type) {
             if (!this.userOp.users) {
                 throw new Error('请选择下一步审核人');
             }
             doNextUsers = this.userOp.users;
             doNextStep = this.doNextUser.step_code;
+        } else {
+            doNextUsers = undefined;
+            doNextStep = undefined;
         }
 
         const data = {

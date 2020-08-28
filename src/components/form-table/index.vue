@@ -1,6 +1,17 @@
 <template>
-  <div class="pso-formTable">
-    <div v-if="!initializing">
+  <div class="pso-formTable" :class="tableClass">
+    <div class="pso-formTable__fixfilter" v-if="!initializing">
+      <transition name="el-fade-in">
+        <pso-data-filter
+          v-show="showFilter"
+          v-model="condition"
+          :condition="defCondition"
+          :fieldsOptions="conditionOptions"
+          fixedfield
+        ></pso-data-filter>
+      </transition>
+    </div>
+    <div class="pso-formTable__body" v-if="!initializing">
       <div class="pso-formTable__top">
         <div class="pso-formTable__title">
           <form-icon></form-icon>
@@ -69,17 +80,7 @@
       </div>
       <div class="pso-formTable-header" v-if="!readOnly">
         <div class="pso-formTable-header__left">
-          <el-popover v-model="showFilter" placement="bottom-start" width="400" trigger="click">
-            <div class="pso-formTable__filter">
-              <div class="pso-formTable__filter-body">
-                <pso-data-filter v-model="condition" :fieldsOptions="conditionOptions"></pso-data-filter>
-              </div>
-              <div class="pso-formTable__filter-footer">
-                <el-button type="primary" size="mini" @click="goFilter">确定</el-button>
-              </div>
-            </div>
-            <el-button type="text" icon="fa fa-filter" slot="reference">筛选</el-button>
-          </el-popover>
+          <el-button type="text" icon="fa fa-filter" @click="showFilter=!showFilter">筛选</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-popover v-model="showSetting" placement="bottom-start" width="300" trigger="click">
             <div class="pso-switch-panel">
@@ -303,7 +304,9 @@
         </div>
       </div>
     </div>
-    <pso-skeleton v-else :lines="5"></pso-skeleton>
+    <div v-else style="padding:15px">
+      <pso-skeleton :lines="5"></pso-skeleton>
+    </div>
     <pso-drawer
       size="48%"
       :visible="showFormViewer"
@@ -341,7 +344,6 @@
   </div>
 </template>
 <script>
-import PsoDataFilter from "../data-filter/index";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
 import XLSX from "xlsx";
@@ -349,9 +351,12 @@ import Qs from "qs";
 import { MENU_LEAF_AUTH } from "../../const/menu";
 import FormIcon from "./form-icon";
 import { FormListMixin } from "../../mixin/list";
+const { FILTER_TYPE } = require("../../../share/const/filter");
+const CPNT = require("../../../share/const/form");
+import debounce from "throttle-debounce/debounce";
 
 export default {
-  components: { PsoFormView: () => import("../form-interpreter"), PsoDataFilter, FormIcon },
+  components: { PsoFormView: () => import("../form-interpreter"), FormIcon },
   mixins: [FormListMixin],
   props: {
     params: {
@@ -440,6 +445,7 @@ export default {
     },
   },
   data() {
+    this.lastCondition = undefined;
     return {
       loadingTable: false,
       initializing: false,
@@ -483,6 +489,7 @@ export default {
       curStage: "all",
       defSearchType: "",
       viewCfg: [],
+      defCondition: [],
     };
   },
   computed: {
@@ -524,6 +531,11 @@ export default {
     selectedIds() {
       return this.selectedList.map((item) => item.leaf_id);
     },
+    tableClass() {
+      return {
+        "pso-formTable__expend": this.showFilter,
+      };
+    },
   },
   watch: {
     showKeywords(val) {
@@ -548,6 +560,9 @@ export default {
     defKeys() {
       this.getFormCfg();
     },
+    showFilter() {
+      this.$refs.table.doLayout();
+    },
   },
   async created() {
     if (this.defLimit) {
@@ -566,7 +581,7 @@ export default {
     if (this.params.auth_config && this.params.auth_config.length) {
       this.viewCfg = this.params.auth_config;
     }
-
+    this.deFetch = debounce(500, this.reload);
     await this.getFormCfg();
   },
   methods: {
@@ -696,12 +711,24 @@ export default {
       });
 
       if (this.fields.length) {
+        const conditions = [];
         this.fields.forEach((f) => {
-          const exist = _.find(storeFields, { field_name: f.field_name });
+          const exist = _.find(storeFields, { field_name: f.field_name.replace("_x", "") });
           if (exist) {
-            Object.assign(f, exist, { show: f.show });
+            Object.assign(f, exist, { field_name: f.field_name, show: f.show });
+            if (f.searchable && CPNT[exist.componentid].op) {
+              conditions.push({ cpnt: exist, field: exist.fid, op: "", data: "", match: "" });
+            }
           }
         });
+        if (conditions.length) {
+          this.defCondition.push(conditions);
+          this.$watch("condition", (val) => {
+            if (this.lastCondition) {
+              this.deFetch();
+            }
+          });
+        }
       } else {
         this.fields = storeFields;
       }
@@ -822,7 +849,8 @@ export default {
         dict_type: this.usedFormCol,
       };
 
-      if (this.condition !== "【】") {
+      this.lastCondition = this.condition;
+      if (this.condition && this.condition !== "【】") {
         parameters.condition = this.condition;
       }
 
@@ -868,10 +896,6 @@ export default {
     },
     nextClickHandler() {
       this.page += 1;
-    },
-    async goFilter() {
-      this.showFilter = false;
-      await this.getFormData();
     },
     async reload() {
       await this.getFormData();

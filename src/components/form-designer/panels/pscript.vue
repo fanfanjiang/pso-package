@@ -44,12 +44,12 @@
         <el-button size="small" type="primary" plain @click="addScript">添加脚本</el-button>
       </div>
       <el-table key="status" :data="cpnt.data._script" style="width: 100%">
-        <el-table-column label="提交脚本" width="300">
+        <el-table-column label="提交脚本">
           <template slot-scope="scope">
             <el-input type="textarea" :row="2" size="small" v-model="scope.row.sql" placeholder></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="参数">
+        <el-table-column label="参数" width="400">
           <template slot-scope="scope">
             <el-dropdown @command="addScriptItem($event,scope.row)" size="mini" trigger="click">
               <span class="el-dropdown-link">

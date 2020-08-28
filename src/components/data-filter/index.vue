@@ -1,19 +1,24 @@
 <template>
   <div class="data-filter" :class="classObj">
     <div class="data-filter__or" v-for="(orCondition,orIndex) in conditionMap" :key="orIndex">
-      <el-divider v-if="orIndex!==0&&!fixed" content-position="center">或</el-divider>
+      <el-divider v-if="orIndex!==0&&!(fixed||fixedfield)" content-position="center">或</el-divider>
       <div class="data-filter__and" v-for="(andCondition,andIndex) in orCondition" :key="andIndex">
-        <el-divider v-if="andIndex!==0&&!fixed" content-position="left">且</el-divider>
+        <el-divider v-if="andIndex!==0&&!(fixed||fixedfield)" content-position="left">且</el-divider>
         <div class="data-filter__picker">
-          <pso-datafilteritem :fixed="fixed" :pick="andCondition" :fieldsOptions="fieldsOptions"></pso-datafilteritem>
+          <pso-datafilteritem
+            :fixed="fixed"
+            :fixedfield="fixedfield"
+            :pick="andCondition"
+            :fieldsOptions="fieldsOptions"
+          ></pso-datafilteritem>
           <i
-            v-if="!fixed"
+            v-if="!(fixed||fixedfield)"
             class="data-filter__del el-icon-delete-solid"
             @click="delCondition({orIndex,andIndex})"
           ></i>
         </div>
       </div>
-      <div class="data-filter__andbtn" v-if="!fixed">
+      <div class="data-filter__andbtn" v-if="!(fixed||fixedfield)">
         <el-button
           @click="addCondition(orIndex)"
           size="mini"
@@ -23,7 +28,7 @@
         >且</el-button>
       </div>
     </div>
-    <div class="data-filter__orbtn" v-if="!fixed">
+    <div class="data-filter__orbtn" v-if="!(fixed||fixedfield)">
       <el-button
         @click="addCondition()"
         size="mini"
@@ -61,6 +66,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    fixedfield: {
+      type: Boolean,
+      default: false,
+    },
   },
   model: {
     prop: "value",
@@ -76,6 +85,7 @@ export default {
     classObj() {
       return {
         fixed: this.fixed,
+        fixedfield: this.fixedfield,
       };
     },
   },

@@ -56,7 +56,6 @@ import PsoSriptDesigner from "./components/script-designer";
 
 import PsoWfDesigner from "./components/workflow-designer";
 import PsoWfStage from "./components/workflow-designer/stage";
-import PsoWfExecutor from "./components/workflow-executor";
 import PsoWfExecutor2 from "./components/wf-executor";
 import PsoWfMgt from "./components/workflow-mgt";
 
@@ -95,7 +94,6 @@ const components = {
     PsoCountDown,
     PsoWfDesigner,
     PsoWfStage,
-    PsoWfExecutor,
     PsoWfExecutor2,
     PsoWfMgt,
     PsoElementMgt,
@@ -147,7 +145,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.DEFAULT_APP_ID = defaultAppId;
 
     Vue.prototype.ResultNotify = debounce(500, function (ret, message) {
-        this.$notify({ title: ret.success ? "成功" : '失败', message: message || ret.message, type: ret.success ? "success" : 'warning' });
+        this.$notify({ title: ret.success ? "成功" : '失败', message: typeof message !== 'undefined' ? message : ret.message, type: ret.success ? "success" : 'warning' });
     });
 };
 

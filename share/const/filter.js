@@ -163,14 +163,14 @@ const FILTER_TYPE = {
             { ...FILTER_OP.op16, match: 8 },
         ]
     },
-    asstable: {
-        id: 'asstable',
-        cid: 'asstable',
-        name: '关联表',
-        op: [
-            { ...FILTER_OP.op1, match: 1 }
-        ]
-    },
+    // asstable: {
+    //     id: 'asstable',
+    //     cid: 'asstable',
+    //     name: '关联表',
+    //     op: [
+    //         { ...FILTER_OP.op1, match: 1 }
+    //     ]
+    // },
     user: {
         id: 'user', 
         cid: 'user',

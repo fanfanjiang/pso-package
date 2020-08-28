@@ -25,7 +25,7 @@
         </template>
       </el-radio-group>
       <el-input
-        v-if="store.curStep.atype==='opinion'"
+        v-if="showOption"
         type="textarea"
         :rows="2"
         placeholder="请输入意见"
@@ -48,12 +48,12 @@ export default {
     text: String,
     type: {
       type: String,
-      default: "primary"
+      default: "primary",
     },
     store: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   computed: {
     confirmText() {
@@ -63,22 +63,28 @@ export default {
       return ["confirm"].indexOf(this.op.id) !== -1;
     },
     justShowConfirm() {
-      return this.store.curStep.atype === "form" || this.store.curStep.atype === "sign" || this.store.data.msg_tag === 1;
-    }
+      return (
+        !this.store.mustFillAsCreator &&
+        (this.store.curStep.atype === "form" || this.store.curStep.atype === "sign" || this.store.data.msg_tag === 1)
+      );
+    },
+    showOption() {
+      return this.store.mustFillAsCreator || this.store.curStep.atype === "opinion";
+    },
   },
   data() {
     return {
       visible: false,
       WF_TAG_TEXT_PASS: WF_TAG_TEXT_PASS,
-      WF_TAG_TEXT_REJECT: WF_TAG_TEXT_REJECT
+      WF_TAG_TEXT_REJECT: WF_TAG_TEXT_REJECT,
     };
   },
   methods: {
     confirm() {
       this.visible = false;
       this.$emit("confirm");
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

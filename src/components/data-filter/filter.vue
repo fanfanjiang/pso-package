@@ -5,9 +5,9 @@
         :size="size"
         filterable
         v-model="pick.field"
-        @change="fieldChange"
+        @change="fieldChange" 
         placeholder="请选择"
-        :disabled="fixed"
+        :disabled="(fixed||fixedfield)"
       >
         <el-option
           v-for="item in fieldsOptions"
@@ -23,7 +23,7 @@
           <el-option v-for="item in opOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </div>
-      <div class="branch-picker__value">
+      <div class="branch-picker__value" v-show="pick.op">
         <el-input
           :size="size"
           v-if="pick.match===1"
@@ -117,6 +117,10 @@ export default {
       default: "mini",
     },
     fixed: {
+      type: Boolean,
+      default: false,
+    },
+    fixedfield: {
       type: Boolean,
       default: false,
     },

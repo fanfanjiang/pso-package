@@ -3,6 +3,29 @@
         margin: 0;
     }
 
+    &.fixedfield {
+        padding: 0 10px;
+
+        .branch-picker__body {
+            flex-direction: column;
+        }
+
+        .branch-picker__op {
+            width: 100% !important;
+            margin-bottom: 10px !important;
+        }
+
+        .branch-picker__value {
+            margin-left: 0 !important;
+        }
+
+        .branch-picker__name {
+            input {
+                padding: 0 5px;
+            }
+        }
+    }
+
     &.fixed {
         .branch-picker {
             display: flex;

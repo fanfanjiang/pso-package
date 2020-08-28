@@ -1,5 +1,5 @@
 <template>
-  <el-form label-position="left" label-width="80px">
+  <el-form label-position="left" label-width="150px">
     <el-form-item label="标签名称">
       <el-input size="mini" v-model="data.tag_name" autocomplete="off"></el-input>
     </el-form-item>
@@ -13,12 +13,12 @@
     </el-form-item>
     <el-form-item label="描述">
       <el-input size="mini" v-model="data.tag_note" autocomplete="off"></el-input>
-    </el-form-item> 
+    </el-form-item>
     <el-form-item label="规则" v-if="data.tag_type!=='searchtag'">
       <el-input size="mini" v-model="data.tag_rule" autocomplete="off"></el-input>
     </el-form-item>
-    <el-form-item label="是否计量">
-      <el-switch v-model="data.tag_meter" :active-value="1" :inactive-value="0"></el-switch>
+    <el-form-item label="标签颜色" style="display: flex;align-items: center;">
+      <el-color-picker v-model="data.tag_meter" size="mini" :predefine="predefineColors"></el-color-picker>
     </el-form-item>
     <plug-set :data="data.tag_set" :node="data" @change="handleTagChange" field="tag_source"></plug-set>
   </el-form>
@@ -37,14 +37,15 @@ export default {
           v: "common",
         },
         {
-          n: "计量标签",
-          v: "calculate",
-        },
-        {
           n: "查询标签",
           v: "searchtag",
         },
+        {
+          n: "旗帜标签",
+          v: "flag",
+        },
       ],
+      predefineColors: ["#ff4500", "#ff8c00", "#ffd700", "#90ee90", "#00ced1", "#1e90ff", "#c71585"],
     };
   },
   computed: {},
@@ -55,3 +56,17 @@ export default {
   },
 };
 </script>
+<style lang="less" scoped>
+@import "../../assets/less/variable";
+@{deep} {
+  .el-form-item {
+    display: flex;
+    align-items: center;
+  }
+  .el-form-item__content {
+    display: flex;
+    align-items: center;
+    margin-left: 0 !important;
+  }
+}
+</style>

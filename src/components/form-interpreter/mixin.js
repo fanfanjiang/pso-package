@@ -31,12 +31,46 @@ export default {
         if (!this.emitSilent) {
             this.watchCpntVal();
         }
+
+        if (this.cpnt.data._association) {
+            this.$on('cpnt-value-changed', ({ cpnt, value, store, proxy }) => {
+                let targetVal;
+                if (cpnt.data.fid === this.cpnt.data._association) {
+                    targetVal = value;
+                } else if (cpnt.CPNT.componentid === 'asstable' && proxy.valList.length) {
+                    const isSubList = this.cpnt.data._association.split('_');
+                    if (isSubList.length > 1) {
+                        isSubList.splice(0, 1);
+                        const target = store.search({ options: { fid: isSubList.join('_') }, onlyData: true });
+                        if (target && target._fieldValue) {
+                            targetVal = proxy.valList[proxy.valList.length - 1][target._fieldValue];
+                        }
+                    }
+
+                }
+                if (targetVal) {
+                    if (this.setDataByIds) {
+                        try {
+                            if (this.proxy) {
+                                const list = this.proxy.list || this.proxy.valList;
+                                if (list) list.splice(0);
+                            }
+                        } catch (error) {
+
+                        }
+                        this.setDataByIds(targetVal.split(','));
+                    } else {
+                        this.cpnt.data._val = targetVal
+                    }
+                }
+            })
+        }
     },
     methods: {
         watchCpntVal() {
             this.$watch('cpnt.data._val', (value) => {
-                this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields });
-                this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields });
+                this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });
+                this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });
                 if (this.cpnt.store) this.cpnt.store.setShowByRules(this.cpnt);
             })
         }

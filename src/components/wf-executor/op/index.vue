@@ -83,7 +83,7 @@ export default {
       return this.store.hasCreatorPower && this.store.data.status === this.REVIEW_STATUS.save.value;
     },
     nextText() {
-      return this.store.isCreator
+      return this.store.hasCreatorPower
         ? "提交"
         : this.store.data.instanceId && this.store.data.status != this.REVIEW_STATUS.save.value
         ? "通过"

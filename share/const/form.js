@@ -35,7 +35,14 @@ const CPNT = {
     chart: true,
     table_show: true,
     figure: true,
-    data: [{ n: '_fieldRealType', v: 'decimal' }, { n: '_unit', v: '' }, { n: '_decimalPlaces', v: 0 }]
+    data: [
+      { n: '_fieldRealType', v: 'decimal' },
+      { n: '_unit', v: '' },
+      { n: '_decimalPlaces', v: 0 },
+      { n: '_useRange', v: false },
+      { n: '_min', v: '' },
+      { n: '_max', v: '' },
+    ]
   },
   money: {
     icon: "fa fa-jpy",
@@ -50,7 +57,14 @@ const CPNT = {
     chart: true,
     table_show: true,
     figure: true,
-    data: [{ n: '_fieldRealType', v: 'decimal' }, { n: '_unit', v: '' }, { n: '_decimalPlaces', v: 0 }]
+    data: [
+      { n: '_fieldRealType', v: 'decimal' },
+      { n: '_unit', v: '' },
+      { n: '_decimalPlaces', v: 0 },
+      { n: '_useRange', v: false },
+      { n: '_min', v: '' },
+      { n: '_max', v: '' },
+    ]
   },
   select: {
     icon: "el-icon-turn-off",
@@ -274,6 +288,7 @@ const CPNT = {
     host_db: false,
     chart: false,
     table_show: true,
+    op: FILTER_TYPE.string.op,
     fop: [{ ...OP_FILTER.op1, match: 1 }],
     data: [{ n: '_selectedTable', v: '' }, { n: '_selectedField', v: '' }]
   },
@@ -288,7 +303,14 @@ const CPNT = {
     chart: false,
     table_show: true,
     figure: true,
-    data: [{ n: '_fieldRealType', v: 'decimal' }, { n: '_selectedTable', v: '' }, { n: '_selectedField', v: '' }, { n: '_selectedOp', v: '' }, { n: '_unit', v: '' }, { n: '_decimalPlaces', v: 0 }],
+    data: [
+      { n: '_fieldRealType', v: 'decimal' },
+      { n: '_selectedTable', v: '' },
+      { n: '_selectedField', v: '' },
+      { n: '_selectedOp', v: '' },
+      { n: '_unit', v: '' },
+      { n: '_decimalPlaces', v: 0 }
+    ],
     op: FILTER_TYPE.number.op,
     fop: [{ ...OP_FILTER.op1, match: 1 }],
   },
@@ -374,7 +396,7 @@ const CPNT = {
     chart: true,
     table_show: true,
     value_format_id: 'node_id',
-    data: [{ n: '_type', v: 'radio' }, { n: '_defaultValType', v: 'choose' }],
+    data: [{ n: '_type', v: 'radio' }, { n: '_defaultValType', v: 'choose' }, { n: '_bindUser', v: '' }],
     op: FILTER_TYPE.dept.op,
     fop: [{ ...OP_FILTER.op1 }],
   },

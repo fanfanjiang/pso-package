@@ -154,14 +154,10 @@ export default {
       this.saved = true;
     }
 
-    let fetched = false;
-    if (!this.cpnt.data._option.length) {
-      await this.fetchData();
-      fetched = true;
-    }
+    //开始都请求一次，无论参数有没有值
+    await this.fetchData();
 
     if (this.cpnt.data._val && this.cpnt.data._type === "2") {
-      if (!fetched) await this.fetchData();
       const exist = _.find(this.table, { [this.cpnt.data._saveField]: this.cpnt.data._val });
       if (exist) {
         this.proxy.valList = [exist];
@@ -199,7 +195,6 @@ export default {
       }
     },
     handleSelectionChange(data) {
-      console.log(data);
       this.selected = data;
     },
   },

@@ -31,6 +31,7 @@ import { mapState } from "vuex";
 export default {
   mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type", idName: "node_id" }), cpntMixin],
   data() {
+    this.orgs = [];
     return {
       loading: false,
       proxy: {
@@ -53,22 +54,34 @@ export default {
   },
   async created() {
     this.loading = true;
-    const orgs = await this.API.getOrgTree();
+    this.orgs = await this.API.getOrgTree();
     if (this.cpnt.data._val) {
-      this.checkDept(orgs, this.cpnt.data._val.split(","));
+      this.setDataByIds(this.cpnt.data._val.split(","));
     } else if (this.cpnt.data._defaultValType === "current" && this.base.user && this.base.user.deptid) {
-      this.checkDept(orgs, [this.base.user.deptid]);
+      this.setDataByIds([this.base.user.deptid]);
     } else {
       this.proxy.valList = [];
     }
     this.loading = false;
     this.dispatch("PsoformInterpreter", "cpnt-dept-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
+
+    if (this.cpnt.data._bindUser) {
+      this.$on("cpnt-value-changed", ({ cpnt, proxy }) => {
+        if (cpnt.data._fieldValue === this.cpnt.data._bindUser && proxy) {
+          if (proxy.list.length) {
+            this.setDataByIds([proxy.list[0].node_id]);
+          } else {
+            this.proxy.list = [];
+          }
+        }
+      });
+    }
   },
   methods: {
-    checkDept(orgs, depts) {
+    async setDataByIds(depts) {
       const list = [];
       for (let node_id of depts) {
-        const node = _.find(orgs, { node_id: parseInt(node_id) });
+        const node = _.find(this.orgs, { node_id: parseInt(node_id) });
         if (node) list.push(node);
       }
       this.handleAddSelection(list);

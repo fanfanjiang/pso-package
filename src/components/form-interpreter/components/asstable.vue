@@ -77,7 +77,7 @@
               header-align="center"
             >
               <template slot-scope="scope">
-                <span>{{getVal(scope.row[field.field_name])}}</span>
+                <span>{{getTrueVal(scope.row,field)}}</span>
               </template>
             </el-table-column>
           </template>
@@ -178,6 +178,7 @@ export default {
     },
   },
   data() {
+    this.clearDefFormOnClose = false;
     return {
       initializing: true,
       loading: false,
@@ -206,7 +207,7 @@ export default {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";
     },
     showFieldsReal() {
-      return this.fields.filter((item) => item.show === "1");
+      return this.fields.filter((item) => item.using === "1" && item.show === "1");
     },
     authCfg() {
       if (this.cpnt.store && this.cpnt.store.sub_config) {
@@ -262,7 +263,7 @@ export default {
       },
     },
     showFormViewer(val) {
-      if (!val) {
+      if (!val && this.clearDefFormOnClose) {
         this.defForm = null;
       }
     },
@@ -270,14 +271,7 @@ export default {
   async created() {
     await this.getFormCfg();
     if (this.cpnt.data._val && typeof this.cpnt.data._val === "string") {
-      const list = [];
-      this.loading = true;
-      for (let id of this.cpnt.data._val.split(",")) {
-        const ret = await this.getFormData(id);
-        if (ret && ret.leaf_id) list.push(ret);
-      }
-      this.handleAddSelection(list);
-      this.loading = false;
+      await this.setDataByIds(this.cpnt.data._val.split(","));
     } else {
       if (this.cpnt.store && this.cpnt.store.mockAsstables && this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]) {
         this.handleAddSelection([this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]]);
@@ -293,21 +287,36 @@ export default {
     });
   },
   methods: {
+    async setDataByIds(idList) {
+      this.loading = true;
+      const list = [];
+      for (let id of idList) {
+        const ret = await this.getFormData(id);
+        if (ret && ret.leaf_id) list.push(ret);
+      }
+      this.handleAddSelection(list);
+      this.loading = false;
+    },
     async getFormCfg() {
       this.initializing = true;
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
       this.store = new FormStore(ret.data);
       this.fields = [];
-      if (ret.data.display_columns) {
-        JSON.parse(ret.data.display_columns).column[0].data.forEach((item) => {
-          const exist = this.store.search({ options: { db: true }, dataOptions: { _fieldValue: item.field_name }, onlyData: true });
-          if (exist.length) {
-            item.fid = exist[0].fid;
-            if (this.cpnt.data._showFields) {
-              item.show = this.cpnt.data._showFields.split(",").indexOf(item.field_name) !== -1 && item.using;
-            }
-            this.fields.push(item);
+      if (ret.data.display_columns && typeof ret.data.display_columns === "string") {
+        const columns = JSON.parse(ret.data.display_columns).column;
+        let targetColumn = columns[0].data;
+        if (this.cpnt.data._showFields) {
+          const exist = _.find(columns, { name: this.cpnt.data._showFields });
+          if (exist) targetColumn = exist.data;
+        }
+        targetColumn.forEach((item) => {
+          const exist = this.store.searchByField(item.field_name);
+          if (exist) {
+            Object.assign(item, exist.data);
+          } else {
+            item.fid = item.fid || item.field_name;
           }
+          this.fields.push(item);
         });
       }
 
@@ -371,7 +380,16 @@ export default {
       this.selectedList = data;
     },
     getVal(val) {
-      return _.isNull(val) ? "" : decodeURIComponent(val);
+      return _.isNull(val) ? "" : val;
+    },
+    getTrueVal(d, f) {
+      if ((f.componentid === "select" || f.componentid === "checkbox") && f._option) {
+        const opt = _.find(f._option, { _optionValue: d[f.field_name] });
+        if (opt) {
+          return opt._optionName;
+        }
+      }
+      return this.getVal(d[f.field_name]);
     },
     handleSelect() {
       this.showTable = true;
@@ -439,9 +457,10 @@ export default {
       this.deletingFrom = false;
       this.showFormViewer = false;
     },
-    setDefForm(data) {
+    setDefForm(data, clearOnClose = true) {
+      //一般用于外部强制设定表单数据
       this.defForm = data;
-      console.log(this.defForm);
+      this.clearDefFormOnClose = clearOnClose;
     },
   },
 };

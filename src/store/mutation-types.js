@@ -21,16 +21,6 @@ export const WF_CONDITION_MAKE = 'WF_CONDITION_MAKE';
 export const WF_FORM_SELECT = 'WF_FORM_SELECT'; //选择表单后做的初始化
 export const WF_NODE_USERS_SET = 'WF_NODE_USERS_SET';
 
-/* 流程执行器 */
-export const WFINS_DATA_RESET = 'WFINS_DATA_RESET';
-export const WFINS_DATA_GET = 'WFINS_DATA_GET';
-export const WFINS_NODE_GET = 'WFINS_NODE_GET';
-export const WFINS_NEXTSETP = 'WFINS_NEXTSETP';
-export const WFINS_SAVE = 'WFINS_SAVE';
-export const WFINS_ADD = 'WFINS_ADD';
-export const WFINS_INSTANCE_GET = 'WFINS_INSTANCE_GET';
-export const WFINS_INSTANCE_SET = 'WFINS_INSTANCE_SET';
-
 /* 图表设计 */
 export const CD_INIT = 'CD_INIT';
 export const CD_SOURCE_GET = 'CD_SOURCE_GET';
@@ -62,17 +52,6 @@ const MUT_TYPES = {
   WF_FORM_SELECT,
   WF_NODE_USERS_SET,
   /* 流程编辑器 */
-
-  /* 流程执行器 */
-  WFINS_DATA_RESET,
-  WFINS_DATA_GET,
-  WFINS_NODE_GET,
-  WFINS_NEXTSETP,
-  WFINS_SAVE,
-  WFINS_ADD,
-  WFINS_INSTANCE_GET,
-  WFINS_INSTANCE_SET,
-  /* 流程执行器 */
 
   /* 图表设计 */
   CD_INIT,

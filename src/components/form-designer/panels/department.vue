@@ -26,6 +26,11 @@
         >{{item.node_name}}</el-tag>
       </div>
     </el-form-item>
+    <el-form-item label="绑定用户">
+      <el-select size="mini" v-model="cpnt.data._bindUser" placeholder="请选择">
+        <el-option v-for="u in userCpnts" :key="u.fid" :label="u._fieldName" :value="u._fieldValue"></el-option>
+      </el-select>
+    </el-form-item>
   </common-panel>
 </template>
 <script>
@@ -36,41 +41,48 @@ export default {
   props: ["cpnt"],
   mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "defaultList", typeName: "type", idName: "node_id" })],
   components: {
-    commonPanel
+    commonPanel,
   },
   data() {
     return {
       loading: false,
       proxy: {
         defaultList: [],
-        type: this.cpnt.data._type
-      }
+        type: this.cpnt.data._type,
+      },
     };
   },
   computed: {
     isSetCurrent() {
       return this.cpnt.data._defaultValType === "current";
-    }
+    },
+    userCpnts() {
+      return this.cpnt.store.search({
+        options: { componentid: "user" },
+        onlyData: true,
+        beforePush: (cpnt) => cpnt.data._type === "radio",
+      });
+    },
   },
   watch: {
     "cpnt.data._type": {
       handler(val) {
         this.proxy.type = val;
-      }
+      },
     },
     "cpnt.data._defaultValType": {
       handler(val) {
         if (val === "current") {
           this.proxy.defaultList = [];
         }
-      }
+      },
     },
     "proxy.defaultList": {
       deep: true,
       handler(val) {
-        this.cpnt.data._defaultValue = val.map(item => item.node_id).join(",");
-      }
-    }
+        this.cpnt.data._defaultValue = val.map((item) => item.node_id).join(",");
+      },
+    },
   },
   async created() {
     if (!this.isSetCurrent && this.cpnt.data._defaultValue) {
@@ -82,6 +94,6 @@ export default {
       }
       this.loading = false;
     }
-  }
+  },
 };
 </script>

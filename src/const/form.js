@@ -137,6 +137,10 @@ export const FIELD_FORMAT = {
     autocode: {
         label: '普通编号',
         value: 'autocode'
+    },
+    flag: {
+        label: '旗帜标签',
+        value: 'flag'
     }
 }
 

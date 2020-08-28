@@ -7,7 +7,8 @@
         :disabled="!cpnt.store.editable||cpnt.data._read"
         :controls="false"
         :precision="precisionVal"
-        :min="min"
+        :min="minNum"
+        :max="maxNum"
       ></el-input-number>
       <span v-if="cpnt.data._unit" class="pso-number-unit">{{cpnt.data._unit}}</span>
     </div>
@@ -39,10 +40,10 @@ export default {
   },
   computed: {
     minNum() {
-      return typeof this.cpnt.data._min === "undefined" ? this.min : this.cpnt.data._min;
+      return this.cpnt.data._useRange && typeof this.cpnt.data._min !== "undefined" ? this.cpnt.data._min : this.min;
     },
     maxNum() {
-      return typeof this.cpnt.data._max === "undefined" ? this.max : this.cpnt.data._max;
+      return this.cpnt.data._useRange && typeof this.cpnt.data._max !== "undefined" ? this.cpnt.data._max : this.max;
     },
     precisionVal() {
       return typeof this.cpnt.data._decimalPlaces === "undefined" ? this.precision : this.cpnt.data._decimalPlaces;
@@ -51,7 +52,7 @@ export default {
   created() {
     this.cpnt.data._val = parseInt(this.cpnt.data._val || 0);
     this.watchCpntVal();
-  }
+  },
 };
 </script>
 <style lang="less" scoped>

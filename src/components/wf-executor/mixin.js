@@ -87,7 +87,7 @@ export const op = {
             }
         },
         excuted(result, optype) {
-            this.ResultNotify(result);
+            this.ResultNotify(result, "");
             this.dispatch("PsoWfExecutorBox", "op-excuted", { optype, status: this.store.data.status, result });
         }
     }

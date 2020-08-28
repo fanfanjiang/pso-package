@@ -29,7 +29,8 @@ export const FORM_COLUMN_FIELDS = {
     url: "",
     cal: "0",
     res_dimen: "",
-    target_form: {}
+    target_form: {},
+    searchable: false
 }
 
 export const STATIC_COLUMN_FIELDS = {

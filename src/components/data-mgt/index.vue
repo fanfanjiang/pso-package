@@ -14,7 +14,7 @@
     <div class="pso-data-mgmt__content" v-loading="initializing">
       <div class="pso-dd" v-if="curNode&&!initializing">
         <div class="pso-dd-header">
-          <pso-title>工作表：{{curNode.node_display}}</pso-title>
+          <pso-title>工作表：{{curNode.node_display}}({{curNode.node_name}})</pso-title>
           <div class="pso-dd-header__btns">
             <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
             <el-button size="mini" type="primary" plain @click="handleEditForm">设计表单</el-button>
@@ -29,7 +29,7 @@
               <el-tab-pane label="列表" name="list"></el-tab-pane>
               <el-tab-pane label="状态" name="status"></el-tab-pane>
               <el-tab-pane label="发布" name="publish"></el-tab-pane>
-              <el-tab-pane label="属性" name="property"></el-tab-pane>
+              <!-- <el-tab-pane label="属性" name="property"></el-tab-pane> -->
               <el-tab-pane label="显示" name="rule"></el-tab-pane>
               <el-tab-pane label="提交" name="submit"></el-tab-pane>
               <el-tab-pane label="阶段" name="stage"></el-tab-pane>
@@ -58,13 +58,13 @@
               :store="formStore"
               @save="saveConfig"
             ></form-publish>
-            <form-property
+            <!-- <form-property
               v-if="curTab==='property'"
               :data="property"
               :fields="colData"
               :store="formStore"
               @save="saveConfig"
-            ></form-property>
+            ></form-property> -->
             <form-rule v-if="curTab==='rule'&&formStore" :store="formStore" :rules="rules"></form-rule>
             <form-submit v-if="curTab==='submit'" :data="subCfg" :fields="tableData"></form-submit>
             <form-asstable
@@ -245,7 +245,7 @@ export default {
     },
     async changeAllFormCol() {
       this.saving = true;
-      const trees = await this.API.getFormTree(); 
+      const trees = await this.API.getFormTree();
       for (let tr of trees) {
         const ret = await this.API.getTreeNode({ code: tr.node_name });
         const cfg = ret.data.data;

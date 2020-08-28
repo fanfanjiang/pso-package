@@ -2,7 +2,33 @@
     height: 100%;
     width: 100%;
     background-color: #fff;
-    padding: 10px;
+    display: flex;
+
+    &.pso-formTable__expend {
+
+        .pso-formTable__fixfilter {
+            width: 200px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .pso-formTable__body {
+            width: calc(100% - 200px);
+            transition: width 0.3s ease-in-out;
+        }
+    }
+
+    .pso-formTable__fixfilter {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease-in-out;
+        overflow-y: auto;
+    }
+
+    .pso-formTable__body {
+        width: 100%;
+        padding: 10px;
+        transition: width 0.3s ease-in-out;
+    }
 
     .pso-formTable__top {
         display: flex;

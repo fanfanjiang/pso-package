@@ -49,20 +49,20 @@ export default {
       return this.node.atype ? _.find(Object.values(REVIEW_TYPE), { id: this.node.atype }).name : "";
     },
     opType() {
-      return this.node.opList.map(item => _.find(Object.values(REVIEW_OP_TYPE), { value: item }).name).join(",");
+      return this.node.opList.map((item) => _.find(Object.values(REVIEW_OP_TYPE), { value: item }).name).join(",");
     },
     authType() {
       return Object.values(REVIEW_AUTH_TYPE);
     },
     smallName() {
       return this.node.name.slice(0, 5);
-    }
+    },
   },
   methods: {
     getOpName(value) {
       return _.find(Object.values(REVIEW_OP_TYPE), { value }).name;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

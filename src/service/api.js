@@ -16,7 +16,7 @@ export default class API {
             if (method === 'delete') data = { data: data };
             const ret = await axios({ method, url, data });
             const message = ret.msg || ret.message;
-            if (!ret.success && message) {
+            if (!ret.success && message && ret.tag !== 99) {
                 Message({ showClose: true, message, type: 'warning' });
             }
             return ret;

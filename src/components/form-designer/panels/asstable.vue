@@ -21,14 +21,9 @@
         <el-radio v-model="cpnt.data._type" :label="1">单条</el-radio>
         <el-radio v-model="cpnt.data._type" :label="2">多条</el-radio>
       </el-form-item>
-      <el-form-item label="选择显示字段" v-loading="loading">
-        <el-select size="mini" multiple v-model="showFields" placeholder="请选择">
-          <el-option
-            v-for="item in cpnt.cache.fieldOptions"
-            :key="item._fieldValue"
-            :label="item._fieldName"
-            :value="item._fieldValue"
-          ></el-option>
+      <el-form-item label="选择显示列表" v-loading="loading">
+        <el-select clearable size="mini" v-model="cpnt.data._showFields" placeholder="请选择">
+          <el-option v-for="item in column" :key="item.name" :label="item.name" :value="item.name"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item v-if="cpnt.data._type===1" label="选择单选显示字段" v-loading="loading">
@@ -58,7 +53,7 @@
         </div>
       </el-form-item>
       <el-button
-        v-if="cpnt.data._relate" 
+        v-if="cpnt.data._relate"
         icon="el-icon-plus"
         plain
         size="mini"
@@ -87,6 +82,7 @@ export default {
     DynamicFilter,
   },
   data() {
+    this.column = [];
     return {
       options: [],
       loading: false,
@@ -94,14 +90,6 @@ export default {
     };
   },
   computed: {
-    showFields: {
-      get() {
-        return !this.cpnt.data._showFields ? [] : this.cpnt.data._showFields.split(",");
-      },
-      set(val) {
-        this.cpnt.data._showFields = val.join(",");
-      },
-    },
     selfCpnts() {
       return this.cpnt.store.search({ options: { db: true }, onlyData: true });
     },
@@ -168,6 +156,12 @@ export default {
 
       const store = new FormStore(ret.data);
 
+      if (ret.data.display_columns && typeof ret.data.display_columns === "string") {
+        this.column = JSON.parse(ret.data.display_columns).column;
+      } else {
+        this.column = [];
+      }
+
       this.cpnt.cache.fieldOptions = store.search({
         options: { table_show: true },
         onlyData: true,
@@ -179,10 +173,6 @@ export default {
 
       this.cpnt.cache.defaultEl._option = id;
 
-      if (!notReset) {
-        this.cpnt.data._showFields = "";
-        this.cpnt.data._showFields = _.map(this.cpnt.cache.fieldOptions, "_fieldValue").join(",");
-      }
       this.loading = false;
     },
   },

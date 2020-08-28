@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     displayable(cpnt) {
-      if (this.forceShow) return true;
+      if (this.forceShow || cpnt.data.forceShow) return true;
 
       const show = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : true;
 
