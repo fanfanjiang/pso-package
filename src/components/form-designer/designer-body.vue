@@ -195,7 +195,6 @@ export default {
 
       this.dragAndDrop.animateAll(dropContainer, () => {
         $(clone).remove();
-
         this.store.append({
           oldIndex: 0,
           newIndex: $(dropContainer).children().length,

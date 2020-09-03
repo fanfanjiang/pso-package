@@ -32,6 +32,10 @@ export default {
             this.watchCpntVal();
         }
 
+        if (this.proxy) {
+            this.cpnt.data._proxy = this.proxy;
+        }
+
         if (this.cpnt.data._association) {
             this.$on('cpnt-value-changed', ({ cpnt, value, store, proxy }) => {
                 let targetVal;

@@ -3,6 +3,7 @@
     <el-button size="mini" type="primary" plain @click="addParam">添加参数</el-button>
     <el-button size="mini" type="primary" plain @click="addFormParam">添加表单通用参数</el-button>
     <el-button size="mini" type="primary" plain @click="addFlowParam">添加流程通用参数</el-button>
+    <el-button size="mini" type="primary" plain @click="addAssParam">添加关联表通用参数</el-button>
     <el-table :data="data" style="width: 100%" key="param">
       <el-table-column label="参数名称">
         <template slot-scope="scope">
@@ -57,6 +58,13 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog title="参数前缀" append-to-body :visible.sync="showEditor" :width="'480px'">
+      <el-input size="mini" v-model="prefix"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="showEditor = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="handleAssParams">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -98,6 +106,8 @@ export default {
   data() {
     return {
       TP_CTL_TYPE: TP_CTL_TYPE,
+      showEditor: false,
+      prefix: "",
     };
   },
   created() {
@@ -123,13 +133,23 @@ export default {
     addFlowParam() {
       this.addParams(WORKFLOW);
     },
-    addParams(source) {
+    addParams(source, prefix = "") {
       source.forEach((d) => {
-        const exist = _.find(this.data, { field: d.field });
+        const field = `${prefix}${d.field}`;
+        const name = `${prefix}${d.name}`;
+        const exist = _.find(this.data, { field });
         if (!exist) {
-          this.data.splice(this.data.length, 0, { ...d });
+          this.data.splice(this.data.length, 0, { ...d, field, name });
         }
       });
+    },
+    addAssParam() {
+      this.prefix = "";
+      this.showEditor = true;
+    },
+    handleAssParams() {
+      this.showEditor = false;
+      this.addParams(FORM, this.prefix);
     },
   },
 };

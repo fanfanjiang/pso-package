@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!initializing">
+    <div>
       <el-form-item label="选择插件">
         <el-select size="mini" filterable v-model="node[field]" clearable @change="getTpDetail">
           <el-option
@@ -128,7 +128,6 @@
         </div>
       </transition>
     </div>
-    <pso-skeleton v-else :lines="3"></pso-skeleton>
     <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner=false">
       <template v-slot:whole>
         <formula-designer
@@ -164,7 +163,7 @@ export default {
       fields: [],
       showDesigner: false,
       curSet: null,
-      cpnts: []
+      cpnts: [],
     };
   },
   async created() {
@@ -247,12 +246,15 @@ export default {
       this.loadingFields = true;
       const formStore = await this.makeFormStore(value);
       const ret = await this.API.getFormDict({ data_code: value });
-      ret.data.forEach((item) => {
-        const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
-        item.field_display = (field ? field._fieldName : "系统字段") + `(${item.field_name})`;
-      });
-      const column = formStore.display_columns ? JSON.parse(formStore.display_columns).column : [];
-      this.formCfg[field || value] = { fields: ret.data, column };
+      if (ret.data) {
+        ret.data.forEach((item) => {
+          const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+          item.field_display = (field ? field._fieldName : "系统字段") + `(${item.field_name})`;
+        });
+        const column = formStore.display_columns ? JSON.parse(formStore.display_columns).column : [];
+        this.formCfg[field || value] = { fields: ret.data, column };
+      }
+
       this.loadingFields = false;
     },
     editScript(set) {

@@ -80,6 +80,14 @@ export const FORMULA = {
         content: '',
         cursorLocation: -1
     },
+    YEAR: {
+        id: 'YEAR',
+        info: '返回年份',
+        input: "YEAR('字符串')",
+        example: "示例：YEAR('7/5/2008') 结果：2008",
+        content: '',
+        cursorLocation: -1
+    },
 
     //逻辑
     AND: {
@@ -296,7 +304,7 @@ export const FORMULA_LIST = [
     {
         name: '时间函数',
         list: [FORMULA.DATE, FORMULA.DATEVALUE, FORMULA.DAY, FORMULA.DAYS, FORMULA.HOUR, FORMULA.MINUTE, FORMULA.MONTH,
-        FORMULA.NOW, FORMULA.SECOND, FORMULA.WEEKDAY]
+        FORMULA.NOW, FORMULA.SECOND, FORMULA.WEEKDAY, FORMULA.YEAR]
     },
     {
         name: '财务函数',

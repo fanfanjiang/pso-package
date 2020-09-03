@@ -95,7 +95,7 @@
         @close="showTable=false"
         :visible="showTable"
       >
-        <pso-form-table
+        <pso-form-view
           :cfgId="cpnt.data._option"
           checkbox
           :deletable="false"
@@ -109,7 +109,7 @@
           :params="formTableCfg"
           :def-keys="devKeysCfg"
           @selection-confirm="handleAddSelection"
-        ></pso-form-table>
+        ></pso-form-view>
       </el-dialog>
       <pso-drawer
         size="40%"
@@ -150,15 +150,14 @@
     </div>
   </el-form-item>
 </template> 
-<script>
-import PsoFormTable from "../../form-table";
+<script> 
 import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
 import FormStore from "../../form-designer/model/store.js";
 import shortid from "shortid";
 
 export default {
-  components: { PsoFormInterpreter: () => import("../index"), PsoFormTable },
+  components: { PsoFormInterpreter: () => import("../index") },
   mixins: [
     cpntMixin,
     pickerMixin({
@@ -279,6 +278,10 @@ export default {
         this.proxy.valList = [];
       }
     }
+
+    this.cpnt._handleClickAdd = this.handleClickAdd;
+    this.cpnt._setDefForm = this.setDefForm;
+
     this.dispatch("PsoformInterpreter", "asstable-initialized", {
       cpnt: this.cpnt,
       data: this.cpnt.data._val,
@@ -415,7 +418,6 @@ export default {
       } else {
         this.unsavedSelf = null;
       }
-
       this.showFormViewer = true;
     },
     async handleSaveForm() {

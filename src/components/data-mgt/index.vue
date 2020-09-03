@@ -5,6 +5,7 @@
         ref="tree"
         :request-options="treeOptions"
         :default-node-data="defaultNodeData"
+        :default-nodeid="params.designedFormId"
         :auto-edit="false"
         @before-node-new="showWorksheetSelector=true"
         @after-node-new="handleAfterNewdNode"
@@ -40,13 +41,13 @@
         </div>
         <div class="pso-dd-body" v-loading="saving">
           <template v-if="!!curNode.is_leaf">
-            <pso-form-table
+            <pso-form-view
               v-show="curTab==='preview'"
               :cfg-id="curNode.node_name"
               :auto-submit="true"
               :read-only="false"
               :key="curNode.node_id"
-            ></pso-form-table>
+            ></pso-form-view>
             <form-field v-if="curTab==='field'" :data="tableData" :code="curNode.node_name"></form-field>
             <form-column v-if="curTab==='list'" :data="colCfg" :def-col="colData"></form-column>
             <form-status v-if="curTab==='status'" :data="staData" @save="saveConfig"></form-status>
@@ -64,7 +65,7 @@
               :fields="colData"
               :store="formStore"
               @save="saveConfig"
-            ></form-property> -->
+            ></form-property>-->
             <form-rule v-if="curTab==='rule'&&formStore" :store="formStore" :rules="rules"></form-rule>
             <form-submit v-if="curTab==='submit'" :data="subCfg" :fields="tableData"></form-submit>
             <form-asstable
@@ -106,7 +107,6 @@
 </template>
 <script>
 import { SHEET_MENU } from "./const.js";
-import PsoFormTable from "../form-table";
 import { formOp } from "../form-designer/mixin.js";
 import PsoNodeauth from "../node-auth";
 import PsoTitle from "../title";
@@ -163,7 +163,6 @@ const _DATA = {
 export default {
   mixins: [formOp],
   components: {
-    PsoFormTable,
     FormField,
     PsoNodeauth,
     PsoTitle,

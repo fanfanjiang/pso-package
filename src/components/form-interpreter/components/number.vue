@@ -50,7 +50,7 @@ export default {
     },
   },
   created() {
-    this.cpnt.data._val = parseInt(this.cpnt.data._val || 0);
+    this.cpnt.data._val = parseFloat(this.cpnt.data._val || 0);
     this.watchCpntVal();
   },
 };

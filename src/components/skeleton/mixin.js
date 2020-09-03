@@ -24,7 +24,7 @@ export const skeleton = {
             type: Number,
             default: 4
         },
-        style: {
+        sStyle: {
             type: Object,
             default: () => ({})
         }

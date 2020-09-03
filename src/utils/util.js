@@ -1,10 +1,13 @@
 import XLSX from 'xlsx';
 import x2js from 'x2js';
 
-export function listToTree({ list, pid = "pid", children = "children", id = "id", afterPush, beforePush }) {
+export function listToTree({ list, pid = "pid", children = "children", id = "id", each, afterPush, beforePush }) {
     let map = {};
     let tree = [];
-    list.forEach(item => map[item[id]] = item);
+    list.forEach(item => {
+        each && each(item);
+        map[item[id]] = item
+    });
     list.forEach(item => {
         let parent = map[item[pid]];
         if (parent) {

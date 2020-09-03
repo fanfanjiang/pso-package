@@ -1,7 +1,7 @@
 <template>
   <div class="act-panel-body">
     <panel-header :icon="cpnt.CPNT.icon" :name="cpnt.CPNT.name" :info="info"></panel-header>
-    <el-form :label-position="'top'" label-width="80px" :model="cpnt.data">
+    <el-form label-position="top" label-width="80px" :model="cpnt.data">
       <el-form-item label="名称">
         <el-input size="mini" v-model.trim="cpnt.data._fieldName" clearable></el-input>
       </el-form-item>
@@ -38,40 +38,23 @@
       <el-form-item label="动态默认值">
         <el-select size="mini" v-model="cpnt.data._association" filterable clearable>
           <el-option-group v-for="(g,index) in fieldsCollection" :key="index" :label="g.n">
-            <el-option
-              v-for="opt in g.v"
-              :key="opt.fid"
-              :label="opt._fieldName"
-              :value="opt.fid"
-            ></el-option>
+            <el-option v-for="opt in g.v" :key="opt.fid" :label="opt._fieldName" :value="opt.fid"></el-option>
           </el-option-group>
         </el-select>
       </el-form-item>
       <slot></slot>
       <el-form-item label="验证">
-        <el-checkbox
-          size="mini"
-          v-model="cpnt.data._required"
-          :true-label="true"
-          :false-label="false"
-        >必填</el-checkbox>
-        <el-checkbox
-          size="mini"
-          v-if="needUnique"
-          v-model="cpnt.data._unique"
-          :true-label="true"
-          :false-label="false"
-        >不允许重复</el-checkbox>
+        <div class="act-panel_check">
+          <el-switch size="mini" v-model="cpnt.data._required" active-text="必填"></el-switch>
+        </div>
+        <div class="act-panel_check">
+          <el-switch v-if="needUnique" size="mini" v-model="cpnt.data._unique" active-text="不允许重复"></el-switch>
+        </div>
         <el-input size="mini" placeholder="正则验证" v-model="cpnt.data._regular" clearable></el-input>
       </el-form-item>
       <el-form-item label="权限">
         <div class="act-panel_check">
-          <el-checkbox
-            size="mini"
-            v-model="cpnt.data._read"
-            :true-label="true"
-            :false-label="false"
-          >用户只读</el-checkbox>
+          <el-switch size="mini" v-model="cpnt.data._read" active-text="用户只读"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">
               设为只读的字段将不允许被用户直接编辑。
@@ -81,12 +64,7 @@
           </el-tooltip>
         </div>
         <div class="act-panel_check">
-          <el-checkbox
-            size="mini"
-            v-model="cpnt.data._hideOnNew"
-            :true-label="true"
-            :false-label="false"
-          >新增记录时隐藏</el-checkbox>
+          <el-switch size="mini" v-model="cpnt.data._hideOnNew" active-text="新增记录时隐藏"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">
               通常用于隐藏一些不需要在新增记录时显示的字段。
@@ -97,12 +75,7 @@
           </el-tooltip>
         </div>
         <div class="act-panel_check">
-          <el-checkbox
-            size="mini"
-            v-model="cpnt.data._hideForever"
-            :true-label="true"
-            :false-label="false"
-          >永久隐藏</el-checkbox>
+          <el-switch size="mini" v-model="cpnt.data._hideForever" active-text="永久隐藏"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">通常用于隐藏一些不需要用户填入的字段。</div>
             <i class="tip el-icon-question"></i>
@@ -113,7 +86,7 @@
         <el-input
           size="mini"
           v-model.trim="cpnt.data._fieldValue"
-          :disabled="!cpnt.data._fvEditable||(!!cpnt.store.data_code&&!cpnt.add&&cpnt.store.is_pub)"
+          :disabled="!!(!cpnt.data._fvEditable||(!!cpnt.store.data_code&&!cpnt.add&&cpnt.store.is_pub))"
           clearable
         ></el-input>
       </el-form-item>

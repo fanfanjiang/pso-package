@@ -21,12 +21,12 @@ export default {
         { status: 2, name: "已退回", script: "" },
         { status: 7, name: "已撤销", script: "" },
         { status: 8, name: "已完成", script: "" },
-        { status: 9, name: "已归档", script: "" }
-      ]
+        { status: 9, name: "已归档", script: "" },
+      ],
     };
   },
   created() {
-    this.statuses.forEach(item => {
+    this.statuses.forEach((item) => {
       const exist = _.findIndex(this.data, { status: item.status });
       if (exist === -1) {
         this.data.push({ ...item });
@@ -34,6 +34,6 @@ export default {
         this.data.splice(exist, 1, { ...item, ...this.data[exist] });
       }
     });
-  }
+  },
 };
 </script>

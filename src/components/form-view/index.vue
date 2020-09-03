@@ -84,7 +84,7 @@
           <el-divider direction="vertical"></el-divider>
           <el-popover v-model="showSetting" placement="bottom-start" width="300" trigger="click">
             <div class="pso-switch-panel">
-              <div class="pso-switch-panel__item" v-for="fItem of fields" :key="fItem.fid">
+              <div class="pso-switch-panel__item" v-for="(fItem,index) of fields" :key="index">
                 <el-switch
                   v-model="fItem.show"
                   :inactive-text="fItem.display"
@@ -198,7 +198,7 @@
                 <img :src="d[params.headPicture]" alt="图片" />
               </div>
               <div class="pso-formTable-box__item-info">
-                <div v-for="f of showFieldsReal" :key="f.field_name">
+                <div v-for="(f,index) of showFieldsReal" :key="index">
                   <template v-if="f.field_name!==params.headPicture">
                     <span>{{f.display}}</span>
                     <span>{{getTrueVal(d,f)}}</span>
@@ -217,7 +217,6 @@
           style="width: 100%"
           :size="tableSize"
           border
-          :highlight-current-row="radio"
           :data="formData"
           :summary-method="handleSummary"
           :show-summary="showSummary"
@@ -248,8 +247,8 @@
               min-width="120"
               :prop="field.field_name"
               :label="field.display"
-              v-for="field of showFieldsReal"
-              :key="field.field_name"
+              v-for="(field,index) of showFieldsReal"
+              :key="index"
               :width="field.width"
               :align="field.align"
               :sortable="field.sortable==='1'?'custom':false"
@@ -314,14 +313,14 @@
       @close="showFormViewer=false"
     >
       <div class="pso-formTable-formViewer" v-if="cfg.data_code">
-        <pso-form-view
+        <pso-form-interpreter
           ref="formImage"
           :form-entity="cfg"
           :data-id="dataId"
           :data-instance="instance"
           :data-default="defForm"
           :editable="dataId?edtailEditable:addable"
-        ></pso-form-view>
+        ></pso-form-interpreter>
       </div>
       <template v-slot:footer v-if="dataId?edtailEditable:addable">
         <div class="pso-drawer-footer__body">
@@ -356,7 +355,7 @@ const CPNT = require("../../../share/const/form");
 import debounce from "throttle-debounce/debounce";
 
 export default {
-  components: { PsoFormView: () => import("../form-interpreter"), FormIcon },
+  components: { PsoFormInterpreter: () => import("../form-interpreter"), FormIcon },
   mixins: [FormListMixin],
   props: {
     params: {
@@ -422,7 +421,7 @@ export default {
       type: String,
       default: "操作",
     },
-    where: Object,
+    where: [Object, String],
     viewAuth: {
       type: Number,
       default: 0,
@@ -499,7 +498,7 @@ export default {
       );
     },
     showSummary() {
-      return this.summary;
+      return !!this.summary;  
     },
     opAddable() {
       return this.addable && (this.opAuth & 1) === 1;
@@ -563,6 +562,13 @@ export default {
     showFilter() {
       this.$refs.table.doLayout();
     },
+    defForm: {
+      deep: true,
+      handler() {
+        this.handleDefKeys();
+        this.getFormStatus();
+      },
+    },
   },
   async created() {
     if (this.defLimit) {
@@ -582,6 +588,7 @@ export default {
       this.viewCfg = this.params.auth_config;
     }
     this.deFetch = debounce(500, this.reload);
+
     await this.getFormCfg();
   },
   methods: {
@@ -607,6 +614,33 @@ export default {
       this.dataId = "";
       this.instance = { ...this.selectedList[0], leaf_id: "" };
       this.showFormViewer = true;
+    },
+    handleDefKeys() {
+      try {
+        //外部传入的请求参数
+        if (this.where) {
+          for (let key in this.where) {
+            this.defaultKeys[key] = { value: this.where[key], type: 1 };
+          }
+        }
+
+        if (this.defKeys) {
+          let keyList = this.defKeys.split(";");
+          keyList.forEach((item) => {
+            const key = item.split("#");
+            this.defaultKeys[key[0]] = { value: key[1], type: key[2] };
+          });
+        }
+
+        //默认参数
+        if (this.defForm) {
+          for (let key in this.defForm) {
+            this.defaultKeys[key] = { value: this.defForm[key], type: 1 };
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
     async handleStatusChange(status) {
       if (!this.selectedList.length) {
@@ -671,6 +705,7 @@ export default {
     },
     async getFormCfg() {
       this.reset();
+      this.handleDefKeys();
 
       this.initializing = true;
       const ret = await this.API.formsCfg({ data: { id: this.cfgId, auth: 1 }, method: "get" });
@@ -754,31 +789,6 @@ export default {
             }
           }
         }
-      }
-
-      try {
-        //外部传入的请求参数
-        if (this.where) {
-          for (let key in this.where) {
-            this.defaultKeys[key] = { value: this.where[key], type: 1 };
-          }
-        }
-        if (this.defKeys) {
-          let keyList = this.defKeys.split(";");
-          keyList.forEach((item) => {
-            const key = item.split("#");
-            this.defaultKeys[key[0]] = { value: key[1], type: key[2] };
-          });
-        }
-
-        //默认参数
-        if (this.defForm) {
-          for (let key in this.defForm) {
-            this.defaultKeys[key] = { value: this.defForm[key], type: 1 };
-          }
-        }
-      } catch (error) {
-        console.log(error);
       }
 
       //视图权限

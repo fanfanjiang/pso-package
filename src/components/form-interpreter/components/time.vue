@@ -5,6 +5,8 @@
       :disabled="!cpnt.store.editable||cpnt.data._read"
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
+      :value-format="format"
+      :format="format"
     ></el-time-picker>
     <el-date-picker
       v-else
@@ -21,25 +23,25 @@
 import cpntMixin from "../mixin";
 import { DATE_OPTION } from "../../../const/form";
 import dayjs from "dayjs";
- 
+
+const TIME_FORMAT = {
+  date: "yyyy-MM-dd",
+  datetime: "YYYY-MM-DD HH:mm:ss",
+  time: "HH:mm:ss",
+};
+
 export default {
   mixins: [cpntMixin],
   computed: {
     format() {
-      return this.cpnt.data._type === "date" ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss";
+      return TIME_FORMAT[this.cpnt.data._type];
     },
   },
   created() {
     if (!this.cpnt.data._val && this.cpnt.data._defaultType) {
       const defType = _.find(DATE_OPTION[this.cpnt.data._type], { value: this.cpnt.data._defaultType });
       if (defType && defType.value === "1") {
-        if (this.cpnt.data._type === "date") {
-          this.cpnt.data._val = dayjs().format("YYYY-MM-DD");
-        } else if (this.cpnt.data._type === "datetime") {
-          this.cpnt.data._val = dayjs().format("YYYY-MM-DD HH:mm:ss");
-        } else {
-          this.cpnt.data._val = dayjs().format("HH:mm:ss");
-        }
+        this.cpnt.data._val = dayjs().format(TIME_FORMAT[this.cpnt.data._type]);
       }
     }
   },

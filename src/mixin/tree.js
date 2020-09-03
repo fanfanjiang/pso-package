@@ -20,7 +20,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 default: () => ({})
             },
             sortOptions: {
-                type: Object,
+                type: Array,
                 default: () => ([["node_serial", "create_time"], ["asc", "asc"]])
             },
             nodeDataFilter: Function,
@@ -98,6 +98,10 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 type: Boolean,
                 default: true
             },
+            defaultNodeid: {
+                type: String,
+                default: ''
+            },
         },
         data() {
             return {
@@ -122,7 +126,8 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 trash: [],
                 selectedTrash: [],
                 trashCfg: null,
-                treeList: []
+                treeList: [],
+                checkedDefaultNodeid: ''
             }
         },
         computed: {
@@ -169,7 +174,11 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
 
                 if (this.checkAfterLoad) {
                     this.$nextTick(() => {
-                        this.setCurrentNode(this.treeData, 3);
+                        if (this.checkedDefaultNodeid) {
+                            this.setCurrentNode([this.$refs[treeRef].getNode(this.checkedDefaultNodeid).data]);
+                        } else {
+                            this.setCurrentNode(this.treeData, 3);
+                        }
                     });
                 }
             },
@@ -221,6 +230,11 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     list: treeList,
                     pid: "node_pid",
                     id: "node_id",
+                    each: (node) => {
+                        if (this.defaultNodeid == node.node_name) {
+                            this.checkedDefaultNodeid = node.node_id;
+                        }
+                    },
                     afterPush: (node, pnode) => {
                         pnode.children = _.orderBy(pnode.children, ...this.sortOptions);
                     },

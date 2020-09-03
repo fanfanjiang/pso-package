@@ -1,7 +1,7 @@
 <template>
   <div class="pso-form-designer" v-loading="loading">
     <div class="pso-form-designer__header">
-      <pso-header title="表单设计" @back="$emit('back')" v-if="storeReady">
+      <pso-header title="表单设计" @back="$emit('back',{params})" v-if="storeReady">
         <template v-slot:btn>
           <el-button
             :disabled="!formStore.canUndo"

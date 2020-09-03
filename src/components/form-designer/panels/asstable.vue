@@ -38,14 +38,14 @@
       </el-form-item>
       <el-form-item label="设置">
         <div class="act-panel_check">
-          <el-checkbox v-model="cpnt.data._new" :true-label="true" :false-label="false">允许新增关联数据</el-checkbox>
+          <el-switch size="mini" v-model="cpnt.data._new" active-text="允许新增关联数据"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">允许新增关联数据</div>
             <i class="tip el-icon-question"></i>
           </el-tooltip>
         </div>
         <div class="act-panel_check">
-          <el-checkbox v-model="cpnt.data._relate" :true-label="true" :false-label="false">允许关联已有数据</el-checkbox>
+          <el-switch size="mini" v-model="cpnt.data._relate" active-text="允许关联已有数据"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">允许关联已有数据</div>
             <i class="tip el-icon-question"></i>

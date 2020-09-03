@@ -6,6 +6,7 @@
         v-if="cpnt.data._showType==='select'"
         :disabled="!cpnt.store.editable||cpnt.data._read"
         v-model="cpnt.data._val"
+        filterable
         :placeholder="cpnt.data._placeholder"
       >
         <el-option
@@ -30,6 +31,6 @@
 import cpntMixin from "../mixin";
 import { optionFix } from "../mixins";
 export default {
-  mixins: [cpntMixin, optionFix]
+  mixins: [cpntMixin, optionFix],
 };
 </script>

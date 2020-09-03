@@ -13,8 +13,8 @@ import Element from 'element-ui';
 import BASEAPI from './service/api';
 import createPDF from './utils/create-pdf';
 import FormStore from './components/form-designer/model/store';
-import WfStore from './components/wf-executor/store';
-
+import WfStore from './components/workflow-executor/store';
+ 
 //store
 import store from './store';
 
@@ -47,7 +47,7 @@ import PsoKnowlMgt from "./components/knowl-mgt";
 import PsoDataFilter from "./components/data-filter";
 
 //表单组件
-import PsoFormTable from "./components/form-table";
+import PsoFormView from "./components/form-view";
 import PsoFormDesigner from "./components/form-designer";
 import PsoFormInterpreter from "./components/form-interpreter";
 import PsoDataMgt from "./components/data-mgt";
@@ -56,7 +56,7 @@ import PsoSriptDesigner from "./components/script-designer";
 
 import PsoWfDesigner from "./components/workflow-designer";
 import PsoWfStage from "./components/workflow-designer/stage";
-import PsoWfExecutor2 from "./components/wf-executor";
+import PsoWfExecutor from "./components/workflow-executor";
 import PsoWfMgt from "./components/workflow-mgt";
 
 import PsoElementMgt from "./components/element-mgt";
@@ -86,7 +86,7 @@ const components = {
     PsoPickerUser,
     PsoPickerIcon,
     PsoTreeCommon,
-    PsoFormTable,
+    PsoFormView,
     PsoFormDesigner,
     PsoFormInterpreter,
     PsoTypebar,
@@ -94,7 +94,7 @@ const components = {
     PsoCountDown,
     PsoWfDesigner,
     PsoWfStage,
-    PsoWfExecutor2,
+    PsoWfExecutor,
     PsoWfMgt,
     PsoElementMgt,
     PsoTempleteMgt,

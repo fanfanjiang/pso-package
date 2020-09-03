@@ -165,14 +165,15 @@ export default class FormStore {
         this.root.updateChildren();
     }
 
-    searchByField(fieldValue) {
+    searchByField(fieldValue, onlyData = false) {
         //仅仅方便在使用表单的时候查询
         if (_.isEmpty(this.cpntsFieldMap)) {
             this._forEach(cpnt => {
-                this.cpntsFieldMap[cpnt.data.fieldValue] = cpnt;
+                if (cpnt.data._fieldValue) this.cpntsFieldMap[cpnt.data._fieldValue] = cpnt;
             })
         }
-        return this.cpntsFieldMap[fieldValue];
+        const cpnt = this.cpntsFieldMap[fieldValue];
+        return onlyData && cpnt ? cpnt.data : cpnt;
     }
 
     search({ options, dataOptions, beforePush, onlyData = false, opType = 'and', onlyMain = false }) {

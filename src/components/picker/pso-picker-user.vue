@@ -150,7 +150,7 @@ export default {
             value: "",
           },
         },
-        type: "GetOfficeUserPage",
+        type: "UserPage", 
       },
       dataTotal: 0,
       postData: [],
@@ -172,7 +172,7 @@ export default {
         if (val !== this.TABS.looser) {
           this.options.type = "";
         } else {
-          this.options.type = "GetOfficeUserPage";
+          this.options.type = "OfficeUserPage";
         }
 
         this.$nextTick(() => {

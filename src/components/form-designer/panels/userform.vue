@@ -38,14 +38,14 @@
       ></form-asstable>
       <el-form-item label="设置">
         <div class="act-panel_check">
-          <el-checkbox v-model="cpnt.data._new" :true-label="true" :false-label="false">允许新增关联数据</el-checkbox>
+          <el-switch size="mini" v-model="cpnt.data._new" active-text="允许新增关联数据"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">允许新增关联数据</div>
             <i class="tip el-icon-question"></i>
           </el-tooltip>
         </div>
         <div class="act-panel_check">
-          <el-checkbox v-model="cpnt.data._relate" :true-label="true" :false-label="false">允许关联已有数据</el-checkbox>
+          <el-switch size="mini" v-model="cpnt.data._relate" active-text="允许关联已有数据"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">允许关联已有数据</div>
             <i class="tip el-icon-question"></i>
@@ -65,12 +65,12 @@ export default {
   props: ["cpnt"],
   components: {
     commonPanel,
-    FormAsstable
+    FormAsstable,
   },
   data() {
     return {
       options: [],
-      loading: false
+      loading: false,
     };
   },
   computed: {
@@ -80,13 +80,13 @@ export default {
       },
       set(val) {
         this.cpnt.data._showFields = val.join(",");
-      }
-    }
+      },
+    },
   },
   watch: {
     "cpnt.data._type"(type) {
       this.cpnt.cache.defaultEl._type = type;
-    }
+    },
   },
   created() {
     this.getFormList();
@@ -112,19 +112,19 @@ export default {
             _required: false,
             _val: "",
             _relate: this.cpnt.data._relate,
-            _new: this.cpnt.data._new
+            _new: this.cpnt.data._new,
           })
         );
 
-        this.$watch(`cpnt.cache.defaultEl._val`, val => {
+        this.$watch(`cpnt.cache.defaultEl._val`, (val) => {
           this.cpnt.data._defaultValue = val;
         });
 
-        this.$watch(`cpnt.data._relate`, val => {
+        this.$watch(`cpnt.data._relate`, (val) => {
           this.cpnt.cache.defaultEl._relate = val;
         });
 
-        this.$watch(`cpnt.data._new`, val => {
+        this.$watch(`cpnt.data._new`, (val) => {
           this.cpnt.cache.defaultEl._new = val;
         });
       }
@@ -148,7 +148,7 @@ export default {
       this.cpnt.cache.fieldOptions = store.search({
         options: { table_show: true },
         onlyData: true,
-        beforePush: item => !item.parent.CPNT.host_db
+        beforePush: (item) => !item.parent.CPNT.host_db,
       });
 
       this.cpnt.cache.defaultEl._option = id;
@@ -158,8 +158,8 @@ export default {
         this.cpnt.data._showFields = _.map(this.cpnt.cache.fieldOptions, "_fieldValue").join(",");
       }
       this.loading = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

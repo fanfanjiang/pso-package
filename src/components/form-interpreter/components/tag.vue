@@ -13,11 +13,9 @@
       <pso-picker-tag
         v-if="cpnt.store.editable&&!cpnt.data._read"
         ref="selector"
-        :show="show"
         :tree-option="cpnt.data._treeOptions"
         :pattern="cpnt.data._type"
         :source="cpnt.data._source"
-        @cancel="show=false"
         @confirm="handleTagAdd"
       >
         <el-button size="mini" icon="el-icon-plus" circle></el-button>

@@ -41,7 +41,7 @@
       </div>
     </el-form-item>
     <el-form-item label="设置">
-      <el-checkbox v-model="cpnt.data._copy" :true-label="true" :false-label="false">为表单赋值</el-checkbox>
+      <el-switch size="mini" v-model="cpnt.data._copy" active-text="为表单赋值"></el-switch>
     </el-form-item>
   </common-panel>
 </template>

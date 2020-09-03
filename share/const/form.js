@@ -18,7 +18,10 @@ const CPNT = {
     data: [
       { n: '_type', v: 'text' },
       { n: '_scannable', v: false },
-      { n: '_scanType', v: 'qr' }
+      { n: '_scanType', v: 'qr' },
+      { n: '_searchable', v: false },
+      { n: '_searchForm', v: '' },
+      { n: '_searchField', v: '' },
     ]
   },
   number: {

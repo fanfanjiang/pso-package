@@ -68,7 +68,7 @@
       @close="showTable=false"
       :visible="showTable"
     >
-      <pso-form-table
+      <pso-form-view
         :cfgId="cpnt.data._option"
         checkbox
         :deletable="deletable"
@@ -81,7 +81,7 @@
         :changable="false"
         :stageable="false"
         @selection-confirm="handleAddSelection"
-      ></pso-form-table>
+      ></pso-form-view>
     </el-dialog>
     <pso-drawer
       size="40%"
@@ -120,14 +120,13 @@
   </el-form-item>
 </template> 
 <script>
-import PsoFormTable from "../../form-table";
 import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
 import FormStore from "../../form-designer/model/store.js";
 import shortid from "shortid";
 
 export default {
-  components: { PsoFormInterpreter: () => import("../index"), PsoFormTable },
+  components: { PsoFormInterpreter: () => import("../index") },
   mixins: [
     cpntMixin,
     pickerMixin({
@@ -137,14 +136,14 @@ export default {
       typeName: "_type",
       idName: "leaf_id",
       radioVal: 1,
-      checkboxVal: 2
-    })
+      checkboxVal: 2,
+    }),
   ],
   props: {
     deletable: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
@@ -157,13 +156,13 @@ export default {
       store: {},
       proxy: {
         valList: [],
-        _type: this.cpnt.data._type
+        _type: this.cpnt.data._type,
       },
       showFormViewer: false,
       dataId: "",
       selectedList: [],
       fields: [],
-      saveField: "user_id"
+      saveField: "user_id",
     };
   },
   computed: {
@@ -171,8 +170,8 @@ export default {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";
     },
     showFieldsReal() {
-      return this.fields.filter(item => item.show === "1");
-    }
+      return this.fields.filter((item) => item.show === "1");
+    },
   },
   watch: {
     "proxy.valList"(val) {
@@ -182,8 +181,8 @@ export default {
     "cpnt.data._type": {
       handler(val) {
         this.proxy._type = val;
-      }
-    }
+      },
+    },
   },
   async created() {
     await this.getFormCfg();
@@ -205,7 +204,7 @@ export default {
       this.store = new FormStore(ret.data);
 
       if (ret.data.display_columns) {
-        this.fields = JSON.parse(ret.data.display_columns).column[0].data.filter(item => {
+        this.fields = JSON.parse(ret.data.display_columns).column[0].data.filter((item) => {
           if (this.cpnt.data._showFields) {
             const exist = this.store.search({ options: { db: true }, dataOptions: { _fieldValue: item.field_name }, onlyData: true });
             if (exist.length) {
@@ -221,12 +220,12 @@ export default {
           options: { table_show: true },
           onlyMain: true,
           onlyData: true,
-          beforePush: item => {
+          beforePush: (item) => {
             this.$set(item.data, "display", item.data._fieldName);
             this.$set(item.data, "field_name", item.data._fieldValue);
             this.$set(item.data, "show", "1");
             return true;
-          }
+          },
         });
       }
 
@@ -242,9 +241,9 @@ export default {
         keys: {
           [this.saveField]: {
             type: 1,
-            value
-          }
-        }
+            value,
+          },
+        },
       });
       this.loadingTable = false;
       return ret.data[0];
@@ -291,15 +290,15 @@ export default {
       const leaf_id = this.dataId;
       const ret = await this.API.form({
         data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
-        method: "delete"
+        method: "delete",
       });
       if (ret.success) {
         this.$notify({ title: "删除成功", type: "success" });
       }
       this.deletingFrom = false;
       this.showFormViewer = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

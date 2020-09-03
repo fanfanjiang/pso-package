@@ -80,7 +80,7 @@ const FILTER_OP = {
         type: 'year',
         format: 'yyyy'
     },
-    op15: { 
+    op15: {
         id: 'op15',
         name: '在月范围内(仅筛选月份值)',
         op: [OP_TYPE.op4, OP_TYPE.op6],
@@ -172,16 +172,16 @@ const FILTER_TYPE = {
     //     ]
     // },
     user: {
-        id: 'user', 
+        id: 'user',
         cid: 'user',
         name: '用户',
         op: [
-            { ...FILTER_OP.op1, match: 99 } 
+            { ...FILTER_OP.op1, match: 99 }
         ]
     },
     dept: {
         id: 'dept',
-        cid: 'department', 
+        cid: 'department',
         name: '部门',
         op: [
             { ...FILTER_OP.op1, match: 99 }
