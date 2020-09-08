@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
+  <pso-label :cpnt="cpnt">
     <div class="pso-form-upload">
       <el-popover
         v-if="storeEditable&&!cpnt.data._read"
@@ -22,7 +22,7 @@
         <pso-skeleton v-else :lines="1"></pso-skeleton>
       </div>
     </div>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import PsoUpload from "../../upload/index.vue";
@@ -34,14 +34,14 @@ export default {
   mixins: [cpntMixin],
   components: {
     PsoUpload,
-    PsoFileList
+    PsoFileList,
   },
   data() {
     return {
       showUpload: false,
       loadingFile: false,
       fIndex: 0,
-      proxy: []
+      proxy: [],
     };
   },
   created() {
@@ -55,9 +55,11 @@ export default {
       handler(val) {
         if (val && val.length) {
           this.cpnt.data._val = _.map(val, "leaf_id").join(",");
+        } else {
+          this.cpnt.data._val = "";
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     async getImages() {
@@ -81,8 +83,8 @@ export default {
         this.proxy.splice(index, 1);
         this.$emit("delete", file);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less">

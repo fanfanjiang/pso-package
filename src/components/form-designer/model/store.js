@@ -40,6 +40,8 @@ export default class FormStore {
 
         this.cpntsDataMps = {};
 
+        this.hiddenCpnts = [];
+
         this.sub_config; //关联表配置
 
         for (let option in options) {

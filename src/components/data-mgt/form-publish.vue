@@ -9,12 +9,10 @@
     </div>
     <div v-if="data.isPublic" class="pso-dd-public">
       <pso-title>对外配置</pso-title>
-      <el-form ref="form" label-width="80px" label-position="left">
-        <el-form-item label="LOGO">
-          <pso-form-attach :cpnt="{data:data.attach}">
-            <el-button icon="el-icon-paperclip" plain size="mini">上传LOGO</el-button>
-          </pso-form-attach>
-        </el-form-item>
+      <el-form ref="form" label-width="80px" label-position="left"> 
+        <pso-form-attach :cpnt="logo" @value-change="handleLogoChange">
+          <el-button icon="el-icon-paperclip" plain size="mini">上传LOGO</el-button>
+        </pso-form-attach>
         <el-form-item label="标题">
           <el-input v-model="data.name" size="mini"></el-input>
         </el-form-item>
@@ -97,24 +95,28 @@
   </div>
 </template>
 <script>
+import PsoFormAttach from "../form-interpreter/components/attachment";
 import PsoFormComponent from "../form-interpreter/cpnt";
 import FormStore from "../form-designer/model/store.js";
+import { genComponentData } from "../form-designer/helper";
 import shortid from "shortid";
 import Qs from "qs";
 export default {
   props: ["data", "node", "store"],
-  components: { PsoFormComponent },
+  components: { PsoFormComponent, PsoFormAttach },
   data() {
     return {
       qrsrc: "",
       selectedList: [],
       init: true,
+      logo: { data: {} },
     };
   },
   watch: {
     "node.node_name"() {
       this.genQR();
     },
+    "logo.data._val"() {},
   },
   computed: {
     host() {
@@ -132,9 +134,13 @@ export default {
         f.cpnt = this.makeCpnt(f, { [f.id]: f.val });
       });
     }
+    this.logo.data = genComponentData({ componentid: "attachment", _fieldName: "LOGO", _val: this.data.attach || "" });
     this.init = false;
   },
   methods: {
+    handleLogoChange({ value }) {
+      this.data.attach = value;
+    },
     async genQR(params = {}) {
       return await QRCode.toDataURL(`${this.host}/form/${this.node.node_name}?${Qs.stringify(params)}`);
     },

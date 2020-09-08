@@ -1,7 +1,7 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
+  <pso-label :cpnt="cpnt">
     <el-cascader size="small" v-if="show" v-model="proxy" :props="props" filterable></el-cascader>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import cpntMixin from "../mixin";
@@ -24,11 +24,11 @@ export default {
             (level === 1 && this.cpnt.data._type === "city") ||
             (level === 2 && this.cpnt.data._type === "county")
           ) {
-            ret.data.forEach(item => (item.leaf = true));
+            ret.data.forEach((item) => (item.leaf = true));
           }
           resolve(ret.data);
-        }
-      }
+        },
+      },
     };
   },
   watch: {
@@ -40,14 +40,14 @@ export default {
       deep: true,
       handler(value) {
         this.cpnt.data._val = value.join("/");
-      }
-    }
+      },
+    },
   },
   created() {
     if (this.cpnt.data._val) {
       this.proxy = this.cpnt.data._val.split("/");
     }
-  }
+  },
 };
 </script>
 <style lang="less" scoped>

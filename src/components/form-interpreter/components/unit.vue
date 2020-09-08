@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
+  <pso-label :cpnt="cpnt">
     <div class="pso-form-selectedlist" v-if="proxy.list.length&&!loading">
       <el-tag
         v-for="item in proxy.list"
@@ -19,7 +19,7 @@
       @cancel="show=false"
       @confirm="handlePickTag"
     ></pso-picker-tag>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import { pickerMixin } from "../../../mixin/picker";

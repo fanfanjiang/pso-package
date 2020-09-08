@@ -30,7 +30,8 @@ export const FORM_COLUMN_FIELDS = {
     cal: "0",
     res_dimen: "",
     target_form: {},
-    searchable: false
+    searchable: false,
+    editable: false
 }
 
 export const STATIC_COLUMN_FIELDS = {

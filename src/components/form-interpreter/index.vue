@@ -42,6 +42,7 @@ export default {
     },
     dataDefault: Object,
     mockAsstables: Object,
+    hiddenCpnts: Array,
   },
   data() {
     return {
@@ -90,14 +91,15 @@ export default {
     });
     this.$on("asstable-initialized", (val) => {
       this.$emit("value-change", val);
+      this.broadcast("PsoformItem", "cpnt-value-changed", val);
     });
   },
   methods: {
     async getFormData() {
-      this.loading = true;
       if (this.dataInstance) {
         this.store.updateInstance(this.dataInstance);
       } else if (this.dataId) {
+        this.loading = true;
         const ret = await this.API.form({ data: { leaf_id: this.dataId, form_code: this.store.data_code } });
         this.store.updateInstance(ret.data);
       } else {
@@ -110,6 +112,7 @@ export default {
           this.store.updateInstance();
         }
       }
+
       this.$emit("data-loaded", this.store);
       this.loading = false;
     },

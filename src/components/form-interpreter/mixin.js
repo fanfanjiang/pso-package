@@ -1,8 +1,10 @@
 import emitter from "../../mixin/emitter";
+import PsoLabel from "./label";
 
 export default {
     mixins: [emitter],
     componentName: "PsoformItem",
+    components: { PsoLabel },
     props: {
         cpnt: {
             type: Object,
@@ -36,8 +38,11 @@ export default {
             this.cpnt.data._proxy = this.proxy;
         }
 
+        this.cpnt.$state = this.$data;
+
         if (this.cpnt.data._association) {
             this.$on('cpnt-value-changed', ({ cpnt, value, store, proxy }) => {
+                console.log(cpnt.data._fieldName);
                 let targetVal;
                 if (cpnt.data.fid === this.cpnt.data._association) {
                     targetVal = value;

@@ -94,7 +94,7 @@
               ></el-option>
             </el-select>
             <el-select
-              v-if="tpItem.picker==='picker-column'&&!loadingFields&&getRelateItem(tpItem)"
+              v-if="tpItem.picker==='picker-column'&&!loadingFields&&!loadingWf&&getRelateItem(tpItem)"
               filterable
               clearable
               size="mini"
@@ -152,14 +152,15 @@ export default {
   data() {
     return {
       initializing: true,
+      loadingFields: true,
+      loadingTp: true,
+      loadingWf: false,
       templetes: [],
       forms: [],
       workflows: [],
       tags: [],
       text: [],
       formCfg: {},
-      loadingFields: true,
-      loadingTp: true,
       fields: [],
       showDesigner: false,
       curSet: null,
@@ -236,11 +237,13 @@ export default {
       return _.find(this.data, { field: tpItem.relateParam }).value;
     },
     async handleWfChange(val, tpItem) {
+      this.loadingWf = true;
       const wfRet = await this.API.workflowcfg({ data: { node_id: val } });
       const data_code = wfRet.data.map_data_code;
       if (!this.formCfg[data_code]) {
         await this.getFormCfg(data_code, val);
       }
+      this.loadingWf = false;
     },
     async getFormCfg(value, field) {
       this.loadingFields = true;

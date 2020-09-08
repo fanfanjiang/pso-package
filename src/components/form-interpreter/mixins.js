@@ -23,7 +23,17 @@ export const formulaMixin = {
         figure(data) {
             let datasource = this.cpnt.data[this.sourceField || '_datasource'];
             data.forEach(item => {
-                datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), item._val);
+                let val = item._val;
+
+                //如果是人员或者部门，做特殊处理
+                if ((item.componentid === 'user' || item.componentid === 'department')) {
+                    if (item._proxy && item._proxy.list.length) {
+                        val = item._proxy.list[0][item.componentid === 'user' ? 'user_name' : 'node_display'];
+                    }
+                }
+
+
+                datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), val);
             });
             try {
                 console.log(datasource);

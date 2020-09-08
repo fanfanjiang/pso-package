@@ -24,11 +24,9 @@
     <el-form-item label="默认值">
       <pso-picker-tag
         ref="selector"
-        :show="show"
         :tree-option="cpnt.data._treeOptions"
         :pattern="cpnt.data._type"
         :source="cpnt.data._source"
-        @cancel="show=false"
         @confirm="handleAddSelection"
       ></pso-picker-tag>
       <div :key="cpnt.fid">

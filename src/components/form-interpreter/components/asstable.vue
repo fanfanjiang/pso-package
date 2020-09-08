@@ -1,9 +1,5 @@
 <template>
-  <el-form-item
-    :label="cpnt.data._fieldName"
-    :required="cpnt.data._required"
-    v-loading="initializing||loading"
-  >
+  <pso-label :cpnt="cpnt" v-loading="initializing||loading">
     <div class="pso-ip__ast" v-if="!initializing">
       <div class="pso-ip__ast-btns" style="margin-bottom:5px" v-if="cpntEditable">
         <el-button
@@ -148,9 +144,9 @@
         </template>
       </pso-drawer>
     </div>
-  </el-form-item>
+  </pso-label>
 </template> 
-<script> 
+<script>
 import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
 import FormStore from "../../form-designer/model/store.js";
@@ -285,8 +281,10 @@ export default {
     this.dispatch("PsoformInterpreter", "asstable-initialized", {
       cpnt: this.cpnt,
       data: this.cpnt.data._val,
+      value: this.cpnt.data._val,
       proxy: this.proxy,
       fields: this.fields,
+      store: this.store,
     });
   },
   methods: {

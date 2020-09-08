@@ -1,6 +1,6 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <div style="display:flex">
+  <pso-label :cpnt="cpnt">
+    <div style="display:flex;align-items: center;">
       <div class="pso-form-user-selectedlist" v-if="!loading&&proxy.list.length">
         <el-tag
           v-for="item in proxy.list"
@@ -10,7 +10,7 @@
           @close="handleDelSelection(item)"
         >{{item.user_name}}</el-tag>
       </div>
-      <pso-skeleton v-if="loading" :lines="1"></pso-skeleton>
+      <pso-skeleton v-if="loading" :lines="1" :s-style="{width:'120px',padding:'0 5px'}"></pso-skeleton>
       <pso-picker-user
         v-if="storeEditable&&!cpnt.data._read"
         :pattern="cpnt.data._type"
@@ -21,7 +21,7 @@
         </div>
       </pso-picker-user>
     </div>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import { pickerMixin } from "../../../mixin/picker";

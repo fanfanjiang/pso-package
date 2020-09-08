@@ -60,7 +60,7 @@
               :small="true"
               layout="total,prev, pager, next"
               :page-sizes="[30,50,100,200,500]"
-              :pager-count="3"
+              :pager-count="5"
               :total="dataTotal"
               :page-size="options.limit"
               :current-page="options.start"

@@ -42,7 +42,7 @@ export default {
       this[WF_NODE_DEL]({ node: this.node, pnode: this.pnode });
     },
     selected() {
-      this.$emit("clickNode", this.node);
+      this.$emit("click-node", this.node);
       if (this.readMode) return;
       this[WF_SET_SELECTED](this.node);
     }

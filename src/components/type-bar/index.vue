@@ -2,7 +2,7 @@
   <div class="pso-typebar">
     <pso-skeleton v-if="loading" :lines="1"></pso-skeleton>
     <div v-else class="pso-typebar-wrapper">
-      <el-tabs v-model="selectedType" @tab-click="typeClickHandler">
+      <el-tabs v-model="selectedType">
         <el-tab-pane v-for="item of types" :name="item.feildname" :key="item.feildvalue">
           <el-badge
             slot="label"

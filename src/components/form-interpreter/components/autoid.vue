@@ -1,7 +1,7 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
+  <pso-label :cpnt="cpnt">
     <el-input size="small" :disabled="!cpnt.store.editable||cpnt.data._read" v-model="idVal"></el-input>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import { FIELD_FORMAT } from "../../../const/form";

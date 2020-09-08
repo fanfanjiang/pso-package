@@ -89,32 +89,32 @@ export default {
       curTab: "base",
       dataTotal: 0,
       page: 1,
-      newTag: {
+      newTag: { 
         tag_name: "",
         tag_type: "",
         tag_note: "",
         tag_meter: 0,
         tag_config: "",
         tag_set: [],
-        tag_rule: [],
+        tag_rule: "",
         tag_source: "",
-        optype: 0
+        optype: 0,
       },
       showEditor: false,
-      showTagEditor: false
+      showTagEditor: false,
     };
   },
   computed: {
     where() {
       return {
-        page: this.page - 1
+        page: this.page - 1,
       };
-    }
+    },
   },
   watch: {
     "node.node_id"() {
       this.fetch();
-    }
+    },
   },
   created() {
     if (this.node) {
@@ -126,7 +126,7 @@ export default {
       this.loadingTable = true;
       const ret = await this.API.tag({
         data: { tag_code: this.node.node_id, ...this.where },
-        method: "get"
+        method: "get",
       });
       if (ret.success) {
         this.data = ret.data;
@@ -195,7 +195,7 @@ export default {
       if (data.tag_type === "searchtag") {
         const tagRule = [];
         if (data.optype !== 2) {
-          data.tag_rule.forEach(item => {
+          data.tag_rule.forEach((item) => {
             tagRule.push({ ...item, fields: [] });
           });
           data.tag_rule = JSON.stringify(tagRule);
@@ -208,7 +208,7 @@ export default {
       this.loading = false;
 
       this.fetch();
-    }
-  }
+    },
+  },
 };
 </script>

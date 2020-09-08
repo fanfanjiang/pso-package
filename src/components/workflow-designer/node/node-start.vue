@@ -1,6 +1,6 @@
 <template>
   <common-node
-    @clickNode="$emit('clickNode',$event)"
+    @click-node="$emit('click-node',$event)"
     :node="node"
     :pnode="pnode"
     :readMode="readMode"
@@ -33,8 +33,8 @@ export default {
   props: ["node", "pnode", "workflowImage", "readMode"],
   components: { CommonNode },
   computed: {
-    ...mapState(["wfDesigner"])
-  }
+    ...mapState(["wfDesigner"]),
+  },
 };
 </script>
 <style lang="less" scoped>

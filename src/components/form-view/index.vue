@@ -39,7 +39,7 @@
               :hidden="status.total==='0'"
               :value="status.total"
               class="item"
-              :type="index>3?'info':''"
+              :type="index>3?'info':'primary'"
               :max="99"
               :key="index"
               v-if="status.total!=='0'"
@@ -201,7 +201,7 @@
                 <div v-for="(f,index) of showFieldsReal" :key="index">
                   <template v-if="f.field_name!==params.headPicture">
                     <span>{{f.display}}</span>
-                    <span>{{getTrueVal(d,f)}}</span>
+                    <span>{{formatListVal(d,f)}}</span>
                   </template>
                 </div>
               </div>
@@ -253,14 +253,22 @@
               :align="field.align"
               :sortable="field.sortable==='1'?'custom':false"
               header-align="center"
+              class-name="modifier-placeholder-wrapper"
             >
               <template slot-scope="scope">
-                <a
-                  v-if="field.url"
-                  href="javascript:;"
-                  @click.stop.prevent="handleUrlClick({row:scope.row,field})"
-                >{{getTrueVal(scope.row,field)}}</a>
-                <span v-else>{{getTrueVal(scope.row,field)}}</span>
+                <div class="modifier-placeholder" :ref="scope.$index+field.field_name">
+                  <span
+                    class="modifier-flag"
+                    v-if="isFlagField(field.field_name)"
+                    v-html="formatListVal(scope.row,field)"
+                  ></span>
+                  <span v-else>{{formatListVal(scope.row,field)}}</span>
+                  <span
+                    v-if="field.editable"
+                    class="el-icon-edit modifier-trigger"
+                    @click.stop="openModifier(scope.row,field,scope.$index)"
+                  ></span>
+                </div>
               </template>
             </el-table-column>
             <el-table-column
@@ -340,6 +348,16 @@
         </div>
       </template>
     </pso-drawer>
+    <transition name="el-fade-in-linear">
+      <div class="modifier" :style="modifierStyle" v-if="showModifier">
+        <pso-form-interpreter
+          ref="modifier"
+          :form-entity="modCfg"
+          :data-instance="modInstance"
+          @data-loaded="handleModLoaded"
+        ></pso-form-interpreter>
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -349,14 +367,14 @@ import XLSX from "xlsx";
 import Qs from "qs";
 import { MENU_LEAF_AUTH } from "../../const/menu";
 import FormIcon from "./form-icon";
-import { FormListMixin } from "../../mixin/list";
+import { FormListMixin, FormModifierMixin } from "../../mixin/list";
 const { FILTER_TYPE } = require("../../../share/const/filter");
 const CPNT = require("../../../share/const/form");
 import debounce from "throttle-debounce/debounce";
 
 export default {
   components: { PsoFormInterpreter: () => import("../form-interpreter"), FormIcon },
-  mixins: [FormListMixin],
+  mixins: [FormListMixin, FormModifierMixin],
   props: {
     params: {
       type: Object,
@@ -498,7 +516,7 @@ export default {
       );
     },
     showSummary() {
-      return !!this.summary;  
+      return !!this.summary;
     },
     opAddable() {
       return this.addable && (this.opAuth & 1) === 1;
@@ -695,9 +713,6 @@ export default {
       }
       !this.initializing && this.getFormData();
     },
-    getVal(val) {
-      return _.isNull(val) ? "" : val;
-    },
     reset() {
       this.viewAuths = [];
       this.formData = [];
@@ -712,6 +727,12 @@ export default {
       if (!ret.success) return;
 
       this.store = new FormStore(ret.data);
+
+      //初始化列表字段修改器
+      this.initializeModifier(ret.data, this.store, (data) => {
+        this.updateFormData(data);
+      });
+
       this.cfg = Object.assign({}, this.cfg, ret.data);
       this.formCode = this.store.data_code;
 
@@ -1054,15 +1075,6 @@ export default {
         }
       }
       return indexs;
-    },
-    getTrueVal(d, f) {
-      if ((f.componentid === "select" || f.componentid === "checkbox") && f._option) {
-        const opt = _.find(f._option, { _optionValue: d[f.field_name] });
-        if (opt) {
-          return opt._optionName;
-        }
-      }
-      return this.getVal(d[f.field_name]);
     },
   },
 };

@@ -1,7 +1,8 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
+  <pso-label :cpnt="cpnt">
     <div class="pso-number">
       <el-input-number
+        ref="cpnt"
         size="small"
         v-model="cpnt.data._val"
         :disabled="!cpnt.store.editable||cpnt.data._read"
@@ -12,7 +13,7 @@
       ></el-input-number>
       <span v-if="cpnt.data._unit" class="pso-number-unit">{{cpnt.data._unit}}</span>
     </div>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import cpntMixin from "../mixin";
@@ -52,6 +53,11 @@ export default {
   created() {
     this.cpnt.data._val = parseFloat(this.cpnt.data._val || 0);
     this.watchCpntVal();
+  },
+  mounted() {
+    if (this.cpnt.data._autofocus) {
+      this.$refs.cpnt.focus();
+    }
   },
 };
 </script>

@@ -16,7 +16,7 @@
             ></div>
             <div
               class="pso-wf-executor__stamp"
-              v-if="!loading"
+              v-if="!store.loading"
               v-html="stamp.stamp"
               :style="stampStyle"
             ></div>

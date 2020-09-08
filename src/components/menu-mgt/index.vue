@@ -11,7 +11,6 @@
           :default-node-data="defaultNodeData"
           :auto-edit="true"
           @node-click="nodeClickHandler"
-          @before-edit-submit="beforeNodeUpdate"
         ></pso-tree-common>
       </div>
       <div class="pso-page-body__content">

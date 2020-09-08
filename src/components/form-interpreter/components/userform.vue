@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required" v-loading="loading">
+  <pso-label :cpnt="cpnt">
     <div class="pso-form-asstable-table">
       <el-table
         ref="table"
@@ -117,7 +117,7 @@
         </div>
       </template>
     </pso-drawer>
-  </el-form-item>
+  </pso-label>
 </template> 
 <script>
 import { pickerMixin } from "../../../mixin/picker";

@@ -10,7 +10,8 @@ const defalutCpntData = [
     { n: '_hideOnNew', v: false }, { n: '_hideForever', v: false }, { n: '_placeholder', v: '' },
     { n: '_fieldInfo', v: '' }, { n: '_unique', v: false }, { n: '_auth', v: [] }, { n: '_regular', v: '' },
     { n: '_fieldFormat', v: 'common' }, { n: '_outputFormat', v: '' }, { n: '_transFields', v: '' },
-    { n: '_height', v: '' }
+    { n: '_height', v: '' },
+    { n: '_autofocus', v: false },
 ]
 
 export function transferCpnt(target, componentid) {
@@ -40,7 +41,7 @@ export function genComponentData(target) {
         } else {
             do {
                 target.fid = shortid.generate();
-            } while (target.fid.indexOf('-') !== -1 || /^[0-9]/.test(target.fid)) 
+            } while (target.fid.indexOf('-') !== -1 || /^[0-9]/.test(target.fid))
             Vue.set(target, '_fieldValue', target.fid);
         }
     }

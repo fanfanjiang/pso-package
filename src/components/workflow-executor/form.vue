@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     instanceId() {
-      return this.store.data.instanceId || (this.store.copy && this.store.copyInstanceId);
+      return this.store.data.instanceId || (this.store.copy ? this.store.copyInstanceId : "");
     },
     isFormWriteable() {
       return this.store.curStep && this.store.curStep.atype === "form";

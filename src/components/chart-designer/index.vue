@@ -97,7 +97,7 @@
                   :key="index"
                   @click="setChartType(typeItem)"
                 >
-                  <el-tooltip open-delay="500" effect="dark" placement="top">
+                  <el-tooltip :open-delay="500" effect="dark" placement="top">
                     <div slot="content" v-html="typeItem.info"></div>
                     <div>
                       <img class="pso-svg" :src="getChartIcon(typeItem)" />

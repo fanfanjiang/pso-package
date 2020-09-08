@@ -1,7 +1,7 @@
 <template>
   <div class="pso-wf-executor__flowchart">
     <pso-wf-stage
-      @clickNode="selectedNode"
+      @click-node="selectedNode"
       :workflowData="store.cfg.wf_map_tp"
       :readMode="true"
       :display-small="displaySmall"
@@ -32,25 +32,27 @@ export default {
   props: {
     store: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     displaySmall: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   methods: {
     selectedNode(node) {
       //只有在指定模式下才执行
       if (this.showBody) return;
-      if (node.nid === this.store.curStep.nid) return this.$message({ message: "不能选择当前执行节点", type: "warning" });
-      if (this.store.appointStep && node.nid === this.store.appointStep.nid) return this.cancelPickreject(true);
+      if (this.store.curStep && node.nid === this.store.curStep.nid)
+        return this.$message({ message: "不能选择当前执行节点", type: "warning" });
+      if (this.store.appointStep && this.store.appointStep && node.nid === this.store.appointStep.nid)
+        return this.store.cancelPickreject(true);
       this.store.appointStep = this.store.cfg.wf_map_tp.clickedNode = node;
     },
     async pickreject() {
       await this.nextStep(REVIEW_OP_TYPE.pickreject.type);
       this.store.cancelPickreject();
-    }
-  }
+    },
+  },
 };
 </script>

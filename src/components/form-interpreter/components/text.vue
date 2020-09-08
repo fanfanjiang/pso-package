@@ -1,12 +1,15 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required" class="cpnt-text">
     <el-input
+      ref="cpnt"
       size="small"
       :type="type||cpnt.data._type||'text'"
       :clearable="true"
       :disabled="!cpntEditable"
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
+      :autofocus="cpnt.data._autofocus"
+      autosize
       @focus="focusing=true"
       @blur="handleInputBlur"
     ></el-input>
@@ -65,6 +68,11 @@ export default {
           this.searchRet = [];
         }
       });
+    }
+  },
+  mounted() {
+    if (this.cpnt.data._autofocus) {
+      this.$refs.cpnt.focus();
     }
   },
   methods: {

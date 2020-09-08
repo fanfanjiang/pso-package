@@ -134,10 +134,7 @@ const _DATA = {
   staData: [],
   pubCfg: {
     isPublic: false,
-    attach: {
-      _fieldName: "附件",
-      _val: "",
-    },
+    attach: "",
     name: "",
     subBtnText: "",
     doneText: "",
@@ -352,7 +349,7 @@ export default {
       if (!ret.success) return;
       this.tableData = ret.data;
       this.tableData.forEach((item) => {
-        const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+        const field = formStore.searchByField(item.field_name, true);
         item.field_display = field ? field._fieldName : "系统字段";
       });
     },
@@ -361,7 +358,7 @@ export default {
       if (!ret.success) return;
       ret.data.forEach((item) => {
         if (item) {
-          const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+          const field = formStore.searchByField(item.field_name, true);
           item.display = item.display_name || (field ? field._fieldName : "");
           this.colData.push(item);
         }

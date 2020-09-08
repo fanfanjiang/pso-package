@@ -9,13 +9,13 @@
           :class="stageClass"
         >
           <wf-node-start
-            @clickNode="$emit('clickNode',$event)"
+            @click-node="$emit('click-node',$event)"
             :readMode="readMode"
             :workflowImage="workflowImage"
             :node="workflowImage.node[0]"
           ></wf-node-start>
           <wf-node-el
-            @clickNode="$emit('clickNode',$event)"
+            @click-node="$emit('click-node',$event)"
             :readMode="readMode"
             :workflowImage="workflowImage"
             v-for="nodeItem in workflowImage.node[0].children"

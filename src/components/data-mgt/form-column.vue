@@ -60,7 +60,7 @@
               <el-switch size="mini" v-model="scope.row.show" active-value="1" inactive-value="0"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column prop="show" label="筛选" width="60" sortable>
+          <el-table-column prop="searchable" label="筛选" width="60" sortable>
             <template slot-scope="scope">
               <el-switch size="mini" v-model="scope.row.searchable"></el-switch>
             </template>
@@ -73,6 +73,11 @@
                 active-value="1"
                 inactive-value="0"
               ></el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column prop="editable" label="编辑" width="60" sortable>
+            <template slot-scope="scope">
+              <el-switch size="mini" v-model="scope.row.editable"></el-switch>
             </template>
           </el-table-column>
           <el-table-column label="统计" width="60">
@@ -234,7 +239,6 @@ export default {
     addCol(data) {
       this.data.column.push({ name: shortid.generate(), data: data || _.cloneDeep(this.data.column[0].data) });
       this.activeTab = this.data.column.length - 1 + "";
-      console.log(this.activeTab);
     },
     setParamsHandler(row) {
       this.curRow = row;

@@ -1,6 +1,6 @@
 <template>
   <common-node
-    @clickNode="$emit('clickNode',$event)"
+    @click-node="$emit('click-node',$event)"
     :node="node"
     :pnode="pnode"
     :readMode="readMode"
@@ -19,13 +19,13 @@
         <div class="wf-node__info" v-if="node.opList.length">
           <span class="wf-node__info-title">操作授权</span>
           <span class="wf-node__info-detail">
-            <el-tag size="mini" v-for="item of node.opList" :key="item">{{getOpName(item)}}</el-tag>
+            <el-tag size="mini" v-for="(item,index) of node.opList" :key="index">{{getOpName(item)}}</el-tag>
           </span>
         </div>
         <div class="wf-node__info" v-if="node.opaitems.length">
           <span class="wf-node__info-title">负责人</span>
           <span class="wf-node__info-detail">
-            <el-tag size="mini" v-for="item of node.opaitems" :key="item">{{item.name}}</el-tag>
+            <el-tag size="mini" v-for="(item,index) of node.opaitems" :key="index">{{item.name}}</el-tag>
           </span>
         </div>
       </div>

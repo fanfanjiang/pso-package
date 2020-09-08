@@ -54,7 +54,7 @@
               :total="dataTotal"
               :page-size="options.limit"
               :current-page="options.start"
-              :pager-count="3"
+              :pager-count="5"
               @size-change="sizeChangeHandler"
               @current-change="currentChangeHandler"
               @prev-click="prevClickHandler"
@@ -62,6 +62,7 @@
             ></el-pagination>
           </div>
           <el-table
+            v-if="!tableLoading"
             ref="multipleTable"
             height="280"
             size="small"
@@ -81,7 +82,7 @@
       <div class="pso-picker__footer">
         <div class="pso-picker__showlist">
           <span v-for="item of selected" :key="item[idName]">
-            <el-tag>{{item[displayName]}}</el-tag>
+            <el-tag closable @close="handleDelSelection(item)">{{item[displayName]}}</el-tag>
           </span>
         </div>
       </div>
@@ -100,26 +101,24 @@
 <script>
 export default {
   props: {
-    show: {
-      type: Boolean,
-      default: false
-    },
     pattern: {
       type: String,
-      default: "radio"
+      default: "radio",
     },
     source: {
       type: String,
-      default: "tree"
+      default: "tree",
     },
     treeOption: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   data() {
     return {
+      show: false,
       loading: false,
+      tableLoading: false,
       opened: false,
       dataTable: [],
       selected: [],
@@ -130,16 +129,16 @@ export default {
         tag_code: "",
         keys: {
           node_id: { value: "", type: 1 },
-          tag_name: { value: "", type: 2 }
-        }
+          tag_name: { value: "", type: 2 },
+        },
       },
-      dataTotal: 0
+      dataTotal: 0,
     };
   },
   computed: {
     treeOptions() {
       const options = {
-        dimen: 5
+        dimen: 5,
       };
       if (this.treeOption) {
         const treeOption = this.treeOption.split(",");
@@ -159,7 +158,7 @@ export default {
     pickerClass() {
       return {
         "pso-picker__l__wider": this.source === "tree",
-        "pso-picker__c__show": this.showCenter
+        "pso-picker__c__show": this.showCenter,
       };
     },
     pickerWidth() {
@@ -170,7 +169,7 @@ export default {
     },
     showCenter() {
       return this.source === "data";
-    }
+    },
   },
   watch: {
     "options.start"() {
@@ -193,7 +192,7 @@ export default {
     treeOption() {
       this.options.keys.node_id.value = "";
       this.dataTable = [];
-    }
+    },
   },
   methods: {
     async fetch(tag_no) {
@@ -204,17 +203,28 @@ export default {
         ret = await this.API.getTagLeafData({ tag_no });
       } else {
         ret = await this.API.tag({
-          data: { ...this.options, keys: JSON.stringify(this.options.keys), page: this.options.start - 1 }
+          data: { ...this.options, keys: JSON.stringify(this.options.keys), page: this.options.start - 1 },
         });
       }
       this.loading = false;
       if (ret.success && ret.data) {
         this.dataTable = ret.data;
-        this.dataTotal = typeof ret.total !== "undefined" ? ret.total : ret.data.length;
+        this.dataTotal = typeof ret.count !== "undefined" ? ret.count : ret.data.length;
       }
     },
     handleSelectChange(data) {
-      this.selected = data;
+      for (let item of data) {
+        const index = _.findIndex(this.selected, { tag_no: item.tag_no });
+        if (index === -1) {
+          this.selected.push(item);
+        }
+      }
+    },
+    handleDelSelection(item) {
+      const index = _.findIndex(this.selected, { [this.idName]: item[this.idName] });
+      if (index !== -1) {
+        this.selected.splice(index, 1);
+      }
     },
     nodeCheckHandler(data) {
       this.checkSelectedNodes(data);
@@ -227,22 +237,23 @@ export default {
     },
     confirm() {
       this.$emit("confirm", _.cloneDeep(this.selected));
+      this.show = false;
     },
     checkSelectedNodes(list) {
-      this.selected = list.filter(node => node.is_leaf);
+      this.selected = list.filter((node) => node.is_leaf);
     },
     async nodeClickHandler(node) {
       if (this.source === "tree") {
         this.checkSelectedNodes([node]);
       } else {
         if (!node.is_leaf) return;
-
+        this.tableLoading = true;
         this.options.start = 1;
         this.options.keys.node_id.value = node.node_id;
         this.options.tag_code = node.node_id;
         if (this.showCenter) {
           const ret = await this.API.tag({
-            data: { tag_code: node.node_id, start: 0, limit: 999 }
+            data: { tag_code: node.node_id, start: 0, limit: 999 },
           });
           if (ret.success) {
             this.tagList = ret.data;
@@ -250,6 +261,9 @@ export default {
         } else {
           this.fetch();
         }
+        this.$nextTick(() => {
+          this.tableLoading = false;
+        });
       }
     },
     async handleTagClick({ tag_no }) {
@@ -269,8 +283,8 @@ export default {
     },
     searchHandler() {
       this.fetch();
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

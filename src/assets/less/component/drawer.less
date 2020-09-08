@@ -1,7 +1,7 @@
 .pso-drawer {
     height: 100vh;
     position: relative;
- 
+
     .pso-drawer-header {
         color: #fff;
         display: flex;
@@ -58,6 +58,16 @@
         right: 0;
         box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.12);
         z-index: 2;
+    }
+
+
+}
+
+.pso-draw-wrapper {
+    .el-drawer {
+        @media (max-width: @screen-md-min) {
+            width: 100% !important;
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
+  <pso-label :cpnt="cpnt">
     <template v-if="cpnt.data._type === '2'&&cpntEditable">
       <el-button
         type="primary"
@@ -66,7 +66,7 @@
         @selection-confirm="handleAddSelection"
       ></pscript-table>
     </el-dialog>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import cpntMixin from "../mixin";

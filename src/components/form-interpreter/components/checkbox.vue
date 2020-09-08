@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
+  <pso-label :cpnt="cpnt">
     <el-checkbox-group v-model="proxy" v-if="!reloading">
       <el-checkbox
         size="small"
@@ -9,7 +9,7 @@
         :disabled="!cpnt.store.editable||cpnt.data._read"
       >{{opt._fixedName||opt._optionName||opt._optionValue}}</el-checkbox>
     </el-checkbox-group>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import cpntMixin from "../mixin";

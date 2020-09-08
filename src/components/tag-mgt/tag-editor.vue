@@ -4,7 +4,7 @@
       <el-input size="mini" v-model="data.tag_name" autocomplete="off"></el-input>
     </el-form-item>
     <el-form-item label="标签类型">
-      <el-select size="mini" v-model="data.tag_type">
+      <el-select size="mini" v-model="data.tag_type" @change="handleTypeChange">
         <el-option v-for="item in tagTypes" :key="item.v" :label="item.n" :value="item.v"></el-option>
       </el-select>
     </el-form-item>
@@ -14,11 +14,15 @@
     <el-form-item label="描述">
       <el-input size="mini" v-model="data.tag_note" autocomplete="off"></el-input>
     </el-form-item>
-    <el-form-item label="规则" v-if="data.tag_type!=='searchtag'">
+    <el-form-item label="规则" v-if="data.tag_type==='common'">
       <el-input size="mini" v-model="data.tag_rule" autocomplete="off"></el-input>
     </el-form-item>
-    <el-form-item label="标签颜色" style="display: flex;align-items: center;">
-      <el-color-picker v-model="data.tag_meter" size="mini" :predefine="predefineColors"></el-color-picker>
+    <el-form-item
+      v-if="data.tag_type==='flag'"
+      label="标签颜色"
+      style="display: flex;align-items: center;"
+    >
+      <el-color-picker v-model="data.tag_rule" size="mini" :predefine="predefineColors"></el-color-picker>
     </el-form-item>
     <plug-set :data="data.tag_set" :node="data" @change="handleTagChange" field="tag_source"></plug-set>
   </el-form>
@@ -52,6 +56,13 @@ export default {
   methods: {
     handleTagChange(data) {
       this.data.tag_set = data;
+    },
+    handleTypeChange(val) {
+      if (val === "searchtag") {
+        this.data.tag_rule = [];
+      } else {
+        this.data.tag_rule = "";
+      }
     },
   },
 };

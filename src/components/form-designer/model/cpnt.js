@@ -22,6 +22,11 @@ export default class Component {
         //默认组件名称
         this.data._fieldName = this.data._fieldName || this.CPNT.name;
 
+        //显示
+        if (store.hiddenCpnts.indexOf(this.data.fid) !== -1) {
+            this.data._hideForever = true;
+        }
+
         //权限
         const auth = _.find(store.__fieldAuth__, { field_name: this.data._fieldValue }) || {};
         this.data.__auth__ = auth.show_auth || null;
