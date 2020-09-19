@@ -17,10 +17,7 @@ const BASEDADA = {
     d_tag: '',
     msg_tag: '',
     creator_name: '',
-    attach: {
-        _fieldName: "附件",
-        _val: ''
-    },
+    attach: '',
     nextUser: null
 }
 
@@ -248,7 +245,7 @@ export default class WfStore {
 
         //设置附件
         if (file && file.length) {
-            this.data.attach._val = _.map(file, 'res_id').join(',');
+            this.data.attach = _.map(file, 'res_id').join(',');
         }
 
         //设置日志
@@ -336,8 +333,7 @@ export default class WfStore {
                 value = "";
             }
         }
-
-        $el.html(value);
+        $el.html(data.__showVal__ || value);
 
         //关联表
         if (cpnt.componentid === "asstable" && proxy && fields) {
@@ -367,15 +363,20 @@ export default class WfStore {
                 }
             } else {
                 const sequence = $el.attr('sequence');
-                $el.append(this.makeStaticTable(fields, proxy.valList, sequence === '1'));
-                const parentTd = $('.pso-static-table').parentsUntil('td');
-                if (parentTd.get(0)) {
-                    $('.pso-static-table').addClass('outer-border-none');
-                    parentTd.parent().css('padding', 0);
+                if (cpnt.data._type == 1) {
+                    if (proxy.valList.length) {
+                        $el.html(proxy.valList[0][cpnt.data._radioField || 'leaf_id']);
+                    }
+                } else {
+                    $el.append(this.makeStaticTable(fields, proxy.valList, sequence === '1'));
+                    const parentTd = $('.pso-static-table').parentsUntil('td');
+                    if (parentTd.get(0)) {
+                        $('.pso-static-table').addClass('outer-border-none');
+                        parentTd.parent().css('padding', 0);
+                    }
                 }
             }
         }
-
     }
 
     makeStaticTable(allFields, data, showIndex = false) {
@@ -431,7 +432,7 @@ export default class WfStore {
             data: formData,
             stepid: this.curStep.nid,
             d_tag: this.data.d_tag,
-            attids: this.data.attach._val,
+            attids: this.data.attach,
             nextStep,
             doNextUsers,
             doNextStep,

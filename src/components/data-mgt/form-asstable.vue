@@ -49,6 +49,7 @@ export default {
   async created() {
     this.asstables.forEach((t) => {
       const exist = _.find(this.data, { id: t._fieldValue });
+      //加个子表code
       let defData = { name: t._fieldName, id: t._fieldValue, authCfg: [], searchType: "", status: [], authable: false };
       if (exist) {
         Object.assign(exist, { ...defData, ...exist });

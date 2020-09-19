@@ -62,7 +62,7 @@
                 :data="columnData"
                 :header="tpHeader"
                 @save="saveTp"
-              ></pso-tp-column>
+              ></pso-tp-column>  
               <pso-tp-textdef v-if="curTab==='textdef'" :data="tpButtons"></pso-tp-textdef>
               <pso-tp-text v-if="curTab==='text'" :data="tpText" :def-text="tpButtons"></pso-tp-text>
             </template>

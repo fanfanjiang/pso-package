@@ -49,10 +49,6 @@ export default {
       type: String,
       default: "3"
     },
-    show: {
-      type: Boolean,
-      default: false
-    },
     pattern: {
       type: String,
       default: "radio"
@@ -60,6 +56,7 @@ export default {
   },
   data() {
     return {
+      show: false,
       opened: false,
       tableData: [],
       selected: []

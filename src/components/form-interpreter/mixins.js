@@ -24,15 +24,12 @@ export const formulaMixin = {
             let datasource = this.cpnt.data[this.sourceField || '_datasource'];
             data.forEach(item => {
                 let val = item._val;
-
                 //如果是人员或者部门，做特殊处理
                 if ((item.componentid === 'user' || item.componentid === 'department')) {
                     if (item._proxy && item._proxy.list.length) {
                         val = item._proxy.list[0][item.componentid === 'user' ? 'user_name' : 'node_display'];
                     }
                 }
-
-
                 datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), val);
             });
             try {
@@ -65,8 +62,9 @@ export const cpntFix = {
     },
     methods: {
         startWatch() {
+            console.log(123);
             this.$watch("numProxy", {
-                deep: true,
+                deep: true, 
                 immediate: true,
                 handler() {
                     this.mainCpnts = this.numProxy;

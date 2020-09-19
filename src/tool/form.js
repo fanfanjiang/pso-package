@@ -64,3 +64,12 @@ export async function makeFormByScript({ code, onEach }) {
         return { ...ret.data.data, data_config };
     }
 }
+
+export function makeSysFormFields() {
+    const sysFields = ['leaf_id', 'd_status'];
+    const fields = [];
+    sysFields.forEach(f => {
+        fields.push(genComponentData({ componentid: 'text', _fieldValue: f, _fieldName: f }))
+    })
+    return fields;
+}

@@ -82,7 +82,7 @@
           </template>
         </el-table>
       </div>
-      <el-dialog
+      <pso-dialog
         width="70%"
         append-to-body
         close-on-click-modal
@@ -106,7 +106,7 @@
           :def-keys="devKeysCfg"
           @selection-confirm="handleAddSelection"
         ></pso-form-view>
-      </el-dialog>
+      </pso-dialog>
       <pso-drawer
         size="40%"
         :visible="showFormViewer"
@@ -230,6 +230,8 @@ export default {
               const source = this.cpnt.store.searchByField(f.sid);
               if (source && source.data._val) {
                 value = source.data._val;
+              } else {
+                value = this.cpnt.store.instance[f.sid];
               }
             }
             if (value) {

@@ -25,6 +25,8 @@ export default class FormStore {
         this.editable = true;
         this.forceInsertSys = true;
 
+        this.instance = {};//数据实例，暂时做的
+
         this.designMode = true; //设计模式
 
         this.copyMode = false;
@@ -139,6 +141,7 @@ export default class FormStore {
     updateInstance(instance) {
         if (instance && instance.leaf_id) {
             this.instance_id = instance.leaf_id;
+            this.instance = instance;
         } else {
             this.instance_id = '';
         }

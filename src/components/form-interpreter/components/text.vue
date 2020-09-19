@@ -17,7 +17,7 @@
       <div class="text-search__result" v-if="showResult">
         <template v-if="!searching">
           <div
-            @click="handleSelect(r[cpnt.data._searchField])"
+            @click="handleSelect(r)"
             class="text-search__result-item"
             v-for="(r,i) in searchRet"
             :key="i"
@@ -95,8 +95,16 @@ export default {
         },
       });
     },
-    handleSelect(value) {
-      this.cpnt.data._val = value;
+    handleSelect(data) {
+      this.cpnt.data._val = data[this.cpnt.data._searchField];
+      if (this.cpnt.data._bindFields) {
+        this.cpnt.data._bindFields.forEach(({ tid, sid }) => {
+          const exist = this.cpnt.store.searchByField(tid, true);
+          if (exist) {
+            exist._val = data[sid];
+          }
+        });
+      }
     },
   },
 };

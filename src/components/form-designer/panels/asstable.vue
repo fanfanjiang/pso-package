@@ -55,25 +55,26 @@
       <el-button
         v-if="cpnt.data._relate"
         icon="el-icon-plus"
-        plain
+        plain 
         size="mini"
         @click="showDialog=true"
       >筛选</el-button>
     </common-panel>
-    <el-dialog title="设置筛选条件" append-to-body :visible.sync="showDialog" width="30%">
+    <el-dialog title="设置筛选条件" append-to-body :visible.sync="showDialog" width="40%">
       <dynamic-filter
-        :targets="cpnt.cache.fieldOptions"
+        :targets="filterFields"
         :sources="selfCpnts"
         v-model="cpnt.data._filter"
       ></dynamic-filter>
     </el-dialog>
-  </div>
+  </div> 
 </template>
 <script>
 import commonPanel from "../common/common-panel";
 import { genComponentData } from "../helper";
 import FormStore from "../../form-designer/model/store.js";
 import DynamicFilter from "../../dynamic-filter";
+import { makeSysFormFields } from "../../../tool/form";
 
 export default {
   props: ["cpnt"],
@@ -87,11 +88,13 @@ export default {
       options: [],
       loading: false,
       showDialog: false,
+      sysFields: [],
+      filterFields: [],
     };
   },
   computed: {
     selfCpnts() {
-      return this.cpnt.store.search({ options: { db: true }, onlyData: true });
+      return this.cpnt.store.search({ options: { db: true }, onlyData: true }).concat(this.sysFields);
     },
   },
   watch: {
@@ -100,6 +103,7 @@ export default {
     },
   },
   created() {
+    this.sysFields = makeSysFormFields();
     this.getFormList();
     this.setCache();
     if (this.cpnt.data._option) this.formChangeHandler(this.cpnt.data._option, true);
@@ -170,6 +174,10 @@ export default {
           return !item.parent.CPNT.host_db;
         },
       });
+
+      this.filterFields = [].concat(this.cpnt.cache.fieldOptions, this.sysFields);
+      console.log(this.sysFields);
+      console.log(this.filterFields);
 
       this.cpnt.cache.defaultEl._option = id;
 

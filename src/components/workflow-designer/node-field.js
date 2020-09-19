@@ -9,6 +9,9 @@ const reviewParams = {
     op: '',
     opList: [],
     opa: "",
+    copiable: '0', //开启抄送
+    copyType: '', //抄送类型
+    copyList: [],//抄送数据
     opaitems: [],
     update: [],
     notification: { type: 2, value: '', list: [], pattern: 'checkbox' },

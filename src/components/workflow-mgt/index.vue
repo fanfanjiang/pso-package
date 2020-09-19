@@ -46,7 +46,7 @@
               <pso-wf-tag v-if="curTab==='tag'" :data="tagData"></pso-wf-tag>
               <pso-wf-text v-if="curTab==='text'" :data="textData"></pso-wf-text>
               <pso-wf-subwf v-if="curTab==='subwf'" :data="subWfData"></pso-wf-subwf>
-              <pso-wf-script v-if="curTab==='script'" :data="script"></pso-wf-script>
+              <pso-wf-script v-if="curTab==='script'" :data="script" :fields="formFields"></pso-wf-script>
             </template>
             <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
           </div>
@@ -140,6 +140,7 @@ export default {
       curNode: {},
       wfCfg: {},
       curTab: "preview",
+      formFields: [],
       leafAuthcfg: [
         { n: "新增", v: 1 },
         { n: "更改", v: 2 },
@@ -179,7 +180,7 @@ export default {
         await this.getBaseInfo(node);
         this.$store.commit(WF_RESET);
         await this.getWfCfg(node);
-        this.loading = false;
+        this.loading = false; 
       } else {
         this.curTab = "auth";
       }
@@ -244,6 +245,15 @@ export default {
       await this.$store.dispatch(WF_INIT, { node_id: sourceNode.node_id });
 
       if (this.wfDesigner.formStore) {
+        //获取全字段
+        const fieldsRet = await this.API.getFormDict({ data_code: this.wfDesigner.formStore.data_code });
+        if (!fieldsRet.success) return;
+        this.formFields = fieldsRet.data;
+        this.formFields.forEach((item) => {
+          const field = this.wfDesigner.formStore.searchByField(item.field_name, true);
+          item.field_display = field ? `[${field._fieldName}]${item.field_name}` : `[系统字段]${item.field_name}`;
+        });
+
         const subWfs = this.wfDesigner.formStore.search({ options: { componentid: "asstable" }, onlyData: true });
         subWfs.forEach((item) => {
           const isExist = _.find(this.subWfData, { subCode: item._option });

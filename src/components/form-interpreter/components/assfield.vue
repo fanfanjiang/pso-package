@@ -29,7 +29,11 @@ export default {
       if (cpnt.fid === this.cpnt.data._selectedTable) {
         if (data.length) {
           this.cpnt.data._val = data[0][this.cpnt.data._selectedField];
-          this.showVal = data[0][this.cpnt.data._selectedField + "_x"];
+          const showVal = data[0][this.cpnt.data._selectedField + "_x"];
+          if (typeof showVal !== "undefined") {
+            this.showVal = this.cpnt.data.__showVal__ = showVal;
+            this.dispatch("PsoformInterpreter", "cpnt-shownval-done", { cpnt: this.cpnt });
+          }
         } else {
           this.cpnt.data._val = "";
         }

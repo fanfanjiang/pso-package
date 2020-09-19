@@ -84,7 +84,7 @@ export const CHART = {
         metricsLimit: 9999,
         extend: {
             series: {
-                label: { show: true, position: "top" }
+                label: { show: true, color: '#fff' }
             }
         }
     },
@@ -99,7 +99,19 @@ export const CHART = {
         metricsLimit: 9999,
         extend: {
             series: {
-                label: { show: true, position: "right" }
+                label: { show: true, color: '#fff' }
+            }
+        },
+        setting: {
+            itemStyle: {
+                "normal": {
+                    "borderWidth": 0,
+                    "borderColor": "#ccc"
+                },
+                "emphasis": {
+                    "borderWidth": 0,
+                    "borderColor": "#ccc"
+                }
             }
         }
     },
@@ -112,6 +124,18 @@ export const CHART = {
         metricsType: 'string',
         dimensionLimit: 9999,
         metricsLimit: 1,
+        setting: {
+            itemStyle: {
+                "normal": {
+                    "borderWidth": 0,
+                    "borderColor": "#ccc"
+                },
+                "emphasis": {
+                    "borderWidth": 0,
+                    "borderColor": "#ccc"
+                }
+            }
+        }
     },
     ring: {
         icon: "",

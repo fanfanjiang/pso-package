@@ -26,8 +26,8 @@ export default {
   props: ["node"],
   data() {
     return {
-      tpTypes: TP_TYPES
+      tpTypes: TP_TYPES,
     };
-  }
+  },
 };
 </script>

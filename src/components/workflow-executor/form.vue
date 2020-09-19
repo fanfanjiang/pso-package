@@ -1,6 +1,7 @@
 <template>
   <pso-form-interpreter
     @value-change="formChangeHandler"
+    @shownval-done="formChangeHandler"
     @data-loaded="handleFormDataLoaded"
     ref="formImage"
     v-if="store.cfg.map_data_code&&!store.configing"
@@ -44,7 +45,6 @@ export default {
       this.dispatch("PsoWfExecutorBox", "initialized", this.store);
     },
     formChangeHandler(data) {
-      // console.log(data);
       this.store.setTableVal(data);
     },
   },

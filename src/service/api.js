@@ -5,7 +5,7 @@ import Auth from '../tool/auth';
 
 export default class API {
 
-    URL_PREFIX = ''
+    static URL_PREFIX = ''
 
     static async request(url, { method = 'post', data = {} }) {
         url = `${this.URL_PREFIX}${url}`;

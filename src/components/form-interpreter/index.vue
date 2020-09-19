@@ -91,7 +91,12 @@ export default {
     });
     this.$on("asstable-initialized", (val) => {
       this.$emit("value-change", val);
-      this.broadcast("PsoformItem", "cpnt-value-changed", val);
+      this.broadcast("PsoformItem", "asstable-initialized", val);
+    });
+
+    //专门用在签单中类似用户或者部门的值
+    this.$on("cpnt-shownval-done", (val) => {
+      this.$emit("shownval-done", val);
     });
   },
   methods: {

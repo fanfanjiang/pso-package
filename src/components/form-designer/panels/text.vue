@@ -20,7 +20,32 @@
         :data="cpnt.data"
         form-field="_searchForm"
         :fields="[{n:'查询字段',f:'_searchField'}]"
+        @loaded="loadedHandler"
       ></picker-form>
+      <el-form-item label="绑定其它字段">
+        <div class="act-text-body__shit" v-for="(f,i) in cpnt.data._bindFields" :key="i">
+          <el-select size="mini" v-model="f.sid" placeholder="源字段">
+            <el-option
+              v-for="u in fields"
+              :key="u._fieldValue"
+              :label="u.fieldDisplay"
+              :value="u._fieldValue"
+            ></el-option>
+          </el-select>
+          <el-select size="mini" v-model="f.tid" placeholder="目标字段">
+            <el-option v-for="u in cpnts" :key="u.fid" :label="u._fieldName" :value="u._fieldValue"></el-option>
+          </el-select>
+          <div @click="delShit(i)">删除</div>
+        </div>
+        <el-button
+          @click="addOption"
+          type="success"
+          icon="el-icon-plus"
+          size="mini"
+          round
+          plain
+        >添加字段</el-button>
+      </el-form-item>
     </common-panel>
   </div>
 </template>
@@ -33,6 +58,30 @@ export default {
   components: {
     commonPanel,
     PickerForm,
+  },
+  data() {
+    return {
+      fields: [],
+    };
+  },
+  computed: {
+    isSetCurrent() {
+      return this.cpnt.data._defaultValType === "current";
+    },
+    cpnts() {
+      return this.cpnt.store.search({ options: { db: true }, onlyData: true });
+    },
+  },
+  methods: {
+    loadedHandler(fields) {
+      this.fields = fields;
+    },
+    addOption() {
+      this.cpnt.data._bindFields.push({ sid: "", nid: "" });
+    },
+    delShit(i) {
+      this.cpnt.data._bindFields.splice(i, 1);
+    },
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <el-form label-position="top">
+  <el-form :label-position="position" label-width="90px">
     <template v-if="!initializing">
       <el-form-item label="选择工作表">
         <el-select
@@ -19,7 +19,13 @@
       </el-form-item>
       <template v-loading="loading">
         <el-form-item :label="f.n" v-for="(f,i) in fields" :key="i">
-          <el-select size="mini" v-model="data[f.f]" filterable :multiple="isArray(data[f.f])">
+          <el-select
+            size="mini"
+            v-model="data[f.f]"
+            filterable
+            :multiple="isArray(data[f.f])"
+            @change="selectHandler($event,f.f)"
+          >
             <el-option
               v-for="fo in fOptions"
               :key="fo._fieldValue"
@@ -41,6 +47,14 @@ export default {
     data: Object,
     formField: String,
     fields: Array,
+    source: {
+      type: String,
+      default: "1",
+    },
+    position: {
+      type: String,
+      default: "top",
+    },
   },
   data() {
     return {
@@ -73,24 +87,55 @@ export default {
     async changeHandler() {
       if (this.curCode && !this.cache[this.curCode]) {
         this.loading = true;
+
+        let fields = [];
         const store = await this.makeFormStore(this.curCode);
-        this.$set(
-          this.cache,
-          this.curCode,
-          store.search({
-            options: { db: true },
-            onlyData: true,
-            beforePush: (item) => {
-              item.data.fieldDisplay = `[${item.CPNT.name}]${item.data._fieldName}`;
-              return !item.parent.CPNT.host_db;
-            },
-          })
-        );
+
+        fields = store.search({
+          options: { db: true },
+          onlyData: true,
+          beforePush: (item) => {
+            item.data.fieldDisplay = `[${item.CPNT.name}]${item.data._fieldName}`;
+            return !item.parent.CPNT.host_db;
+          },
+        });
+
+        if (this.source === "2" || this.source === "3") {
+          fields = [];
+          const ret = await this.API.getFormDict({ data_code: this.curCode });
+          ret.data.forEach((d) => {
+            const f = store.searchByField(d.field_name);
+
+            if (f) {
+              d.field_format = f.data._fieldFormat;
+              d.output_format = f.data._outputFormat;
+            }
+            d.is_sys = f ? "0" : "1";
+            d._fieldValue = d.field_name;
+            d.fieldDisplay = f ? `[${f.CPNT.name}][${f.data._fieldName}]${d.field_name}` : `[系统字段]${d.field_name}`;
+
+            if (this.source === "3") {
+              if (!/\S+_s$/.test(d.field_name) && !/\S+_x$/.test(d.field_name)) {
+                fields.push(d);
+              }
+            } else {
+              fields.push(d);
+            }
+          });
+        }
+
+        this.$set(this.cache, this.curCode, fields);
+        this.$emit("loaded", fields);
+
         this.loading = false;
       }
     },
     isArray(object) {
       return Array.isArray(object);
+    },
+    selectHandler(_fieldValue, target) {
+      const field = _.find(this.cache[this.curCode], { _fieldValue });
+      this.$emit("select", { field, target });
     },
   },
 };

@@ -20,11 +20,12 @@ export default {
     };
   },
   created() {
-    let instance_id = this.cpnt.store.instance_id;
-
     //开始监听
-    if (this.cpnt.data._datasource && !instance_id) {
+    if (this.cpnt.data._datasource) {
       this.$watch("fixValue", (val) => {
+        if (typeof val === "number") {
+          val = parseFloat(val).toFixed(this.cpnt.data._decimalPlaces);
+        }
         this.cpnt.data._val = val;
       });
       this.startWatch();

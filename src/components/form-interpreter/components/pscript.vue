@@ -188,9 +188,13 @@ export default {
       }
 
       for (let key in data) {
-        const cpnts = this.cpnt.store.search({ options: { db: true }, dataOptions: { _fieldValue: key }, onlyData: true });
-        if (cpnts && cpnts.length) {
-          cpnts[0]._val = data[key];
+        const cpnt = this.cpnt.store.searchByField(key);
+        if (cpnt) {
+          if (cpnt.__setDataByIds) {
+            cpnt.__setDataByIds(data[key]);
+          } else {
+            cpnt.data._val = data[key];
+          }
         }
       }
     },

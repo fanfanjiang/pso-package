@@ -27,6 +27,9 @@ export default {
     this.cpnt.data._hideOnNew = false;
     this.cpnt.data._fieldName = "";
   },
+  mounted() {
+    this.handleChange({ value: this.cpnt.data._val });
+  },
   methods: {
     handleChange({ value }) {
       this.$emit("change", value);

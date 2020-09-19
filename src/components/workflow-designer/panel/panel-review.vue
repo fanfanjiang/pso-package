@@ -14,8 +14,21 @@
           <el-option v-for="item in opType" :key="item.id" :label="item.name" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
-      <pso-common-review :node="node"></pso-common-review>
-      <!-- <pso-wf-notification :node="node" :key="node.nid"></pso-wf-notification> -->
+      <pso-common-review :node="node" key="review"></pso-common-review>
+      <el-form-item label="开启抄送">
+        <el-switch v-model="node.copiable" active-text="开启" active-value="1" inactive-value="0"></el-switch>
+      </el-form-item>
+      <pso-common-review
+        v-if="node.copiable==='1'"
+        :node="node"
+        :type-filter="copyFilter"
+        key="copy"
+        type-text="抄送类型"
+        picker-text="选择抄送对象"
+        field="copyType"
+        list="copyList"
+        reset
+      ></pso-common-review>
       <pso-wf-update :node="node"></pso-wf-update>
     </el-form>
   </div>
@@ -38,8 +51,13 @@ export default {
     },
     opType() {
       return Object.values(REVIEW_OP_TYPE);
-    }
-  }
+    },
+  },
+  methods: {
+    copyFilter(list) {
+      return list.filter((d) => [1, 3, 5].includes(d.value));
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

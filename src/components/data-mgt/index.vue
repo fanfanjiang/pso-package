@@ -50,7 +50,12 @@
             ></pso-form-view>
             <form-field v-if="curTab==='field'" :data="tableData" :code="curNode.node_name"></form-field>
             <form-column v-if="curTab==='list'" :data="colCfg" :def-col="colData"></form-column>
-            <form-status v-if="curTab==='status'" :data="staData" @save="saveConfig"></form-status>
+            <form-status
+              v-if="curTab==='status'"
+              :data="staData"
+              :fields="tableData"
+              @save="saveConfig"
+            ></form-status>
             <form-stage v-if="curTab==='stage'" :data="stageData" @save="saveConfig"></form-stage>
             <form-publish
               v-if="curTab==='publish'&&formStore"
@@ -350,7 +355,7 @@ export default {
       this.tableData = ret.data;
       this.tableData.forEach((item) => {
         const field = formStore.searchByField(item.field_name, true);
-        item.field_display = field ? field._fieldName : "系统字段";
+        item.field_display = field ? `[${field._fieldName}]${item.field_name}` : `[系统字段]${item.field_name}`;
       });
     },
     async getListTableData(formStore) {

@@ -39,8 +39,8 @@
           </el-select>
           <div class="wf-table-editor__icon">
             <editor-menu-item
-              v-for="menuItem of menu"
-              :key="menuItem.type"
+              v-for="(menuItem,i) of menu"
+              :key="i"
               :type="menuItem.type"
               :tip="menuItem.tip"
               :src="menuItem.src"

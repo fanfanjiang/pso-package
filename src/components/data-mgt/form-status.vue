@@ -29,30 +29,46 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="执行脚本" width="600">
+      <el-table-column label="操作" width="300" fixed="right">
         <template slot-scope="scope">
-          <el-input type="textarea" :row="8" size="mini" v-model="scope.row.script" placeholder></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" fixed="right">
-        <template slot-scope="scope">
+          <el-button size="mini" type="success" @click="goDesigner(scope.$index)">设计脚本</el-button>
           <el-button size="mini" type="danger" @click="delHandler(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <pso-dialog title="设计脚本" :visible="showDeisgner" width="70%" @close="showDeisgner=false">
+      <div style="padding:20px;height:100%;overflow: auto;">
+        <sql-designer :sql="curSql" :params="fields" params-n="field_display" params-v="field_name"></sql-designer>
+      </div>
+    </pso-dialog>
   </div>
 </template>
 <script>
+import SqlDesigner from "../sql-designer";
 export default {
-  props: ["data"],
+  components: { SqlDesigner },
+  props: ["data", "fields"],
+  data() {
+    return {
+      curSql: null,
+      showDeisgner: false,
+    };
+  },
   created() {
     this.data.forEach((item) => {
-      Object.assign({ value: "", name: "", color: "", display: "", script: "", ...item });
+      if (typeof item.script === "string") {
+        item.script = [];
+      }
+      Object.assign({ value: "", name: "", color: "", display: "", script: [], ...item });
     });
   },
   methods: {
+    goDesigner(index) {
+      this.curSql = this.data[index].script;
+      this.showDeisgner = true;
+    },
     addHandler() {
-      this.data.push({ value: "", name: "", color: "", display: "", script: "" });
+      this.data.push({ value: "", name: "", color: "", display: "", script: [] });
     },
     delHandler(index) {
       this.data.splice(index, 1);

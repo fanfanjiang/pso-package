@@ -1,7 +1,7 @@
 <template>
   <div class="pso-wf-executor__attach">
     <el-form label-width="80px" size="medium">
-      <pso-form-attach :cpnt="{data:store.data.attach}" @delete="deleteFile">
+      <pso-form-attach :cpnt="attach" @value-change="handleAttachChange">
         <el-button icon="el-icon-paperclip" plain size="small">上传附件</el-button>
       </pso-form-attach>
     </el-form>
@@ -9,24 +9,29 @@
 </template>
 <script>
 import PsoFormAttach from "../form-interpreter/components/attachment";
+import { genComponentData } from "../form-designer/helper";
 
 export default {
-  components: {  PsoFormAttach },
+  components: { PsoFormAttach },
   props: {
     store: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
+  },
+  data() {
+    return {
+      attach: { data: {} },
+    };
+  },
+  created() {
+    this.attach.data = genComponentData({ componentid: "attachment", _fieldName: "", _val: this.store.data.attach || "" });
+    this.attach.data._fieldName = "";
   },
   methods: {
-    async deleteFile(file) {
-      if (!this.store.data.instanceId) return;
-      let ret = await this.API.file({
-        data: { att_id: file.res_id, mtype: "Flow", mkey: "InstAtt", keys: { att_id: file.res_id } },
-        method: "delete"
-      });
-      this.$notify({ title: ret.success ? "成功删除" : "删除失败", type: ret.success ? "success" : "warning" });
-    }
-  }
+    handleAttachChange({ value }) {
+      this.store.data.attach = value;
+    },
+  },
 };
 </script>

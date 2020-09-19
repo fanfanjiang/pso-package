@@ -13,7 +13,7 @@
         <div class="wf-branchitem-node__body">
           <div class="wf-branchitem-node__empty" v-if="!node.conditionMap.length">所有数据可进入该分支</div>
           <div
-            v-slse
+            v-else
             class="wf-branchitem-node__or"
             v-for="(orCondition,orIndex) in node.conditionMap"
             :key="orIndex"

@@ -5,6 +5,8 @@
         <span>{{getTarget(c)._fieldName}}</span>
         <el-select size="mini" v-model="c.op" placeholder="操作">
           <el-option label="等于" value="1"></el-option>
+          <el-option label="包含" value="2"></el-option>
+          <el-option label="在其中" value="4"></el-option>
         </el-select>
         <i class="dy-filter__item__del el-icon-close" @click="delCondition(i)"></i>
       </div>

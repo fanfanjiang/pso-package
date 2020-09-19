@@ -14,7 +14,7 @@ import BASEAPI from './service/api';
 import createPDF from './utils/create-pdf';
 import FormStore from './components/form-designer/model/store';
 import WfStore from './components/workflow-executor/store';
- 
+
 //store
 import store from './store';
 
@@ -43,7 +43,7 @@ import PsoNodeauth from "./components/node-auth";
 import PsoMenuMgt from "./components/menu-mgt";
 import PsoTreeDimen from "./components/tree-dimen";
 import PsoTagMgt from "./components/tag-mgt";
-import PsoKnowlMgt from "./components/knowl-mgt"; 
+import PsoKnowlMgt from "./components/knowl-mgt";
 import PsoDataFilter from "./components/data-filter";
 
 //表单组件

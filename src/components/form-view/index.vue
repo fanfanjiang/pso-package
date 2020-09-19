@@ -1070,7 +1070,7 @@ export default {
         for (let key in this.summary) {
           const index = _.findIndex(columns, { property: key });
           if (index !== -1) {
-            indexs[index] = this.summary[key];
+            indexs[index] = parseFloat(this.summary[key]).toFixed(2);
           }
         }
       }

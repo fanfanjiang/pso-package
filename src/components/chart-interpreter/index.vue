@@ -2,17 +2,23 @@
   <div class="pso-chart" ref="chart">
     <div class="pso-chart-wrapper" v-loading="!loaded">
       <div class="pso-chart-name">{{chartCfg.chartName}}</div>
-      <component
-        v-if="loaded"
-        v-bind:is="currentChart"
-        :cfg="formCfg"
-        :settings="chartSettings"
-        :chart-config="chartCfg"
-        :data="chartData"
-        :height="chartHeight"
-        :extend="extend"
-        :colors="colors"
-      ></component>
+      <div class="pso-chart-body">
+        <component
+          v-if="loaded"
+          v-bind:is="currentChart"
+          :cfg="formCfg"
+          :settings="chartSettings"
+          :chart-config="chartCfg"
+          :data="chartData"
+          :height="chartHeight"
+          :extend="extend"
+          :colors="colors"
+          theme="dark"
+        ></component>
+        <div class="pso-chart-body__bg"></div>
+        <div class="pso-chart-body__border-top"></div>
+        <div class="pso-chart-body__border-bottom"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -62,7 +68,7 @@ export default {
       fields: [],
       chartHeight: "400px",
       conflict: [],
-      colors: ["#065279", "#ffc773", "#426666", "#493131", "#f47983"],
+      colors: [],
     };
   },
   computed: {
@@ -129,6 +135,7 @@ export default {
   },
   created() {
     this.deGetForm = debounce(500, this.getFormCfg);
+    this.colors = _.shuffle(["#DD6B66", "#759AA0", "#E69D87", "#8DC1A9", "#f47983"]);
   },
   mounted() {
     this.setHeight();
@@ -348,7 +355,7 @@ export default {
           switch (mItem.op) {
             case FIGER_OP.SUM:
               row[mItem._fieldValue] = _.sumBy(ary, (a) => {
-                return parseInt(a[mItem._fieldValue]||0);
+                return parseInt(a[mItem._fieldValue] || 0);
               });
               break;
             case FIGER_OP.COUNT:

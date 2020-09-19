@@ -22,6 +22,7 @@ const CPNT = {
       { n: '_searchable', v: false },
       { n: '_searchForm', v: '' },
       { n: '_searchField', v: '' },
+      { n: '_bindFields', v: [] },
     ]
   },
   number: {

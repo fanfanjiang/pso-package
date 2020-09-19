@@ -57,7 +57,11 @@
             <pso-wf-form :store="store"></pso-wf-form>
             <slot name="data" :store="store"></slot>
           </div>
-          <pso-wf-attach :store="store" v-show="store.activeExtendTab==='attach'"></pso-wf-attach>
+          <pso-wf-attach
+            v-if="!store.configing"
+            :store="store"
+            v-show="store.activeExtendTab==='attach'"
+          ></pso-wf-attach>
           <pso-wf-chart :store="store" v-show="store.activeExtendTab==='flowchart'"></pso-wf-chart>
           <pso-wf-log :store="store" v-show="store.activeExtendTab==='log'"></pso-wf-log>
         </div>
