@@ -14,13 +14,21 @@
                 <div class="pso-upload__list-info__name" v-if="!file.isImg">{{file.name}}</div>
               </div>
               <div class="pso-upload__list-panel">
-                <span class="pso-upload__list-panel__item" @click="goShowViewer({index,file})">
+                <span
+                  class="pso-upload__list-panel__item"
+                  v-if="check"
+                  @click="goShowViewer({index,file})"
+                >
                   <i class="el-icon-zoom-in"></i>
                 </span>
-                <span class="pso-upload__list-panel__item" @click="download(file)">
+                <span class="pso-upload__list-panel__item" v-if="download" @click="download(file)">
                   <i class="el-icon-download"></i>
                 </span>
-                <span class="pso-upload__list-panel__item" @click="$emit('delete',file)">
+                <span
+                  class="pso-upload__list-panel__item"
+                  v-if="remove"
+                  @click="$emit('delete',file)"
+                >
                   <i class="el-icon-delete"></i>
                 </span>
               </div>
@@ -38,7 +46,21 @@
 import FileViewer from "../file-viewer";
 export default {
   components: { FileViewer },
-  props: ["files"],
+  props: {
+    files: Array,
+    remove: {
+      type: Boolean,
+      default: true,
+    },
+    downloadable: {
+      type: Boolean,
+      default: true,
+    },
+    check: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       showViewer: false,
@@ -51,11 +73,11 @@ export default {
       this.showViewer = true;
       this.$emit("check", params);
     },
-    download(file) { 
+    download(file) {
       const eleLink = document.createElement("a");
-      eleLink.href = file.url;   
+      eleLink.href = file.url;
       eleLink.download = file.filename;
-      eleLink.style.display = 'none';
+      eleLink.style.display = "none";
       document.body.appendChild(eleLink);
       eleLink.click();
       document.body.removeChild(eleLink);

@@ -13,7 +13,7 @@
       <el-upload
         drag
         class="pso-upload__area"
-        :data="uploadData"
+        :data="data"
         :headers="uploadHeader"
         :action="uploadApi"
         :show-file-list="false"
@@ -34,7 +34,7 @@
       <div class="pso-upload__footer-left">
         <el-upload
           class="pso-upload__btn"
-          :data="uploadData"
+          :data="data"
           :headers="uploadHeader"
           :action="uploadApi"
           :show-file-list="false"
@@ -52,8 +52,8 @@
         <el-button
           class="pso-upload__footer-cancel"
           size="small"
-          type="text" 
-          @click="$emit('close')" 
+          type="text"
+          @click="$emit('close')"
         >取消</el-button>
         <el-button
           class="pso-upload__footer-confirm"
@@ -72,17 +72,26 @@ import { makeFiles } from "../../tool/file";
 
 export default {
   components: { PsoFileList },
+  props: {
+    api: {
+      type: String,
+      default: "/api/upload",
+    },
+    data: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
-      uploadData: {},
       upFileList: [],
       dragingFile: false,
-      lastDragEnter: null
+      lastDragEnter: null,
     };
   },
   computed: {
     uploadApi() {
-      return `${this.APIURL}/api/upload`;
+      return `${this.APIURL}${this.api}`;
     },
     uploadHeader() {
       var token = Auth.getToken();
@@ -90,7 +99,7 @@ export default {
     },
     showFileList() {
       return !!this.upFileList.length && !this.dragingFile;
-    }
+    },
   },
   methods: {
     onSuccess(ret, file) {
@@ -102,7 +111,7 @@ export default {
       }
       this.$message({
         message: "上传成功",
-        type: "success"
+        type: "success",
       });
     },
     onError(err, file, fileList) {
@@ -136,8 +145,8 @@ export default {
       if (e.target === this.lastDragEnter) {
         this.dragingFile = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

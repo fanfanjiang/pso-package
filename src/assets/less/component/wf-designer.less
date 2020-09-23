@@ -367,3 +367,26 @@
         }
     }
 }
+
+.wf-auth {
+    .wf-auth-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &.wf-auth-item__header {
+            border-bottom: 1px solid #D7D4D4;
+            padding-bottom: 5px;
+        }
+
+        &+.wf-auth-item {
+            margin-top: 10px;
+        }
+
+        .wf-auth-item__name {
+            color: #666;
+        }
+
+        .wf-auth-item__ctl {}
+    }
+}

@@ -30,7 +30,7 @@
               <el-tab-pane label="列表" name="list"></el-tab-pane>
               <el-tab-pane label="状态" name="status"></el-tab-pane>
               <el-tab-pane label="发布" name="publish"></el-tab-pane>
-              <!-- <el-tab-pane label="属性" name="property"></el-tab-pane> -->
+              <el-tab-pane label="上传" name="upload"></el-tab-pane>
               <el-tab-pane label="显示" name="rule"></el-tab-pane>
               <el-tab-pane label="提交" name="submit"></el-tab-pane>
               <el-tab-pane label="阶段" name="stage"></el-tab-pane>
@@ -64,13 +64,12 @@
               :store="formStore"
               @save="saveConfig"
             ></form-publish>
-            <!-- <form-property
-              v-if="curTab==='property'"
-              :data="property"
-              :fields="colData"
+            <form-upload
+              v-if="curTab==='upload'&&formStore"
+              :data="upload"
+              :code="curNode.node_name"
               :store="formStore"
-              @save="saveConfig"
-            ></form-property>-->
+            ></form-upload>
             <form-rule v-if="curTab==='rule'&&formStore" :store="formStore" :rules="rules"></form-rule>
             <form-submit v-if="curTab==='submit'" :data="subCfg" :fields="tableData"></form-submit>
             <form-asstable
@@ -121,11 +120,11 @@ import FormField from "./form-field";
 import FormColumn from "./form-column";
 import FormStatus from "./form-status";
 import FormPublish from "./form-publish";
-import FormProperty from "./form-property";
 import FormRule from "./form-rule";
 import FormSubmit from "./form-submit";
 import FormStage from "./form-stage";
 import FormAsstable from "./form-asstable";
+import FormUpload from "./form-upload";
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList } from "../../utils/util";
 
@@ -146,16 +145,7 @@ const _DATA = {
     qrList: [],
     rules: [],
   },
-  property: {
-    cal_mark: 0,
-    cal_amount_field: "",
-    cal_tag_field: "",
-    cal_unit_field: "",
-    cal_parent_tag: "",
-    cal_source_main_form: "",
-    cal_source_leaf_form: "",
-    cal_end_leaf_form: "",
-  },
+  upload: [],
   rules: [],
   subCfg: [],
   stageData: [],
@@ -172,11 +162,11 @@ export default {
     FormColumn,
     FormStatus,
     FormPublish,
-    FormProperty,
     FormRule,
     FormSubmit,
     FormStage,
     FormAsstable,
+    FormUpload,
   },
   props: {
     params: {
@@ -334,6 +324,10 @@ export default {
         if (cfg.sub_config) {
           this.asstable = JSON.parse(cfg.sub_config);
         }
+
+        if (cfg.export_config) {
+          this.upload = JSON.parse(cfg.export_config);
+        }
       }
     },
     nodeClickHandler(data) {
@@ -427,7 +421,7 @@ export default {
         submit_config: JSON.stringify(subCfgData),
         stage_config: JSON.stringify(this.stageData),
         sub_config: JSON.stringify(this.asstable),
-        ...this.property,
+        export_config: JSON.stringify(this.upload),
       });
       this.saving = false;
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });

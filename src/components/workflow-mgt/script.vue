@@ -43,10 +43,10 @@ export default {
     this.statuses.forEach((item) => {
       const exist = _.findIndex(this.data, { status: item.status });
       if (exist === -1) {
-        this.data.push({ ...item });
+        this.data.push({ ...item }); 
       } else {
-        if (typeof this.data[exist] === "string") {
-          this.data[exist] = [];
+        if (typeof this.data[exist].script === "string") {
+          this.data[exist].script = [];
         }
         this.data.splice(exist, 1, { ...item, ...this.data[exist] });
       }

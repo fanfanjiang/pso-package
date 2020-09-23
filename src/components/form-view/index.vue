@@ -15,82 +15,52 @@
       <div class="pso-formTable__top">
         <div class="pso-formTable__title">
           <form-icon></form-icon>
-          <span>{{listTitle}}</span>
+          <span>{{ listTitle }}</span>
         </div>
-        <div class="pso-formTable-view" v-if="viewAuths.length>1&&!params.hideAuthTab">
+        <div class="pso-formTable-view" v-if="viewAuths.length > 1 && !params.hideAuthTab">
           <el-tabs v-model="activeView">
-            <el-tab-pane :label="auth.n" :name="auth.v+''" v-for="auth in viewAuths" :key="auth.v"></el-tab-pane>
+            <el-tab-pane :label="auth.n" :name="auth.v + ''" v-for="auth in viewAuths" :key="auth.v"></el-tab-pane>
           </el-tabs>
         </div>
       </div>
-      <div
-        class="pso-formTable-tagfilter"
-        v-if="(showAllStatusBar||stages.length)&&!params.hideStatusTab"
-      >
+      <div class="pso-formTable-tagfilter" v-if="(showAllStatusBar || stages.length) && !params.hideStatusTab">
         <div class="pso-formTable-status" v-if="statuses.length">
-          <el-tag
-            v-if="showAllStatusBar"
-            size="medium"
-            @click="handleStatusClick()"
-            :effect="!curStatus?'dark':'plain'"
-          >全部</el-tag>
-          <template v-for="(status,index) in statuses">
+          <el-tag v-if="showAllStatusBar" size="medium" @click="handleStatusClick()" :effect="!curStatus ? 'dark' : 'plain'">全部</el-tag>
+          <template v-for="(status, index) in statuses">
             <el-badge
-              :hidden="status.total==='0'"
+              :hidden="status.total === '0'"
               :value="status.total"
               class="item"
-              :type="index>3?'info':'primary'"
+              :type="index > 3 ? 'info' : 'primary'"
               :max="99"
               :key="index"
-              v-if="status.total!=='0'"
+              v-if="status.total !== '0'"
             >
-              <el-tag
-                size="medium"
-                :effect="curStatus===status?'dark':'plain'"
-                @click="handleStatusClick(status)"
-              >{{status.name}}</el-tag>
+              <el-tag size="medium" :effect="curStatus === status ? 'dark' : 'plain'" @click="handleStatusClick(status)">{{
+                status.name
+              }}</el-tag>
             </el-badge>
           </template>
         </div>
-        <el-divider direction="vertical" v-if="showAllStatusBar&&stages.length"></el-divider>
-        <el-select
-          v-if="stages.length"
-          v-model="curStage"
-          placeholder="请选择阶段"
-          size="mini"
-          @change="handleStageClick"
-        >
+        <el-divider direction="vertical" v-if="showAllStatusBar && stages.length"></el-divider>
+        <el-select v-if="stages.length" v-model="curStage" placeholder="请选择阶段" size="mini" @change="handleStageClick">
           <el-option label="全部阶段" value="all"></el-option>
-          <el-option
-            v-for="stage in stages"
-            :key="stage.value"
-            :label="stage.name"
-            :value="stage.value"
-          ></el-option>
+          <el-option v-for="stage in stages" :key="stage.value" :label="stage.name" :value="stage.value"></el-option>
         </el-select>
       </div>
       <div class="pso-formTable-sort" v-if="sorts.length">
-        <el-tag
-          size="small"
-          v-for="(sort,index) in sorts"
-          :key="sort.prop"
-          closable
-          @close="handleDelSort(index)"
-        >{{sort.name}} {{sort.order==='desc'?'降序':'升序'}}</el-tag>
+        <el-tag size="small" v-for="(sort, index) in sorts" :key="sort.prop" closable @close="handleDelSort(index)"
+          >{{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}</el-tag
+        >
       </div>
       <div class="pso-formTable-header" v-if="!readOnly">
         <div class="pso-formTable-header__left">
-          <el-button type="text" icon="fa fa-filter" @click="showFilter=!showFilter">筛选</el-button>
+          <el-button type="text" icon="fa fa-filter" @click="showFilter = !showFilter">筛选</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-popover v-model="showSetting" placement="bottom-start" width="300" trigger="click">
             <div class="pso-switch-panel">
-              <div class="pso-switch-panel__item" v-for="(fItem,index) of fields" :key="index">
-                <el-switch
-                  v-model="fItem.show"
-                  :inactive-text="fItem.display"
-                  active-value="1"
-                  inactive-value="0"
-                ></el-switch>
+              <div class="pso-switch-panel__item" v-for="(fItem, index) of fields" :key="index">
+                <el-switch v-model="fItem.show" :inactive-text="fItem.display" active-value="1" inactive-value="0"></el-switch>
               </div>
             </div>
             <el-button type="text" icon="el-icon-setting" slot="reference">列表</el-button>
@@ -105,35 +75,28 @@
             v-model="keywords"
             clearable
             @blur="handleKeywordsBlur"
-            @clear="showKeywords=false"
+            @clear="showKeywords = false"
             @change="getFormData"
           ></el-input>
-          <el-button
-            v-show="!showKeywords"
-            type="text"
-            icon="el-icon-search"
-            @click="showKeywords=true"
-          >搜索</el-button>
+          <el-button v-show="!showKeywords" type="text" icon="el-icon-search" @click="showKeywords = true">搜索</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button type="text" icon="el-icon-refresh" @click="getFormData">刷新</el-button>
+          <template v-if="downloadFiles.length">
+            <el-divider direction="vertical"></el-divider>
+            <el-popover placement="bottom-start" width="300" trigger="click">
+              <pso-file-list :files="downloadFiles" :remove="false"></pso-file-list>
+              <el-button type="text" icon="el-icon-setting" slot="reference">文件</el-button>
+            </el-popover>
+          </template>
         </div>
         <div class="pso-formTable-header__right">
-          <el-button
-            v-if="opAddable&&!params.hideNewBtn"
-            type="primary"
-            size="mini"
-            @click="newData"
-          >{{cpntText.add}}</el-button>
+          <el-button v-if="opAddable && !params.hideNewBtn" type="primary" size="mini" @click="newData">{{ cpntText.add }}</el-button>
           <el-button v-if="selectable" type="primary" size="mini" @click="selectConfirmHandler">确定</el-button>
           <slot name="op"></slot>
-          <el-dropdown size="small" trigger="click" v-if="opChangable&&!params.hideChangeBtn">
-            <el-button
-              type="primary"
-              size="mini"
-              :disabled="!selectedList.length"
-            >{{cpntText.change}}</el-button>
+          <el-dropdown size="small" trigger="click" v-if="opChangable && !params.hideChangeBtn">
+            <el-button type="primary" size="mini" :disabled="!selectedList.length">{{ cpntText.change }}</el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(status,index) in opStatuses" :key="index">
+              <el-dropdown-item v-for="(status, index) in opStatuses" :key="index">
                 <el-popconfirm
                   confirmButtonText="确定"
                   cancelButtonText="取消"
@@ -142,19 +105,15 @@
                   title="你确认要修改吗"
                   @onConfirm="handleStatusChange(status)"
                 >
-                  <span slot="reference">{{status.name}}</span>
+                  <span slot="reference">{{ status.name }}</span>
                 </el-popconfirm>
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <el-dropdown size="small" trigger="click" v-if="opStageable">
-            <el-button
-              type="primary"
-              size="mini"
-              :disabled="!selectedList.length"
-            >{{cpntText.stage}}</el-button>
+            <el-button type="primary" size="mini" :disabled="!selectedList.length">{{ cpntText.stage }}</el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(stage,index) in stages" :key="index">
+              <el-dropdown-item v-for="(stage, index) in stages" :key="index">
                 <el-popconfirm
                   confirmButtonText="确定"
                   cancelButtonText="取消"
@@ -163,26 +122,33 @@
                   title="你确认要修改吗"
                   @onConfirm="handleStageChange(stage)"
                 >
-                  <span slot="reference">{{stage.name}}</span>
+                  <span slot="reference">{{ stage.name }}</span>
                 </el-popconfirm>
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <el-button
-            v-if="opAddable&&!params.hideCopyBtn"
+            v-if="opAddable && !params.hideCopyBtn"
             type="primary"
             size="mini"
             @click="handleCopy"
             :disabled="selectedList.length !== 1"
-          >{{cpntText.copy}}</el-button>
+            >{{ cpntText.copy }}</el-button
+          >
           <el-dropdown size="small" @command="handleMore" v-if="!params.hideMoreBtn">
             <el-button class="el-dropdown-link" size="mini" type="text">
               更多
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>下载模板</el-dropdown-item>
-              <el-dropdown-item v-if="opAddable">导入</el-dropdown-item>
+              <el-dropdown-item command="downloadFormTp">下载模板</el-dropdown-item>
+              <el-dropdown-item v-if="opAddable">
+                <el-form>
+                  <pso-form-attach :cpnt="uploadAttach" :data="{ data_code: cfg.data_code }" :preview="false" :api="uploadAPI">
+                    <span>导入</span>
+                  </pso-form-attach>
+                </el-form>
+              </el-dropdown-item>
               <el-dropdown-item command="export" v-if="opExportable">导出EXCEL</el-dropdown-item>
               <el-dropdown-item v-if="opExportable">全部导出</el-dropdown-item>
               <el-dropdown-item command="saveColCfg" v-if="opAddable">保存列宽</el-dropdown-item>
@@ -190,18 +156,18 @@
           </el-dropdown>
         </div>
       </div>
-      <div class="pso-formTable-box" v-if="params.displayMode==='box'" v-loading="loadingTable">
+      <div class="pso-formTable-box" v-if="params.displayMode === 'box'" v-loading="loadingTable">
         <el-row :gutter="10">
-          <el-col :xs="6" :sm="6" v-for="(d,index) in formData" :key="index">
+          <el-col :xs="6" :sm="6" v-for="(d, index) in formData" :key="index">
             <div class="pso-formTable-box__item">
               <div v-if="params.headPicture" class="pso-formTable-box__item-pic">
                 <img :src="d[params.headPicture]" alt="图片" />
               </div>
               <div class="pso-formTable-box__item-info">
-                <div v-for="(f,index) of showFieldsReal" :key="index">
-                  <template v-if="f.field_name!==params.headPicture">
-                    <span>{{f.display}}</span>
-                    <span>{{formatListVal(d,f)}}</span>
+                <div v-for="(f, index) of showFieldsReal" :key="index">
+                  <template v-if="f.field_name !== params.headPicture">
+                    <span>{{ f.display }}</span>
+                    <span>{{ formatListVal(d, f) }}</span>
                   </template>
                 </div>
               </div>
@@ -220,74 +186,49 @@
           :data="formData"
           :summary-method="handleSummary"
           :show-summary="showSummary"
+          :cell-class-name="makeRowClass"
+          :max-height="tableMaxHeight"
+          @row-dblclick="rowDClickHandler"
           @row-click="rowClickHandler"
           @selection-change="handleSelectionChange"
           @sort-change="handleSort"
           @header-dragend="handleHeaderDrag"
         >
           <template #default>
-            <el-table-column
-              v-if="checkbox"
-              type="selection"
-              width="40"
-              header-align="center"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              type="index"
-              label="序号"
-              :index="1"
-              width="50"
-              header-align="center"
-              align="center"
-            ></el-table-column>
+            <el-table-column v-if="checkbox" type="selection" width="40" header-align="center" align="center"></el-table-column>
+            <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
             <el-table-column
               resizable
-              show-overflow-tooltip
               min-width="120"
+              show-overflow-tooltip
               :prop="field.field_name"
               :label="field.display"
-              v-for="(field,index) of showFieldsReal"
+              v-for="(field, index) of showFieldsReal"
               :key="index"
               :width="field.width"
               :align="field.align"
-              :sortable="field.sortable==='1'?'custom':false"
+              :sortable="field.sortable === '1' ? 'custom' : false"
               header-align="center"
               class-name="modifier-placeholder-wrapper"
             >
               <template slot-scope="scope">
-                <div class="modifier-placeholder" :ref="scope.$index+field.field_name">
-                  <span
-                    class="modifier-flag"
-                    v-if="isFlagField(field.field_name)"
-                    v-html="formatListVal(scope.row,field)"
-                  ></span>
-                  <span v-else>{{formatListVal(scope.row,field)}}</span>
+                <div class="modifier-placeholder" :ref="scope.$index + field.field_name">
+                  <span class="modifier-flag" v-if="isFlagField(field.field_name)" v-html="formatListVal(scope.row, field)"></span>
+                  <span v-else class="modifier-value" :style="{ 'text-align': field.align }">{{ formatListVal(scope.row, field) }}</span>
                   <span
                     v-if="field.editable"
                     class="el-icon-edit modifier-trigger"
-                    @click.stop="openModifier(scope.row,field,scope.$index)"
+                    @click.stop="openModifier(scope.row, field, scope.$index)"
                   ></span>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column
-              v-if="operate"
-              :label="opText"
-              :width="operateWidth"
-              fixed="right"
-              align="center"
-              header-align="center"
-            >
+            <el-table-column v-if="operate" :label="opText" :width="operateWidth" fixed="right" align="center" header-align="center">
               <template slot-scope="scope" v-if="deletable">
-                <el-button
-                  size="mini"
-                  type="danger"
-                  @click.stop.prevent="deleteForm(scope.row.leaf_id)"
-                >删除</el-button>
+                <el-button size="mini" type="danger" @click.stop.prevent="deleteForm(scope.row.leaf_id)">删除</el-button>
               </template>
               <template slot-scope="scope" v-if="!deletable">
-                <slot name="column" v-bind:data="{row:scope.row,code:cfg.data_code}"></slot>
+                <slot name="column" v-bind:data="{ row: scope.row, code: cfg.data_code }"></slot>
               </template>
             </el-table-column>
           </template>
@@ -299,7 +240,7 @@
           <el-pagination
             background
             layout="total, sizes, prev, pager, next, jumper"
-            :page-sizes="[limit,20,50,100,200,500]"
+            :page-sizes="[limit, 20, 50, 100, 200, 500]"
             :total="dataTotal"
             :page-size="limit"
             :current-page="page"
@@ -311,15 +252,10 @@
         </div>
       </div>
     </div>
-    <div v-else style="padding:15px">
+    <div v-else style="padding: 15px">
       <pso-skeleton :lines="5"></pso-skeleton>
     </div>
-    <pso-drawer
-      size="48%"
-      :visible="showFormViewer"
-      :title="cfg.data_name"
-      @close="showFormViewer=false"
-    >
+    <pso-drawer size="48%" :visible="showFormViewer" :title="cfg.data_name" @close="showFormViewer = false">
       <div class="pso-formTable-formViewer" v-if="cfg.data_code">
         <pso-form-interpreter
           ref="formImage"
@@ -327,24 +263,13 @@
           :data-id="dataId"
           :data-instance="instance"
           :data-default="defForm"
-          :editable="dataId?edtailEditable:addable"
+          :editable="dataId ? edtailEditable : addable"
         ></pso-form-interpreter>
       </div>
-      <template v-slot:footer v-if="dataId?edtailEditable:addable">
+      <template v-slot:footer v-if="dataId ? edtailEditable : addable">
         <div class="pso-drawer-footer__body">
-          <el-button
-            v-if="dataId?deletable:''"
-            type="danger"
-            size="small"
-            @click="deleteForm(dataId)"
-          >删除</el-button>
-          <el-button
-            type="primary"
-            size="small"
-            @click="saveForm"
-            :disabled="saving"
-            :loading="saving"
-          >保存</el-button>
+          <el-button v-if="dataId ? deletable : ''" type="danger" size="small" @click="deleteForm(dataId)">删除</el-button>
+          <el-button type="primary" size="small" @click="saveForm" :disabled="saving" :loading="saving">保存</el-button>
         </div>
       </template>
     </pso-drawer>
@@ -460,6 +385,10 @@ export default {
       type: String,
       default: "small",
     },
+    tableMaxHeight: {
+      type: String,
+      default: "800px",
+    },
   },
   data() {
     this.lastCondition = undefined;
@@ -467,10 +396,6 @@ export default {
       loadingTable: false,
       initializing: false,
       showFormViewer: false,
-      cfg: {
-        data_code: "",
-        data_design: [],
-      },
       formData: [],
       currentRow: {},
       conditionOptions: [],
@@ -507,6 +432,7 @@ export default {
       defSearchType: "",
       viewCfg: [],
       defCondition: [],
+      downloadFiles: [],
     };
   },
   computed: {
@@ -606,6 +532,10 @@ export default {
       this.viewCfg = this.params.auth_config;
     }
     this.deFetch = debounce(500, this.reload);
+
+    if (this.params.downloadFiles) {
+      this.downloadFiles = await this.getImages(this.params.downloadFiles);
+    }
 
     await this.getFormCfg();
   },
@@ -771,7 +701,7 @@ export default {
         this.fields.forEach((f) => {
           const exist = _.find(storeFields, { field_name: f.field_name.replace("_x", "") });
           if (exist) {
-            Object.assign(f, exist, { field_name: f.field_name, show: f.show });
+            Object.assign(f, exist, { display: f.display, field_name: f.field_name, show: f.show });
             if (f.searchable && CPNT[exist.componentid].op) {
               conditions.push({ cpnt: exist, field: exist.fid, op: "", data: "", match: "" });
             }
@@ -931,10 +861,13 @@ export default {
     async reload() {
       await this.getFormData();
     },
+    rowDClickHandler(row) {
+      this.instanceClick(row);
+    },
     rowClickHandler(row) {
-      const autoOpen = this.tableRowClick && this.tableRowClick(row);
-      if (!autoOpen) {
-        this.instanceClick(row);
+      if (this.tableRowClick) {
+        this.clickedRow = row;
+        this.tableRowClick(row);
       }
     },
     instanceClick(row) {

@@ -10,14 +10,14 @@
         width="400"
         v-model="showUpload"
       >
-        <pso-upload @close="showUpload=false" @confirm="confirm"></pso-upload>
+        <pso-upload @close="showUpload=false" @confirm="confirm" :api="api" :data="data"></pso-upload>
         <template slot="reference">
           <slot>
             <el-button icon="el-icon-paperclip" plain size="small">上传附件</el-button>
           </slot>
         </template>
       </el-popover>
-      <div class="pso-form-upload__files">
+      <div class="pso-form-upload__files" v-if="preview">
         <pso-file-list v-if="!loadingFile" :files="proxy" @delete="deleteFile"></pso-file-list>
         <pso-skeleton v-else :lines="1"></pso-skeleton>
       </div>
@@ -35,6 +35,20 @@ export default {
   components: {
     PsoUpload,
     PsoFileList,
+  },
+  props: {
+    api: {
+      type: String,
+      default: "/api/upload",
+    },
+    data: {
+      type: Object,
+      default: () => ({}),
+    },
+    preview: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {

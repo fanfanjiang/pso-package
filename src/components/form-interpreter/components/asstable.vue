@@ -104,6 +104,7 @@
           :stageable="false"
           :params="formTableCfg"
           :def-keys="devKeysCfg"
+          table-max-height="400px"
           @selection-confirm="handleAddSelection"
         ></pso-form-view>
       </pso-dialog>

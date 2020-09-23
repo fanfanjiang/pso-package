@@ -124,6 +124,12 @@
               plain
               @click="editScript(tpItem)"
             >编辑脚本</el-button>
+            <pso-picker-resource
+              v-if="tpItem.picker==='picker-file'"
+              source="list"
+              pattern="checkbox"
+              @confirm="handlefileChecked($event,tpItem)"
+            ></pso-picker-resource>
           </el-form-item>
         </div>
       </transition>
@@ -145,6 +151,7 @@
 import formulaDesigner from "../form-designer/formula-designer";
 import { formOp } from "../form-designer/mixin.js";
 import { genComponentData } from "../form-designer/helper";
+
 export default {
   mixins: [formOp],
   components: { formulaDesigner },
@@ -274,6 +281,15 @@ export default {
         cpnts.push(genComponentData({ componentid: "text", fid: item.field, _fieldName: item.name }));
       });
       this.cpnts = cpnts;
+    },
+    handlefileChecked(files, item) {
+      const list = [];
+      files.forEach((f) => {
+        if (f.map_key) {
+          list.push(f.map_key);
+        }
+      });
+      item.value = list.join(",");
     },
   },
 };

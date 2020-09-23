@@ -37,12 +37,13 @@ export default {
       default: true,
     },
     copyMode: {
-      type: Boolean, //是否可编辑
+      type: Boolean, //是否是复制
       default: false,
     },
     dataDefault: Object,
     mockAsstables: Object,
     hiddenCpnts: Array,
+    extendAuth: Array,
   },
   data() {
     return {
@@ -129,14 +130,14 @@ export default {
       }
 
       //获取表单配置
+      const baseEntity = { copyMode: this.copyMode, extendAuth: this.extendAuth, editable: this.editable };
       if (this.formEntity) {
-        this.store = new FormStore(this.formEntity);
+        this.store = new FormStore({ ...this.formEntity, ...baseEntity });
       } else if (this.formId) {
         this.loading = true;
         const ret = await this.API.formsCfg({ data: { id: this.formId } });
-        this.store = new FormStore({ copyMode: this.copyMode, ...ret.data });
+        this.store = new FormStore({ ...ret.data, ...baseEntity });
       }
-      this.store.editable = this.editable;
 
       this.watchFun.push(
         this.$watch("dataId", () => {

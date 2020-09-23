@@ -62,7 +62,6 @@ export const cpntFix = {
     },
     methods: {
         startWatch() {
-            console.log(123);
             this.$watch("numProxy", {
                 deep: true, 
                 immediate: true,

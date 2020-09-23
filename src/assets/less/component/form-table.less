@@ -4,6 +4,10 @@
     background-color: #fff;
     display: flex;
 
+    .pso-table-currow {
+        background-color: #E5E5E5;
+    }
+
     &.pso-formTable__expend {
 
         .pso-formTable__fixfilter {
@@ -270,10 +274,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 99%;
+    position: relative;
 
     .modifier-flag {
         display: flex;
         align-items: center;
+    }
+
+    .modifier-value {
+        width: 100%;
     }
 
     .modifier-trigger {
@@ -299,8 +309,8 @@
     }
 
     .el-input__inner {
-        height: 40px;
-        line-height: 40px;
+        height: 44px;
+        line-height: 44px;
     }
 
     .el-form-item {
@@ -315,7 +325,7 @@
 
     input,
     textarea {
-        min-height: 40px !important;
+        min-height: 44px !important;
         border-width: 2px;
     }
 }

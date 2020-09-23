@@ -111,11 +111,11 @@ export default {
         return (this.store.curStep.op & command) === command;
       }
     },
-    async confirm() {
+    async confirm(unAppendForm = true) {
       if (this.store.isNextEmpty) {
         this.openUserOp({ text: "下一步", op: this.REVIEW_OP_TYPE.confirm.type });
       } else {
-        await this.nextStep(this.REVIEW_OP_TYPE.confirm.type);
+        await this.nextStep(this.REVIEW_OP_TYPE.confirm.type, unAppendForm);
       }
     },
     async reject() {

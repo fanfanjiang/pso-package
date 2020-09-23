@@ -35,7 +35,8 @@ export default class FormStore {
 
         this.is_pub = 0;
 
-
+        this.extendAuth = null;//额外的表单权限配置，因为流程那里需要
+        
         this.rule_config;
 
         this.__fieldAuth__ = []; //字段权限

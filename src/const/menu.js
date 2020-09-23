@@ -57,6 +57,10 @@ export const TP_CTL_TYPE = [
         v: 'picker-menu'
     },
     {
+        n: '文件选择器',
+        v: 'picker-file'
+    },
+    {
         n: '文本',
         v: 'input'
     }

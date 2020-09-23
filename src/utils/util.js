@@ -88,3 +88,21 @@ export function formatJSONList(list, fieldObj) {
     }
     return data;
 }
+
+export function assignList({ target, source, base, tid, sid, assemble }) {
+    target.forEach((t, i) => {
+        const exist = _.find(source, { [sid]: t[tid] });
+        if (!exist) {
+            delete target[i]
+        }
+    })
+    source.forEach(s => {
+        const exist = _.find(target, { [tid]: s[sid] });
+        if (exist) {
+            formatJSONList([exist], base)
+        } else {
+            target.push({ ...base, ...assemble(s) })
+        }
+    })
+}
+

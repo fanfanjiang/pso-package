@@ -52,3 +52,10 @@ export const STATIC_COLUMN_FIELDS = {
     drillTarget: '',
     drillParams: []
 }
+
+export const FORM_UPLOAD_FIELDS = {
+    field: "",
+    name: "",
+    type: "",
+    enable: false
+}

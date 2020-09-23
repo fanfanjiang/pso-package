@@ -6,16 +6,12 @@
           v-for="item in proxy.list"
           size="medium"
           :key="item.user_id"
-          :closable="storeEditable&&!cpnt.data._read"
+          :closable="cpntEditable"
           @close="handleDelSelection(item)"
         >{{item.user_name}}</el-tag>
       </div>
       <pso-skeleton v-if="loading" :lines="1" :s-style="{width:'120px',padding:'0 5px'}"></pso-skeleton>
-      <pso-picker-user
-        v-if="storeEditable&&!cpnt.data._read"
-        :pattern="cpnt.data._type"
-        @confirm="handleAddSelection"
-      >
+      <pso-picker-user v-if="cpntEditable" :pattern="cpnt.data._type" @confirm="handleAddSelection">
         <div style="margin-top: -4px;">
           <el-button size="mini" icon="el-icon-plus" circle></el-button>
         </div>

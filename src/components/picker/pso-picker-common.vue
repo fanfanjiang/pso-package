@@ -51,7 +51,7 @@
               :total="dataTotal"
               :page-size="options.limit"
               :current-page="options.start"
-              :pager-count="3"
+              :pager-count="5"
               @size-change="sizeChangeHandler"
               @current-change="currentChangeHandler"
               @prev-click="prevClickHandler"
@@ -108,19 +108,19 @@ export default {
   props: {
     appid: {
       type: String,
-      default: "3"
+      default: "3",
     },
     show: {
       type: Boolean,
-      default: false
+      default: false,
     },
     pattern: {
       type: String,
-      default: "radio"
+      default: "radio",
     },
     source: {
       type: String,
-      default: "tree"
+      default: "tree",
     },
     typebarOption: Object,
     treeOption: Object,
@@ -128,7 +128,7 @@ export default {
     treeFilter: Function,
     nodeClickFun: Function,
     fetchTableFun: Function,
-    tableField: Array
+    tableField: Array,
   },
   data() {
     return {
@@ -139,10 +139,10 @@ export default {
       options: {
         start: 1,
         limit: 20,
-        filter: ""
+        filter: "",
       },
       dataTotal: 0,
-      typeBarVal: {}
+      typeBarVal: {},
     };
   },
   computed: {
@@ -174,7 +174,7 @@ export default {
     },
     pickerClass() {
       return {
-        "pso-picker__l__wider": this.source === "tree"
+        "pso-picker__l__wider": this.source === "tree",
       };
     },
     pickerWidth() {
@@ -182,14 +182,14 @@ export default {
     },
     autoNodeClick() {
       return this.source !== "tree";
-    }
+    },
   },
   watch: {
     options: {
       deep: true,
       handler() {
         this.debouncedGetData();
-      }
+      },
     },
     source() {
       this.selected = [];
@@ -201,7 +201,7 @@ export default {
       if (val) {
         this.dataTable = [];
       }
-    }
+    },
   },
   created() {
     this.debouncedGetData = debounce(500, this.fetch);
@@ -260,8 +260,8 @@ export default {
     },
     nextClickHandler() {
       this.options.start += 1;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

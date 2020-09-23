@@ -1,7 +1,7 @@
 {
   "name": "pbpm",
-  "version": "0.1.56",
-  "main": "dist/pbpm.umd.min.js",   
+  "version": "0.1.60",
+  "main": "src/index.js",   
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
     "build": "vue-cli-service build --target lib --name pbpm src/index.js",

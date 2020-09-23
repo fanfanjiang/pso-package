@@ -10,6 +10,7 @@
     :data-default="store.defForm"
     :editable="isFormWriteable"
     :copy-mode="store.copy"
+    :extend-auth="store.cfg.wf_map_tp.selectedNode.fieldsAuth"
   ></pso-form-interpreter>
 </template>
 <script>
@@ -32,6 +33,7 @@ export default {
     isFormWriteable() {
       return this.store.curStep && this.store.curStep.atype === "form";
     },
+
   },
   methods: {
     async handleFormDataLoaded(formStore) {

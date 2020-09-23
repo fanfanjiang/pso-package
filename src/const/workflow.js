@@ -192,3 +192,9 @@ export const WF_AUTH_TYPE = [
     { n: "仅保留重复审批人第一步", v: 1 },
     { n: "仅保留重复审批人最后一步", v: 2 }
 ]
+
+export const WF_FIELD_AUTH = [
+    { n: "查看", v: 1 },
+    { n: "编辑", v: 2 },
+    { n: "必填", v: 4 },
+];

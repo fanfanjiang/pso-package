@@ -7,7 +7,7 @@ input:hover,
 input:focus,
 input:checked,
 input:active,
-a:focus, 
+a:focus,
 a:hover,
 div:focus {
     text-decoration: none !important;
@@ -176,10 +176,24 @@ a {
     }
 }
 
-.el-dropdown-menu { 
+.el-dropdown-menu {
     &.el-dropdown-menu--mini {
         max-height: 400px;
         overflow-y: scroll;
+    }
+
+    .el-form-item {
+        margin: 0;
+
+        .pso-form-upload__files {
+            margin: 0;
+        }
+
+        .el-form-item__content {
+            height: 26px;
+            line-height: 26px;
+            font-size: 13px;
+        }
     }
 }
 

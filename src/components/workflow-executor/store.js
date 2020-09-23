@@ -512,7 +512,6 @@ export default class WfStore {
             doNextStep,
             optype
         }
-
         if (this.data.instanceId) {
 
             //指定操作
@@ -560,7 +559,6 @@ export default class WfStore {
             if (formData) {
                 data.formData = formData;
             }
-
             return await API.workflow({ data, method: "put" });
         } else {
             return await this.newInstanceData({ nextStep: true, formData, doNextUsers, doNextStep })

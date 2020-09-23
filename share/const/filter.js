@@ -176,7 +176,8 @@ const FILTER_TYPE = {
         cid: 'user',
         name: '用户',
         op: [
-            { ...FILTER_OP.op1, match: 99 }
+            { ...FILTER_OP.op1, match: 99 },
+            { ...FILTER_OP.op2, match: 99 },
         ]
     },
     dept: {
@@ -184,7 +185,8 @@ const FILTER_TYPE = {
         cid: 'department',
         name: '部门',
         op: [
-            { ...FILTER_OP.op1, match: 99 }
+            { ...FILTER_OP.op1, match: 99 },
+            { ...FILTER_OP.op2, match: 99 },
         ]
     }
 }

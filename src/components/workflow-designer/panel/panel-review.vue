@@ -29,6 +29,7 @@
         list="copyList"
         reset
       ></pso-common-review>
+      <wf-formauth :node="node"></wf-formauth>
       <pso-wf-update :node="node"></pso-wf-update>
     </el-form>
   </div>
@@ -39,10 +40,10 @@ import { REVIEW_TYPE, REVIEW_OP_TYPE, REVIEW_AUTH_TYPE } from "../../../const/wo
 
 import PsoCommonReview from "../../workflow-designer/common/common-review";
 import PsoWfUpdate from "../../workflow-designer/common/update";
-import PsoWfNotification from "../../workflow-designer/common/notification";
+import WfFormauth from "../../workflow-designer/common/form-auth";
 
 export default {
-  components: { PsoCommonReview, PsoWfUpdate, PsoWfNotification },
+  components: { PsoCommonReview, PsoWfUpdate, WfFormauth },
   props: ["node"],
   computed: {
     ...mapState(["wfDesigner"]),

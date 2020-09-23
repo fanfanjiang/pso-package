@@ -1,6 +1,9 @@
 import { MENU_LEAF_AUTH } from "../const/menu";
 import { closest } from "../components/form-designer/drag-drop/utils";
 import addEventListener from "../utils/dom/addEventListener";
+import { makeFiles } from "../tool/file";
+import { genComponentData } from "../components/form-designer/helper";
+import PsoFormAttach from "../components/form-interpreter/components/attachment";
 
 //权限视图
 export const AuthViewMixin = {
@@ -39,16 +42,32 @@ export const AuthViewMixin = {
 
 //表单列表相关通用功能
 export const FormListMixin = {
+    components: { PsoFormAttach },
     data() {
+        this.uploadAPI = '/api/upload/data';
         return {
+            cfg: {
+                data_code: "",
+                data_design: [],
+            },
             usedFormCol: '',
             oriColCfg: null,
             oriColData: null,
             fields: [],
-            formCode: ''
+            formCode: '',
+            clickedRow: null,
+            uploadAttach: { data: {} }
         }
     },
+    created() {
+        this.genUploadCpnt();
+    },
     methods: {
+        makeRowClass({ row, column, rowIndex, columnIndex }) {
+            if (this.clickedRow === row) {
+                return 'pso-table-currow'
+            }
+        },
         analyzeColumn(cfg, defKey) {
             this.oriColCfg = JSON.parse(cfg);
             this.oriColData = this.getFormColumn(cfg, defKey);
@@ -109,6 +128,32 @@ export const FormListMixin = {
         },
         isFlagField(field) {
             return /\S+_s$/.test(field);
+        },
+        async getImages(ids) {
+            const ret = await this.API.file({ data: { ids }, method: "get" });
+            makeFiles({ files: ret.data, urlField: "res_path", nameField: "res_name" });
+            return ret.data;
+        },
+        downloadFormTp() {
+            let uploadCfg = this.cfg.export_config;
+            if (uploadCfg) {
+                if (typeof uploadCfg === 'string') {
+                    uploadCfg = JSON.parse(uploadCfg)
+                }
+                const cfg = uploadCfg.filter(f => f.enable);
+                const data = {};
+                cfg.forEach(c => {
+                    data[c.field] = c.name;
+                })
+                const sheet = XLSX.utils.json_to_sheet([data], { header: _.map(cfg, 'field'), skipHeader: true });
+                const book = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(book, sheet, '模板');
+                XLSX.writeFile(book, '模板.xlsx');
+            }
+        },
+        genUploadCpnt() {
+            this.uploadAttach.data = genComponentData({ componentid: "attachment", _fieldName: "", _val: "" });
+            this.uploadAttach.data._fieldName = "";
         }
     },
 }
@@ -163,7 +208,7 @@ export const FormModifierMixin = {
                 try {
                     const formData = await this.$refs.modifier.makeData();
                     const data = formData.dataArr[0];
-                    if (data.leaf_id === this.modInstance.leaf_id && data[this.modifiedField] !== this.modInstance[this.modifiedField]) {
+                    if (data.leaf_id === this.modInstance.leaf_id && data[this.modifiedField] != this.modInstance[this.modifiedField]) {
                         this.handleSaved && this.handleSaved({ leaf_id: this.dataId, formData });
                     }
                 } catch (error) {
@@ -194,7 +239,7 @@ export const FormModifierMixin = {
             this.modifierStyle = {
                 top: `${top - 1}px`,
                 left: `${left - 1}px`,
-                width: `${width - 2}px`, 
+                width: `${width - 2}px`,
             };
 
             this.showModifier = false;

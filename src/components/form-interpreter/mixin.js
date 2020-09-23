@@ -20,6 +20,7 @@ export default {
             }
         },
         cpntEditable() {
+            if (this.cpnt.data.__forceEdit__) return true;
             return this.storeEditable && !this.cpnt.data._read;
         }
     },
@@ -92,6 +93,9 @@ export default {
 
                     }
                     this.setDataByIds(targetVal.split(','));
+                } else if (this.cpnt.componentid === 'checkbox') {
+                    this.cpnt.data._proxy.splice(0, this.cpnt.data._proxy.length);
+                    this.cpnt.data._proxy.push(...targetVal.split(','))
                 } else {
                     this.cpnt.data._val = targetVal
                 }

@@ -36,7 +36,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pso-dialog title="设计脚本" :visible="showDeisgner" width="70%" @close="showDeisgner=false">
+    <pso-dialog title="设计脚本" :visible="showDeisgner" width="80%" @close="showDeisgner=false">
       <div style="padding:20px;height:100%;overflow: auto;">
         <sql-designer :sql="curSql" :params="fields" params-n="field_display" params-v="field_name"></sql-designer>
       </div>

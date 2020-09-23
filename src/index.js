@@ -45,6 +45,7 @@ import PsoTreeDimen from "./components/tree-dimen";
 import PsoTagMgt from "./components/tag-mgt";
 import PsoKnowlMgt from "./components/knowl-mgt";
 import PsoDataFilter from "./components/data-filter";
+import PsoFileList from "./components/file-list";
 
 //表单组件
 import PsoFormView from "./components/form-view";
@@ -112,11 +113,12 @@ const components = {
     PsoKnowlMgt,
     PsoDataFilter,
     PsoTagEditor,
-    PsoDialog
+    PsoDialog,
+    PsoFileList
 }
 
 
-const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', selfUrl } = {}) {
+const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host } = {}) {
     Object.keys(components).map(key => {
         Vue.component(key, components[key]);
     })
@@ -132,7 +134,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
 
     Vue.prototype.createPDF = createPDF;
     Vue.prototype.APIURL = apiUrl;
-    Vue.prototype.SELFURL = selfUrl;
+    Vue.prototype.HOST = host;
 
     BASEAPI.URL_PREFIX = apiPrefix;
     if (API && API.handleAuthError) {

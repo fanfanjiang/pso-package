@@ -118,17 +118,9 @@ export const FIELD_FORMAT = {
         label: '标签',
         value: 'tag'
     },
-    calculate: {
-        label: '计算',
-        value: 'calculate'
-    },
     table: {
         label: '子表',
         value: 'table'
-    },
-    alert: {
-        label: '日期',
-        value: 'alert'
     },
     autotag: {
         label: '标签编号',
