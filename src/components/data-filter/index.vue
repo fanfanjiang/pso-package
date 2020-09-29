@@ -42,7 +42,7 @@
 <script>
 import PsoDatafilteritem from "./filter";
 import { transCMapToCondition } from "../../tool/form";
-
+ 
 export default {
   props: {
     value: [String, Array],

@@ -3,14 +3,14 @@
     <el-input
       ref="cpnt"
       size="small"
-      :type="type||cpnt.data._type||'text'"
+      :type="type || cpnt.data._type || 'text'"
       :clearable="true"
       :disabled="!cpntEditable"
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
       :autofocus="cpnt.data._autofocus"
       autosize
-      @focus="focusing=true"
+      @focus="focusing = true"
       @blur="handleInputBlur"
     ></el-input>
     <transition name="el-zoom-in-top">
@@ -19,12 +19,12 @@
           <div
             @click="handleSelect(r)"
             class="text-search__result-item"
-            v-for="(r,i) in searchRet"
+            v-for="(r, i) in searchRet"
             :key="i"
             v-html="r[cpnt.data._searchField]"
           ></div>
         </template>
-        <pso-skeleton v-else :lines="1" :s-style="{padding:'0 15px'}"></pso-skeleton>
+        <pso-skeleton v-else :lines="1" :s-style="{ padding: '0 15px' }"></pso-skeleton>
       </div>
     </transition>
   </el-form-item>
@@ -99,9 +99,13 @@ export default {
       this.cpnt.data._val = data[this.cpnt.data._searchField];
       if (this.cpnt.data._bindFields) {
         this.cpnt.data._bindFields.forEach(({ tid, sid }) => {
-          const exist = this.cpnt.store.searchByField(tid, true);
+          const exist = this.cpnt.store.searchByField(tid);
           if (exist) {
-            exist._val = data[sid];
+            if (exist.__setDataByIds) {
+              exist.__setDataByIds(data[sid]);
+            } else {
+              exist.data._val = data[sid];
+            }
           }
         });
       }

@@ -188,30 +188,8 @@
             background-color: #fff;
         }
     }
-
-
 }
 
-.pso-switch-panel {
-    max-height: 300px;
-    overflow: scroll;
-
-    .pso-switch-panel__item {
-        &+.pso-switch-panel__item {
-            margin-top: 15px;
-        }
-    }
-
-    .el-switch {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-    }
-}
-
-.pso-formTable-formViewer {
-    padding: 15px;
-}
 
 .pso-formTable-box {
     .pso-formTable-box__item {
@@ -250,82 +228,3 @@
     }
 }
 
-//旗帜标签
-.tag-flag-box {
-    width: 20px;
-    height: 20px;
-    border-radius: 3px;
-    display: inline-block;
-
-    &+.tag-flag-box {
-        margin-left: 2px;
-    }
-}
-
-.modifier-placeholder-wrapper {
-    &:hover {
-        .modifier-trigger {
-            display: block;
-        }
-    }
-}
-
-.modifier-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 99%;
-    position: relative;
-
-    .modifier-flag {
-        display: flex;
-        align-items: center;
-    }
-
-    .modifier-value {
-        width: 100%;
-    }
-
-    .modifier-trigger {
-        cursor: pointer;
-        font-size: 16px;
-        display: none;
-
-        &:hover {
-            color: @main-color
-        }
-    }
-}
-
-.modifier {
-    position: fixed;
-    background-color: #fff;
-    z-index: 999;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
-
-    .el-input__inner,
-    .el-textarea__inner {
-        border-radius: 0;
-    }
-
-    .el-input__inner {
-        height: 44px;
-        line-height: 44px;
-    }
-
-    .el-form-item {
-        margin: 0 !important;
-    }
-
-    .pso-form-row {
-        >div {
-            margin: 0 !important;
-        }
-    }
-
-    input,
-    textarea {
-        min-height: 44px !important;
-        border-width: 2px;
-    }
-}

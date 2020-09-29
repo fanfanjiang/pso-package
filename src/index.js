@@ -1,3 +1,5 @@
+// import 'babel-polyfill';
+
 const formulajs = require("@handsontable/formulajs");
 import debounce from "throttle-debounce/debounce";
 
@@ -48,7 +50,9 @@ import PsoDataFilter from "./components/data-filter";
 import PsoFileList from "./components/file-list";
 
 //表单组件
-import PsoFormView from "./components/form-view";
+import PsoFormView2 from "./components/form-view";
+import PsoFormView from "./components/form-view2";
+
 import PsoFormDesigner from "./components/form-designer";
 import PsoFormInterpreter from "./components/form-interpreter";
 import PsoDataMgt from "./components/data-mgt";
@@ -59,6 +63,7 @@ import PsoWfDesigner from "./components/workflow-designer";
 import PsoWfStage from "./components/workflow-designer/stage";
 import PsoWfExecutor from "./components/workflow-executor";
 import PsoWfMgt from "./components/workflow-mgt";
+import PsoWfView from "./components/workflow-view";
 
 import PsoElementMgt from "./components/element-mgt";
 import PsoTempleteMgt from "./components/templete-mgt";
@@ -87,16 +92,22 @@ const components = {
     PsoPickerUser,
     PsoPickerIcon,
     PsoTreeCommon,
+
     PsoFormView,
+    PsoFormView2,
+
     PsoFormDesigner,
     PsoFormInterpreter,
     PsoTypebar,
     PsoSriptDesigner,
     PsoCountDown,
+    
     PsoWfDesigner,
     PsoWfStage,
     PsoWfExecutor,
     PsoWfMgt,
+    PsoWfView,
+
     PsoElementMgt,
     PsoTempleteMgt,
     PsoDataMgt,
@@ -160,7 +171,9 @@ Object.keys(formulajs).forEach(key => {
     window[key] = formulajs[key];
 });
 
-export { BASEAPI, store, WfStore, FormStore, genComponentData }
+const CONST = require('../share/const');
+
+export { BASEAPI, store, WfStore, FormStore, genComponentData, CONST }
 
 export default {
     install

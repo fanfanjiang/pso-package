@@ -20,6 +20,8 @@ export const TP_TYPES = [
 ]
 
 export const FORM_COLUMN_FIELDS = {
+    field_name: '',
+    display: '',
     width: "",
     using: "1",
     show: "1",
@@ -58,4 +60,13 @@ export const FORM_UPLOAD_FIELDS = {
     name: "",
     type: "",
     enable: false
+}
+
+export const FORM_STATUS_FIELDS = {
+    value: 0,
+    name: "",
+    color: "",
+    display: "",
+    script: [],
+    target: []
 }

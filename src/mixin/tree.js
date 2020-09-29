@@ -187,7 +187,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 const setNode = (nodeData) => {
                     level -= 1;
                     for (let n of nodeData) {
-                        if (!(this.folderMode && n.is_leaf === 0)) {
+                        if (!(this.folderMode && n.is_leaf === 0) && this.$refs[treeRef]) {
                             this.$refs[treeRef].setCurrentKey(n.node_id);
                             this.nodeClickHandler(n);
                             return n;
@@ -265,8 +265,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 return data.is_leaf === 1;
             },
             getNodeIcon(node) {
-                return `${this.nodeIconUri}${(this.folderMode && !this.isLeaf(node)) ? 'folder' : node.data.node_icon}${
-                    this.folderMode && !this.isLeaf(node)
+                return `${this.nodeIconUri}${(this.folderMode && !this.isLeaf(node)) ? 'folder' : node.data.node_icon}${this.folderMode && !this.isLeaf(node)
                         ? node.data.children && node.data.children.length && node.expanded
                             ? "_expand"
                             : ""

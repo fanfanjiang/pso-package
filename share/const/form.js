@@ -433,7 +433,7 @@ const CPNT = {
     db: true,
     host_db: false,
     chart: true,
-    table_show: false
+    table_show: true
   },
   aiw: {
     icon: "fa fa-jpy",

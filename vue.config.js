@@ -45,16 +45,18 @@ if (process.env.BABEL_ENV === 'development') {
                 jquery: "jQuery",
                 lodash: '_',
                 xlsx: 'XLSX',
-                'video.js': 'videojs', 
+                'video.js': 'videojs',
                 html2canvas: 'html2canvas'
             },
             plugins: [
                 new BundleAnalyzerPlugin()
             ],
         },
+        productionSourceMap: false,
         chainWebpack: config => {
             config.plugins.delete('prefetch');
             config.plugins.delete('preload');
+            // config.module.rule('js').include.add(path.resolve('src')).add(path.resolve('share')).end();
         },
         css: {
             extract: false,

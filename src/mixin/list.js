@@ -56,6 +56,9 @@ export const FormListMixin = {
             fields: [],
             formCode: '',
             clickedRow: null,
+            selectedList: [],
+            statuses: [],
+            stages: [],
             uploadAttach: { data: {} }
         }
     },
@@ -63,6 +66,25 @@ export const FormListMixin = {
         this.genUploadCpnt();
     },
     methods: {
+        analyzeAvaiableChange(entity, field) {
+            const checked = Object.keys(_.groupBy(this.selectedList, field)).map(d => parseInt(d));
+            entity.forEach(obj => {
+                let available = true;
+                for (let item of checked) {
+                    console.log(item, entity);
+                    const source = _.find(entity, { value: item });
+                    if (item === obj.value) {
+                        available = false;
+                        break;
+                    }
+                    if (source.target && source.target.indexOf(parseInt(obj.value)) === -1) {
+                        available = false;
+                        break;
+                    }
+                }
+                this.$set(obj, 'available', available)
+            })
+        },
         makeRowClass({ row, column, rowIndex, columnIndex }) {
             if (this.clickedRow === row) {
                 return 'pso-table-currow'
@@ -80,15 +102,20 @@ export const FormListMixin = {
             if (Array.isArray(cfg)) {
                 return this.$message.error("表单列表配置错误，请重新配置列表参数")
             }
-            if (defKey) {
-                const exist = _.find(cfg.column, { name: defKey });
-                if (exist) {
-                    this.usedFormCol = defKey;
-                    return exist.data;
+            if (cfg.column.length) {
+                if (defKey) {
+                    const exist = _.find(cfg.column, { name: defKey });
+                    if (exist) {
+                        this.usedFormCol = defKey;
+                        return exist.data;
+                    }
                 }
+                this.usedFormCol = cfg.column[0].name;
+                return cfg.column[0].data;
+            } else {
+                return []
             }
-            this.usedFormCol = cfg.column[0].name;
-            return cfg.column[0].data;
+
         },
         handleHeaderDrag(newWidth, oldWidth, column, event) {
             if (this.oriColData) {
@@ -107,7 +134,7 @@ export const FormListMixin = {
             }
         },
         formatListVal(d, f) {
-            const _val = d[f.field_name];
+            let _val = d[f.field_name];
             if ((f.componentid === "select" || f.componentid === "checkbox") && f._option) {
                 const opt = _.find(f._option, { _optionValue: _val });
                 if (opt) {
@@ -121,6 +148,15 @@ export const FormListMixin = {
                 }).join('');
 
             }
+
+            try {
+                if (_val) {
+                    _val = _val.replace(/(?:\.0*|(\.\d+?)0+)$/, '$1');
+                }
+            } catch (error) {
+
+            }
+
             return this.filterBadVal(_val);
         },
         filterBadVal(val) {
@@ -216,7 +252,7 @@ export const FormModifierMixin = {
                 }
             }
         },
-        handleModLoaded(store) {
+        modLoadHandler(store) {
             if (!this.modifiedField) return;
             const cpnt = store.searchByField(this.modifiedField);
             if (cpnt) {
@@ -239,7 +275,7 @@ export const FormModifierMixin = {
             this.modifierStyle = {
                 top: `${top - 1}px`,
                 left: `${left - 1}px`,
-                width: `${width - 2}px`,
+                width: `${width}px`,
             };
 
             this.showModifier = false;

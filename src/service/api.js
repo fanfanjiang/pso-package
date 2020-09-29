@@ -157,6 +157,22 @@ export default class API {
         }
     }
 
+    static async updateWfStatus(data) {
+        try {
+            return await this.request('/api/workflow/status', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getWfStatus(data) {
+        try {
+            return await this.request('/api/workflow/status', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async permissionEntries(params) {
         try {
             return await this.RESTful('/api/permissionEntries', Object.assign({ idField: 'body_id' }, params));

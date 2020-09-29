@@ -2,7 +2,7 @@
   <div class="act-text-body">
     <common-panel :cpnt="cpnt" info="可输入脚本，根据脚本返回值填充表单" :needDefaultValue="false">
       <el-form-item label="脚本" required>
-        <el-button @click="showScript=true" size="mini">设置脚本</el-button>
+        <el-button @click="showScript = true" size="mini">设置脚本</el-button>
       </el-form-item>
       <el-form-item label="存储方式" required>
         <el-select size="mini" v-model="cpnt.data._type" placeholder="请选择">
@@ -15,24 +15,14 @@
       </el-form-item>
       <el-form-item label="参数字段">
         <el-select v-model="cpnt.data._option" size="mini" placeholder="请选择" multiple>
-          <el-option
-            v-for="item in fieldOptions"
-            :key="item.fid"
-            :label="item._fieldName"
-            :value="item.fid"
-          ></el-option>
+          <el-option v-for="item in fieldOptions" :key="item.fid" :label="item._fieldName" :value="item.fid"></el-option>
         </el-select>
       </el-form-item>
       <pso-title title="设置列"></pso-title>
-      <el-button @click="showColum=true" size="mini">设置列参数</el-button>
+      <el-button @click="showColum = true" size="mini">设置列参数</el-button>
       <el-form-item label="保存字段" required>
         <el-select v-model="cpnt.data._saveField" size="mini" placeholder="请选择">
-          <el-option
-            v-for="item in cpnt.data._column"
-            :key="item.field"
-            :label="item.name"
-            :value="item.field"
-          ></el-option>
+          <el-option v-for="item in cpnt.data._column" :key="item.field" :label="item.name" :value="item.field"></el-option>
         </el-select>
       </el-form-item>
     </common-panel>
@@ -40,59 +30,63 @@
       <column-editor :data="cpnt.data._column" :formulable="false"></column-editor>
     </el-dialog>
     <el-dialog title="设置脚本" append-to-body :visible.sync="showScript" :width="'80%'">
+      {{ cpnt.data._script }}
       <div class="pso-table-controller">
         <el-button size="small" type="primary" plain @click="addScript">添加脚本</el-button>
       </div>
       <el-table key="status" :data="cpnt.data._script" style="width: 100%">
-        <el-table-column label="提交脚本">
+        <el-table-column label="参数">
           <template slot-scope="scope">
-            <el-input type="textarea" :row="2" size="small" v-model="scope.row.sql" placeholder></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="参数" width="400">
-          <template slot-scope="scope">
-            <el-dropdown @command="addScriptItem($event,scope.row)" size="mini" trigger="click">
+            <el-dropdown @command="addScriptItem($event, scope.row)" size="mini" trigger="click">
               <span class="el-dropdown-link">
                 添加字段
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                  v-for="f in fieldOptions"
-                  :key="f._fieldValue"
-                  :command="f._fieldValue"
-                >{{f._fieldName}}</el-dropdown-item>
+                <el-dropdown-item v-for="f in fieldOptions" :key="f._fieldValue" :command="f._fieldValue">{{
+                  f._fieldName
+                }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <div class="pscript-item" v-for="(value,key) of scope.row.param" :key="key">
-              <span>{{getName(key)}}</span>
+            <div class="pscript-item" v-for="(value, key) of scope.row.param" :key="key">
+              <span>{{ getName(key) }}</span>
               <el-input size="mini" v-model="scope.row.param[key]"></el-input>
-              <i class="el-icon-delete" @click="delScriptItem(scope.row.param,key)"></i>
+              <i class="el-icon-delete" @click="delScriptItem(scope.row.param, key)"></i>
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="100">
+        <el-table-column label="操作" fixed="right" width="200">
           <template slot-scope="scope">
+            <el-button size="mini" @click="goDesigner(scope.$index)">设计脚本</el-button>
             <el-button size="mini" type="danger" @click="delScript(scope.$index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-dialog>
+    <pso-dialog title="设计脚本" :visible="showDeisgner" width="80%" @close="showDeisgner = false">
+      <div style="padding: 20px; height: 100%; overflow: auto" v-if="curSql">
+        <sql-designer :sql="curSql" :params="fieldOptions" params-n="_fieldName" params-v="_fieldValue"></sql-designer>
+      </div>
+    </pso-dialog>
   </div>
 </template>
 <script>
 import commonPanel from "../common/common-panel";
 import columnEditor from "../../templete-mgt/column";
+import SqlDesigner from "../../sql-designer";
 export default {
   props: ["cpnt"],
   components: {
     commonPanel,
     columnEditor,
+    SqlDesigner,
   },
   data() {
     return {
       showColum: false,
       showScript: false,
+      curSql: null,
+      showDeisgner: false,
     };
   },
   computed: {
@@ -110,7 +104,7 @@ export default {
   },
   methods: {
     addScript() {
-      this.cpnt.data._script.push({ sql: "", param: {} });
+      this.cpnt.data._script.push({ sql: [], param: {} });
     },
     delScript(index) {
       this.cpnt.data._script.splice(index, 1);
@@ -126,6 +120,13 @@ export default {
     },
     getName(key) {
       return _.find(this.fieldOptions, { _fieldValue: key })._fieldName;
+    },
+    goDesigner(index) {
+      if (typeof this.cpnt.data._script[index].sql === "string") {
+        this.$set(this.cpnt.data._script[index], "sql", []);
+      }
+      this.curSql = this.cpnt.data._script[index].sql;
+      this.showDeisgner = true;
     },
   },
 };

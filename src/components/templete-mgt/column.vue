@@ -259,7 +259,7 @@
 import formulaDesigner from "../form-designer/formula-designer";
 import { genComponentData } from "../form-designer/helper";
 import { STATIC_COLUMN_FIELDS } from "../../const/sys";
-const { FILTER_TYPE_ARY } = require("../../../share/const/filter");
+import { FILTER_TYPE_ARY } from "../../../share/const/filter";
 import { formatJSONList } from "../../utils/util";
 import { MENU_TYPE } from "../../const/menu";
 

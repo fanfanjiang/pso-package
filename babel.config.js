@@ -1,5 +1,9 @@
 module.exports = {
-  presets: ["@vue/cli-plugin-babel/preset"],
+  presets: [
+    ['@vue/babel-preset-app', {
+      polyfills: []
+    }]
+  ],
   "plugins": [
     ["import", {
       "libraryName": "muse-ui",

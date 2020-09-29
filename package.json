@@ -1,14 +1,14 @@
 {
-  "name": "pbpm",
-  "version": "0.1.60",
-  "main": "src/index.js",   
+  "name": "pbpm", 
+  "version": "0.1.74",
+  "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
     "build": "vue-cli-service build --target lib --name pbpm src/index.js",
     "build:exam": "vue-cli-service build example/main.js",
     "test:unit": "vue-cli-service test:unit"
   },
-  "dependencies": {}, 
+  "dependencies": {},
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",
     "@vue/cli-plugin-unit-mocha": "~4.3.0",
@@ -17,6 +17,7 @@
     "@vue/test-utils": "1.0.0-beta.31",
     "axios": "^0.19.0",
     "babel-plugin-import": "^1.13.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-vue": "^2.0.2",
     "big.js": "^5.2.2",
     "chai": "^4.1.2",

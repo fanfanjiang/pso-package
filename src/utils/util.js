@@ -1,5 +1,6 @@
 import XLSX from 'xlsx';
 import x2js from 'x2js';
+import Vue from 'vue';
 
 export function listToTree({ list, pid = "pid", children = "children", id = "id", each, afterPush, beforePush }) {
     let map = {};
@@ -73,18 +74,26 @@ export async function checkUniq(data, field) {
     return (_.uniq(fieldNames).length !== fieldNames.length) ? false : true;
 }
 
-export function formatJSONList(list, fieldObj) {
+export function formatJSONList(list, fieldObj, compare = true) {
     let data = list;
     if (typeof list === 'string') {
         data = JSON.parse(list);
     }
     for (let item of data) {
-        for (let key in item) {
-            if (!fieldObj.hasOwnProperty(key)) {
-                delete item.key
+        for (let fKey in fieldObj) {
+            if (!item.hasOwnProperty(fKey) || (typeof item[fKey] === "object" && typeof fieldObj[fKey] !== 'object') || (typeof item[fKey] !== "object" && typeof fieldObj[fKey] === 'object')) {
+                Vue.set(item, fKey, _.cloneDeep(fieldObj[fKey]));
             }
         }
-        Object.assign(item, { ...fieldObj }, { ...item });
+        if (compare) {
+            for (let key in item) {
+                if (!fieldObj.hasOwnProperty(key)) {
+                    Vue.delete(item, key);
+                    delete item.key
+                }
+            }
+        }
+
     }
     return data;
 }

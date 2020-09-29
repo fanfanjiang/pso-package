@@ -7,15 +7,15 @@
         :default-node-data="defaultNodeData"
         :default-nodeid="params.designedFormId"
         :auto-edit="false"
-        @before-node-new="showWorksheetSelector=true"
+        @before-node-new="showWorksheetSelector = true"
         @after-node-new="handleAfterNewdNode"
         @node-click="nodeClickHandler"
       ></pso-tree-common>
     </div>
     <div class="pso-data-mgmt__content" v-loading="initializing">
-      <div class="pso-dd" v-if="curNode&&!initializing">
+      <div class="pso-dd" v-if="curNode && !initializing">
         <div class="pso-dd-header">
-          <pso-title>工作表：{{curNode.node_display}}({{curNode.node_name}})</pso-title>
+          <pso-title>工作表：{{ curNode.node_display }}({{ curNode.node_name }})</pso-title>
           <div class="pso-dd-header__btns">
             <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
             <el-button size="mini" type="primary" plain @click="handleEditForm">设计表单</el-button>
@@ -42,43 +42,29 @@
         <div class="pso-dd-body" v-loading="saving">
           <template v-if="!!curNode.is_leaf">
             <pso-form-view
-              v-show="curTab==='preview'"
+              v-show="curTab === 'preview'"
               :cfg-id="curNode.node_name"
               :auto-submit="true"
               :read-only="false"
               :key="curNode.node_id"
             ></pso-form-view>
-            <form-field v-if="curTab==='field'" :data="tableData" :code="curNode.node_name"></form-field>
-            <form-column v-if="curTab==='list'" :data="colCfg" :def-col="colData"></form-column>
-            <form-status
-              v-if="curTab==='status'"
-              :data="staData"
-              :fields="tableData"
-              @save="saveConfig"
-            ></form-status>
-            <form-stage v-if="curTab==='stage'" :data="stageData" @save="saveConfig"></form-stage>
+            <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
+            <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData"></form-column>
+            <form-status v-if="curTab === 'status'" :data="staData" :fields="tableData"></form-status>
+            <form-status v-if="curTab === 'stage'" :data="stageData" :fields="tableData"></form-status>
             <form-publish
-              v-if="curTab==='publish'&&formStore"
+              v-if="curTab === 'publish' && formStore"
               :data="pubCfg"
               :node="curNode"
               :store="formStore"
               @save="saveConfig"
             ></form-publish>
-            <form-upload
-              v-if="curTab==='upload'&&formStore"
-              :data="upload"
-              :code="curNode.node_name"
-              :store="formStore"
-            ></form-upload>
-            <form-rule v-if="curTab==='rule'&&formStore" :store="formStore" :rules="rules"></form-rule>
-            <form-submit v-if="curTab==='submit'" :data="subCfg" :fields="tableData"></form-submit>
-            <form-asstable
-              v-if="curTab==='asstable'&&formStore"
-              :store="formStore"
-              :data="asstable"
-            ></form-asstable>
+            <form-upload v-if="curTab === 'upload' && formStore" :data="upload" :code="curNode.node_name" :store="formStore"></form-upload>
+            <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
+            <form-submit v-if="curTab === 'submit'" :data="subCfg" :fields="tableData"></form-submit>
+            <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
           </template>
-          <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+          <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
         </div>
       </div>
     </div>
@@ -91,18 +77,18 @@
       :visible.sync="showWorksheetSelector"
     >
       <div class="pso-worksheet-menu">
-        <div class="pso-worksheet-menu__tip">{{curWsMenu.tip}}</div>
+        <div class="pso-worksheet-menu__tip">{{ curWsMenu.tip }}</div>
         <div class="pso-worksheet-menu__list">
           <div
-            :class="[{'pso-worksheet-menu__item':true,'active':curWsMenu===item}]"
-            @mouseenter="curWsMenu=item"
-            @mouseleave="curWsMenu={}"
+            :class="[{ 'pso-worksheet-menu__item': true, active: curWsMenu === item }]"
+            @mouseenter="curWsMenu = item"
+            @mouseleave="curWsMenu = {}"
             @click="newSheet(item)"
-            v-for="(item,index) in worksheetMenu"
+            v-for="(item, index) in worksheetMenu"
             :key="index"
           >
-            <img :src="curWsMenu===item?item.icon[1]:item.icon[0]" :alt="item.name" />
-            <span>{{item.name}}</span>
+            <img :src="curWsMenu === item ? item.icon[1] : item.icon[0]" :alt="item.name" />
+            <span>{{ item.name }}</span>
           </div>
         </div>
       </div>
@@ -122,7 +108,6 @@ import FormStatus from "./form-status";
 import FormPublish from "./form-publish";
 import FormRule from "./form-rule";
 import FormSubmit from "./form-submit";
-import FormStage from "./form-stage";
 import FormAsstable from "./form-asstable";
 import FormUpload from "./form-upload";
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
@@ -144,6 +129,7 @@ const _DATA = {
     doneText: "",
     qrList: [],
     rules: [],
+    submitable: true,
   },
   upload: [],
   rules: [],
@@ -164,7 +150,6 @@ export default {
     FormPublish,
     FormRule,
     FormSubmit,
-    FormStage,
     FormAsstable,
     FormUpload,
   },
@@ -274,7 +259,7 @@ export default {
         const exist = _.find(list, { field_name: i.field_name }) || {};
         l.push({ ...i, ...exist });
       }
-      formatJSONList(l, FORM_COLUMN_FIELDS);
+      formatJSONList(l, FORM_COLUMN_FIELDS,false);
       return l;
     },
     async getFormInfo() {
@@ -394,6 +379,7 @@ export default {
         subBtnText: this.pubCfg.subBtnText,
         doneText: this.pubCfg.doneText,
         qrList: this.pubCfg.qrList,
+        submitable: this.pubCfg.submitable,
         rules: [],
       };
 

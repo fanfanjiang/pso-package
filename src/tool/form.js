@@ -1,8 +1,7 @@
 import { CPNT } from "../const/form";
-import { OP_TYPE } from "../const/op";
-const { FILTER_OP, FILTER_TYPE } = require("../../share/const/filter");
+import { FILTER_OP, FILTER_TYPE } from "../../share/const/filter";
 import { genComponentData } from '../components/form-designer/helper'
-import API from "../service/api.js";
+import API from "../service/api.js"; 
 
 export function transCMapToCondition(map) {
     try {

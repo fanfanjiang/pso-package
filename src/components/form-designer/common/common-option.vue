@@ -31,7 +31,6 @@
           size="mini"
           v-else
           :true-label="option._optionValue"
-          :false-label="false"
           v-model="cpnt.data._defaultValueList[idx]"
           :label="option._optionValue"
         ></el-checkbox>
