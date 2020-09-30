@@ -1,39 +1,27 @@
 <template>
-  <pso-label :cpnt="cpnt" v-loading="initializing||loading">
+  <pso-label :cpnt="cpnt" v-loading="initializing || loading">
     <div class="pso-ip__ast" v-if="!initializing">
-      <div class="pso-ip__ast-btns" style="margin-bottom:5px" v-if="cpntEditable">
-        <el-button
-          v-if="cpnt.data._relate"
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="showTable=true"
-        >选择{{cpnt.data._fieldName}}</el-button>
-        <el-button
-          v-if="cpnt.data._new"
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleClickAdd"
-        >添加{{cpnt.data._fieldName}}</el-button>
-        <el-button
-          v-show="selectedList.length"
-          type="danger"
-          icon="el-icon-delete"
-          size="mini"
-          @click="handleDelList(selectedList)"
-        >取消所选关联数据</el-button>
+      <div class="pso-ip__ast-btns" style="margin-bottom: 5px" v-if="cpntEditable">
+        <el-button v-if="cpnt.data._relate" type="primary" plain icon="el-icon-plus" size="mini" @click="showTable = true"
+          >选择{{ cpnt.data._fieldName }}</el-button
+        >
+        <el-button v-if="cpnt.data._new" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd"
+          >添加{{ cpnt.data._fieldName }}</el-button
+        >
+        <el-button v-show="selectedList.length" type="danger" icon="el-icon-delete" size="mini" @click="handleDelList(selectedList)"
+          >取消所选关联数据</el-button
+        >
       </div>
       <div class="pso-form-asstable-table">
         <el-tag
-          v-if="selectionType==='radio'&&proxy.valList.length"
+          v-if="selectionType === 'radio' && proxy.valList.length"
           :closable="cpntEditable"
+          @click="showInstance(proxy.valList[0])"
           @close="handleDelList(proxy.valList)"
-        >{{proxy.valList[0][`${cpnt.data._radioField}_x`]||proxy.valList[0][cpnt.data._radioField||'leaf_id']}}</el-tag>
+          >{{ proxy.valList[0][`${cpnt.data._radioField}_x`] || proxy.valList[0][cpnt.data._radioField || "leaf_id"] }}
+        </el-tag>
         <el-table
-          v-if="selectionType==='checkbox'"
+          v-if="selectionType === 'checkbox'"
           ref="table"
           border
           v-loading="loadingTable"
@@ -41,25 +29,12 @@
           style="width: 100%"
           size="mini"
           max-height="500"
-          @row-click="instanceClick"
+          @row-click="showInstance"
           @selection-change="handleSelectionChange"
         >
           <template #default>
-            <el-table-column
-              v-if="cpntEditable"
-              type="selection"
-              width="40"
-              header-align="center"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              type="index"
-              label="序号"
-              :index="1"
-              width="50"
-              header-align="center"
-              align="center"
-            ></el-table-column>
+            <el-table-column v-if="cpntEditable" type="selection" width="40" header-align="center" align="center"></el-table-column>
+            <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
             <el-table-column
               resizable
               show-overflow-tooltip
@@ -73,7 +48,7 @@
               header-align="center"
             >
               <template slot-scope="scope">
-                <span>{{getTrueVal(scope.row,field)}}</span>
+                <span>{{ getTrueVal(scope.row, field) }}</span>
               </template>
             </el-table-column>
           </template>
@@ -88,7 +63,7 @@
         close-on-click-modal
         custom-class="form-table-dialog"
         title="选择关联数据"
-        @close="showTable=false"
+        @close="showTable = false"
         :visible="showTable"
       >
         <pso-form-view
@@ -108,42 +83,16 @@
           @selection-confirm="handleAddSelection"
         ></pso-form-view>
       </pso-dialog>
-      <pso-drawer
-        size="40%"
-        :visible="showFormViewer"
+      <pso-form-executor
+        :params="executorParams"
         :title="store.data_name"
-        @close="showFormViewer=false"
-      >
-        <div class="pso-formTable-formViewer" v-if="store.data_code">
-          <pso-form-interpreter
-            ref="formImage"
-            :form-id="store.data_code"
-            :data-id="dataId"
-            :data-default="defForm"
-            :editable="cpntEditable"
-            :mock-asstables="unsavedSelf"
-          ></pso-form-interpreter>
-        </div>
-        <template v-slot:footer>
-          <div class="pso-drawer-footer__body" v-if="cpntEditable">
-            <el-button
-              v-if="dataId"
-              type="danger"
-              size="small"
-              @click="handleDeleteForm"
-              :disabled="deletingFrom"
-              :loading="deletingFrom"
-            >删除</el-button>
-            <el-button
-              type="primary"
-              size="small"
-              @click="handleSaveForm"
-              :disabled="savingFrom"
-              :loading="savingFrom"
-            >保存</el-button>
-          </div>
-        </template>
-      </pso-drawer>
+        :opener="opener"
+        :instanceids="instanceids"
+        :keepable="false"
+        @data-changed="dataChangeHandler"
+        @prev="showPrev"
+        @next="showNext"
+      ></pso-form-executor>
     </div>
   </pso-label>
 </template> 
@@ -181,14 +130,11 @@ export default {
       showTable: false,
       selecedList: [],
       loadingTable: false,
-      savingFrom: false,
-      deletingFrom: false,
       store: {},
       proxy: {
         valList: [],
         _type: this.cpnt.data._type,
       },
-      showFormViewer: false,
       dataId: "",
       selectedList: [],
       fields: [],
@@ -196,9 +142,24 @@ export default {
       unsavedSelf: null,
       subAsstables: [],
       addDataCallback: null,
+      opener: {
+        showExecutor: false,
+      },
     };
   },
   computed: {
+    instanceids() {
+      this.proxy.valList.map((d) => d.leaf_id);
+    },
+    executorParams() {
+      return {
+        formId: this.store.data_code,
+        dataId: this.dataId,
+        dataDefault: this.defForm,
+        editable: this.cpntEditable,
+        mockAsstables: this.unsavedSelf,
+      };
+    },
     selectionType() {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";
     },
@@ -260,7 +221,7 @@ export default {
         this.proxy._type = val;
       },
     },
-    showFormViewer(val) {
+    "opener.showExecutor"(val) {
       if (!val && this.clearDefFormOnClose) {
         this.defForm = null;
       }
@@ -376,9 +337,27 @@ export default {
       this.loadingTable = false;
       return ret.data[0];
     },
-    instanceClick(row) {
+    showPrev(id) {
+      const leaf_id = id || this.dataId;
+      if (leaf_id) {
+        const index = _.findIndex(this.proxy.valList, { leaf_id });
+        if (index > 0) {
+          this.showInstance(this.proxy.valList[index - 1]);
+        }
+      }
+    },
+    showNext(id) {
+      const leaf_id = id || this.dataId;
+      if (leaf_id) {
+        const index = _.findIndex(this.proxy.valList, { leaf_id });
+        if (index !== -1 && index < this.proxy.valList.length - 1) {
+          this.showInstance(this.proxy.valList[index + 1]);
+        }
+      }
+    },
+    showInstance(row) {
       this.dataId = row.leaf_id;
-      this.showFormViewer = true;
+      this.opener.showExecutor = true;
     },
     handleSelectionChange(data) {
       this.selectedList = data;
@@ -394,9 +373,6 @@ export default {
         }
       }
       return this.getVal(d[f.field_name]);
-    },
-    handleSelect() {
-      this.showTable = true;
     },
     handleClickAdd(callback) {
       this.dataId = "";
@@ -419,46 +395,23 @@ export default {
       } else {
         this.unsavedSelf = null;
       }
-      this.showFormViewer = true;
+      this.opener.showExecutor = true;
     },
-    async handleSaveForm() {
-      const leaf_id = this.dataId || shortid.generate();
-      try {
-        const formData = await this.$refs.formImage.makeData();
-        this.savingFrom = true;
-        const ret = await this.API.form({ data: { leaf_id, formData }, method: "put" });
-        if (ret.success) {
-          this.$notify({ title: "保存成功", type: "success" });
-          let data;
-          if (this.dataId) {
-            data = await this.getFormData(this.dataId);
-            this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
-          } else {
-            data = await this.getFormData(ret.data.data);
-            //新增数据回调
-            this.addDataCallback && this.addDataCallback(data);
-          }
-          this.handleAddSelection([data]);
+    async dataChangeHandler({ leaf_id, op, formData }) {
+      if (op === 1 || op === 2) {
+        let data;
+        if (this.dataId) {
+          data = await this.getFormData(this.dataId);
+          this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
+        } else {
+          data = await this.getFormData(leaf_id);
+          //新增数据回调
+          this.addDataCallback && this.addDataCallback(data);
         }
-        this.savingFrom = false;
-        this.showFormViewer = false;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async handleDeleteForm() {
-      this.deletingFrom = true;
-      const leaf_id = this.dataId;
-      const ret = await this.API.form({
-        data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
-        method: "delete",
-      });
-      if (ret.success) {
+        this.handleAddSelection([data]);
+      } else if (op === 3) {
         this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
-        this.$notify({ title: "删除成功", type: "success" });
       }
-      this.deletingFrom = false;
-      this.showFormViewer = false;
     },
     setDefForm(data, clearOnClose = true) {
       //一般用于外部强制设定表单数据

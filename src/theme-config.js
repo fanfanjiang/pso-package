@@ -1,11 +1,11 @@
 const themes = [
     {
-      name: '2D8CF0',
+      name: '1B9AEE',
       variables: {
-        '@main-color': '#2D8CF0'
+        '@main-color': '#1B9AEE'
       }
     },
-    // {
+    // { 
     //   name: '006E4B',
     //   variables: {
     //     '@main-color': '#006E4B'

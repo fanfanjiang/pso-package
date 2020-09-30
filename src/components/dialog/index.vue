@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :class="['pso-dialog',customclass]"
+    :class="['pso-dialog', customclass]"
     :title="title"
     :visible="visible"
     :width="width"
@@ -13,8 +13,11 @@
     @closed="closed"
     @opened="opened"
   >
-    <div class="pso-dialog-body" v-if="rendered">
-      <slot></slot>
+    <template #title>
+      <slot name="title"></slot>
+    </template>
+    <div class="pso-dialog-body">
+      <slot v-if="rendered"></slot>
     </div>
   </el-dialog>
 </template>

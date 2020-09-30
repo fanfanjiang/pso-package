@@ -18,7 +18,7 @@
         <div class="pso-view-header">
           <div class="pso-view-header__l">
             <div class="pso-view-title">
-              <img src="../../assets/images/form.png" />
+              <icon></icon>
               <span>{{ pageTitle }}</span>
             </div>
           </div>
@@ -56,14 +56,69 @@
                 :copyable="!params.hideCopyBtn"
                 :moreable="!params.hideMoreBtn"
                 :exportable="!params.hideExport"
+                @new="store.showInstance.call(store, null)"
               >
-                <template #op> </template>
+                <template #op>
+                  <el-popconfirm
+                    confirmButtonText="确定"
+                    cancelButtonText="取消"
+                    icon="el-icon-info"
+                    iconColor="red"
+                    title="你确认吗"
+                    @onConfirm="store.handleBackout.call(store)"
+                    v-if="store.opBackoutable && !params.hideBackBtn"
+                  >
+                    <el-button :disabled="!store.backoutable" slot="reference" size="mini" type="primary" plain>{{
+                      store.cpntText.backout
+                    }}</el-button>
+                  </el-popconfirm>
+                  <el-popconfirm
+                    confirmButtonText="确定"
+                    cancelButtonText="取消"
+                    icon="el-icon-info"
+                    iconColor="red"
+                    title="你确认吗"
+                    @onConfirm="store.handleArchive.call(store)"
+                    v-if="store.opArchiveable && !params.hideArchiveBtn"
+                  >
+                    <el-button :disabled="!store.archiveable" slot="reference" size="mini" type="primary" plain>{{
+                      store.cpntText.archive
+                    }}</el-button>
+                  </el-popconfirm>
+                </template>
               </data-fun>
             </div>
           </div>
-          <view-table :store="store" :params="{ ...params, ...$props }"></view-table>
+          <view-table :store="store" :params="{ ...params, ...$props, checkbox }"></view-table>
         </div>
       </div>
+      <pso-dialog :title="store.wfCfg.wf_name" :visible="store.showExecutor" :width="executorWidth" @close="store.showExecutor = false">
+        <template #title>
+          <div class="form-executor-header">
+            <div class="form-executor-header__l">
+              <div class="form-executor-title">
+                <i class="el-icon-edit-outline"></i>
+                <span>{{ pageTitle }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
+        <pso-wf-executor
+          ref="executor"
+          :params="executorParams"
+          @before-save="$emit('executor-beforesave', $event)"
+          @before-next="$emit('executor-beforenext', $event)"
+          @excuted="store.handleExcuted.call(store, $event)"
+          @executor-initialized="$emit('executor-initialized', $event)"
+        >
+          <template slot="data" slot-scope="scope">
+            <slot name="data" :store="scope.store"></slot>
+          </template>
+          <template slot="content" slot-scope="scope">
+            <slot name="content" :store="scope.store"></slot>
+          </template>
+        </pso-wf-executor>
+      </pso-dialog>
     </template>
   </div>
 </template>
@@ -74,9 +129,10 @@ import TableFun from "../form-view/table-fun";
 import DataFun from "../form-view/data-fun";
 import ViewTable from "../form-view/table";
 import Dropdown from "../form-view/dropdown";
+import Icon from "./icon";
 
 export default {
-  components: { FastSwitch, TableFun, DataFun, ViewTable, Dropdown },
+  components: { FastSwitch, TableFun, DataFun, ViewTable, Dropdown, Icon },
   props: {
     params: {
       type: Object,
@@ -102,6 +158,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    checkbox: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -116,6 +176,21 @@ export default {
     viewClass() {
       return {
         "pso-view__expend": this.store.showFilter,
+      };
+    },
+    displayMode() {
+      return this.params.forceExpand ? "" : this.store.copying ? "simple" : this.store.curInstance ? "" : "";
+    },
+    executorWidth() {
+      return this.params.ewidth || (this.displayMode ? "60%" : "88%");
+    },
+    executorParams() {
+      return {
+        node_id: this.params.wfId,
+        instance: { instanceId: this.store.curInstance ? this.store.curInstance.leaf_id : "" },
+        copy: this.store.copying,
+        displayMode: this.displayMode,
+        defForm: this.store.defForm,
       };
     },
   },
@@ -146,6 +221,7 @@ export default {
 
         this.makeKeys();
         await this.store.initialize(this.params.wfId, this.params.useCloumn);
+
         this.$emit("initialized", { store: this.store.store, cfg: this.store.formCfg });
 
         if (this.params.textGroup && this.params.plug_code) {

@@ -2,7 +2,7 @@
   <pso-label :cpnt="cpnt">
     <div class="pso-form-upload">
       <el-popover
-        v-if="storeEditable&&!cpnt.data._read"
+        v-if="storeEditable && !cpnt.data._read"
         :visible-arrow="false"
         transition="el-zoom-in-top"
         popper-class="pso-upload-wrapper"
@@ -10,14 +10,14 @@
         width="400"
         v-model="showUpload"
       >
-        <pso-upload @close="showUpload=false" @confirm="confirm" :api="api" :data="data"></pso-upload>
+        <pso-upload @close="showUpload = false" @confirm="confirm" :api="api" :data="data"></pso-upload>
         <template slot="reference">
           <slot>
             <el-button icon="el-icon-paperclip" plain size="small">上传附件</el-button>
           </slot>
         </template>
       </el-popover>
-      <div class="pso-form-upload__files" v-if="preview">
+      <div class="pso-form-upload__files" v-if="preview && proxy.length">
         <pso-file-list v-if="!loadingFile" :files="proxy" @delete="deleteFile"></pso-file-list>
         <pso-skeleton v-else :lines="1"></pso-skeleton>
       </div>
@@ -101,20 +101,4 @@ export default {
   },
 };
 </script>
-<style lang="less">
-@deep: ~">>>";
-.pso-form-upload {
-  position: relative;
-  .pso-form-upload__trigger {
-    cursor: pointer;
-    user-select: none;
-  }
-  .pso-form-upload__files {
-    margin-top: 10px;
-  }
-}
-.pso-upload-wrapper {
-  padding: 0;
-  margin-bottom: 0 !important;
-}
-</style>
+

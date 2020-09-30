@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-view-table__body">
+  <div class="pso-view-table__body" ref="tableRef">
     <el-table
       ref="table"
       style="width: 100%"
@@ -10,6 +10,8 @@
       :show-summary="!!store.summary"
       :summary-method="store.getSummary.bind(store)"
       :cell-class-name="store.analyzeRowClass.bind(store)"
+      :row-style="store.analyzeRowStyle.bind(store)"
+      :cell-style="store.analyzeCellStyle.bind(store)"
       :max-height="params.tableMaxHeight"
       @row-dblclick="rowdbClickHandler"
       @row-click="rowClickHandler"
@@ -36,7 +38,10 @@
         >
           <template slot-scope="scope">
             <div class="modifier-placeholder" :ref="scope.$index + f.field_name">
-              <span class="modifier-flag" v-if="store.checkFlag(f.field_name)" v-html="store.formatListVal(scope.row, f)"></span>
+              <span v-if="store.checkFlag(f.field_name)" class="modifier-flag" v-html="store.formatListVal(scope.row, f)"></span>
+              <span v-else-if="store.checkFile(f.field_name)" class="modifier-file">
+                <pso-attachment :ids="scope.row[f.field_name]"></pso-attachment>
+              </span>
               <span v-else class="modifier-value" :style="{ 'text-align': f.align }">{{ store.formatListVal(scope.row, f) }}</span>
               <span
                 v-if="params.modifiable && f.editable"
@@ -83,8 +88,10 @@
   </div>
 </template>
 <script>
+import PsoAttachment from "../attachment";
 import { FormModifierMixin } from "../../mixin/list";
 export default {
+  components: { PsoAttachment },
   mixins: [FormModifierMixin],
   props: {
     params: {
@@ -113,21 +120,25 @@ export default {
     if (this.params.modifiable) {
       this.initializeModifier(this.store.formCfg, this.store.store, (data) => {
         // 修改回调函数
+        this.store.addOrUpdate(data);
       });
     }
   },
+  mounted() {
+    this.store.$table = this.$refs.tableRef;
+  },
   methods: {
     rowdbClickHandler(row) {
-
+      this.store.showInstance(row);
     },
     rowClickHandler(row) {
-      
+      this.params.tableRowClick && this.params.tableRowClick(row);
     },
     sortHandler(data) {
       this.store.makeSort(data);
     },
     changeHandler(data) {
-      if (this.selectionType === "radio" && data.length > 1) {
+      if (this.params.selectionType === "radio" && data.length > 1) {
         this.$refs.table.clearSelection();
         this.$refs.table.toggleRowSelection(data[data.length - 1], true);
         data = [data[data.length - 1]];

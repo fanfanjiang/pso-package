@@ -42,9 +42,13 @@
             .pso-view-title {
                 display: flex;
                 align-items: center;
+                color: #666;
+
+                i {
+                    font-size: 18px;
+                }
 
                 span {
-                    color: #333;
                     font-weight: bold;
                     font-size: 17px;
                     margin-left: 5px;
@@ -64,9 +68,7 @@
             }
         }
 
-        .pso-view-switch {
-    
-        }
+        .pso-view-switch {}
 
         .pso-view-viewtab {
             display: flex;
@@ -127,6 +129,13 @@
                 &+button {
                     margin-left: 10px;
                 }
+            }
+
+
+            .el-dropdown,
+            >span,
+            >button {
+                margin-left: 10px;
             }
         }
 
@@ -200,6 +209,15 @@
     .modifier-flag {
         display: flex;
         align-items: center;
+    }
+
+    .modifier-file {
+        width: 100%;
+
+        .pso-upload__list-item {
+            width: 60px;
+            height: 60px;
+        }
     }
 
     .modifier-value {

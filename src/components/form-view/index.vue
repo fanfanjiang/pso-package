@@ -18,7 +18,7 @@
         <div class="pso-view-header">
           <div class="pso-view-header__l">
             <div class="pso-view-title">
-              <icon></icon>
+              <i class="el-icon-document"></i>
               <span>{{ pageTitle }}</span>
             </div>
           </div>
@@ -57,12 +57,27 @@
                 :copyable="addable && !params.hideCopyBtn"
                 :moreable="!params.hideMoreBtn"
                 :exportable="!params.hideExport"
+                @new="store.newInstance.call(store)"
+                @select="$emit('selection-confirm', store.selectedList)"
               ></data-fun>
             </div>
           </div>
-          <view-table :store="store" :params="{ ...params, ...$props }"></view-table>
+          <view-table :store="store" :params="{ ...params, ...$props }">
+            <template v-slot:column="scope">
+              <slot name="column" v-bind:data="{ row: scope.row }"></slot>
+            </template>
+          </view-table>
         </div>
       </div>
+      <pso-form-executor
+        :params="executorParams"
+        :title="store.formCfg.data_name"
+        :opener="store"
+        :instanceids="store.instanceids"
+        @data-changed="dataChangeHandler"
+        @prev="store.showPrev.call(store, $event)"
+        @next="store.showNext.call(store, $event)"
+      ></pso-form-executor>
     </template>
   </div>
 </template>
@@ -178,11 +193,20 @@ export default {
   },
   computed: {
     pageTitle() {
-      return this.titleText || this.store.formCfg.data_name;
+      return this.titleText || this.params.menu_name || this.store.formCfg.data_name;
     },
     viewClass() {
       return {
         "pso-view__expend": this.store.showFilter,
+      };
+    },
+    executorParams() {
+      return {
+        formEntity: this.store.formCfg,
+        dataId: this.store.dataId,
+        dataInstance: this.store.instance,
+        dataDefault: this.defForm,
+        editable: this.store.dataId ? this.edtailEditable : this.addable,
       };
     },
   },
@@ -258,6 +282,10 @@ export default {
     },
     makeKeys() {
       this.store.makeDefkeys({ where: this.where, defKeys: this.defKeys, defForm: this.defForm });
+    },
+    dataChangeHandler(data) {
+      this.store.fetchStatus();
+      this.$emit("data-changed", data);
     },
   },
 };

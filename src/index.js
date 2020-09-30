@@ -4,7 +4,7 @@ const formulajs = require("@handsontable/formulajs");
 import debounce from "throttle-debounce/debounce";
 
 import './assets/theme/index.css';
-
+ 
 import Vuebar from 'vuebar';
 import 'muse-ui/lib/styles/base.less';
 import 'muse-ui/lib/styles/theme.less';
@@ -50,11 +50,13 @@ import PsoDataFilter from "./components/data-filter";
 import PsoFileList from "./components/file-list";
 
 //表单组件
-import PsoFormView2 from "./components/form-view";
-import PsoFormView from "./components/form-view2";
+import PsoFormView from "./components/form-view";
+import PsoFormView2 from "./components/form-view2";
 
 import PsoFormDesigner from "./components/form-designer";
 import PsoFormInterpreter from "./components/form-interpreter";
+import PsoFormExecutor from "./components/form-executor";
+
 import PsoDataMgt from "./components/data-mgt";
 
 import PsoSriptDesigner from "./components/script-designer";
@@ -88,20 +90,21 @@ const components = {
     PsoPickerPosition,
     PsoPickerPost,
     PsoPickerResource,
-    PsoPickerTree,
+    PsoPickerTree, 
     PsoPickerUser,
     PsoPickerIcon,
     PsoTreeCommon,
 
     PsoFormView,
     PsoFormView2,
+    PsoFormExecutor,
 
     PsoFormDesigner,
     PsoFormInterpreter,
     PsoTypebar,
-    PsoSriptDesigner,
+    PsoSriptDesigner, 
     PsoCountDown,
-    
+
     PsoWfDesigner,
     PsoWfStage,
     PsoWfExecutor,
@@ -125,7 +128,7 @@ const components = {
     PsoDataFilter,
     PsoTagEditor,
     PsoDialog,
-    PsoFileList
+    PsoFileList,
 }
 
 

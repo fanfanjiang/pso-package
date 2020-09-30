@@ -264,6 +264,8 @@ export const FormModifierMixin = {
                 });
                 cpnt.data._fieldName = "";
                 cpnt.data._autofocus = true;
+                cpnt.data._hideForever = false;
+                cpnt.data._read = false;
             }
         },
         openModifier(row, field, index) {

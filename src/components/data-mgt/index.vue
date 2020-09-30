@@ -41,13 +41,13 @@
         </div>
         <div class="pso-dd-body" v-loading="saving">
           <template v-if="!!curNode.is_leaf">
-            <pso-form-view
+            <pso-form-view2
               v-show="curTab === 'preview'"
               :cfg-id="curNode.node_name"
               :auto-submit="true"
               :read-only="false"
               :key="curNode.node_id"
-            ></pso-form-view>
+            ></pso-form-view2>
             <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
             <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData"></form-column>
             <form-status v-if="curTab === 'status'" :data="staData" :fields="tableData"></form-status>

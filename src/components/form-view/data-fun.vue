@@ -8,16 +8,16 @@
       :text="store.cpntText.change"
       :disabled="!store.selectedList.length"
       :options="store.statuses"
-      @change="store.changeStatus"
+      @change="store.changeStatus.call(store, $event)"
     ></dropdown>
     <dropdown
       v-if="opStageable"
       :text="store.cpntText.stage"
       :disabled="!store.selectedList.length"
       :options="store.stages"
-      @change="store.changeStage"
+      @change="store.changeStage.call(store, $event)"
     ></dropdown>
-    <el-button v-if="opAddable && copyable" type="primary" size="mini" @click="store.copyInstance" :disabled="disableCopy">
+    <el-button v-if="opAddable && copyable" type="primary" size="mini" @click="store.copyInstance.call(store)" :disabled="disableCopy">
       {{ store.cpntText.copy }}
     </el-button>
     <el-dropdown size="small" @command="operateMore" v-if="moreable">
@@ -74,7 +74,7 @@ export default {
     exportable: {
       type: Boolean,
       default: true,
-    }
+    },
   },
   data() {
     this.uploadAPI = "/api/upload/data";

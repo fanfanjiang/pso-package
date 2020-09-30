@@ -25,12 +25,7 @@
       <el-table-column label="关联参数">
         <template slot-scope="scope">
           <el-select v-model="scope.row.relateParam" size="mini" clearable>
-            <el-option
-              v-for="item in data"
-              :key="item.field"
-              :label="item.name"
-              :value="item.field"
-            ></el-option>
+            <el-option v-for="item in data" :key="item.field" :label="item.name" :value="item.field"></el-option>
           </el-select>
         </template>
       </el-table-column>
@@ -41,12 +36,7 @@
       </el-table-column>
       <el-table-column label="存储方式">
         <template slot-scope="scope">
-          <el-select
-            v-model="scope.row.saveType"
-            size="mini"
-            clearable
-            @change="typeChange($event,scope.$index)"
-          >
+          <el-select v-model="scope.row.saveType" size="mini" clearable @change="typeChange($event, scope.$index)">
             <el-option label="非列表" value="1"></el-option>
             <el-option label="列表" value="2"></el-option>
           </el-select>
@@ -81,6 +71,7 @@ const FORM = [
   { field: "hideStatusTab", value: "", picker: "picker-yes", name: "状态视图切换", saveType: "1", relateParam: "" },
   { field: "hideNewBtn", value: "", picker: "picker-yes", name: "隐藏新增按钮", saveType: "1", relateParam: "" },
   { field: "hideChangeBtn", value: "", picker: "picker-yes", name: "隐藏更改按钮", saveType: "1", relateParam: "" },
+  { field: "hideStage", value: "", picker: "picker-yes", name: "隐藏阶段按钮", saveType: "1", relateParam: "" },
   { field: "hideCopyBtn", value: "", picker: "picker-yes", name: "隐藏复制按钮", saveType: "1", relateParam: "" },
   { field: "hideMoreBtn", value: "", picker: "picker-yes", name: "隐藏更多按钮", saveType: "1", relateParam: "" },
 ];
@@ -95,6 +86,7 @@ const WORKFLOW = [
   { field: "hideStatusTab", value: "", picker: "picker-yes", name: "状态视图切换", saveType: "1", relateParam: "" },
   { field: "hideNewBtn", value: "", picker: "picker-yes", name: "隐藏新增按钮", saveType: "1", relateParam: "" },
   { field: "hideChangeBtn", value: "", picker: "picker-yes", name: "隐藏更改按钮", saveType: "1", relateParam: "" },
+  { field: "hideStage", value: "", picker: "picker-yes", name: "隐藏阶段按钮", saveType: "1", relateParam: "" },
   { field: "hideCopyBtn", value: "", picker: "picker-yes", name: "隐藏复制按钮", saveType: "1", relateParam: "" },
   { field: "hideMoreBtn", value: "", picker: "picker-yes", name: "隐藏更多按钮", saveType: "1", relateParam: "" },
   { field: "hideArchiveBtn", value: "", picker: "picker-yes", name: "隐藏归档按钮", saveType: "1", relateParam: "" },

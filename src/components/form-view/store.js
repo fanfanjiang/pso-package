@@ -20,7 +20,7 @@ export default class FormViewStore {
         this.fetching = false;
         this.operating = false;
 
-        this.showEditor = false;
+        this.showExecutor = false;
         this.showFilter = false;
         this.showKeywords = false;
 
@@ -28,10 +28,10 @@ export default class FormViewStore {
         this.store = null;
         this.formCfg = null;
         this.instances = [];
-        this.currentRow = {};
+        this.curInstance = null;//当前实例
         this.dataId = '';
         this.summary = null;
-        this.instance = null;
+        this.instance = null;//并不是当前实例，是专门用于表单复制功能
 
         //过滤器
         this.conditionOptions = [];
@@ -62,6 +62,8 @@ export default class FormViewStore {
         this.statuses = [];
         this.stages = [];
         this.uploadAttach = { data: {} };
+        this.statusesObj = {};
+        this.stagesObj = {};
 
         //权限视图
         this.authViews = [];
@@ -139,7 +141,7 @@ export default class FormViewStore {
         await this.makeChange({ data, api: 'updateFormStage', type: 'stage', field: 'd_stage', extend: { data_code: this.formCfg.data_code } });
     }
 
-    async makeChange({ data, api, type, field, extend = {} }) {
+    async makeChange({ data, api, type, field, extend = {}, ids = 'leafids' }) {
         if (!this.selectedList.length) return this.$vue.$message("请先选择数据");
 
         const { value } = data;
@@ -148,7 +150,7 @@ export default class FormViewStore {
             const ret = await API[api]({
                 ...extend,
                 [field]: value,
-                leafids: _.map(this.selectedList, 'leaf_id').join(','),
+                [ids]: _.map(this.selectedList, 'leaf_id').join(','),
             });
 
             this.$vue.ResultNotify(ret);
@@ -157,7 +159,7 @@ export default class FormViewStore {
             this.fetchStatus();
         };
 
-        this.$vue.$emit(`${type}-change`, { handler, data: this.selectedList });
+        this.$vue.$emit(`${type}-change`, { handler, data: this.selectedList, value });
 
         if (this.autoChange) {
             await handler();
@@ -171,7 +173,40 @@ export default class FormViewStore {
         }
         this.dataId = "";
         this.instance = { ...this.selectedList[0], leaf_id: "" };
-        this.showEditor = true;
+        this.showExecutor = true;
+    }
+
+    showInstance(row) {
+        this.curInstance = row;
+        this.dataId = row.leaf_id;
+        this.instance = null;
+        this.showExecutor = true;
+    }
+
+    showPrev(id) {
+        const leaf_id = id || this.dataId;
+        if (leaf_id) {
+            const index = _.findIndex(this.instances, { leaf_id });
+            if (index > 0) {
+                this.showInstance(this.instances[index - 1])
+            }
+        }
+    }
+
+    showNext(id) {
+        const leaf_id = id || this.dataId;
+        if (leaf_id) {
+            const index = _.findIndex(this.instances, { leaf_id });
+            if (index !== -1 && index < this.instances.length - 1) {
+                this.showInstance(this.instances[index + 1])
+            }
+        }
+    }
+
+    newInstance() {
+        this.dataId = "";
+        this.instance = null;
+        this.showExecutor = true;
     }
 
     async fetchCuzFastSwtich(source, key, data, vField = 'value') {
@@ -183,6 +218,10 @@ export default class FormViewStore {
             delete this.keys[key];
         }
         await this.fetch();
+    }
+
+    get instanceids() {
+        return this.instances.map(d => d.leaf_id);
     }
 
     getFetchParams() {
@@ -305,10 +344,16 @@ export default class FormViewStore {
 
         if (stage_config) {
             this.stages = JSON.parse(stage_config);
+            this.stages.forEach(s => {
+                this.stagesObj[s.value + ''] = s;
+            })
         }
 
         if (status_config) {
             this.statuses = JSON.parse(status_config);
+            this.statuses.forEach(s => {
+                this.statusesObj[s.value + ''] = s;
+            })
         }
 
         //首先确定列表
@@ -416,9 +461,10 @@ export default class FormViewStore {
     }
 
     exportCurPage() {
-        const dom = $(".pso-formTable").find("#pso-formTable-table");
-        const et = XLSX.utils.table_to_book(dom[0]);
-        XLSX.writeFile(et, '模板.xlsx');
+        if (this.$table) {
+            const et = XLSX.utils.table_to_book($(this.$table)[0]);
+            XLSX.writeFile(et, '模板.xlsx');
+        }
     }
 
     async saveColumn() {
@@ -435,6 +481,46 @@ export default class FormViewStore {
 
     analyzeRowClass() {
 
+    }
+
+    getFieldStyleCfg(value, styleObj, filters) {
+        const style = this[styleObj][value + ''];
+        if (style && style.display && style.color) {
+            if (filters) {
+                if (filters.includes(style.display)) {
+                    return style;
+                }
+            } else {
+                return style;
+            }
+        }
+    }
+
+    getStyle(data) {
+        if (data) {
+            const { color, display } = data;
+            if (display === '1' || display === '2') {
+                return { color }
+            } else {
+                return { 'background-color': color }
+            }
+        }
+        return {};
+    }
+
+    analyzeRowStyle({ row, rowIndex }) {
+        const statusStyle = this.getStyle(this.getFieldStyleCfg(row.d_status, 'statusesObj', ['2', '3']));
+        const stageStyle = this.getStyle(this.getFieldStyleCfg(row.d_stage, 'stagesObj', ['2', '3']));
+        return { ...stageStyle, ...statusStyle }
+    }
+
+    analyzeCellStyle({ row, column, rowIndex, columnIndex }) {
+        if (column.property && column.property.replace('_x', '') === 'd_status') {
+            return this.getStyle(this.getFieldStyleCfg(row.d_status, 'statusesObj', ['1']));
+        }
+        if (column.property && column.property.replace('_x', '') === 'd_stage') {
+            return this.getStyle(this.getFieldStyleCfg(row.d_stage, 'stagesObj', ['1']));
+        }
     }
 
     getSummary({ columns }) {
@@ -487,6 +573,11 @@ export default class FormViewStore {
 
     checkFlag(field) {
         return /\S+_s$/.test(field);
+    }
+
+    checkFile(fid) {
+        const field = this.store.searchByField(fid);
+        if (field && field.CPNT.componentid === 'attachment') return true
     }
 
     formatListVal(d, f) {
@@ -544,5 +635,19 @@ export default class FormViewStore {
             }
             Vue.set(obj, 'available', available)
         })
+    }
+
+    async addOrUpdate({ leaf_id = "", formData }, refresh = true) {
+        if (formData) {
+            const dataId = leaf_id || shortid.generate();
+            const ret = await API.form({ data: { leaf_id: dataId, formData }, method: "put" });
+            this.$vue.ResultNotify(ret);
+            if (ret.success) {
+                this.$vue.$emit("data-changed", { leaf_id: leaf_id || ret.data.data, formData, op: leaf_id ? 2 : 1 });
+                if (refresh) {
+                    this.fetchStatus();
+                }
+            }
+        }
     }
 }
