@@ -33,7 +33,7 @@
         </el-dropdown-item>
         <el-dropdown-item command="exportCurPage" v-if="opExportable">导出EXCEL</el-dropdown-item>
         <el-dropdown-item v-if="opExportable">全部导出</el-dropdown-item>
-        <el-dropdown-item command="saveColumn" v-if="opAddable">保存列宽</el-dropdown-item>
+        <el-dropdown-item command="saveColumn">保存列宽</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>

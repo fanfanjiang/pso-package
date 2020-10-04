@@ -23,7 +23,7 @@
             </div>
           </div>
           <div class="pso-view-header__r">
-            <div class="pso-view-authtab">
+            <div class="pso-view-authtab" v-show="store.authViews.length > 1 && !params.hideAuthTab">
               <el-tabs v-model="store.activeView">
                 <el-tab-pane v-for="(ah, i) in store.authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
               </el-tabs>
@@ -31,7 +31,7 @@
           </div>
         </div>
         <!-- 视图切换 -->
-        <div class="pso-view-viewtab">
+        <div class="pso-view-viewtab" v-if="!params.hideStatusTab">
           <fast-switch key="wfStatuses" :store="store" switch="wfStatuses" model="curWfStatus" skey="d_audit"></fast-switch>
           <fast-switch divider key="stages" :store="store" showtype="select" switch="stages" model="curStage" skey="d_stage"></fast-switch>
         </div>
@@ -190,7 +190,7 @@ export default {
         instance: { instanceId: this.store.curInstance ? this.store.curInstance.leaf_id : "" },
         copy: this.store.copying,
         displayMode: this.displayMode,
-        defForm: this.store.defForm,
+        defForm: this.params.defForm,
       };
     },
   },
@@ -221,8 +221,8 @@ export default {
 
         this.makeKeys();
         await this.store.initialize(this.params.wfId, this.params.useCloumn);
-
         this.$emit("initialized", { store: this.store.store, cfg: this.store.formCfg });
+        await this.store.fetchStatus();
 
         if (this.params.textGroup && this.params.plug_code) {
           this.store.analyzeViewText(this.params.textGroup, this.params.plug_code);

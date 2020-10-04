@@ -4,7 +4,7 @@
     transition="el-zoom-in-top"
     placement="top-end"
     width="400"
-    @show="opened=true"
+    @show="opened = true"
     @after-leave="afterHandler"
     v-model="show"
   >
@@ -18,24 +18,24 @@
           :draggable="false"
           :show-checkbox="showCheckbox"
           :check-after-load="false"
-          :tree-style="{'box-shadow':'none',padding:0}"
+          :tree-style="{ 'box-shadow': 'none', padding: 0 }"
           @node-click="nodeClickHandler"
           @node-checked="nodeCheckHandler"
         ></pso-tree-common>
       </div>
       <div class="pso-picker__showlist">
         <span v-for="item of selectedData" :key="item.node_id">
-          <el-tag>{{item.node_display}}</el-tag>
+          <el-tag>{{ item.node_display }}</el-tag>
         </span>
       </div>
       <div class="pso-picker__controller">
-        <el-button @click="show=false" size="mini">取 消</el-button>
+        <el-button @click="show = false" size="mini">取 消</el-button>
         <el-button type="primary" @click="confirm" size="mini">确 定</el-button>
       </div>
     </div>
     <template slot="reference">
       <slot>
-        <el-button icon="el-icon-plus" plain size="mini">{{btnText}}</el-button>
+        <el-button icon="el-icon-plus" plain size="mini">{{ btnText }}</el-button>
       </slot>
     </template>
   </el-popover>
@@ -51,10 +51,6 @@ export default {
       type: String,
       default: "radio",
     },
-    show: {
-      type: Boolean,
-      default: false,
-    },
     rootable: {
       type: Boolean,
       default: false,
@@ -69,6 +65,7 @@ export default {
   data() {
     return {
       opened: false,
+      show: false,
       selectedData: [],
     };
   },

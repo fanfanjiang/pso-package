@@ -23,7 +23,7 @@
             </div>
           </div>
           <div class="pso-view-header__r">
-            <div class="pso-view-authtab">
+            <div class="pso-view-authtab" v-show="store.authViews.length > 1 && !params.hideAuthTab">
               <el-tabs v-model="store.activeView">
                 <el-tab-pane v-for="(ah, i) in store.authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
               </el-tabs>
@@ -31,7 +31,7 @@
           </div>
         </div>
         <!-- 视图切换 -->
-        <div class="pso-view-viewtab">
+        <div class="pso-view-viewtab" v-if="!params.hideStatusTab">
           <fast-switch :store="store" key="statuses" switch="statuses" model="curStatus" skey="d_status"></fast-switch>
           <fast-switch divider :store="store" key="stages" showtype="select" switch="stages" model="curStage" skey="d_stage"></fast-switch>
         </div>
@@ -241,7 +241,8 @@ export default {
         if (this.cfgId) {
           this.makeKeys();
           await this.store.initialize(this.cfgId, this.params.useCloumn);
-          this.$emit("initialized", { store: this.store.store, cfg: this.store.formCfg, defForm: this.defForm });
+          this.$emit("initialized", { vStore: this.store, store: this.store.store, cfg: this.store.formCfg, defForm: this.defForm });
+          await this.store.fetchStatus();
         }
 
         if (this.textGroup && this.plug_code) {

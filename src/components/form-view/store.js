@@ -103,7 +103,6 @@ export default class FormViewStore {
         if (!ret.success) return this.$vue.ResultNotify(ret);
 
         this.analyzeFormCfg(ret.data, usedColumn);
-        await this.fetchStatus();
 
         this.initializing = false;
     }
@@ -223,6 +222,10 @@ export default class FormViewStore {
     get instanceids() {
         return this.instances.map(d => d.leaf_id);
     }
+  
+    setClickRow(row) {
+        this.clickedRow = row;
+    }
 
     getFetchParams() {
         const order = this.sorts.map((item) => `${item.prop} ${item.order}`).join(",");
@@ -307,7 +310,7 @@ export default class FormViewStore {
             //默认参数
             if (defForm) {
                 for (let key in defForm) {
-                    this.defaultKeys[key] = { value: this.defForm[key], type: 1 };
+                    this.defaultKeys[key] = { value: defForm[key], type: 1 };
                 }
             }
         } catch (error) {
@@ -383,6 +386,8 @@ export default class FormViewStore {
                     if (f.searchable && CPNT[exist.componentid].op) {
                         conditions.push({ cpnt: exist, field: exist.fid, op: "", data: "", match: "" });
                     }
+                } else {
+                    f.fid = f.fid || f.field_name;
                 }
             });
             if (conditions.length) {
@@ -397,7 +402,7 @@ export default class FormViewStore {
     analyzeColumn(cfg, defKey) {
         this.oriColData = this.getFormColumn(cfg, defKey);
         if (this.oriColData) {
-            this.fields = _.cloneDeep(this.oriColData).filter((f) => f.using === "1");
+            this.fields = _.cloneDeep(this.oriColData);
         } else {
             this.fields = [];
         }
@@ -511,7 +516,11 @@ export default class FormViewStore {
     analyzeRowStyle({ row, rowIndex }) {
         const statusStyle = this.getStyle(this.getFieldStyleCfg(row.d_status, 'statusesObj', ['2', '3']));
         const stageStyle = this.getStyle(this.getFieldStyleCfg(row.d_stage, 'stagesObj', ['2', '3']));
-        return { ...stageStyle, ...statusStyle }
+        let clickStyle = {};
+        if (this.clickedRow && this.clickedRow.leaf_id === row.leaf_id) {
+            clickStyle = { 'background-color': '#DCF1FF' };
+        }
+        return { ...stageStyle, ...statusStyle, ...clickStyle }
     }
 
     analyzeCellStyle({ row, column, rowIndex, columnIndex }) {
@@ -565,14 +574,15 @@ export default class FormViewStore {
     dragHandler(newWidth, oldWidth, column, event) {
         if (this.oriColData) {
             const exist = _.find(this.oriColData, { field_name: column.property });
+            console.log(exist)
             if (exist) {
                 exist.width = parseInt(newWidth);
             }
         }
     }
 
-    checkFlag(field) {
-        return /\S+_s$/.test(field);
+    checkFlag(field, data) {
+        return data[`${field}_s`] || (/\S+_s$/.test(field) && data[field]);
     }
 
     checkFile(fid) {
@@ -588,12 +598,13 @@ export default class FormViewStore {
                 return opt._optionName;
             }
         }
+
         //旗帜标签
-        if (this.checkFlag(f.field_name) && _val) {
-            return _val.split(',').map(color => {
+        const flagColor = this.checkFlag(f.field_name, d);
+        if (flagColor) {
+            return flagColor.split(',').map(color => {
                 return `<span class="tag-flag-box" style="background-color: ${color};"></span>`
             }).join('');
-
         }
 
         try {

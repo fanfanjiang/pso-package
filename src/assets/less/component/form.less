@@ -4,14 +4,14 @@
     .el-form-item {
         margin-bottom: 15px;
     }
- 
+
     .el-form-item__label {
         white-space: nowrap;
         text-overflow: ellipsis;
         line-height: 20px !important;
         padding: 0 !important;
     }
- 
+
     .pso-form-table {
         padding-top: 10px;
 
@@ -26,6 +26,29 @@
     .el-select,
     .el-date-editor.el-input__inner {
         width: 100%;
+    }
+}
+
+.pso-form-row {
+    display: flex;
+    flex-direction: row;
+
+    @media (max-width: @screen-md-min) {
+        flex-direction: column !important;
+
+        >div {
+            &+div {
+                margin-left: 0 !important;
+            }
+        }
+    }
+
+    >div {
+        flex: 1;
+
+        &+div {
+            margin-left: 10px;
+        }
     }
 }
 
@@ -94,7 +117,7 @@
         &:hover {
             border: 2px dotted @main-color;
         }
-    } 
+    }
 
     .rule-set-empty {
         color: #999;
@@ -169,7 +192,7 @@
         background-color: #fff;
         overflow: auto;
         z-index: 9;
-        padding: 10px 0; 
+        padding: 10px 0;
 
         .text-search__result-item {
             cursor: pointer;

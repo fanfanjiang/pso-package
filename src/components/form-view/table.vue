@@ -38,7 +38,7 @@
         >
           <template slot-scope="scope">
             <div class="modifier-placeholder" :ref="scope.$index + f.field_name">
-              <span v-if="store.checkFlag(f.field_name)" class="modifier-flag" v-html="store.formatListVal(scope.row, f)"></span>
+              <span v-if="store.checkFlag(f.field_name, scope.row)" class="modifier-flag" v-html="store.formatListVal(scope.row, f)"></span>
               <span v-else-if="store.checkFile(f.field_name)" class="modifier-file">
                 <pso-attachment :ids="scope.row[f.field_name]"></pso-attachment>
               </span>
@@ -61,10 +61,11 @@
         <pso-empty></pso-empty>
       </template>
     </el-table>
-    <div class="pso-view-table__footer">
+    <div class="pso-view-table__footer" v-if="pagination">
       <el-pagination
-        background
-        layout="total, sizes, prev, pager, next, jumper"
+        :background="!forceclick"
+        :small="forceclick"
+        :layout="paginationLayout"
         :page-sizes="[baseLimit, 20, 50, 100, 200, 500]"
         :total="store.dataTotal"
         :page-size="store.limit"
@@ -99,16 +100,38 @@ export default {
       default: () => ({}),
     },
     store: Object,
+    dragable: {
+      type: Boolean,
+      default: true,
+    },
+    pagination: {
+      type: Boolean,
+      default: true,
+    },
+    refresh: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     this.baseLimit = 10;
-    return {};
+    this.timer = null;
+    return {
+      clickCount: 0,
+    };
   },
   computed: {
     fields() {
       return this.store.fields.filter(
-        (f) => f.show === "1" && (this.params.columnFilter ? this.params.columnFilter.indexOf(f.field_name) === -1 : true)
+        (f) =>
+          f.using === "1" && f.show === "1" && (this.params.columnFilter ? this.params.columnFilter.indexOf(f.field_name) === -1 : true)
       );
+    },
+    forceclick() {
+      return this.__isMobile__;
+    },
+    paginationLayout() {
+      return this.forceclick ? "prev, pager, next" : "total, sizes, prev, pager, next, jumper";
     },
   },
   watch: {
@@ -118,9 +141,9 @@ export default {
   },
   created() {
     if (this.params.modifiable) {
-      this.initializeModifier(this.store.formCfg, this.store.store, (data) => {
+      this.initializeModifier(this.store.formCfg, this.store.store, async (data) => {
         // 修改回调函数
-        this.store.addOrUpdate(data);
+        await this.store.addOrUpdate(data, this.refresh);
       });
     }
   },
@@ -132,7 +155,27 @@ export default {
       this.store.showInstance(row);
     },
     rowClickHandler(row) {
-      this.params.tableRowClick && this.params.tableRowClick(row);
+      if (this.forceclick) {
+        this.clickCount++;
+        if (this.clickCount === 1) {
+          this.timer = setTimeout(() => {
+            if (this.params.tableRowClick) {
+              this.setClickedRow(row);
+            }
+            this.clickCount = 0;
+          }, 300);
+        } else if (this.clickCount === 2) {
+          this.timer && clearTimeout(this.timer);
+          this.store.showInstance(row);
+          this.clickCount = 0;
+        }
+      } else if (this.params.tableRowClick) {
+        this.setClickedRow(row);
+      }
+    },
+    setClickedRow(row) {
+      this.store.clickedRow = row;
+      this.params.tableRowClick(row);
     },
     sortHandler(data) {
       this.store.makeSort(data);
@@ -146,7 +189,9 @@ export default {
       this.store.changeSelectedList(data);
     },
     dragHandler() {
-      this.store.dragHandler(...arguments);
+      if (this.dragable) {
+        this.store.dragHandler(...arguments);
+      }
     },
     sizeChangeHandler(size) {
       this.store.limit = size;

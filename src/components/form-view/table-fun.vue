@@ -1,7 +1,9 @@
 <template>
   <div class="view-table-fun">
     <template v-if="store.defCondition.length">
-      <el-button type="text" icon="fa fa-filter" @click="store.showFilter = !store.showFilter">筛选</el-button>
+      <el-button type="text" icon="fa fa-filter" @click="store.showFilter = !store.showFilter">
+        <template v-if="!__isMobile__">筛选</template>
+      </el-button>
       <el-divider direction="vertical"></el-divider>
     </template>
     <el-popover v-model="showFidSet" placement="bottom-start" width="300" trigger="click">
@@ -12,7 +14,7 @@
           </div>
         </template>
       </div>
-      <el-button type="text" icon="el-icon-setting" slot="reference">列表</el-button>
+      <el-button type="text" icon="el-icon-setting" slot="reference"><template v-if="!__isMobile__">列表</template></el-button>
     </el-popover>
     <el-divider direction="vertical"></el-divider>
     <el-input
@@ -27,14 +29,16 @@
       @clear="showKeywords = false"
       @change="store.deFetch"
     ></el-input>
-    <el-button v-show="!showKeywords" type="text" icon="el-icon-search" @click="onClickSearch">搜索</el-button>
+    <el-button v-show="!showKeywords" type="text" icon="el-icon-search" @click="onClickSearch">
+      <template v-if="!__isMobile__">搜索</template>
+    </el-button>
     <el-divider direction="vertical"></el-divider>
-    <el-button type="text" icon="el-icon-refresh" @click="store.deFetch">刷新</el-button>
+    <el-button type="text" icon="el-icon-refresh" @click="store.deFetch"><template v-if="!__isMobile__">刷新</template></el-button>
     <template v-if="fileList.length">
       <el-divider direction="vertical"></el-divider>
       <el-popover placement="bottom-start" width="300" trigger="click">
         <pso-file-list :files="fileList" :remove="false"></pso-file-list>
-        <el-button type="text" icon="el-icon-setting" slot="reference">文件</el-button>
+        <el-button type="text" icon="el-icon-setting" slot="reference"><template v-if="!__isMobile__">文件</template></el-button>
       </el-popover>
     </template>
   </div>

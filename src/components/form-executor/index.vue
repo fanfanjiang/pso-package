@@ -57,8 +57,8 @@
             <el-button type="primary" size="small" @click="submitHandler(true)" :disabled="saving" :loading="saving">提交</el-button>
           </template>
           <template v-else>
-            <el-button size="small" @click="submitHandler(true)" :disabled="saving" :loading="saving">保存并退出</el-button>
-            <el-button type="primary" size="small" @click="submitHandler(false)" :disabled="saving" :loading="saving">保存</el-button>
+            <el-button size="small" @click="submitHandler(false)" :disabled="saving" :loading="saving">保存</el-button>
+            <el-button type="primary" size="small" @click="submitHandler(true)" :disabled="saving" :loading="saving">保存并退出</el-button>
           </template>
         </div>
       </div>
@@ -109,7 +109,7 @@ export default {
       return this.params.dataId;
     },
     showSwitch() {
-      return this.dataId && this.instanceids && this.instanceids.length;
+      return this.dataId && this.instanceids && this.instanceids.length > 1;
     },
     showPrev() {
       return this.showSwitch && this.dataId !== this.instanceids[0];
@@ -131,19 +131,21 @@ export default {
     },
     async keepSubmitHander() {
       const data = await this.addOrUpdate();
-      this.showpreter = false;
-      if (this.keepData) {
-        this.$set(this.data, "dataInstance", data);
-      } else {
-        this.clearCopy();
+      if (data) {
+        this.showpreter = false;
+        if (this.keepData) {
+          this.$set(this.data, "dataInstance", data);
+        } else {
+          this.clearCopy();
+        }
+        this.$nextTick(() => {
+          this.showpreter = true;
+        });
       }
-      this.$nextTick(() => {
-        this.showpreter = true;
-      });
     },
     async submitHandler(close) {
-      await this.addOrUpdate();
-      if (close) {
+      const data = await this.addOrUpdate();
+      if (data && close) {
         this.colseHandler();
       }
     },

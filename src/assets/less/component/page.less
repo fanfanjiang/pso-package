@@ -2,6 +2,17 @@
     height: 100%;
     position: relative;
 
+    @media (max-width: @screen-md-min) {
+        .pso-page-body {
+            flex-direction: column;
+        }
+
+        .pso-page__tree {
+            height: auto !important;
+            width: 100% !important;
+        }
+    }
+
     &.has-header {
         .pso-page-body {
             top: 41px;
@@ -131,7 +142,7 @@
 
     .pso-page-body__tabbody {
         padding-top: 10px;
- 
+
         >div {
             position: relative;
         }

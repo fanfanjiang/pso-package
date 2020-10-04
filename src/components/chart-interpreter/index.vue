@@ -13,7 +13,6 @@
           :height="chartHeight"
           :extend="extend"
           :colors="colors"
-          theme="dark"
         ></component>
         <div class="pso-chart-body__bg"></div>
         <div class="pso-chart-body__border-top"></div>

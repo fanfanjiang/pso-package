@@ -8,54 +8,33 @@
         <el-button v-if="cpnt.data._new" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd"
           >添加{{ cpnt.data._fieldName }}</el-button
         >
-        <el-button v-show="selectedList.length" type="danger" icon="el-icon-delete" size="mini" @click="handleDelList(selectedList)"
-          >取消所选关联数据</el-button
-        >
+        <transition name="el-zoom-in-center">
+          <el-button
+            v-show="!justShowOne && selectedList.length"
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+            @click="handleDelList(selectedList)"
+            >取消所选数据</el-button
+          >
+        </transition>
       </div>
       <div class="pso-form-asstable-table">
         <el-tag
-          v-if="selectionType === 'radio' && proxy.valList.length"
+          v-if="justShowOne && instances.length"
           :closable="cpntEditable"
-          @click="showInstance(proxy.valList[0])"
-          @close="handleDelList(proxy.valList)"
-          >{{ proxy.valList[0][`${cpnt.data._radioField}_x`] || proxy.valList[0][cpnt.data._radioField || "leaf_id"] }}
+          @click="astStore.showInstance.call(astStore, instances[0])"
+          @close="handleDelList(instances)"
+          >{{ firstInstanceDisplay }}
         </el-tag>
-        <el-table
-          v-if="selectionType === 'checkbox'"
-          ref="table"
-          border
-          v-loading="loadingTable"
-          :data="proxy.valList"
-          style="width: 100%"
-          size="mini"
-          max-height="500"
-          @row-click="showInstance"
-          @selection-change="handleSelectionChange"
-        >
-          <template #default>
-            <el-table-column v-if="cpntEditable" type="selection" width="40" header-align="center" align="center"></el-table-column>
-            <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
-            <el-table-column
-              resizable
-              show-overflow-tooltip
-              min-width="120"
-              v-for="field of showFieldsReal"
-              :prop="field.field_name"
-              :label="field.display"
-              :key="field.field_name"
-              :width="field.width"
-              :align="field.align"
-              header-align="center"
-            >
-              <template slot-scope="scope">
-                <span>{{ getTrueVal(scope.row, field) }}</span>
-              </template>
-            </el-table-column>
-          </template>
-          <template #empty>
-            <pso-empty></pso-empty>
-          </template>
-        </el-table>
+        <view-table
+          v-if="!justShowOne"
+          :store="astStore"
+          :params="tableParams"
+          :dragable="false"
+          :pagination="false"
+          :refresh="false"
+        ></view-table>
       </div>
       <pso-dialog
         width="70%"
@@ -86,12 +65,12 @@
       <pso-form-executor
         :params="executorParams"
         :title="store.data_name"
-        :opener="opener"
-        :instanceids="instanceids"
+        :opener="astStore"
+        :instanceids="astStore.instanceids"
         :keepable="false"
         @data-changed="dataChangeHandler"
-        @prev="showPrev"
-        @next="showNext"
+        @prev="astStore.showPrev.call(astStore, $event)"
+        @next="astStore.showNext.call(astStore, $event)"
       ></pso-form-executor>
     </div>
   </pso-label>
@@ -102,8 +81,11 @@ import cpntMixin from "../mixin";
 import FormStore from "../../form-designer/model/store.js";
 import shortid from "shortid";
 
+import ASTStore from "../astStore";
+import ViewTable from "../../form-view/table";
+
 export default {
-  components: { PsoFormInterpreter: () => import("../index") },
+  components: { PsoFormInterpreter: () => import("../index"), ViewTable },
   mixins: [
     cpntMixin,
     pickerMixin({
@@ -128,43 +110,58 @@ export default {
       initializing: true,
       loading: false,
       showTable: false,
-      selecedList: [],
-      loadingTable: false,
+      astStore: null,
       store: {},
       proxy: {
         valList: [],
         _type: this.cpnt.data._type,
       },
-      dataId: "",
-      selectedList: [],
       fields: [],
       defForm: null,
       unsavedSelf: null,
       subAsstables: [],
       addDataCallback: null,
-      opener: {
-        showExecutor: false,
-      },
     };
   },
   computed: {
-    instanceids() {
-      this.proxy.valList.map((d) => d.leaf_id);
+    selectionType() {
+      return this.cpnt.data._type === 1 ? "radio" : "checkbox";
+    },
+    justShowOne() {
+      return this.selectionType === "radio";
+    },
+    instances() {
+      return this.astStore.instances;
+    },
+    selectedList() {
+      return this.astStore.selectedList;
+    },
+    dataId() {
+      return this.astStore.dataId;
+    },
+    firstInstanceDisplay() {
+      if (this.instances.length) {
+        const data = this.instances[0];
+        const field = this.cpnt.data._radioField;
+        return data[`${field}_x`] || data[field || "leaf_id"];
+      }
+    },
+    tableParams() {
+      return {
+        selectionType: this.selectionType,
+        modifiable: this.cpntEditable,
+        checkbox: this.cpntEditable,
+        tableSize: "small",
+      };
     },
     executorParams() {
       return {
-        formId: this.store.data_code,
-        dataId: this.dataId,
+        formId: this.astStore.store.data_code,
+        dataId: this.astStore.dataId,
         dataDefault: this.defForm,
         editable: this.cpntEditable,
         mockAsstables: this.unsavedSelf,
       };
-    },
-    selectionType() {
-      return this.cpnt.data._type === 1 ? "radio" : "checkbox";
-    },
-    showFieldsReal() {
-      return this.fields.filter((item) => item.using === "1" && item.show === "1");
     },
     authCfg() {
       if (this.cpnt.store && this.cpnt.store.sub_config) {
@@ -212,23 +209,26 @@ export default {
     },
   },
   watch: {
-    "proxy.valList"(val) {
-      this.cpnt.data._val = _.map(val, "leaf_id").join(",");
-      this.dispatch("PsoformInterpreter", "asstable-selected", { cpnt: this.cpnt, data: val, store: this.store });
+    "proxy.valList"(data) {
+      this.astStore.instances = data;
+      this.cpnt.data._val = _.map(data, "leaf_id").join(",");
+      this.dispatch("PsoformInterpreter", "asstable-selected", { cpnt: this.cpnt, data, store: this.store });
     },
     "cpnt.data._type": {
       handler(val) {
         this.proxy._type = val;
       },
     },
-    "opener.showExecutor"(val) {
+    "astStore.showExecutor"(val) {
       if (!val && this.clearDefFormOnClose) {
         this.defForm = null;
       }
     },
   },
   async created() {
-    await this.getFormCfg();
+    await this.initialize();
+
+    //初始赋值
     if (this.cpnt.data._val && typeof this.cpnt.data._val === "string") {
       await this.setDataByIds(this.cpnt.data._val.split(","));
     } else {
@@ -250,59 +250,26 @@ export default {
       fields: this.fields,
       store: this.store,
     });
+
+    this.$on("data-changed", async (evt) => {
+      this.astStore.dataId = evt.leaf_id;
+      await this.dataChangeHandler(evt);
+      this.astStore.dataId = "";
+    });
   },
   methods: {
-    async setDataByIds(idList) {
-      this.loading = true;
-      const list = [];
-      for (let id of idList) {
-        const ret = await this.getFormData(id);
-        if (ret && ret.leaf_id) list.push(ret);
-      }
-      this.handleAddSelection(list);
-      this.loading = false;
-    },
-    async getFormCfg() {
+    async initialize() {
       this.initializing = true;
+      if (!this.cpnt.data._option) return;
+
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
-      this.store = new FormStore(ret.data);
-      this.fields = [];
-      if (ret.data.display_columns && typeof ret.data.display_columns === "string") {
-        const columns = JSON.parse(ret.data.display_columns).column;
-        let targetColumn = columns[0].data;
-        if (this.cpnt.data._showFields) {
-          const exist = _.find(columns, { name: this.cpnt.data._showFields });
-          if (exist) targetColumn = exist.data;
-        }
-        targetColumn.forEach((item) => {
-          const exist = this.store.searchByField(item.field_name);
-          if (exist) {
-            Object.assign(item, exist.data);
-          } else {
-            item.fid = item.fid || item.field_name;
-          }
-          this.fields.push(item);
-        });
-      }
 
-      if (!this.fields.length) {
-        this.fields = this.store.search({
-          options: { table_show: true },
-          onlyMain: true,
-          onlyData: true,
-          beforePush: (item) => {
-            this.$set(item.data, "display", item.data._fieldName);
-            this.$set(item.data, "field_name", item.data._fieldValue);
-            this.$set(item.data, "show", "1");
-            return true;
-          },
-        });
-      }
-
-      this.fields = _.orderBy(this.fields, ["number"], ["asc"]);
+      this.astStore = new ASTStore({ $vue: this, limit: 10 });
+      this.astStore.analyzeFormCfg(ret.data, this.cpnt.data._showFields);
+      this.store = this.astStore.store;
 
       if (this.cpnt.store) {
-        this.subAsstables = this.store.search({
+        this.subAsstables = this.astStore.store.search({
           options: { componentid: "asstable" },
           onlyMain: true,
           onlyData: true,
@@ -320,69 +287,21 @@ export default {
 
       this.initializing = false;
     },
-    async getFormData(value) {
-      this.loadingTable = true;
-      const ret = await this.API.formSearch({
-        form_code: this.store.data_code,
-        limit: 9999,
-        start: 0,
-        leaf_auth: 4,
-        keys: {
-          leaf_id: {
-            type: 1,
-            value,
-          },
-        },
-      });
-      this.loadingTable = false;
-      return ret.data[0];
-    },
-    showPrev(id) {
-      const leaf_id = id || this.dataId;
-      if (leaf_id) {
-        const index = _.findIndex(this.proxy.valList, { leaf_id });
-        if (index > 0) {
-          this.showInstance(this.proxy.valList[index - 1]);
-        }
+    async setDataByIds(idList) {
+      this.loading = true;
+      const list = [];
+      for (let id of idList) {
+        const data = await this.astStore.findById(id);
+        if (data) list.push(data);
       }
-    },
-    showNext(id) {
-      const leaf_id = id || this.dataId;
-      if (leaf_id) {
-        const index = _.findIndex(this.proxy.valList, { leaf_id });
-        if (index !== -1 && index < this.proxy.valList.length - 1) {
-          this.showInstance(this.proxy.valList[index + 1]);
-        }
-      }
-    },
-    showInstance(row) {
-      this.dataId = row.leaf_id;
-      this.opener.showExecutor = true;
-    },
-    handleSelectionChange(data) {
-      this.selectedList = data;
-    },
-    getVal(val) {
-      return _.isNull(val) ? "" : val;
-    },
-    getTrueVal(d, f) {
-      if ((f.componentid === "select" || f.componentid === "checkbox") && f._option) {
-        const opt = _.find(f._option, { _optionValue: d[f.field_name] });
-        if (opt) {
-          return opt._optionName;
-        }
-      }
-      return this.getVal(d[f.field_name]);
+      this.handleAddSelection(list);
+      this.loading = false;
     },
     handleClickAdd(callback) {
-      this.dataId = "";
+      //设置数据修改回调
+      this.addDataCallback = typeof callback === "function" ? callback : null;
 
-      if (typeof callback === "function") {
-        this.addDataCallback = callback;
-      } else {
-        this.addDataCallback = null;
-      }
-
+      //设置提前数据
       if (this.subAsstables.length) {
         if (!this.cpnt.store.instance_id) {
           const data = { leaf_id: this.cpnt.store.beInstanceId };
@@ -395,20 +314,23 @@ export default {
       } else {
         this.unsavedSelf = null;
       }
-      this.opener.showExecutor = true;
+
+      this.astStore.newInstance();
     },
     async dataChangeHandler({ leaf_id, op, formData }) {
       if (op === 1 || op === 2) {
         let data;
         if (this.dataId) {
-          data = await this.getFormData(this.dataId);
-          this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
+          data = await this.astStore.findById(this.dataId);
+          data && this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
         } else {
-          data = await this.getFormData(leaf_id);
+          data = await this.astStore.findById(leaf_id);
           //新增数据回调
-          this.addDataCallback && this.addDataCallback(data);
+          data && this.addDataCallback && this.addDataCallback(data);
         }
-        this.handleAddSelection([data]);
+        if (data) {
+          this.handleAddSelection([data]);
+        }
       } else if (op === 3) {
         this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
       }

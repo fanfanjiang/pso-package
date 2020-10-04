@@ -43,8 +43,6 @@ export default class WFVStore extends FVStore {
             this.opAuth = opAuth.leaf_auth;
         }
 
-        await this.fetchStatus();
-
         this.initializing = false;
     }
 
@@ -98,7 +96,6 @@ export default class WFVStore extends FVStore {
             this.summary = ret.data.sum || null;
             this.$vue.$emit("data-loaded", this.instances);
         }
-        console.log(this.summary);
 
         this.fetching = false;
     }

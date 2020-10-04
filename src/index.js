@@ -1,10 +1,12 @@
 // import 'babel-polyfill';
 
 const formulajs = require("@handsontable/formulajs");
+const UAParser = require('../share/util/u-agent');
+
 import debounce from "throttle-debounce/debounce";
 
 import './assets/theme/index.css';
- 
+
 import Vuebar from 'vuebar';
 import 'muse-ui/lib/styles/base.less';
 import 'muse-ui/lib/styles/theme.less';
@@ -90,7 +92,7 @@ const components = {
     PsoPickerPosition,
     PsoPickerPost,
     PsoPickerResource,
-    PsoPickerTree, 
+    PsoPickerTree,
     PsoPickerUser,
     PsoPickerIcon,
     PsoTreeCommon,
@@ -102,7 +104,7 @@ const components = {
     PsoFormDesigner,
     PsoFormInterpreter,
     PsoTypebar,
-    PsoSriptDesigner, 
+    PsoSriptDesigner,
     PsoCountDown,
 
     PsoWfDesigner,
@@ -163,6 +165,10 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.ResultNotify = debounce(500, function (ret, message) {
         this.$notify({ title: ret.success ? "成功" : '失败', message: typeof message !== 'undefined' ? message : ret.message, type: ret.success ? "success" : 'warning' });
     });
+
+    const parser = new UAParser();
+    Vue.prototype.__device__ = parser.getResult();
+    Vue.prototype.__isMobile__ = Vue.prototype.__device__.device.type === 'mobile';
 };
 
 // auto install
