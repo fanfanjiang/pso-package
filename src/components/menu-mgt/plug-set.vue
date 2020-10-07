@@ -3,87 +3,50 @@
     <div>
       <el-form-item label="选择插件">
         <el-select size="mini" filterable v-model="node[field]" clearable @change="getTpDetail">
-          <el-option
-            v-for="item in templetes"
-            :key="item.node_name"
-            :label="item.node_display"
-            :value="item.node_name"
-          ></el-option>
+          <el-option v-for="item in templetes" :key="item.node_name" :label="item.node_display" :value="item.node_name"></el-option>
         </el-select>
       </el-form-item>
       <transition name="el-zoom-in-top">
-        <div v-if="node[field]&&data.length&&!loadingTp">
+        <div v-if="node[field] && data.length && !loadingTp">
           <pso-title>插件参数</pso-title>
           <el-form-item v-for="tpItem in data" :key="tpItem.field" :label="tpItem.name">
-            <template v-if="tpItem.picker==='picker-form'||tpItem.picker==='picker-wf'">
+            <template v-if="tpItem.picker === 'picker-form' || tpItem.picker === 'picker-wf'">
               <el-select
-                v-if="tpItem.picker==='picker-form'"
+                v-if="tpItem.picker === 'picker-form'"
                 filterable
                 clearable
                 size="mini"
-                @change="handleFormChange($event,tpItem)"
+                @change="handleFormChange($event, tpItem)"
                 v-model="tpItem.value"
               >
-                <el-option
-                  v-for="item in forms"
-                  :key="item.node_name"
-                  :label="item.node_display"
-                  :value="item.node_name"
-                ></el-option>
+                <el-option v-for="item in forms" :key="item.node_name" :label="item.node_display" :value="item.node_name"></el-option>
               </el-select>
               <el-select
-                v-if="tpItem.picker==='picker-wf'"
+                v-if="tpItem.picker === 'picker-wf'"
                 filterable
                 clearable
                 size="mini"
-                @change="handleWfChange($event,tpItem)"
+                @change="handleWfChange($event, tpItem)"
                 v-model="tpItem.value"
               >
-                <el-option
-                  v-for="item in workflows"
-                  :key="item.node_name"
-                  :label="item.node_display"
-                  :value="item.node_name"
-                ></el-option>
+                <el-option v-for="item in workflows" :key="item.node_name" :label="item.node_display" :value="item.node_name"></el-option>
               </el-select>
               <slot v-bind:data="tpItem"></slot>
             </template>
-            <el-select
-              v-if="tpItem.picker==='picker-tag'"
-              filterable
-              clearable
-              size="mini"
-              v-model="tpItem.value"
-            >
-              <el-option
-                v-for="item in tags"
-                :key="item.dimen_tag"
-                :label="item.tag_name"
-                :value="item.dimen_tag"
-              ></el-option>
+            <el-select v-if="tpItem.picker === 'picker-tag'" filterable clearable size="mini" v-model="tpItem.value">
+              <el-option v-for="item in tags" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
             </el-select>
-            <el-input
-              v-if="tpItem.picker==='input'"
-              v-model="tpItem.value"
-              size="mini"
-              autocomplete="off"
-            ></el-input>
-            <el-switch v-if="tpItem.picker==='picker-yes'" v-model="tpItem.value"></el-switch>
-            <el-select
-              v-if="tpItem.picker==='picker-text'"
-              filterable
-              clearable
-              size="mini"
-              v-model="tpItem.value"
-            >
+            <el-input v-if="tpItem.picker === 'input'" v-model="tpItem.value" size="mini" autocomplete="off"></el-input>
+            <el-switch v-if="tpItem.picker === 'picker-yes'" v-model="tpItem.value"></el-switch>
+            <el-select v-if="tpItem.picker === 'picker-text'" filterable clearable size="mini" v-model="tpItem.value">
               <el-option v-for="item in text" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
             <el-select
-              v-if="tpItem.picker==='picker-field'&&!loadingFields&&getRelateItem(tpItem)"
+              v-if="tpItem.picker === 'picker-field' && !loadingFields && getRelateItem(tpItem)"
               filterable
               clearable
               size="mini"
-              :multiple="tpItem.saveType==='2'"
+              :multiple="tpItem.saveType === '2'"
               v-model="tpItem.value"
             >
               <el-option
@@ -94,7 +57,7 @@
               ></el-option>
             </el-select>
             <el-select
-              v-if="tpItem.picker==='picker-column'&&!loadingFields&&!loadingWf&&getRelateItem(tpItem)"
+              v-if="tpItem.picker === 'picker-column' && !loadingFields && !loadingWf && getRelateItem(tpItem)"
               filterable
               clearable
               size="mini"
@@ -108,39 +71,35 @@
               ></el-option>
             </el-select>
             <el-select
-              v-if="tpItem.picker==='picker-stafield'"
+              v-if="tpItem.picker === 'picker-stafield'"
               filterable
               clearable
               size="mini"
-              :multiple="tpItem.saveType==='2'"
+              :multiple="tpItem.saveType === '2'"
               v-model="tpItem.value"
             >
               <el-option v-for="f in fields" :key="f.field" :label="f.name" :value="f.field"></el-option>
             </el-select>
-            <el-button
-              v-if="tpItem.picker==='picker-staFormula'"
-              size="mini"
-              type="primary"
-              plain
-              @click="editScript(tpItem)"
-            >编辑脚本</el-button>
+            <el-button v-if="tpItem.picker === 'picker-staFormula'" size="mini" type="primary" plain @click="editScript(tpItem)"
+              >编辑脚本</el-button
+            >
             <pso-picker-resource
-              v-if="tpItem.picker==='picker-file'"
+              v-if="tpItem.picker === 'picker-file'"
               source="list"
               pattern="checkbox"
-              @confirm="handlefileChecked($event,tpItem)"
+              @confirm="handlefileChecked($event, tpItem)"
             ></pso-picker-resource>
           </el-form-item>
         </div>
       </transition>
     </div>
-    <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner=false">
+    <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner = false">
       <template v-slot:whole>
         <formula-designer
-          v-if="curSet&&curSet.picker==='picker-staFormula'"
+          v-if="curSet && curSet.picker === 'picker-staFormula'"
           :value="curSet.value"
           :cpnts="cpnts"
-          @cancel="showDesigner=false"
+          @cancel="showDesigner = false"
           @confirm="handleConfirm"
         ></formula-designer>
       </template>
@@ -183,7 +142,7 @@ export default {
     this.workflows = await this.API.getWfTree();
     const tagRet = await this.API.getTreeDimen();
     this.tags = tagRet.data;
-    this.getTpDetail(this.node[this.field], this.data);
+    await this.getTpDetail(this.node[this.field], this.data);
 
     //初始获取表单和流程字段
     for (let d of this.data) {

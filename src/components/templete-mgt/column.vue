@@ -20,12 +20,7 @@
       </el-table-column>
       <el-table-column label="顺序" width="160">
         <template slot-scope="scope">
-          <el-input-number
-            size="mini"
-            v-model="scope.row.number"
-            controls-position="right"
-            :min="0"
-          ></el-input-number>
+          <el-input-number size="mini" v-model="scope.row.number" controls-position="right" :min="0"></el-input-number>
         </template>
       </el-table-column>
       <el-table-column label="显示" width="100">
@@ -68,35 +63,18 @@
     </el-table>
     <div v-if="header">
       <pso-title>表头设置</pso-title>
-      <el-tree
-        :data="header"
-        node-key="id"
-        default-expand-all
-        :expand-on-click-node="false"
-        draggable
-      >
+      <el-tree :data="header" node-key="id" default-expand-all :expand-on-click-node="false" draggable>
         <span class="tree-node" slot-scope="{ node, data }">
           <span>{{ node.label }}</span>
           <span>
             <el-button type="text" size="mini" @click="() => append(data)">添加</el-button>
-            <el-button v-if="data.id!=='0'" type="text" size="mini" @click="() => edit(data)">编辑</el-button>
-            <el-button
-              v-if="data.id!=='0'"
-              type="text"
-              size="mini"
-              @click="() => remove(node, data)"
-            >删除</el-button>
+            <el-button v-if="data.id !== '0'" type="text" size="mini" @click="() => edit(data)">编辑</el-button>
+            <el-button v-if="data.id !== '0'" type="text" size="mini" @click="() => remove(node, data)">删除</el-button>
           </span>
         </span>
       </el-tree>
     </div>
-    <el-dialog
-      v-if="header"
-      title="设置表头"
-      append-to-body
-      :visible.sync="showHEditor"
-      :width="'400px'"
-    >
+    <el-dialog v-if="header" title="设置表头" append-to-body :visible.sync="showHEditor" :width="'400px'">
       <el-form label-width="80px" v-if="showHEditor">
         <el-form-item label="真实字段">
           <el-switch size="mini" v-model="hData.isField" active-value="1" inactive-value="0"></el-switch>
@@ -104,14 +82,9 @@
         <el-form-item label="名称">
           <el-input size="mini" v-model="hData.label" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="选择字段" v-if="hData.isField==='1'">
+        <el-form-item label="选择字段" v-if="hData.isField === '1'">
           <el-select filterable size="mini" v-model="hData.field">
-            <el-option
-              v-for="item in data"
-              :key="item.field"
-              :label="item.name"
-              :value="item.field"
-            ></el-option>
+            <el-option v-for="item in data" :key="item.field" :label="item.name" :value="item.field"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -123,46 +96,25 @@
     <el-dialog title="设置钻取参数" append-to-body :visible.sync="showDrill" :width="'600px'">
       <el-form label-width="110px" v-if="showDrill">
         <el-form-item label="统计插件">
-          <el-select
-            clearable
-            filterable
-            size="mini"
-            v-model="curCol.drillTarget"
-            @change="drillChange"
-          >
-            <el-option
-              v-for="tp in menus"
-              :key="tp.menu_link"
-              :label="tp.node_display"
-              :value="tp.menu_link"
-            ></el-option>
+          <el-select clearable filterable size="mini" v-model="curCol.drillTarget" @change="drillChange">
+            <el-option v-for="tp in menus" :key="tp.menu_link" :label="tp.node_display" :value="tp.menu_link"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
-      <template v-if="curCol&&curCol.drillTarget">
+      <template v-if="curCol && curCol.drillTarget">
         <el-button size="mini" plain @click="drillAdd()">添加参数</el-button>
         <el-table key="params" :data="curCol.drillParams" style="width: 100%" height="300">
           <el-table-column label="原字段">
             <template slot-scope="scope">
               <el-select clearable filterable size="mini" v-model="scope.row.s">
-                <el-option
-                  v-for="item in data"
-                  :key="item.field"
-                  :label="item.name"
-                  :value="item.field"
-                ></el-option>
+                <el-option v-for="item in data" :key="item.field" :label="item.name" :value="item.field"></el-option>
               </el-select>
             </template>
           </el-table-column>
           <el-table-column label="目标字段">
             <template slot-scope="scope">
               <el-select clearable filterable size="mini" v-model="scope.row.t">
-                <el-option
-                  v-for="item in tempFields"
-                  :key="item.field"
-                  :label="item.name"
-                  :value="item.field"
-                ></el-option>
+                <el-option v-for="item in tempFields" :key="item.field" :label="item.name" :value="item.field"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -180,26 +132,16 @@
     </el-dialog>
     <el-dialog title="设置查询参数" append-to-body :visible.sync="showParamsditor" :width="'600px'">
       <template v-if="curCol">
-        <pso-title>{{curCol.name}}</pso-title>
+        <pso-title>{{ curCol.name }}</pso-title>
         <el-form label-position="left" label-width="80px">
           <el-form-item label="值类型">
             <el-select filterable size="mini" v-model="curCol.searchType">
-              <el-option
-                v-for="item in FILTER_TYPE_ARY"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              ></el-option>
+              <el-option v-for="item in FILTER_TYPE_ARY" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="操作" v-if="curCol.searchType">
             <el-select filterable size="mini" v-model="curCol.searchOp">
-              <el-option
-                v-for="item in getOpTypes(curCol.searchType)"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              ></el-option>
+              <el-option v-for="item in getOpTypes(curCol.searchType)" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="默认值" v-if="curCol.searchType">
@@ -236,19 +178,13 @@
         </span>
       </template>
     </el-dialog>
-    <pso-drawer
-      v-if="formulable"
-      size="50%"
-      :visible="showDesigner"
-      title="设计脚本"
-      @close="showDesigner=false"
-    >
+    <pso-drawer v-if="formulable" size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner = false">
       <template v-slot:whole>
         <formula-designer
           v-if="curCol"
           :value="curCol.formula"
           :cpnts="cpnts"
-          @cancel="showDesigner=false"
+          @cancel="showDesigner = false"
           @confirm="handleConfirm"
         ></formula-designer>
       </template>
@@ -310,6 +246,7 @@ export default {
     if (this.header && !this.header.length) {
       this.header.push({ label: "表头", id: "0", field: "0", children: [] });
     }
+    this.traverse(this.header);
 
     const templetes = (await this.API.getTempleteTree()).filter((i) => i.tp_type === 1);
     const menus = await this.API.getAllMenu();
@@ -378,7 +315,7 @@ export default {
     },
     save() {
       if (this.op === "1") {
-        const newChild = { id: shortid.generate(), ...this.hData };
+        const newChild = { ...this.hData, id: shortid.generate() };
         if (this.hData.isField === "1" && this.hData.field) {
           const f = _.find(this.data, { field: this.hData.field });
           if (f) {
@@ -446,6 +383,12 @@ export default {
           }
         }
         this.tempFields = [];
+      }
+    },
+    traverse(list) {
+      for (let d of list) {
+        if (d.children) this.traverse(d.children);
+        d.id = shortid.generate();
       }
     },
   },

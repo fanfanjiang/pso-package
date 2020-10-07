@@ -267,10 +267,10 @@
           :data-id="dataId"
           :data-instance="instance"
           :data-default="defForm"
-          :editable="dataId ? edtailEditable : addable"
+          :editable="dataId ? detailEditable : addable"
         ></pso-form-interpreter>
       </div>
-      <template v-slot:footer v-if="dataId ? edtailEditable : addable">
+      <template v-slot:footer v-if="dataId ? detailEditable : addable">
         <div class="pso-drawer-footer__body">
           <el-button v-if="dataId ? deletable : ''" type="danger" size="small" @click="deleteForm(dataId)">删除</el-button>
           <el-button type="primary" size="small" @click="saveForm" :disabled="saving" :loading="saving">保存</el-button>
@@ -327,7 +327,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    edtailEditable: {
+    detailEditable: {
       type: Boolean,
       default: true,
     },

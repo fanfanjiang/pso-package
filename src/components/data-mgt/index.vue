@@ -1,70 +1,76 @@
 <template>
-  <div class="pso-data-mgmt">
-    <div class="pso-data-mgmt__tree">
-      <pso-tree-common
-        ref="tree"
-        :request-options="treeOptions"
-        :default-node-data="defaultNodeData"
-        :default-nodeid="params.designedFormId"
-        :auto-edit="false"
-        @before-node-new="showWorksheetSelector = true"
-        @after-node-new="handleAfterNewdNode"
-        @node-click="nodeClickHandler"
-      ></pso-tree-common>
-    </div>
-    <div class="pso-data-mgmt__content" v-loading="initializing">
-      <div class="pso-dd" v-if="curNode && !initializing">
-        <div class="pso-dd-header">
-          <pso-title>工作表：{{ curNode.node_display }}({{ curNode.node_name }})</pso-title>
-          <div class="pso-dd-header__btns">
-            <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
-            <el-button size="mini" type="primary" plain @click="handleEditForm">设计表单</el-button>
-            <el-button size="mini" type="primary" plain @click="changeAllFormCol">转换所有列表配置</el-button>
+  <div class="pso-page">
+    <div class="pso-page-body">
+      <div class="pso-page__tree">
+        <pso-tree-common
+          ref="tree"
+          :request-options="treeOptions"
+          :default-node-data="defaultNodeData"
+          :default-nodeid="params.designedFormId"
+          :auto-edit="false"
+          @before-node-new="showWorksheetSelector = true"
+          @after-node-new="handleAfterNewdNode"
+          @node-click="nodeClickHandler"
+        ></pso-tree-common>
+      </div>
+      <div class="pso-page-body__content" v-loading="initializing">
+        <div class="pso-page-body__wrapper" v-if="curNode && !initializing">
+          <div class="pso-page-body__header">
+            <pso-title>工作表：{{ curNode.node_display }}({{ curNode.node_name }})</pso-title>
+            <div class="pso-dd-header__btns">
+              <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
+              <el-button size="mini" type="primary" plain @click="handleEditForm">设计表单</el-button>
+              <el-button size="mini" type="primary" plain @click="changeAllFormCol">转换所有列表配置</el-button>
+            </div>
           </div>
-        </div>
-        <div class="pso-dd-tab">
-          <el-tabs v-model="curTab">
+          <div class="pso-page-body__tab">
+            <el-tabs v-model="curTab">
+              <template v-if="!!curNode.is_leaf">
+                <el-tab-pane label="数据" name="preview"></el-tab-pane>
+                <el-tab-pane label="字段" name="field"></el-tab-pane>
+                <el-tab-pane label="列表" name="list"></el-tab-pane>
+                <el-tab-pane label="状态" name="status"></el-tab-pane>
+                <el-tab-pane label="发布" name="publish"></el-tab-pane>
+                <el-tab-pane label="上传" name="upload"></el-tab-pane>
+                <el-tab-pane label="显示" name="rule"></el-tab-pane>
+                <el-tab-pane label="提交" name="submit"></el-tab-pane>
+                <el-tab-pane label="阶段" name="stage"></el-tab-pane>
+                <el-tab-pane label="子表" name="asstable"></el-tab-pane>
+              </template>
+              <el-tab-pane label="权限" name="auth"></el-tab-pane>
+            </el-tabs>
+          </div>
+          <div class="pso-page-body__tabbody" v-loading="saving">
             <template v-if="!!curNode.is_leaf">
-              <el-tab-pane label="数据" name="preview"></el-tab-pane>
-              <el-tab-pane label="字段" name="field"></el-tab-pane>
-              <el-tab-pane label="列表" name="list"></el-tab-pane>
-              <el-tab-pane label="状态" name="status"></el-tab-pane>
-              <el-tab-pane label="发布" name="publish"></el-tab-pane>
-              <el-tab-pane label="上传" name="upload"></el-tab-pane>
-              <el-tab-pane label="显示" name="rule"></el-tab-pane>
-              <el-tab-pane label="提交" name="submit"></el-tab-pane>
-              <el-tab-pane label="阶段" name="stage"></el-tab-pane>
-              <el-tab-pane label="子表" name="asstable"></el-tab-pane>
+              <pso-form-view
+                v-show="curTab === 'preview'"
+                :key="curNode.node_id"
+                :cfg-id="curNode.node_name"
+                :view-auth="4"
+              ></pso-form-view>
+              <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
+              <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData"></form-column>
+              <form-status v-if="curTab === 'status'" :data="staData" :fields="tableData"></form-status>
+              <form-status v-if="curTab === 'stage'" :data="stageData" :fields="tableData"></form-status>
+              <form-publish
+                v-if="curTab === 'publish' && formStore"
+                :data="pubCfg"
+                :node="curNode"
+                :store="formStore"
+                @save="saveConfig"
+              ></form-publish>
+              <form-upload
+                v-if="curTab === 'upload' && formStore"
+                :data="upload"
+                :code="curNode.node_name"
+                :store="formStore"
+              ></form-upload>
+              <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
+              <form-submit v-if="curTab === 'submit'" :data="subCfg" :fields="tableData"></form-submit>
+              <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
             </template>
-            <el-tab-pane label="权限" name="auth"></el-tab-pane>
-          </el-tabs>
-        </div>
-        <div class="pso-dd-body" v-loading="saving">
-          <template v-if="!!curNode.is_leaf">
-            <pso-form-view2
-              v-show="curTab === 'preview'"
-              :cfg-id="curNode.node_name"
-              :auto-submit="true"
-              :read-only="false"
-              :key="curNode.node_id"
-            ></pso-form-view2>
-            <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
-            <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData"></form-column>
-            <form-status v-if="curTab === 'status'" :data="staData" :fields="tableData"></form-status>
-            <form-status v-if="curTab === 'stage'" :data="stageData" :fields="tableData"></form-status>
-            <form-publish
-              v-if="curTab === 'publish' && formStore"
-              :data="pubCfg"
-              :node="curNode"
-              :store="formStore"
-              @save="saveConfig"
-            ></form-publish>
-            <form-upload v-if="curTab === 'upload' && formStore" :data="upload" :code="curNode.node_name" :store="formStore"></form-upload>
-            <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
-            <form-submit v-if="curTab === 'submit'" :data="subCfg" :fields="tableData"></form-submit>
-            <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
-          </template>
-          <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+            <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+          </div>
         </div>
       </div>
     </div>
@@ -259,7 +265,7 @@ export default {
         const exist = _.find(list, { field_name: i.field_name }) || {};
         l.push({ ...i, ...exist });
       }
-      formatJSONList(l, FORM_COLUMN_FIELDS,false);
+      formatJSONList(l, FORM_COLUMN_FIELDS, false);
       return l;
     },
     async getFormInfo() {

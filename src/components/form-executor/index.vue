@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="form-executor-header__r">
-          <template v-if="editable && !initializing">
+          <template v-if="deletable && !initializing">
             <el-dropdown size="small" v-if="dataId" trigger="click">
               <span class="el-dropdown-link"> <i class="el-icon-more"></i> </span>
               <el-dropdown-menu slot="dropdown">
@@ -43,20 +43,18 @@
       <div class="form-executor-body">
         <pso-form-interpreter v-if="showpreter" ref="formImage" v-bind="formParams" @data-loaded="onLoaded"></pso-form-interpreter>
       </div>
-      <div class="form-executor-footer" v-if="editable && !initializing">
-        <div class="form-executor-footer__l">
-          <template v-if="!dataId && keepable">
-            <el-checkbox v-model="keepData">继续创建时，保留本次提交内容</el-checkbox>
-          </template>
+      <div class="form-executor-footer" v-if="(editable || addable) && !initializing">
+        <div class="form-executor-footer__l" v-if="addable && keepable">
+          <el-checkbox v-model="keepData">继续创建时，保留本次提交内容</el-checkbox>
         </div>
         <div class="form-executor-footer__r">
-          <template v-if="!dataId">
+          <template v-if="addable">
             <el-button v-if="keepable" size="small" @click="keepSubmitHander" :disabled="saving" :loading="saving"
               >提交并继续创建</el-button
             >
             <el-button type="primary" size="small" @click="submitHandler(true)" :disabled="saving" :loading="saving">提交</el-button>
           </template>
-          <template v-else>
+          <template v-if="dataId">
             <el-button size="small" @click="submitHandler(false)" :disabled="saving" :loading="saving">保存</el-button>
             <el-button type="primary" size="small" @click="submitHandler(true)" :disabled="saving" :loading="saving">保存并退出</el-button>
           </template>
@@ -100,13 +98,19 @@ export default {
   },
   computed: {
     formParams() {
-      return { ...this.params, ...this.data };
+      return { ...this.params, ...this.data, editable: this.addable || this.editable };
+    },
+    dataId() {
+      return this.params.dataId;
     },
     editable() {
       return this.params.editable !== undefined ? this.params.editable : true;
     },
-    dataId() {
-      return this.params.dataId;
+    addable() {
+      return (this.params.addable !== undefined ? this.params.addable : this.editable) && !this.dataId;
+    },
+    deletable() {
+      return this.params.deletable;
     },
     showSwitch() {
       return this.dataId && this.instanceids && this.instanceids.length > 1;

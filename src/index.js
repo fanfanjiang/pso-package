@@ -53,7 +53,6 @@ import PsoFileList from "./components/file-list";
 
 //表单组件
 import PsoFormView from "./components/form-view";
-import PsoFormView2 from "./components/form-view2";
 
 import PsoFormDesigner from "./components/form-designer";
 import PsoFormInterpreter from "./components/form-interpreter";
@@ -83,6 +82,8 @@ import PsoChartInterpreter from "./components/chart-interpreter";
 
 import PsoTagEditor from "./components/tag-editor";
 
+import PsoSearch from "./components/search";
+
 const components = {
     PsoEmpty,
     PsoSkeleton,
@@ -98,7 +99,6 @@ const components = {
     PsoTreeCommon,
 
     PsoFormView,
-    PsoFormView2,
     PsoFormExecutor,
 
     PsoFormDesigner,
@@ -131,6 +131,7 @@ const components = {
     PsoTagEditor,
     PsoDialog,
     PsoFileList,
+    PsoSearch
 }
 
 

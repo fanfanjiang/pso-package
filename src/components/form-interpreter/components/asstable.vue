@@ -159,6 +159,7 @@ export default {
         formId: this.astStore.store.data_code,
         dataId: this.astStore.dataId,
         dataDefault: this.defForm,
+        addable: this.cpnt.data.__forceAdd__ || this.cpntEditable,
         editable: this.cpntEditable,
         mockAsstables: this.unsavedSelf,
       };
@@ -325,11 +326,16 @@ export default {
           data && this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
         } else {
           data = await this.astStore.findById(leaf_id);
-          //新增数据回调
-          data && this.addDataCallback && this.addDataCallback(data);
         }
         if (data) {
           this.handleAddSelection([data]);
+
+          //新增数据回调
+          if (!this.dataId && this.addDataCallback) {
+            this.$nextTick(() => {
+              this.addDataCallback(data);
+            });
+          }
         }
       } else if (op === 3) {
         this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);

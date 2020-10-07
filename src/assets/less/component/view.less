@@ -33,6 +33,7 @@
         .pso-view-header__r {
             width: 100%;
             margin-top: 5px;
+
             .el-tabs__item {
                 padding: 0 15px;
             }
@@ -42,7 +43,7 @@
             width: 100%;
         }
 
-        .pso-view-table{
+        .pso-view-table {
             margin-top: 10px;
         }
     }
@@ -151,6 +152,12 @@
 
         .pso-view-sorttag {
             margin-top: 10px;
+
+            .el-tag {
+                &+.el-tag {
+                    margin-left: 10px;
+                }
+            }
         }
 
         .view-table-fun {

@@ -178,7 +178,7 @@ export default {
       };
     },
     pickerWidth() {
-      return this.source === "tree" ? 400 : 620;
+      return this.source === "tree" ? 360 : this.__isMobile__ ? 360 : 600;
     },
     autoNodeClick() {
       return this.source !== "tree";
@@ -264,73 +264,3 @@ export default {
   },
 };
 </script>
-<style lang="less" scoped>
-@import "../../assets/less/variable";
-.pso-picker {
-  &.pso-picker__l__wider {
-    .pso-picker__body-l {
-      width: 100%;
-      flex: 1;
-    }
-  }
-}
-.pso-picker__body {
-  display: flex;
-  height: 330px;
-  width: 100%;
-
-  .pso-picker__body-l {
-    margin-right: 2px;
-    width: 200px;
-    height: 100%;
-    > div {
-      height: 100%;
-    }
-  }
-  .pso-picker__body-r {
-    width: calc(100% - 200px);
-  }
-}
-.pso-picker__footer {
-  margin-top: 10px;
-}
-.pso-picker__showlist {
-  display: flex;
-  flex-wrap: wrap;
-  > span {
-    margin: 2px;
-    box-sizing: content-box;
-  }
-}
-.pso-picker__controller {
-  margin-top: 10px;
-  text-align: right;
-}
-.pso-picker-menu {
-  padding: 10px;
-  > div {
-    padding: 10px 0;
-    cursor: pointer;
-    &:hover {
-      color: @main-color;
-    }
-  }
-}
-.pso-picker__table-header {
-  display: flex;
-  align-items: center;
-  @{deep} {
-    .el-input {
-      width: 140px;
-    }
-    .mu-input {
-      margin-bottom: 0;
-      width: 100px;
-      font-size: 14px;
-    }
-    .mu-input__focus {
-      color: @main-color;
-    }
-  }
-}
-</style>

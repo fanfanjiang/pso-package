@@ -549,6 +549,14 @@ export default class API {
             throw error;
         }
     }
+
+    static async getWechatConfig(data = {}) {
+        try {
+            return await this.request('/api/common/wechat', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

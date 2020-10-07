@@ -101,7 +101,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             defaultNodeid: {
                 type: String,
                 default: ''
-            },
+            }
         },
         data() {
             return {
@@ -253,7 +253,11 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     }
                 }
 
-                return data;
+                if (!this.rootable && data.length) {
+                    return data[0].children;
+                } else {
+                    return data;
+                }
             },
             requestOptionHandler(options) {
                 this.where = _.cloneDeep(options);
@@ -266,12 +270,12 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             },
             getNodeIcon(node) {
                 return `${this.nodeIconUri}${(this.folderMode && !this.isLeaf(node)) ? 'folder' : node.data.node_icon}${this.folderMode && !this.isLeaf(node)
-                        ? node.data.children && node.data.children.length && node.expanded
-                            ? "_expand"
-                            : ""
-                        : node.isCurrent
-                            ? "_expand"
-                            : ""
+                    ? node.data.children && node.data.children.length && node.expanded
+                        ? "_expand"
+                        : ""
+                    : node.isCurrent
+                        ? "_expand"
+                        : ""
                     }.png`;
 
             },

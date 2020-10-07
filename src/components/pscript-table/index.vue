@@ -1,15 +1,9 @@
 <template>
-  <div class="pso-statistics" style="padding:10px">
+  <div class="pso-statistics" style="padding: 10px">
     <div class="pso-table-wrapper">
       <div class="pso-table-header">
         <div class="pso-table-header__l">
-          <el-popover
-            v-model="showFilter"
-            placement="bottom-start"
-            width="400"
-            trigger="click"
-            v-if="conditionOptions.length"
-          >
+          <el-popover v-model="showFilter" placement="bottom-start" width="400" trigger="click" v-if="conditionOptions.length">
             <div class="pso-formTable__filter">
               <div class="pso-formTable__filter-body">
                 <pso-data-filter v-model="condition" :fieldsOptions="conditionOptions"></pso-data-filter>
@@ -24,13 +18,7 @@
           <el-popover placement="bottom-start" width="300" trigger="click">
             <div class="pso-switch-panel">
               <div class="pso-switch-panel__item" v-for="f of fields" :key="f.name">
-                <el-switch
-                  size="mini"
-                  v-model="f.show"
-                  :inactive-text="f.name"
-                  active-value="1"
-                  inactive-value="0"
-                ></el-switch>
+                <el-switch size="mini" v-model="f.show" :inactive-text="f.name" active-value="1" inactive-value="0"></el-switch>
               </div>
             </div>
             <el-button type="text" icon="el-icon-setting" slot="reference">列表</el-button>
@@ -65,7 +53,7 @@
             :width="f.width"
             :align="f.align"
           >
-            <template slot-scope="scope">{{scope.row[f.field]}}</template>
+            <template slot-scope="scope">{{ scope.row[f.field] }}</template>
           </el-table-column>
         </template>
         <template #empty>
@@ -93,7 +81,7 @@ export default {
       default: () => [],
     },
     selectionType: {
-      type: Boolean,
+      type: String,
       default: "radio",
     },
   },

@@ -39,7 +39,7 @@ export default class WFVStore extends FVStore {
         this.wfCfg = ret.data;
         const { opAuth } = this.wfCfg;
 
-        if (opAuth) {
+        if (opAuth) { 
             this.opAuth = opAuth.leaf_auth;
         }
 

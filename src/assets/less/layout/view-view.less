@@ -1,0 +1,56 @@
+.lay-vv {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &.display-row {
+        flex-direction: row;
+
+        .lay-vv__t {
+            width: 40%;
+            height: 100%;
+        }
+
+        .lay-vv__b {
+            width: 60%;
+            height: 100%;
+            box-shadow: none;
+        }
+    }
+
+    &.no-b-header {
+        .lay-vv__b__body {
+            margin-top: 5px;
+        }
+    }
+
+    .lay-vv__t {
+        width: 100%;
+        height: 40%;
+        overflow-y: auto;
+        z-index: 1;
+        position: relative;
+    }
+
+    .lay-vv__b {
+        width: 100%;
+        height: 60%;
+        padding: 0 15px 15px 15px;
+        z-index: 2;
+        box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
+        position: relative;
+    }
+
+
+    .lay-vv__b-header {
+        width: 100%;
+        position: absolute;
+        background-color: #fff;
+        z-index: 99999;
+    }
+
+    .lay-vv__b__body {
+        margin-top: 54px;
+    }
+}

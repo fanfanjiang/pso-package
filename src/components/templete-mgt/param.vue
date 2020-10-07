@@ -29,11 +29,6 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="默认值">
-        <template slot-scope="scope">
-          <el-input v-model="scope.row.value" size="mini" placeholder></el-input>
-        </template>
-      </el-table-column>
       <el-table-column label="存储方式">
         <template slot-scope="scope">
           <el-select v-model="scope.row.saveType" size="mini" clearable @change="typeChange($event, scope.$index)">

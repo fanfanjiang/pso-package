@@ -222,7 +222,7 @@ export default class FormViewStore {
     get instanceids() {
         return this.instances.map(d => d.leaf_id);
     }
-  
+
     setClickRow(row) {
         this.clickedRow = row;
     }
@@ -633,7 +633,6 @@ export default class FormViewStore {
         entity.forEach(obj => {
             let available = true;
             for (let item of checked) {
-                console.log(item, entity);
                 const source = _.find(entity, { value: item });
                 if (item === obj.value) {
                     available = false;
@@ -659,6 +658,18 @@ export default class FormViewStore {
                     this.fetchStatus();
                 }
             }
+        }
+    }
+
+    async batchAddOrUpdate(data, idList, refresh = true) {
+        const list = idList || this.selectedList.map(d => d.leaf_id);
+        if (!list.length) return;
+        const { data_name, node_id, data_code } = this.store;
+        for (let leaf_id of list) {
+            await this.addOrUpdate({ leaf_id, formData: { data_name, node_id, data_code, dataArr: [{ leaf_id, optype: 1, ...data }] } }, false);
+        }
+        if (refresh) {
+            this.fetchStatus();
         }
     }
 }

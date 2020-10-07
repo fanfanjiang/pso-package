@@ -175,7 +175,7 @@ export default {
     },
     viewClass() {
       return {
-        "pso-view__expend": this.store.showFilter,
+        "pso-view__expend": this.store && this.store.showFilter,
       };
     },
     displayMode() {

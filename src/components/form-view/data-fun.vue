@@ -2,7 +2,7 @@
   <div class="view-data-fun">
     <el-button v-if="opAddable" type="primary" size="mini" @click="$emit('new')">{{ store.cpntText.add }}</el-button>
     <el-button v-if="selectable" type="primary" size="mini" @click="$emit('select')">选择</el-button>
-    <slot name="op"></slot>
+    <slot name="op" v-bind:data="store"></slot>
     <dropdown
       v-if="opChangable"
       :text="store.cpntText.change"

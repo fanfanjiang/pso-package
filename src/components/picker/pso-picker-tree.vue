@@ -3,7 +3,7 @@
     :visible-arrow="false"
     transition="el-zoom-in-top"
     placement="top-end"
-    width="400"
+    width="360"
     @show="opened = true"
     @after-leave="afterHandler"
     v-model="show"

@@ -59,7 +59,11 @@
                 :exportable="!params.hideExport"
                 @new="store.newInstance.call(store)"
                 @select="$emit('selection-confirm', store.selectedList)"
-              ></data-fun>
+              >
+                <template v-slot:op="scope">
+                  <slot name="op" v-bind:data="scope.store"></slot>
+                </template>
+              </data-fun>
             </div>
           </div>
           <view-table :store="store" :params="{ ...params, ...$props }">
@@ -114,7 +118,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    edtailEditable: {
+    detailEditable: {
       type: Boolean,
       default: true,
     },
@@ -125,10 +129,6 @@ export default {
     checkbox: {
       type: Boolean,
       default: true,
-    },
-    readOnly: {
-      type: Boolean,
-      default: false,
     },
     selectable: {
       type: Boolean,
@@ -197,7 +197,7 @@ export default {
     },
     viewClass() {
       return {
-        "pso-view__expend": this.store.showFilter,
+        "pso-view__expend": this.store && this.store.showFilter,
       };
     },
     executorParams() {
@@ -206,7 +206,9 @@ export default {
         dataId: this.store.dataId,
         dataInstance: this.store.instance,
         dataDefault: this.defForm,
-        editable: this.store.dataId ? this.edtailEditable : this.addable,
+        editable: this.store.dataId ? this.detailEditable : this.addable,
+        addable: this.addable,
+        deletable: this.deletable,
       };
     },
   },

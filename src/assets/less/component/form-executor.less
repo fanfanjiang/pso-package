@@ -3,12 +3,28 @@
     width: 100%;
     position: relative;
 
+    @media (max-width: @screen-md-min) {
+        .form-executor-footer {
+            flex-direction: column !important;
+            align-items: flex-end !important;
+
+            .form-executor-footer__l {
+                margin-bottom: 10px !important;
+            }
+        }
+
+        .form-executor-body {
+            padding: 20px 20px 120px !important;
+        }
+    }
+
     .form-executor-body {
         height: 100%;
         overflow-y: auto;
         padding: 20px 20px 80px;
         position: relative;
         z-index: 1;
+        background: #FAFAFA;
     }
 
     .form-executor-footer {
@@ -19,9 +35,14 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 20px;
+        padding: 15px;
         background-color: #fff;
         z-index: 2;
+
+        .form-executor-footer__r {
+            flex: 1;
+            text-align: right;
+        }
     }
 }
 

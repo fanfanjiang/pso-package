@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-tree" :style="treeStyle">
+  <div class="pso-tree" :class="treeClass" :style="treeStyle">
     <div class="pso-tree__header">
       <div class="pso-tree__search" v-if="searchable">
         <mu-text-field v-model="filterText">
@@ -9,12 +9,7 @@
         </mu-text-field>
       </div>
       <div v-if="editMode">
-        <el-button
-          icon="el-icon-plus"
-          size="mini"
-          circle
-          @click="treeFunHandler('newFolder',{data:{node_id:0}})"
-        ></el-button>
+        <el-button icon="el-icon-plus" size="mini" circle @click="treeFunHandler('newFolder', { data: { node_id: 0 } })"></el-button>
       </div>
     </div>
     <pso-skeleton v-if="loadingWholeTree" :lines="10"></pso-skeleton>
@@ -38,17 +33,17 @@
         @node-drop="nodeDropHandler"
         @check="checkChangeHandler"
       >
-        <span class="pso-tree__node" slot-scope="{node}">
+        <span class="pso-tree__node" slot-scope="{ node }">
           <span class="pso-tree__node-title">
             <img :src="getNodeIcon(node)" alt />
             <span>{{ node.label }}</span>
           </span>
-          <span v-if="editMode" :class="[{'pso-tree__node-btns':true},{'show':node.showMenu}]">
+          <span v-if="editMode" :class="[{ 'pso-tree__node-btns': true }, { show: node.showMenu }]">
             <el-dropdown
               size="small"
               trigger="hover"
               :show-timeout="50"
-              @command="treeFunHandler($event,node)"
+              @command="treeFunHandler($event, node)"
               @visible-change="nodeMenuChangeHandler(node)"
             >
               <i class="el-icon-more"></i>
@@ -56,7 +51,7 @@
                 <slot name="node-edit-menu">
                   <template v-if="!node.data.is_leaf">
                     <el-dropdown-item v-if="folderMode" command="newFolder">新建文件夹</el-dropdown-item>
-                    <el-dropdown-item command="newNode">新建{{nodeEditLable}}</el-dropdown-item>
+                    <el-dropdown-item command="newNode">新建{{ nodeEditLable }}</el-dropdown-item>
                   </template>
                   <el-dropdown-item command="edit">编辑</el-dropdown-item>
                   <el-dropdown-item command="delete">删除</el-dropdown-item>
@@ -72,12 +67,7 @@
             <el-button size="mini" @click="restoreTrash" :disabled="canTrash">还 原</el-button>
             <el-button size="mini" type="danger" @click="emptyTrash" :disabled="canTrash">清 空</el-button>
           </div>
-          <el-table
-            size="mini"
-            :data="trash"
-            style="width: 100%"
-            @selection-change="handleTrashSelect"
-          >
+          <el-table size="mini" :data="trash" style="width: 100%" @selection-change="handleTrashSelect">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="node_display" label="名称"></el-table-column>
           </el-table>
@@ -98,27 +88,18 @@
           <el-form-item :label="nodePayload.nameLable">
             <el-input size="small" v-model="nodePayload.node.data.node_display" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="标签" v-if="nodePayload.node.data.node_pid===0">
+          <el-form-item label="标签" v-if="nodePayload.node.data.node_pid === 0">
             <el-select size="small" v-model="nodePayload.node.data.data_type">
-              <el-option
-                v-for="item in dimens"
-                :key="item.dimen_tag"
-                :label="item.tag_name"
-                :value="item.dimen_tag"
-              ></el-option>
+              <el-option v-for="item in dimens" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
             </el-select>
           </el-form-item>
           <slot v-bind:node="nodePayload.node.data"></slot>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="nodePayload.showForm = false" size="small">取 消</el-button>
-          <el-button
-            size="small"
-            type="primary"
-            @click="editNode"
-            :loading="nodePayload.loading"
-            :disabled="nodePayload.loading"
-          >确 定</el-button>
+          <el-button size="small" type="primary" @click="editNode" :loading="nodePayload.loading" :disabled="nodePayload.loading"
+            >确 定</el-button
+          >
         </div>
       </el-dialog>
     </div>
@@ -132,8 +113,15 @@ export default {
   props: {
     treeStyle: {
       type: Object,
-      default: () => ({})
-    }
-  }
+      default: () => ({}),
+    },
+  },
+  computed: {
+    treeClass() {
+      return {
+        search: this.searchable,
+      };
+    },
+  },
 };
 </script>
