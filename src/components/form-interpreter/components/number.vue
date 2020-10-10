@@ -5,13 +5,13 @@
         ref="cpnt"
         size="small"
         v-model="cpnt.data._val"
-        :disabled="!cpnt.store.editable||cpnt.data._read"
+        :disabled="!cpnt.store.editable || cpnt.data._read"
         :controls="false"
         :precision="precisionVal"
         :min="minNum"
         :max="maxNum"
       ></el-input-number>
-      <span v-if="cpnt.data._unit" class="pso-number-unit">{{cpnt.data._unit}}</span>
+      <span v-if="cpnt.data._unit" class="pso-number-unit">{{ cpnt.data._unit }}</span>
     </div>
   </pso-label>
 </template>

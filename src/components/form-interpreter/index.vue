@@ -215,7 +215,16 @@ export default {
               }
             }
 
-            mainData[cpntData._fieldValue] = cpntData._val;
+            let val = cpntData._val;
+            if (typeof cpnt.data._decimalPlaces !== "undefined") {
+              try {
+                val = cpntData._val.toFixed(cpnt.data._decimalPlaces);
+              } catch (e) {
+                console.log(e);
+              }
+            }
+
+            mainData[cpntData._fieldValue] = val;
           }
         }
       } catch (error) {

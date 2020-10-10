@@ -32,7 +32,7 @@
               <pso-knowl-table
                 v-if="curTab==='base'"
                 :node="curNode"
-                :auth="params.auth"
+                :view-auth="params.viewAuth"
                 :def-keys="params.defKeys"
                 @go="$emit('go',$event)"
               ></pso-knowl-table>
@@ -53,7 +53,7 @@ export default {
   props: {
     params: {
       type: Object,
-      default: () => ({ data_type: "", auth: 0, mgtable: "0" })
+      default: () => ({ data_type: "", viewAuth: 0, mgtable: "0" })
     }
   },
   data() {

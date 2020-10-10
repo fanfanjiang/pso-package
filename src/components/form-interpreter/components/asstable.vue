@@ -248,7 +248,7 @@ export default {
       data: this.cpnt.data._val,
       value: this.cpnt.data._val,
       proxy: this.proxy,
-      fields: this.fields,
+      fields: this.astStore.fields,
       store: this.store,
     });
 

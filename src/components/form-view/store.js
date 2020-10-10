@@ -64,6 +64,7 @@ export default class FormViewStore {
         this.uploadAttach = { data: {} };
         this.statusesObj = {};
         this.stagesObj = {};
+        this.tableHeight = 0; //table高度
 
         //权限视图
         this.authViews = [];
@@ -277,7 +278,14 @@ export default class FormViewStore {
 
         this.$vue.$emit("data-loaded", this.instances);
 
+        this.fixLayout();
         this.fetching = false;
+    }
+
+    fixLayout() {
+        if (this.$table) {
+            Vue.nextTick(() => { this.$table.doLayout() });
+        }
     }
 
     appendSearchType(data) {
@@ -339,7 +347,7 @@ export default class FormViewStore {
 
         const { opAuth, display_columns, stage_config, status_config } = this.formCfg;
 
-        this.store = new FormStore({ data_code: data.data_code, data_design: data.data_design, designMode: false });
+        this.store = new FormStore({ ...data, designMode: false });
 
         if (opAuth) {
             this.opAuth = opAuth.leaf_auth;
@@ -466,8 +474,8 @@ export default class FormViewStore {
     }
 
     exportCurPage() {
-        if (this.$table) {
-            const et = XLSX.utils.table_to_book($(this.$table)[0]);
+        if (this.$tableWrapper) {
+            const et = XLSX.utils.table_to_book($(this.$tableWrapper)[0]);
             XLSX.writeFile(et, '模板.xlsx');
         }
     }
@@ -574,7 +582,6 @@ export default class FormViewStore {
     dragHandler(newWidth, oldWidth, column, event) {
         if (this.oriColData) {
             const exist = _.find(this.oriColData, { field_name: column.property });
-            console.log(exist)
             if (exist) {
                 exist.width = parseInt(newWidth);
             }
@@ -608,7 +615,7 @@ export default class FormViewStore {
         }
 
         try {
-            if (_val) {
+            if (_val && f.clearZero) {
                 _val = _val.replace(/(?:\.0*|(\.\d+?)0+)$/, '$1');
             }
         } catch (error) {

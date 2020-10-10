@@ -31,7 +31,7 @@ export function addTargetListener(target, affix) {
     let targeted = _.find(targets, { target });
     if (targeted) {
         targeted.list.push(affix)
-    } else {
+    } else { 
         targeted = { target, list: [affix], events: {} };
         targets.push(targeted);
         EVENTS.forEach(evt => {

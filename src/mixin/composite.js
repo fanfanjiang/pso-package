@@ -8,7 +8,7 @@ export const FormAsMainMixin = {
             mainDefForm: null,
             mainCurRow: null,
             asstables: [],
-            activeAst: '',//之决定页面中显示哪个关联表
+            activeAst: '',//决定页面中显示哪个关联表
         }
     },
     computed: {

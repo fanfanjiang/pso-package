@@ -65,7 +65,6 @@ const Affix = {
 
             const newState = { state: AffixState.none };
 
-
             if (fixedTop !== undefined) {
                 newState.affixStyle = {
                     position: 'fixed',

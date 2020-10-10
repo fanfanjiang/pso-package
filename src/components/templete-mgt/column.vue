@@ -243,10 +243,13 @@ export default {
   },
   async created() {
     this.initializing = true;
-    if (this.header && !this.header.length) {
-      this.header.push({ label: "表头", id: "0", field: "0", children: [] });
+    if (this.header) {
+      if (!this.header.length) {
+        this.header.push({ label: "表头", id: "0", field: "0", children: [] });
+      } else {
+        this.traverse(this.header);
+      }
     }
-    this.traverse(this.header);
 
     const templetes = (await this.API.getTempleteTree()).filter((i) => i.tp_type === 1);
     const menus = await this.API.getAllMenu();

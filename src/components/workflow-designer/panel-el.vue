@@ -1,12 +1,8 @@
 <template>
   <div class="pso-wf-panel-node">
     <template v-for="node in nodesMap">
-      <div :key="node.nid" v-show="wfDesigner.selectedNode.nid===node.nid">
-        <panel-header
-          :icon="getPanelType(node).icon"
-          :info="getPanelType(node).tip"
-          :name="getPanelType(node).name"
-        ></panel-header>
+      <div :key="node.nid" v-show="wfDesigner.selectedNode.nid === node.nid">
+        <panel-header :icon="getPanelType(node).icon" :info="getPanelType(node).tip" :name="getPanelType(node).name"></panel-header>
         <component v-bind:is="currentEL(node)" :node="node"></component>
       </div>
     </template>
@@ -30,18 +26,20 @@ export default {
     ...mapState(["wfDesigner"]),
     nodesMap() {
       const map = {};
-      this.$store.getters[WF_FIND_NODE]({ cb: item => (map[item.nid] = item) });
+      this.$store.getters[WF_FIND_NODE]({ cb: (item) => (map[item.nid] = item) });
       return map;
-    }
+    },
   },
   methods: {
     getPanelType(node) {
       return NODE_TYPE[node.tid];
     },
     currentEL(node) {
-      return `wf-panel-${node.tid}`;
-    }
-  }
+      if (node.tid !== "branch") {
+        return `wf-panel-${node.tid}`;
+      }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

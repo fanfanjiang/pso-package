@@ -8,7 +8,7 @@
     @media (max-width: @screen-md-min) {
 
         .pso-view-header,
-        .pso-view-table__header {
+        .pso-view-fun {
             align-items: flex-start !important;
         }
 
@@ -16,11 +16,11 @@
             flex-direction: column !important;
         }
 
-        .pso-view-table__header {
+        .pso-view-fun {
             flex-direction: column-reverse !important;
         }
 
-        .pso-view-table__header-r {
+        .pso-view-fun-r {
             overflow: auto;
             width: 100%;
             margin-top: 10px;
@@ -70,6 +70,7 @@
     .pso-view-body {
         width: 100%;
         padding: 10px;
+        overflow: auto;
         transition: width 0.3s ease-in-out;
 
         .pso-view-header {
@@ -196,19 +197,13 @@
             }
         }
 
+        .pso-view-fun {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
         .pso-view-table {
-
-            .pso-view-table__header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-
-                .pso-view-table__header-l {}
-
-                .pso-view-table__header-r {}
-            }
-
-            .pso-view-table__body {}
 
             .pso-view-table__footer {
                 margin: 10px 0;

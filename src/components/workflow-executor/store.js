@@ -302,7 +302,9 @@ export default class WfStore {
     prepareMainTableVal(data) {
         for (let key in data) {
             if (typeof data[key] === "string") {
-                this.setTableVal({ cpnt: { data: { _fieldValue: `wf_${key}` } }, value: data[key] });
+                let field = key;
+                if (key === 'creator') field = 'creator_name';
+                this.setTableVal({ cpnt: { data: { _fieldValue: `wf_${key}` } }, value: data[field] });
             }
         }
     }

@@ -7,14 +7,14 @@ export default class API {
 
     static URL_PREFIX = ''
 
-    static async request(url, { method = 'post', data = {} }) {
+    static async request(url, { method = 'post', data = {}, headers = {} }) {
         url = `${this.URL_PREFIX}${url}`;
         if (method === 'get') {
             url += `?${Qs.stringify(data)}`;
         }
         try {
             if (method === 'delete') data = { data: data };
-            const ret = await axios({ method, url, data });
+            const ret = await axios({ method, url, data, headers });
             const message = ret.msg || ret.message;
             if (!ret.success && message && ret.tag !== 99) {
                 Message({ showClose: true, message, type: 'warning' });
@@ -553,6 +553,16 @@ export default class API {
     static async getWechatConfig(data = {}) {
         try {
             return await this.request('/api/common/wechat', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async uploadTempPdf(file) {
+        try {
+            const data = new FormData();
+            data.append("file", file);
+            return await this.request('/api/upload/temppdf', { data, method: 'post', headers: { 'Content-Type': 'multipart/form-data' } });
         } catch (error) {
             throw error;
         }

@@ -5,14 +5,7 @@
       style="width: 100%"
       border
       v-loading="store.fetching"
-      :size="params.tableSize"
-      :data="store.instances"
-      :show-summary="!!store.summary"
-      :summary-method="store.getSummary.bind(store)"
-      :cell-class-name="store.analyzeRowClass.bind(store)"
-      :row-style="store.analyzeRowStyle.bind(store)"
-      :cell-style="store.analyzeCellStyle.bind(store)"
-      :max-height="params.tableMaxHeight"
+      v-bind="tableParams"
       @row-dblclick="rowdbClickHandler"
       @row-click="rowClickHandler"
       @selection-change="changeHandler"
@@ -133,6 +126,24 @@ export default {
     paginationLayout() {
       return this.forceclick ? "prev, pager, next" : "total, sizes, prev, pager, next, jumper";
     },
+    tableParams() {
+      const params = {
+        data: this.store.instances,
+        showSummary: !!this.store.summary,
+        summaryMethod: this.store.getSummary.bind(this.store),
+        rowStyle: this.store.analyzeRowStyle.bind(this.store),
+        cellStyle: this.store.analyzeCellStyle.bind(this.store),
+        cellClassName: this.store.analyzeRowClass.bind(this.store),
+        size: this.params.tableSize,
+        maxHeight: this.params.tableMaxHeight,
+      };
+
+      if (this.store.tableHeight) {
+        params.height = this.store.tableHeight;
+      }
+
+      return params;
+    },
   },
   watch: {
     "store.showFilter"() {
@@ -148,7 +159,8 @@ export default {
     }
   },
   mounted() {
-    this.store.$table = this.$refs.tableRef;
+    this.store.$tableWrapper = this.$refs.tableRef;
+    this.store.$table = this.$refs.table;
   },
   methods: {
     rowdbClickHandler(row) {

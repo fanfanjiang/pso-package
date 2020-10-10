@@ -41,54 +41,54 @@
             {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
           </el-tag>
         </div>
+        <div class="pso-view-fun">
+          <div class="pso-view-fun-l">
+            <table-fun :store="store" :files="params.downloadFiles"></table-fun>
+          </div>
+          <div class="pso-view-fun-r">
+            <data-fun
+              :store="store"
+              :addable="!params.hideNewBtn"
+              :changable="!params.hideChangeBtn"
+              :stageable="!params.hideStage"
+              :copyable="!params.hideCopyBtn"
+              :moreable="!params.hideMoreBtn"
+              :exportable="!params.hideExport"
+              @new="store.showInstance.call(store, null)"
+            >
+              <template #op>
+                <el-popconfirm
+                  confirmButtonText="确定"
+                  cancelButtonText="取消"
+                  icon="el-icon-info"
+                  iconColor="red"
+                  title="你确认吗"
+                  @onConfirm="store.handleBackout.call(store)"
+                  v-if="store.opBackoutable && !params.hideBackBtn"
+                >
+                  <el-button :disabled="!store.backoutable" slot="reference" size="mini" type="primary" plain>{{
+                    store.cpntText.backout
+                  }}</el-button>
+                </el-popconfirm>
+                <el-popconfirm
+                  confirmButtonText="确定"
+                  cancelButtonText="取消"
+                  icon="el-icon-info"
+                  iconColor="red"
+                  title="你确认吗"
+                  @onConfirm="store.handleArchive.call(store)"
+                  v-if="store.opArchiveable && !params.hideArchiveBtn"
+                >
+                  <el-button :disabled="!store.archiveable" slot="reference" size="mini" type="primary" plain>{{
+                    store.cpntText.archive
+                  }}</el-button>
+                </el-popconfirm>
+              </template>
+            </data-fun>
+          </div>
+        </div>
         <!-- 表格 -->
         <div class="pso-view-table" v-loading="store.starting">
-          <div class="pso-view-table__header">
-            <div class="pso-view-table__header-l">
-              <table-fun :store="store" :files="params.downloadFiles"></table-fun>
-            </div>
-            <div class="pso-view-table__header-r">
-              <data-fun
-                :store="store"
-                :addable="!params.hideNewBtn"
-                :changable="!params.hideChangeBtn"
-                :stageable="!params.hideStage"
-                :copyable="!params.hideCopyBtn"
-                :moreable="!params.hideMoreBtn"
-                :exportable="!params.hideExport"
-                @new="store.showInstance.call(store, null)"
-              >
-                <template #op>
-                  <el-popconfirm
-                    confirmButtonText="确定"
-                    cancelButtonText="取消"
-                    icon="el-icon-info"
-                    iconColor="red"
-                    title="你确认吗"
-                    @onConfirm="store.handleBackout.call(store)"
-                    v-if="store.opBackoutable && !params.hideBackBtn"
-                  >
-                    <el-button :disabled="!store.backoutable" slot="reference" size="mini" type="primary" plain>{{
-                      store.cpntText.backout
-                    }}</el-button>
-                  </el-popconfirm>
-                  <el-popconfirm
-                    confirmButtonText="确定"
-                    cancelButtonText="取消"
-                    icon="el-icon-info"
-                    iconColor="red"
-                    title="你确认吗"
-                    @onConfirm="store.handleArchive.call(store)"
-                    v-if="store.opArchiveable && !params.hideArchiveBtn"
-                  >
-                    <el-button :disabled="!store.archiveable" slot="reference" size="mini" type="primary" plain>{{
-                      store.cpntText.archive
-                    }}</el-button>
-                  </el-popconfirm>
-                </template>
-              </data-fun>
-            </div>
-          </div>
           <view-table :store="store" :params="{ ...params, ...$props, checkbox }"></view-table>
         </div>
       </div>

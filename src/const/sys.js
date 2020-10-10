@@ -33,7 +33,8 @@ export const FORM_COLUMN_FIELDS = {
     res_dimen: "",
     target_form: {},
     searchable: false,
-    editable: false
+    editable: false,
+    clearZero: false,
 }
 
 export const STATIC_COLUMN_FIELDS = {

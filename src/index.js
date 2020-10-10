@@ -83,6 +83,7 @@ import PsoChartInterpreter from "./components/chart-interpreter";
 import PsoTagEditor from "./components/tag-editor";
 
 import PsoSearch from "./components/search";
+import PsoAffix from "./components/affix";
 
 const components = {
     PsoEmpty,
@@ -131,7 +132,8 @@ const components = {
     PsoTagEditor,
     PsoDialog,
     PsoFileList,
-    PsoSearch
+    PsoSearch,
+    PsoAffix
 }
 
 
@@ -164,7 +166,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.DEFAULT_APP_ID = defaultAppId;
 
     Vue.prototype.ResultNotify = debounce(500, function (ret, message) {
-        this.$notify({ title: ret.success ? "成功" : '失败', message: typeof message !== 'undefined' ? message : ret.message, type: ret.success ? "success" : 'warning' });
+        this.$notify({ title: ret.success ? "成功" : '失败', message: typeof message !== 'undefined' ? message : (ret.message || ret.msg), type: ret.success ? "success" : 'warning' });
     });
 
     const parser = new UAParser();

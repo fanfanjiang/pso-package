@@ -13,7 +13,7 @@
           ></pso-data-filter>
         </transition>
       </div>
-      <div class="pso-view-body">
+      <div class="pso-view-body" ref="viewBody">
         <!-- 标题和权限视图过滤 -->
         <div class="pso-view-header">
           <div class="pso-view-header__l">
@@ -41,31 +41,31 @@
             {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
           </el-tag>
         </div>
+        <div class="pso-view-fun">
+          <div class="pso-view-fun-l">
+            <table-fun :store="store" :files="params.downloadFiles"></table-fun>
+          </div>
+          <div class="pso-view-fun-r">
+            <data-fun
+              :store="store"
+              :addable="addable && !params.hideNewBtn"
+              :selectable="selectable"
+              :changable="changable && !params.hideChangeBtn"
+              :stageable="stageable && !params.hideStage"
+              :copyable="addable && !params.hideCopyBtn"
+              :moreable="!params.hideMoreBtn"
+              :exportable="!params.hideExport"
+              @new="store.newInstance.call(store)"
+              @select="$emit('selection-confirm', store.selectedList)"
+            >
+              <template v-slot:op="scope">
+                <slot name="op" v-bind:data="scope.store"></slot>
+              </template>
+            </data-fun>
+          </div>
+        </div>
         <!-- 表格 -->
         <div class="pso-view-table" v-loading="store.starting">
-          <div class="pso-view-table__header">
-            <div class="pso-view-table__header-l">
-              <table-fun :store="store" :files="params.downloadFiles"></table-fun>
-            </div>
-            <div class="pso-view-table__header-r">
-              <data-fun
-                :store="store"
-                :addable="addable && !params.hideNewBtn"
-                :selectable="selectable"
-                :changable="changable && !params.hideChangeBtn"
-                :stageable="stageable && !params.hideStage"
-                :copyable="addable && !params.hideCopyBtn"
-                :moreable="!params.hideMoreBtn"
-                :exportable="!params.hideExport"
-                @new="store.newInstance.call(store)"
-                @select="$emit('selection-confirm', store.selectedList)"
-              >
-                <template v-slot:op="scope">
-                  <slot name="op" v-bind:data="scope.store"></slot>
-                </template>
-              </data-fun>
-            </div>
-          </div>
           <view-table :store="store" :params="{ ...params, ...$props }">
             <template v-slot:column="scope">
               <slot name="column" v-bind:data="{ row: scope.row }"></slot>
@@ -220,6 +220,10 @@ export default {
       },
     },
   },
+  mounted() {
+    //计算表格高度
+    
+  },
   methods: {
     async initialize() {
       if (this.cfgId) {
@@ -289,6 +293,9 @@ export default {
     dataChangeHandler(data) {
       this.store.fetchStatus();
       this.$emit("data-changed", data);
+    },
+    getFixedTarget() {
+      return this.$refs.viewBody;
     },
   },
 };

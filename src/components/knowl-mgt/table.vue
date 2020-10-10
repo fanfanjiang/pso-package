@@ -1,33 +1,25 @@
 <template>
   <div>
     <div>
-      <div v-if="activeView.length>1">
+      <div v-if="viewAuths.length > 1">
         <el-tabs v-model="activeView">
-          <el-tab-pane :label="a.n" :name="a.v+''" v-for="a in viewAuths" :key="a.v"></el-tab-pane>
+          <el-tab-pane :label="a.n" :name="a.v + ''" v-for="a in viewAuths" :key="a.v"></el-tab-pane>
         </el-tabs>
       </div>
-      <div style="margin-top:10px">
+      <div style="margin-top: 10px">
         <el-button size="mini" type="primary" @click="addHandler()">新增</el-button>
       </div>
     </div>
-    <el-table
-      v-loading="loading"
-      ref="multipleTable"
-      height="500"
-      size="small"
-      :data="data"
-      tooltip-effect="dark"
-      style="width: 100%"
-    >
+    <el-table v-loading="loading" ref="multipleTable" height="500" size="small" :data="data" tooltip-effect="dark" style="width: 100%">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="r_name" label="资源名"></el-table-column>
       <el-table-column prop="r_time" label="添加时间"></el-table-column>
       <el-table-column label="操作" fixed="right" width="290">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="editHandler(scope.row)">编辑</el-button>
-          <el-button size="mini" @click="$emit('go',{data:scope.row,node})">查看</el-button>
-          <pso-picker-user pattern="radio" @confirm="shareHandler($event,scope.row)">
-            <span style="margin:0 10px;">
+          <el-button size="mini" @click="$emit('go', { data: scope.row, node })">查看</el-button>
+          <pso-picker-user pattern="radio" @confirm="shareHandler($event, scope.row)">
+            <span style="margin: 0 10px">
               <el-button size="mini" type="warning">转发</el-button>
             </span>
           </pso-picker-user>
@@ -51,7 +43,7 @@
         <el-form-item label="资源名称" required>
           <el-input size="mini" :clearable="true" v-model="curData.r_name"></el-input>
         </el-form-item>
-        <form-attachment :cpnt="{data:curCpnt}"></form-attachment>
+        <form-attachment :cpnt="{ data: curCpnt }"></form-attachment>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="showEditor = false">取 消</el-button>
@@ -68,9 +60,9 @@ export default {
     node: Object,
     viewAuth: {
       type: Number,
-      default: 0
+      default: 0,
     },
-    defKeys: String
+    defKeys: String,
   },
   components: { FormAttachment },
   data() {
@@ -86,26 +78,26 @@ export default {
         _fieldName: "文件",
         _required: true,
         _val: "",
-        _limit: 1
+        _limit: 1,
       },
       curData: {
-        r_name: ""
+        r_name: "",
       },
       optype: "",
       shareuid: "",
       saving: false,
       viewAuths: [],
       activeView: "",
-      defaultKeys: []
+      defaultKeys: [],
     };
   },
   computed: {
     where() {
       return {
         page: this.page - 1,
-        limit: this.limit
+        limit: this.limit,
       };
-    }
+    },
   },
   watch: {
     "node.node_id"() {
@@ -115,9 +107,8 @@ export default {
       this.fetch();
     },
     activeView() {
-      console.log(123);
       this.fetch();
-    }
+    },
   },
   async created() {
     await this.initializ();
@@ -127,14 +118,14 @@ export default {
       this.initializing = true;
 
       if (this.defKeys) {
-        this.defKeys.split(";").forEach(item => {
+        this.defKeys.split(";").forEach((item) => {
           const key = item.split(",");
           this.defaultKeys[key[0]] = { value: key[1], type: key[2] };
         });
       }
 
       if (typeof this.viewAuth !== "undefined") {
-        MENU_LEAF_AUTH.forEach(a => {
+        MENU_LEAF_AUTH.forEach((a) => {
           if ((a.v & this.viewAuth) === a.v) {
             this.viewAuths.push(a);
           }
@@ -144,6 +135,7 @@ export default {
       } else {
         await this.fetch();
       }
+      console.log(this.viewAuths);
       this.initializing = false;
     },
     async fetch() {
@@ -153,8 +145,8 @@ export default {
           ...this.where,
           leaf_auth: this.activeView,
           node_id: this.node.node_id,
-          keys: JSON.stringify({ ...this.defaultKeys })
-        }
+          keys: JSON.stringify({ ...this.defaultKeys }),
+        },
       });
       if (ret.success) {
         this.data = ret.data;
@@ -171,7 +163,7 @@ export default {
     addHandler() {
       this.curData = {
         r_name: "",
-        leaf_id: ""
+        leaf_id: "",
       };
       this.curCpnt._val = "";
       this.optype = 0;
@@ -199,13 +191,13 @@ export default {
       this.saving = true;
       const ret = await this.API.resource({
         data: { ...this.curData, map_key: this.curCpnt._val, r_user: this.shareuid, node_id: this.node.node_id, optype: this.optype },
-        method: this.curData.leaf_id ? "put" : "post"
+        method: this.curData.leaf_id ? "put" : "post",
       });
       this.ResultNotify(ret);
       this.showEditor = false;
       this.saving = false;
       await this.fetch();
-    }
-  }
+    },
+  },
 };
 </script>

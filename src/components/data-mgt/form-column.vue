@@ -77,6 +77,9 @@
         <el-form-item label="统计">
           <el-switch size="mini" v-model="curRow.cal" active-value="1" inactive-value="0"></el-switch>
         </el-form-item>
+        <el-form-item label="清除多余零">
+          <el-switch size="mini" v-model="curRow.clearZero"></el-switch>
+        </el-form-item> 
         <el-form-item label="对齐方式">
           <el-select size="mini" v-model="curRow.align">
             <el-option label="居中" value="center"></el-option>

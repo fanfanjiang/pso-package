@@ -96,7 +96,7 @@ export default class WFVStore extends FVStore {
             this.summary = ret.data.sum || null;
             this.$vue.$emit("data-loaded", this.instances);
         }
-
+        this.fixLayout();
         this.fetching = false;
     }
 
