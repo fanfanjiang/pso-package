@@ -218,7 +218,11 @@ export default {
             let val = cpntData._val;
             if (typeof cpnt.data._decimalPlaces !== "undefined") {
               try {
-                val = cpntData._val.toFixed(cpnt.data._decimalPlaces);
+                if (typeof val === "string") {
+                  val = parseFloat(val);
+                }
+                console.log(val);
+                val = val.toFixed(cpnt.data._decimalPlaces);
               } catch (e) {
                 console.log(e);
               }

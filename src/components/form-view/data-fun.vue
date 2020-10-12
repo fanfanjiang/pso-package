@@ -84,16 +84,16 @@ export default {
   },
   computed: {
     opAddable() {
-      return this.addable && (this.store.opAuth & 1) === 1;
+      return this.addable && this.store.opAddable;
     },
     opChangable() {
-      return this.changable && this.store.statuses.length && (this.store.opAuth & 2) === 2;
+      return this.changable && this.store.opChangable;
     },
     opStageable() {
-      return this.stageable && this.store.stages.length && (this.store.opAuth & 8) === 8;
+      return this.stageable && this.store.opStageable;
     },
     opExportable() {
-      return this.exportable && (this.store.opAuth & 4) === 4;
+      return this.exportable && this.store.opExportable;
     },
     disableCopy() {
       return this.store.selectedList.length !== 1;

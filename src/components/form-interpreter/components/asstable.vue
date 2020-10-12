@@ -154,13 +154,17 @@ export default {
         tableSize: "small",
       };
     },
+    editable() {
+      return this.cpnt.data._new && this.cpntEditable;
+    },
     executorParams() {
       return {
         formId: this.astStore.store.data_code,
         dataId: this.astStore.dataId,
         dataDefault: this.defForm,
-        addable: this.cpnt.data.__forceAdd__ || this.cpntEditable,
-        editable: this.cpntEditable,
+        addable: this.cpnt.data.__forceAdd__ || this.editable,
+        editable: this.editable,
+        deletable: this.editable,
         mockAsstables: this.unsavedSelf,
       };
     },
@@ -268,7 +272,8 @@ export default {
       this.astStore = new ASTStore({ $vue: this, limit: 10 });
       this.astStore.analyzeFormCfg(ret.data, this.cpnt.data._showFields);
       this.store = this.astStore.store;
-
+      this.fields = this.astStore.fields;
+      
       if (this.cpnt.store) {
         this.subAsstables = this.astStore.store.search({
           options: { componentid: "asstable" },

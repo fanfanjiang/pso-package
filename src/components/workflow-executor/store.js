@@ -310,7 +310,7 @@ export default class WfStore {
     }
 
     //设置主体部分的值
-    setTableVal({ cpnt, value, proxy, fields }) {
+    setTableVal({ cpnt, value, proxy, fields, store }) {
         const { data } = cpnt;
         if (!data._fieldValue) return;
         const $el = $("#executorMain").find(`[field=${data._fieldValue}]`);
@@ -335,6 +335,19 @@ export default class WfStore {
                 value = "";
             }
         }
+
+        if (typeof cpnt.data._decimalPlaces !== "undefined") {
+            try {
+                if (typeof value === "string") {
+                    value = parseFloat(value);
+                }
+                console.log(value);
+                value = value.toFixed(cpnt.data._decimalPlaces);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
         $el.html(data.__showVal__ || value);
 
         //关联表
@@ -370,18 +383,20 @@ export default class WfStore {
                         $el.html(proxy.valList[0][cpnt.data._radioField || 'leaf_id']);
                     }
                 } else {
-                    $el.append(this.makeStaticTable(fields, proxy.valList, sequence === '1'));
-                    const parentTd = $('.pso-static-table').parentsUntil('td');
-                    if (parentTd.get(0)) {
-                        $('.pso-static-table').addClass('outer-border-none');
-                        parentTd.parent().css('padding', 0);
+                    if (proxy.valList.length) {
+                        $el.append(this.makeStaticTable(fields, proxy.valList, sequence === '1', store));
+                        const parentTd = $('.pso-static-table').parentsUntil('td');
+                        if (parentTd.get(0)) {
+                            $('.pso-static-table').addClass('outer-border-none');
+                            parentTd.parent().css('padding', 0);
+                        }
                     }
                 }
             }
         }
     }
 
-    makeStaticTable(allFields, data, showIndex = false) {
+    makeStaticTable(allFields, data, showIndex = false, store) {
         const fields = allFields.filter((f) => f.show === "1" && f.using === '1');
         const $wrapper = $(`<table class="pso-static-table"><colgroup></colgroup><thead><tr></tr></thead><tbody></tbody></table>`);
         const $colgroup = $wrapper.find('colgroup');
@@ -401,7 +416,14 @@ export default class WfStore {
                 $tr.append(`<td>${i + 1}</td>`)
             }
             for (let f of fields) {
-                $tr.append(`<td>${data[i][f.field_name]}</td>`)
+                let unit = '';
+                if (store) {
+                    const cpnt = store.searchByField(f.field_name, true);
+                    if (cpnt && cpnt._unit) {
+                        unit = cpnt._unit;
+                    }
+                }
+                $tr.append(`<td>${data[i][f.field_name]}${unit}</td>`)
             }
             $tbody.append($tr);
         }

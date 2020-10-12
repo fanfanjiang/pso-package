@@ -198,6 +198,7 @@ export default {
       if (this.showCenter) {
         ret = await this.API.getTagLeafData({ tag_no });
       } else {
+        console.log(this.options.keys);
         ret = await this.API.tag({
           data: { ...this.options, keys: JSON.stringify(this.options.keys), page: this.options.start - 1 },
         });

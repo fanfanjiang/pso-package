@@ -4,12 +4,7 @@
       <div class="pso-upload__header-title">添加附件</div>
       <i class="pso-upload__header-cose el-icon-close" @click="$emit('close')"></i>
     </div>
-    <div
-      class="pso-upload__body"
-      @drop.prevent="dragingFile=false"
-      @dragenter.prevent="dragenter"
-      @dragleave.prevent="dragleave"
-    >
+    <div class="pso-upload__body" @drop.prevent="dragingFile = false" @dragenter.prevent="dragenter" @dragleave.prevent="dragleave">
       <el-upload
         drag
         class="pso-upload__area"
@@ -49,18 +44,8 @@
         <el-button icon="el-icon-folder" size="small" type="text">知识库</el-button>
       </div>
       <div class="pso-upload__footer-right" v-show="showFileList">
-        <el-button
-          class="pso-upload__footer-cancel"
-          size="small"
-          type="text"
-          @click="$emit('close')"
-        >取消</el-button>
-        <el-button
-          class="pso-upload__footer-confirm"
-          size="small"
-          type="primary"
-          @click="confirm"
-        >确认</el-button>
+        <el-button class="pso-upload__footer-cancel" size="small" type="text" @click="$emit('close')">取消</el-button>
+        <el-button class="pso-upload__footer-confirm" size="small" type="primary" @click="confirm">确认</el-button>
       </div>
     </div>
   </div>
@@ -94,8 +79,12 @@ export default {
       return `${this.APIURL}${this.api}`;
     },
     uploadHeader() {
-      var token = Auth.getToken();
-      return token ? { Authorization: `Bearer ${token}` } : {};
+      const token = Auth.getToken();
+      const headers = { timeout: 100000000 };
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      return headers;
     },
     showFileList() {
       return !!this.upFileList.length && !this.dragingFile;
@@ -103,8 +92,11 @@ export default {
   },
   methods: {
     onSuccess(ret, file) {
-      if (!ret.success) return this.$message.error("上传失败");
-      let _file = this.findFile(file.uid);
+      const _file = this.findFile(file.uid);
+      if (!ret.success || !ret.data.length) {
+        if (_file) this.deleteFile(file);
+        return this.$message.error("上传失败");
+      }
       if (_file) {
         _file.leaf_id = ret.data[0].LeafId;
         makeFiles({ files: [Object.assign(_file, ret.data[0])] });

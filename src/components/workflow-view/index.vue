@@ -16,7 +16,7 @@
       <div class="pso-view-body">
         <!-- 标题和权限视图过滤 -->
         <div class="pso-view-header">
-          <div class="pso-view-header__l">
+          <div class="pso-view-header__l" v-if="!params.hideTitle">
             <div class="pso-view-title">
               <icon></icon>
               <span>{{ pageTitle }}</span>
@@ -182,7 +182,7 @@ export default {
       return this.params.forceExpand ? "" : this.store.copying ? "simple" : this.store.curInstance ? "" : "";
     },
     executorWidth() {
-      return this.params.ewidth || (this.displayMode ? "60%" : "88%");
+      return this.params.ewidth || (this.displayMode ? "60%" : "94%");
     },
     executorParams() {
       return {

@@ -76,6 +76,18 @@ export const FormAsMainMixin = {
         },
         mainChangeHandler({ leaf_id, op }) {
 
+        },
+        astChangeHandler({ cpnt }) {
+            if (cpnt.data.componentid === "asstable") {
+                this.$nextTick(() => {
+                    this.saveAst();
+                })
+            }
+        },
+        async saveAst() {
+            if (!this.mainDataId) return;
+            const formData = await this.$refs.formImage.makeData();
+            return await this.vStore.addOrUpdate({ leaf_id: this.mainDataId, formData });
         }
     }
 }

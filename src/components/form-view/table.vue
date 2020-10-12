@@ -33,11 +33,11 @@
             <div class="modifier-placeholder" :ref="scope.$index + f.field_name">
               <span v-if="store.checkFlag(f.field_name, scope.row)" class="modifier-flag" v-html="store.formatListVal(scope.row, f)"></span>
               <span v-else-if="store.checkFile(f.field_name)" class="modifier-file">
-                <pso-attachment :ids="scope.row[f.field_name]"></pso-attachment>
+                <pso-attachment :ids="scope.row[f.field_name]" @initialized="attachInited"></pso-attachment>
               </span>
               <span v-else class="modifier-value" :style="{ 'text-align': f.align }">{{ store.formatListVal(scope.row, f) }}</span>
               <span
-                v-if="params.modifiable && f.editable"
+                v-if="modifiable && f.editable"
                 class="el-icon-edit modifier-trigger"
                 @click.stop="openModifier(scope.row, f, scope.$index)"
               ></span>
@@ -59,7 +59,7 @@
         :background="!forceclick"
         :small="forceclick"
         :layout="paginationLayout"
-        :page-sizes="[baseLimit, 20, 50, 100, 200, 500]"
+        :page-sizes="[baseLimit, 30, 50, 100, 200, 500]"
         :total="store.dataTotal"
         :page-size="store.limit"
         :current-page="store.page"
@@ -107,7 +107,7 @@ export default {
     },
   },
   data() {
-    this.baseLimit = 10;
+    this.baseLimit = this.store.limit || 10;
     this.timer = null;
     return {
       clickCount: 0,
@@ -138,11 +138,14 @@ export default {
         maxHeight: this.params.tableMaxHeight,
       };
 
-      if (this.store.tableHeight) {
+      if (this.store.tableHeight > 100) {
         params.height = this.store.tableHeight;
       }
 
       return params;
+    },
+    modifiable() {
+      return this.params.modifiable && this.store.opAddable;
     },
   },
   watch: {
@@ -151,7 +154,7 @@ export default {
     },
   },
   created() {
-    if (this.params.modifiable) {
+    if (this.modifiable) {
       this.initializeModifier(this.store.formCfg, this.store.store, async (data) => {
         // 修改回调函数
         await this.store.addOrUpdate(data, this.refresh);
@@ -216,6 +219,9 @@ export default {
     },
     nextClickHandler() {
       this.store.page += 1;
+    },
+    attachInited() {
+      this.store.deFixLayout();
     },
   },
 };

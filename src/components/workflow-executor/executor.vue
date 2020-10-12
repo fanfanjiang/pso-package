@@ -3,13 +3,15 @@
     <transition name="el-zoom-in-top">
       <div class="pso-wf-executor__body" v-show="store.showBody">
         <div class="pso-wf-executor__main">
-          <div class="pso-wf-executor__main-header">
-            <pso-wf-overview :store="store"></pso-wf-overview>
-          </div>
-          <div class="pso-wf-executor__main-content-wrapper" id="executorMain">
-            <slot name="content" :store="store"></slot>
-            <div v-if="!isMobile" ref="wfTable" class="pso-wf-executor__main-content" v-html="store.cfg.wf_body_tp"></div>
-            <div class="pso-wf-executor__stamp" v-if="!store.loading" v-html="stamp.stamp" :style="stampStyle"></div>
+          <div class="pso-wf-executor__main-scroll">
+            <div class="pso-wf-executor__main-header">
+              <pso-wf-overview :store="store"></pso-wf-overview>
+            </div>
+            <div class="pso-wf-executor__main-content-wrapper" id="executorMain">
+              <slot name="content" :store="store"></slot>
+              <div v-if="!isMobile" ref="wfTable" class="pso-wf-executor__main-content" v-html="store.cfg.wf_body_tp"></div>
+              <div class="pso-wf-executor__stamp" v-if="!store.loading" v-html="stamp.stamp" :style="stampStyle"></div>
+            </div>
             <div class="pso-wf-executor__main-log">
               <pso-wf-log :store="store"></pso-wf-log>
             </div>

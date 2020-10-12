@@ -16,13 +16,9 @@
         text="结束"
         @confirm="end"
       ></pso-wf-confirm>
-      <el-button
-        v-if="showCommand(REVIEW_OP_TYPE.pickreject.value)"
-        type="primary"
-        plain
-        size="small"
-        @click="goPickreject"
-      >指定</el-button>
+      <el-button v-if="showCommand(REVIEW_OP_TYPE.pickreject.value)" type="primary" plain size="small" @click="goPickreject"
+        >指定</el-button
+      >
       <pso-wf-confirm
         :store="store"
         v-if="showCommand(REVIEW_OP_TYPE.rollback.value)"
@@ -40,18 +36,13 @@
         @confirm="reject"
       ></pso-wf-confirm>
     </div>
-    <el-dropdown
-      @command="handleCommand"
-      v-if="store.data.instanceId"
-      placement="top-end"
-      trigger="click"
-    >
+    <el-dropdown @command="handleCommand" v-if="store.data.instanceId" placement="top-end" trigger="click">
       <el-button size="small">
         更多
         <i class="el-icon-more"></i>
       </el-button>
       <el-dropdown-menu slot="dropdown">
-        <template v-if="superable&&store.curStep">
+        <template v-if="superable && store.curStep">
           <el-dropdown-item command="copy">抄送</el-dropdown-item>
           <el-dropdown-item command="distribute">分发</el-dropdown-item>
           <el-dropdown-item command="addSign">加签</el-dropdown-item>
@@ -113,6 +104,7 @@ export default {
     },
     async confirm(unAppendForm = true) {
       if (this.store.isNextEmpty) {
+        this.$message({ message: "请选择下一步审核人，选择后点击下一步完成审核", type: "warning" });
         this.openUserOp({ text: "下一步", op: this.REVIEW_OP_TYPE.confirm.type });
       } else {
         await this.nextStep(this.REVIEW_OP_TYPE.confirm.type, unAppendForm);

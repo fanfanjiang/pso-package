@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-view pso-view-form" :class="viewClass" v-loading="!store || store.initializing">
+  <div class="pso-view pso-view-form" ref="view" :class="viewClass" v-loading="!store || store.initializing">
     <template v-if="store && !store.initializing">
       <!-- 过滤器 -->
       <div class="pso-view-extend">
@@ -15,53 +15,63 @@
       </div>
       <div class="pso-view-body" ref="viewBody">
         <!-- 标题和权限视图过滤 -->
-        <div class="pso-view-header">
-          <div class="pso-view-header__l">
-            <div class="pso-view-title">
-              <i class="el-icon-document"></i>
-              <span>{{ pageTitle }}</span>
+        <div ref="header">
+          <div class="pso-view-header">
+            <div class="pso-view-header__l">
+              <div class="pso-view-title">
+                <i class="el-icon-document"></i>
+                <span>{{ pageTitle }}</span>
+              </div>
+            </div>
+            <div class="pso-view-header__r">
+              <div class="pso-view-authtab" v-show="store.authViews.length > 1 && !params.hideAuthTab">
+                <el-tabs v-model="store.activeView">
+                  <el-tab-pane v-for="(ah, i) in store.authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
+                </el-tabs>
+              </div>
             </div>
           </div>
-          <div class="pso-view-header__r">
-            <div class="pso-view-authtab" v-show="store.authViews.length > 1 && !params.hideAuthTab">
-              <el-tabs v-model="store.activeView">
-                <el-tab-pane v-for="(ah, i) in store.authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
-              </el-tabs>
-            </div>
-          </div>
-        </div>
-        <!-- 视图切换 -->
-        <div class="pso-view-viewtab" v-if="!params.hideStatusTab">
-          <fast-switch :store="store" key="statuses" switch="statuses" model="curStatus" skey="d_status"></fast-switch>
-          <fast-switch divider :store="store" key="stages" showtype="select" switch="stages" model="curStage" skey="d_stage"></fast-switch>
-        </div>
-        <!-- 排序标签 -->
-        <div class="pso-view-sorttag" v-if="store.sorts.length">
-          <el-tag size="small" v-for="(sort, i) in store.sorts" :key="i" closable @close="store.removeSort(i)">
-            {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
-          </el-tag>
-        </div>
-        <div class="pso-view-fun">
-          <div class="pso-view-fun-l">
-            <table-fun :store="store" :files="params.downloadFiles"></table-fun>
-          </div>
-          <div class="pso-view-fun-r">
-            <data-fun
+          <!-- 视图切换 -->
+          <div class="pso-view-viewtab" v-if="!params.hideStatusTab">
+            <fast-switch :store="store" key="statuses" switch="statuses" model="curStatus" skey="d_status"></fast-switch>
+            <fast-switch
+              divider
               :store="store"
-              :addable="addable && !params.hideNewBtn"
-              :selectable="selectable"
-              :changable="changable && !params.hideChangeBtn"
-              :stageable="stageable && !params.hideStage"
-              :copyable="addable && !params.hideCopyBtn"
-              :moreable="!params.hideMoreBtn"
-              :exportable="!params.hideExport"
-              @new="store.newInstance.call(store)"
-              @select="$emit('selection-confirm', store.selectedList)"
-            >
-              <template v-slot:op="scope">
-                <slot name="op" v-bind:data="scope.store"></slot>
-              </template>
-            </data-fun>
+              key="stages"
+              showtype="select"
+              switch="stages"
+              model="curStage"
+              skey="d_stage"
+            ></fast-switch>
+          </div>
+          <!-- 排序标签 -->
+          <div class="pso-view-sorttag" v-if="store.sorts.length">
+            <el-tag size="small" v-for="(sort, i) in store.sorts" :key="i" closable @close="store.removeSort(i)">
+              {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
+            </el-tag>
+          </div>
+          <div class="pso-view-fun">
+            <div class="pso-view-fun-l">
+              <table-fun :store="store" :files="params.downloadFiles"></table-fun>
+            </div>
+            <div class="pso-view-fun-r">
+              <data-fun
+                :store="store"
+                :addable="addable && !params.hideNewBtn"
+                :selectable="selectable"
+                :changable="changable && !params.hideChangeBtn"
+                :stageable="stageable && !params.hideStage"
+                :copyable="addable && !params.hideCopyBtn"
+                :moreable="!params.hideMoreBtn"
+                :exportable="!params.hideExport"
+                @new="store.newInstance.call(store)"
+                @select="$emit('selection-confirm', store.selectedList)"
+              >
+                <template v-slot:op="scope">
+                  <slot name="op" v-bind:data="scope.store"></slot>
+                </template>
+              </data-fun>
+            </div>
           </div>
         </div>
         <!-- 表格 -->
@@ -201,14 +211,15 @@ export default {
       };
     },
     executorParams() {
+      //这里只用了新增权限来控制所有操作权限
       return {
         formEntity: this.store.formCfg,
         dataId: this.store.dataId,
         dataInstance: this.store.instance,
         dataDefault: this.defForm,
-        editable: this.store.dataId ? this.detailEditable : this.addable,
-        addable: this.addable,
-        deletable: this.deletable,
+        editable: (this.store.dataId ? this.detailEditable : this.addable) && this.store.opAddable,
+        addable: this.addable && this.store.opAddable,
+        deletable: this.deletable && this.store.opAddable,
       };
     },
   },
@@ -219,10 +230,14 @@ export default {
         this.initialize();
       },
     },
-  },
-  mounted() {
-    //计算表格高度
-    
+    "store.starting"(val) {
+      if (this.store && !this.store.initializing && !val && this.$refs.header) {
+        const height = $(this.$refs.view).height() - $(this.$refs.header).height() - 65;
+        if (height > 100) {
+          this.store.tableHeight = height;
+        }
+      }
+    },
   },
   methods: {
     async initialize() {

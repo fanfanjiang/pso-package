@@ -85,6 +85,11 @@ import PsoTagEditor from "./components/tag-editor";
 import PsoSearch from "./components/search";
 import PsoAffix from "./components/affix";
 
+//混合视图
+import PsoFvAst from "./components/composite/fv-ast";
+import PsoFvWv from "./components/composite/fv-wv";
+
+
 const components = {
     PsoEmpty,
     PsoSkeleton,
@@ -133,7 +138,11 @@ const components = {
     PsoDialog,
     PsoFileList,
     PsoSearch,
-    PsoAffix
+    PsoAffix,
+
+    //混合视图
+    PsoFvAst,
+    PsoFvWv
 }
 
 

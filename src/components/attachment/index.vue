@@ -40,13 +40,14 @@ export default {
       this.initializing = false;
       makeFiles({ files: ret.data, urlField: "res_path", nameField: "res_name" });
       this.data = ret.data;
+      this.$emit("initialized");
     },
   },
 };
 </script>
 <style lang="less">
 .attach-view {
-  height: 100%; 
+  height: 100%;
   width: 100%;
 }
 </style>

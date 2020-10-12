@@ -15,7 +15,7 @@ export default class FormViewStore {
         this.$vue = null;
 
         //数据状态
-        this.initializing = false;
+        this.initializing = true;
         this.starting = false;
         this.fetching = false;
         this.operating = false;
@@ -39,7 +39,7 @@ export default class FormViewStore {
         this.lastCondition = undefined;
 
         //列表参数
-        this.limit = 15;
+        this.limit = 20;
         this.page = 1;
         this.defaultKeys = {};
         this.keys = {};
@@ -94,6 +94,26 @@ export default class FormViewStore {
         this.deFetch = debounce(500, (params) => {
             this.fetch(params);
         });
+
+        this.deFixLayout = debounce(1000, (params) => {
+            this.fixLayout(params);
+        });
+    }
+
+    get opAddable() {
+        return (this.opAuth & 1) === 1;
+    }
+
+    get opChangable() {
+        return this.statuses.length && (this.opAuth & 2) === 2;
+    }
+
+    get opStageable() {
+        return this.stages.length && (this.opAuth & 8) === 8;
+    }
+
+    get opExportable() {
+        return (this.opAuth & 4) === 4;
     }
 
     //初始化
@@ -278,8 +298,9 @@ export default class FormViewStore {
 
         this.$vue.$emit("data-loaded", this.instances);
 
-        this.fixLayout();
         this.fetching = false;
+
+        this.fixLayout();
     }
 
     fixLayout() {

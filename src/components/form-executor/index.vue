@@ -17,8 +17,8 @@
           </div>
         </div>
         <div class="form-executor-header__r">
-          <template v-if="deletable && !initializing">
-            <el-dropdown size="small" v-if="dataId" trigger="click">
+          <template v-if="!initializing">
+            <el-dropdown size="small" v-if="deletable" trigger="click">
               <span class="el-dropdown-link"> <i class="el-icon-more"></i> </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
@@ -110,7 +110,7 @@ export default {
       return (this.params.addable !== undefined ? this.params.addable : this.editable) && !this.dataId;
     },
     deletable() {
-      return this.params.deletable;
+      return (this.params.deletable !== undefined ? this.params.deletable : this.editable) && this.dataId;
     },
     showSwitch() {
       return this.dataId && this.instanceids && this.instanceids.length > 1;

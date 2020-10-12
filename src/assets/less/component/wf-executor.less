@@ -59,7 +59,13 @@
             left: 0;
             right: 0;
             bottom: 50px;
-            overflow: auto;
+            overflow: hidden;
+
+            .pso-wf-executor__main-scroll {
+                position: relative;
+                overflow: auto;
+                height: 100%;
+            }
 
             .pso-wf-executor__main-header {
                 border-bottom: 1px solid #F4F4F4;
@@ -68,12 +74,14 @@
             .pso-wf-executor__main-content-wrapper {
                 position: relative;
                 .richEditor();
+                color: #000;
+                font-size: 16px;
 
                 table {
 
                     td,
                     th {
-                        border: 1px solid #666;
+                        border: 1px solid #000;
                     }
                 }
 

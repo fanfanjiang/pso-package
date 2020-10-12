@@ -25,6 +25,22 @@ export default class WFVStore extends FVStore {
         this.lastOp = '';
     }
 
+    get backoutable() {
+        return this.selectedList.length ? this.selectedList.every((d) => [REVIEW_STATUS.submited.value, REVIEW_STATUS.reject.value, REVIEW_STATUS.pass.value].includes(d.d_audit)) : false;
+    }
+
+    get archiveable() {
+        return this.selectedList.length ? this.selectedList.every((d) => d.d_audit === REVIEW_STATUS.pass.value) : false;
+    }
+
+    get opBackoutable() {
+        return (this.opAuth & 8) === 8;
+    }
+
+    get opArchiveable() {
+        return (this.opAuth & 16) === 16;
+    }
+
     async initialize(id, usedColumn) {
         this.initializing = true;
 
@@ -39,7 +55,7 @@ export default class WFVStore extends FVStore {
         this.wfCfg = ret.data;
         const { opAuth } = this.wfCfg;
 
-        if (opAuth) { 
+        if (opAuth) {
             this.opAuth = opAuth.leaf_auth;
         }
 
@@ -96,8 +112,9 @@ export default class WFVStore extends FVStore {
             this.summary = ret.data.sum || null;
             this.$vue.$emit("data-loaded", this.instances);
         }
-        this.fixLayout();
+
         this.fetching = false;
+        this.fixLayout();
     }
 
     async changeStatus(data) {
@@ -158,21 +175,5 @@ export default class WFVStore extends FVStore {
             extend: { wf_code: this.wfCfg.wf_code, optype }
         });
         this.lastOp = value;
-    }
-
-    get backoutable() {
-        return this.selectedList.length ? this.selectedList.every((d) => [REVIEW_STATUS.submited.value, REVIEW_STATUS.reject.value, REVIEW_STATUS.pass.value].includes(d.d_audit)) : false;
-    }
-
-    get archiveable() {
-        return this.selectedList.length ? this.selectedList.every((d) => d.d_audit === REVIEW_STATUS.pass.value) : false;
-    }
-
-    get opBackoutable() {
-        return (this.opAuth & 8) === 8;
-    }
-
-    get opArchiveable() {
-        return (this.opAuth & 16) === 16;
     }
 }

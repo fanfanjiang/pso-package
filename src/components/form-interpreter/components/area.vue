@@ -1,6 +1,6 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <el-cascader size="small" v-if="show" v-model="proxy" :props="props" filterable></el-cascader>
+    <el-cascader size="small" v-if="show" v-model="proxy" :props="props" :disabled="!cpntEditable" filterable></el-cascader>
   </pso-label>
 </template>
 <script>
