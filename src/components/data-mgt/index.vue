@@ -136,6 +136,8 @@ const _DATA = {
     qrList: [],
     rules: [],
     submitable: true,
+    formLabelPosition: "top",
+    formLabelWith: "",
   },
   upload: [],
   rules: [],
@@ -386,6 +388,8 @@ export default {
         doneText: this.pubCfg.doneText,
         qrList: this.pubCfg.qrList,
         submitable: this.pubCfg.submitable,
+        formLabelPosition: this.pubCfg.formLabelPosition,
+        formLabelWith: this.pubCfg.formLabelWith,
         rules: [],
       };
 

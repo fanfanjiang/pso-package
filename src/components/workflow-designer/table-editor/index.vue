@@ -1,11 +1,11 @@
 <template>
   <div class="wf-table-editor">
     <div class="wf-table-editor__menu-wrapper">
-      <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, getMarkAttrs}">
+      <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, getMarkAttrs }">
         <div class="wf-table-editor__menu">
           <div class="wf-table-editor__menu-header">
             <span>操作</span>
-            <span>{{selectedOp}}</span>
+            <span>{{ selectedOp }}</span>
           </div>
           <el-select
             size="small"
@@ -13,12 +13,12 @@
             v-model="fieldValue"
             placeholder="插入字段"
             @change="setField(commands)"
-            @focus="selectedOp='插入工作表字段'"
+            @focus="selectedOp = '插入工作表字段'"
           >
             <el-option
               v-for="item in options"
               :key="item._fieldValue"
-              :label="item.displayName||item._fieldName"
+              :label="item.displayName || item._fieldName"
               :value="item._fieldValue"
             ></el-option>
           </el-select>
@@ -28,7 +28,7 @@
             v-model="perEntryVal"
             placeholder="插入权限项"
             @change="setPermission(commands)"
-            @focus="selectedOp='插入权限项'"
+            @focus="selectedOp = '插入权限项'"
           >
             <el-option
               v-for="item in wfDesigner.permissionEntries"
@@ -39,16 +39,20 @@
           </el-select>
           <div class="wf-table-editor__icon">
             <editor-menu-item
-              v-for="(menuItem,i) of menu"
+              v-for="(menuItem, i) of menu"
               :key="i"
               :type="menuItem.type"
               :tip="menuItem.tip"
               :src="menuItem.src"
-              :isActive="menuItem.type==='align'?(getMarkAttrs('align').textAlign === menuItem.src):(isActive[menuItem.type]&&isActive[menuItem.type](menuItem.params||{}))"
-              @click="commands[menuItem.method||menuItem.type](menuItem.params||{})"
-              @hover="selectedOp=menuItem.tip"
-              @mouseenter="selectedOp=menuItem.tip"
-              @mouseleave="selectedOp=''"
+              :isActive="
+                menuItem.type === 'align'
+                  ? getMarkAttrs('align').textAlign === menuItem.src
+                  : isActive[menuItem.type] && isActive[menuItem.type](menuItem.params || {})
+              "
+              @click="commands[menuItem.method || menuItem.type](menuItem.params || {})"
+              @hover="selectedOp = menuItem.tip"
+              @mouseenter="selectedOp = menuItem.tip"
+              @mouseleave="selectedOp = ''"
             ></editor-menu-item>
             <transition-group name="el-zoom-in-top">
               <template v-if="isActive.table()">
@@ -58,10 +62,10 @@
                   :type="menuItem.type"
                   :tip="menuItem.tip"
                   :src="menuItem.src"
-                  :isActive="isActive[menuItem.type]&&isActive[menuItem.type](menuItem.params||{})"
-                  @click="commands[menuItem.method||menuItem.type](menuItem.params||{})"
-                  @mouseenter="selectedOp=menuItem.tip"
-                  @mouseleave="selectedOp=''"
+                  :isActive="isActive[menuItem.type] && isActive[menuItem.type](menuItem.params || {})"
+                  @click="commands[menuItem.method || menuItem.type](menuItem.params || {})"
+                  @mouseenter="selectedOp = menuItem.tip"
+                  @mouseleave="selectedOp = ''"
                 ></editor-menu-item>
               </template>
             </transition-group>
@@ -76,7 +80,7 @@
             <el-option label="脚本" value="script"></el-option>
           </el-select>
         </div>
-        <div style="margin-top:15px" v-if="asstableNode.attrs.display==='table'">
+        <div style="margin-top: 15px" v-if="asstableNode.attrs.display === 'table'">
           <el-switch
             size="mini"
             v-model="asstableNode.attrs.sequence"
@@ -87,12 +91,9 @@
           ></el-switch>
         </div>
         <div class="wf-table-editor__table-btn">
-          <el-button
-            v-if="asstableNode.attrs.display==='script'"
-            type="primary"
-            size="mini"
-            @click="showDesigner=true"
-          >设置脚本</el-button>
+          <el-button v-if="asstableNode.attrs.display === 'script'" type="primary" size="mini" @click="showDesigner = true"
+            >设置脚本</el-button
+          >
         </div>
       </div>
     </div>
@@ -107,36 +108,21 @@
     <transition name="el-zoom-in-top">
       <div class="wf-table-editor__review" v-if="fieldNode">
         <div class="wf-table-editor__review-header">审核展示配置</div>
-        <codemirror
-          ref="codemirror"
-          v-model="fieldNode.attrs.format"
-          @blur="blurHandler"
-          @focus="showDrop = true"
-        />
+        <codemirror ref="codemirror" v-model="fieldNode.attrs.format" @blur="blurHandler" @focus="showDrop = true" />
         <transition name="el-zoom-in-top">
           <ul class="dropdown" v-show="showDrop">
-            <li
-              v-for="item in reviewLogField"
-              :key="item.id"
-              @click="dropClickHandler(item)"
-            >{{item.name}}</li>
+            <li v-for="item in reviewLogField" :key="item.id" @click="dropClickHandler(item)">{{ item.name }}</li>
           </ul>
         </transition>
       </div>
     </transition>
-    <pso-drawer
-      v-if="asstableNode"
-      size="50%"
-      :visible="showDesigner"
-      title="设计脚本"
-      @close="showDesigner=false"
-    >
+    <pso-drawer v-if="asstableNode" size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner = false">
       <template v-slot:whole>
         <formula-designer
           v-if="asstableNode"
           :value="asstableNode.attrs.format"
           :cpnts="tableCpnt[asstableNode.attrs.field]"
-          @cancel="showDesigner=false"
+          @cancel="showDesigner = false"
           @confirm="confirmScript"
         ></formula-designer>
       </template>
@@ -372,6 +358,7 @@ export default {
         genComponentData({ _fieldValue: "wf_import", _fieldName: "[系统]重要等级", componentid: "text" }),
         genComponentData({ _fieldValue: "wf_secret", _fieldName: "[系统]秘密等级", componentid: "text" }),
         genComponentData({ _fieldValue: "wf_urgent", _fieldName: "[系统]加急程度", componentid: "text" }),
+        genComponentData({ _fieldValue: "wf_logs", _fieldName: "[系统]审批过程", componentid: "text" }),
       ]);
 
       this.reviewList.forEach(({ target }) => {

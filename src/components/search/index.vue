@@ -8,11 +8,11 @@
       clearable
       v-show="showKeywords"
       v-model="keywords"
-      @blur="onKeywordsBlur"
+      @blur="onKeywordsBlur" 
       @clear="showKeywords = false"
     ></el-input>
     <el-button v-show="!showKeywords" type="text" icon="el-icon-search" @click="onClickSearch">
-      <template v-if="!__isMobile__">搜索</template>
+      <template v-if="!__isMobile__">{{ text }}</template>
     </el-button>
   </div>
 </template>
@@ -20,6 +20,10 @@
 export default {
   props: {
     value: String,
+    text: {
+      type: String,
+      default: "搜索",
+    },
   },
   model: {
     prop: "value",

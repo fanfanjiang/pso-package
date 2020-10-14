@@ -259,15 +259,15 @@ export default {
           this.store.analyzeAuthView(this.viewAuth, this.params.auth_config);
         }
 
+        if (this.textGroup && this.plug_code) {
+          this.store.analyzeViewText(this.textGroup, this.plug_code);
+        }
+
         if (this.cfgId) {
           this.makeKeys();
           await this.store.initialize(this.cfgId, this.params.useCloumn);
           this.$emit("initialized", { vStore: this.store, store: this.store.store, cfg: this.store.formCfg, defForm: this.defForm });
           await this.store.fetchStatus();
-        }
-
-        if (this.textGroup && this.plug_code) {
-          this.store.analyzeViewText(this.textGroup, this.plug_code);
         }
 
         this.watchFun.push(

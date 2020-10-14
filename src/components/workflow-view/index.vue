@@ -179,10 +179,10 @@ export default {
       };
     },
     displayMode() {
-      return this.params.forceExpand ? "" : this.store.copying ? "simple" : this.store.curInstance ? "" : "";
+      return this.params.forceExpand ? "" : this.store.copying ? "" : this.store.curInstance ? "" : "";
     },
     executorWidth() {
-      return this.params.ewidth || (this.displayMode ? "60%" : "94%");
+      return this.params.ewidth || (this.displayMode ? "94%" : "94%");
     },
     executorParams() {
       return {
@@ -219,14 +219,14 @@ export default {
           this.store.analyzeAuthView(this.params.viewAuth, this.params.auth_config);
         }
 
+        if (this.params.textGroup && this.params.plug_code) {
+          this.store.analyzeViewText(this.params.textGroup, this.params.plug_code);
+        }
+
         this.makeKeys();
         await this.store.initialize(this.params.wfId, this.params.useCloumn);
         this.$emit("initialized", { store: this.store.store, cfg: this.store.formCfg });
         await this.store.fetchStatus();
-
-        if (this.params.textGroup && this.params.plug_code) {
-          this.store.analyzeViewText(this.params.textGroup, this.params.plug_code);
-        }
 
         this.watchFun.push(
           this.$watch("store.limit", () => {

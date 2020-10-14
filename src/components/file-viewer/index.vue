@@ -1,31 +1,16 @@
 <template>
   <div ref="view" class="pso-file-viewer" @click.stop>
     <div ref="header" class="pso-file-viewer__header">
-      <div class="pso-file-viewer__header-title">{{currentFile.name}}</div>
-      <span class="pso-file-viewer__header-number">{{fIndex+1}} / {{files.length}}</span>
+      <div class="pso-file-viewer__header-title">{{ currentFile.name }}</div>
+      <span class="pso-file-viewer__header-number">{{ fIndex + 1 }} / {{ files.length }}</span>
       <div class="pso-file-viewer__fun">
-        <el-tooltip
-          popper-class="pso-file-viewer__fun-tip"
-          effect="dark"
-          content="下载"
-          placement="bottom"
-        >
-          <i class="el-icon-download"></i>
+        <el-tooltip popper-class="pso-file-viewer__fun-tip" effect="dark" content="下载" placement="bottom">
+          <i class="el-icon-download" @click.stop="$emit('download', currentFile)"></i>
         </el-tooltip>
-        <el-tooltip
-          popper-class="pso-file-viewer__fun-tip"
-          effect="dark"
-          content="分享"
-          placement="bottom"
-        >
+        <!-- <el-tooltip popper-class="pso-file-viewer__fun-tip" effect="dark" content="分享" placement="bottom">
           <i class="el-icon-share"></i>
-        </el-tooltip>
-        <el-tooltip
-          popper-class="pso-file-viewer__fun-tip"
-          effect="dark"
-          content="关闭"
-          placement="bottom"
-        >
+        </el-tooltip> -->
+        <el-tooltip popper-class="pso-file-viewer__fun-tip" effect="dark" content="关闭" placement="bottom">
           <i class="el-icon-close" @click.stop="$emit('close')"></i>
         </el-tooltip>
       </div>
@@ -35,13 +20,13 @@
         <div>
           <div class="pso-file-viewer__menu-wrapper">
             <div
-              :class="{'pso-file-viewer__menu-item':true,'active':fIndex===index}"
-              v-for="(file,index) in files"
+              :class="{ 'pso-file-viewer__menu-item': true, active: fIndex === index }"
+              v-for="(file, index) in files"
               :key="index"
               @click="changeIndex(index)"
             >
               <img :src="file.icon" alt />
-              <span>{{file.name}}</span>
+              <span>{{ file.name }}</span>
             </div>
           </div>
         </div>
@@ -55,12 +40,8 @@
           @change="changeIndex"
           :initial-index="fIndex"
         >
-          <el-carousel-item v-for="(file,index) in files" :key="index">
-            <component
-              v-if="index===fIndex||isLoaded(index)"
-              v-bind:is="fileCpnt(file)"
-              :file="file"
-            ></component>
+          <el-carousel-item v-for="(file, index) in files" :key="index">
+            <component v-if="index === fIndex || isLoaded(index)" v-bind:is="fileCpnt(file)" :file="file"></component>
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -78,36 +59,38 @@ export default {
   props: {
     fileList: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     fIndex: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   data() {
     return {
       files: this.fileList,
-      carouselHeight: "600px"
+      carouselHeight: "600px",
     };
   },
   computed: {
     currentFile() {
       return this.files[this.fIndex];
-    }
+    },
   },
   created() {
-    this.files.forEach(f => delete f.loaded);
+    this.files.forEach((f) => delete f.loaded);
     this.changeIndex(this.fIndex);
   },
   mounted() {
-    document.body.append(this.$refs.view);
+    document.body.appendChild(this.$refs.view);
     $(document.body).css("overflow", "hidden");
-    this.carouselHeight = `${$(this.$refs.view).height() -
-      $(this.$refs.header).height()}px`;
+    this.carouselHeight = `${$(this.$refs.view).height() - $(this.$refs.header).height()}px`;
   },
   beforeDestroy() {
     $(document.body).css("overflow", "auto");
+    if (this.$el && this.$el.parentNode) {
+      this.$el.parentNode.removeChild(this.$el);
+    }
   },
   methods: {
     fileCpnt(file) {
@@ -131,8 +114,8 @@ export default {
     },
     isLoaded(index) {
       return this.files[index].loaded === true;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less">

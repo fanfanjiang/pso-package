@@ -26,7 +26,7 @@
       </div>
     </div>
     <transition name="el-fade-in">
-      <file-viewer :fIndex="fIndex" :fileList="files" v-if="showViewer" @close="showViewer = false"></file-viewer>
+      <file-viewer :fIndex="fIndex" :fileList="files" v-if="showViewer" @close="showViewer = false" @download="download"></file-viewer>
     </transition>
   </div>
 </template>
@@ -62,13 +62,14 @@ export default {
       this.$emit("check", params);
     },
     download(file) {
-      const eleLink = document.createElement("a");
-      eleLink.href = file.url;
-      eleLink.download = file.filename;
-      eleLink.style.display = "none";
-      document.body.appendChild(eleLink);
-      eleLink.click();
-      document.body.removeChild(eleLink);
+      window.open(file.url);
+      // const eleLink = document.createElement("a");
+      // eleLink.href = file.url;
+      // eleLink.download = file.filename;
+      // eleLink.style.display = "none";
+      // document.body.appendChild(eleLink);
+      // eleLink.click();
+      // document.body.removeChild(eleLink);
     },
   },
 };

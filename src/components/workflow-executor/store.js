@@ -1,5 +1,6 @@
 import API from "../../service/api.js";
-import { REVIEW_OP_TYPE, REVIEW_OP_APPEND, REVIEW_STATUS, WF_IMPORTANCE, WF_SECTRE, WF_URGENT } from "../../const/workflow";
+import { REVIEW_OP_TYPE, REVIEW_OP_USER, REVIEW_STATUS, WF_IMPORTANCE, WF_SECTRE, WF_URGENT } from "../../const/workflow";
+import { filterByDecimal } from "../../tool/form.js";
 
 const BASEDADA = {
     instanceId: '',
@@ -252,6 +253,7 @@ export default class WfStore {
         if (log) {
             this.log = log;
             this.setTableLogVal(log);
+            this.setLogsFlow(log);
         }
 
         try {
@@ -270,6 +272,22 @@ export default class WfStore {
         this.setInstanceData(instanceRet.data);
     }
 
+    setLogsFlow(logs) {
+        //主体审核流
+        const $el = $("#executorMain").find(`[field=wf_logs]`);
+        if (!$el.get(0)) return;
+        const $wrapper = $('<div class="pso-wf-logs"></div>');
+        for (let log of logs) {
+            if (log.step_code === 'start') continue;
+            const note = log.op_note || (log.op_result === 'pass' ? '通过' : '退回');
+            $wrapper.append(`<div class="pso-wf-logs__item">
+                               <div><span>步骤：${log.step_name}；</span><span>时间：${log.op_time}；</span><span>审核人：${log.user_name}；</span></div>
+                               <div>审核意见：${note}</div>
+                             </div>`);
+        }
+        $el.empty().append($wrapper);
+    }
+
     setTableLogVal(data) {
         //替换主体审核日志部分
         const group = _.groupBy(data, "step_code");
@@ -280,19 +298,18 @@ export default class WfStore {
             let format = $el.attr('format');
             if (format) {
                 const data = group[key][group[key].length - 1];
+                const note = data.op_note || (data.op_result === 'pass' ? '通过' : '退回');
                 format = format.replace(new RegExp(`#man#`, "g"), data.user_name);
                 format = format.replace(new RegExp(`#time#`, "g"), data.op_time);
-                format = format.replace(new RegExp(`#content#`, "g"), data.op_note);
+                format = format.replace(new RegExp(`#content#`, "g"), note);
                 $wrapper.html(format);
             } else {
                 group[key].forEach(item => {
+                    const note = item.op_note || (item.op_result === 'pass' ? '通过' : '退回');
                     $wrapper.append(`<div class="pso-wf-logs__item">
-                            <div>步骤：${item.step_name}</div>
-                            <div>审核人：${item.op_user}</div>
-                            <div>审核时间：${item.op_time}</div>
-                            <div>审核结果：${item.op_result}</div>
-                            <div>审核意见：${item.op_note}</div>
-                           </div>`);
+                    <div><span>步骤：${item.step_name}；</span><span>时间：${item.op_time}；</span><span>审核人：${item.user_name}；</span></div>
+                    <div>审核意见：${note}</div>
+                    </div>`);
                 });
             }
             $el.empty().append($wrapper);
@@ -336,19 +353,9 @@ export default class WfStore {
             }
         }
 
-        if (typeof cpnt.data._decimalPlaces !== "undefined") {
-            try {
-                if (typeof value === "string") {
-                    value = parseFloat(value);
-                }
-                console.log(value);
-                value = value.toFixed(cpnt.data._decimalPlaces);
-            } catch (e) {
-                console.log(e);
-            }
-        }
-
-        $el.html(data.__showVal__ || value);
+        value = data.__showVal__ || filterByDecimal(cpnt.data, value);
+        const _unit = data._unit || '';
+        $el.html((!_.isNaN(value) && !_.isNull(value)) ? `${value} ${_unit}` : '');
 
         //关联表
         if (cpnt.componentid === "asstable" && proxy && fields) {
@@ -536,6 +543,7 @@ export default class WfStore {
             doNextStep,
             optype
         }
+
         if (this.data.instanceId) {
 
             //指定操作
@@ -548,7 +556,7 @@ export default class WfStore {
             }
 
             //用户添加操作
-            if (optype === REVIEW_OP_APPEND) {
+            if (REVIEW_OP_USER.includes(optype)) {
                 if (!this.userOp.appendType || !this.userOp.users) {
                     this.steping = false;
                     throw new Error('请先选择用户');

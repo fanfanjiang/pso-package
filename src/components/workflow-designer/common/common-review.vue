@@ -8,34 +8,30 @@
     <el-form-item :label="pickerText">
       <div class="wf-panel-usersection">
         <div class="wf-panel-usersection__list">
-          <el-tag
-            size="medium"
-            closable
-            @close="handleDelSelection(item)"
-            v-for="(item,index) of node[list]"
-            :key="index"
-          >{{item.name}}</el-tag>
+          <el-tag size="medium" closable @close="handleDelSelection(item)" v-for="(item, index) of node[list]" :key="index">{{
+            item.name
+          }}</el-tag>
         </div>
         <pso-picker-user
-          v-if="node[field]===REVIEW_AUTH_TYPE.anybody.value||node[field]===REVIEW_AUTH_TYPE.one.value"
+          v-if="node[field] === REVIEW_AUTH_TYPE.anybody.value || node[field] === REVIEW_AUTH_TYPE.one.value"
           pattern="checkbox"
           :show="showSelector"
           @confirm="opaAddHandler"
-          @cancel="showSelector=false"
+          @cancel="showSelector = false"
         ></pso-picker-user>
         <pso-picker-position
-          v-if="node[field]===REVIEW_AUTH_TYPE.anyPosition.value||node[field]===REVIEW_AUTH_TYPE.position.value"
+          v-if="node[field] === REVIEW_AUTH_TYPE.anyPosition.value || node[field] === REVIEW_AUTH_TYPE.position.value"
           pattern="checkbox"
           :show="showSelector"
           @confirm="opaAddHandler"
-          @cancel="showSelector=false"
+          @cancel="showSelector = false"
         ></pso-picker-position>
         <pso-picker-post
-          v-if="node[field]===REVIEW_AUTH_TYPE.anyJob.value||node[field]===REVIEW_AUTH_TYPE.job.value"
+          v-if="node[field] === REVIEW_AUTH_TYPE.anyJob.value || node[field] === REVIEW_AUTH_TYPE.job.value"
           pattern="checkbox"
           :show="showSelector"
           @confirm="opaAddHandler"
-          @cancel="showSelector=false"
+          @cancel="showSelector = false"
         ></pso-picker-post>
       </div>
     </el-form-item>
@@ -102,16 +98,22 @@ export default {
   created() {
     if (this.reset) {
       this.resetPicker({ dataListName: this.list, reset: false });
-      this.node[this.list] = [];
     }
     this.node[this.field] && this.opaChangeHandler(this.node[this.field], false);
   },
   methods: {
     opaAddHandler(data) {
       const auth = _.find(this.authType, { value: this.node[this.field] });
-      data.forEach((item) =>
-        Object.assign(item, { uid: "", pid: "", did: "" }, { [auth.opaId]: item[auth.idName], name: item[auth.opaName] })
-      );
+      data.forEach((item) => {
+        delete item.create_time;
+        delete item.expire_time;
+        delete item.user_pwd;
+        delete item.user_sex;
+        delete item.user_email;
+        delete item.user_img;
+        delete item.user_phone;
+        Object.assign(item, { uid: "", pid: "", did: "" }, { [auth.opaId]: item[auth.idName], name: item[auth.opaName] });
+      });
       this.handleAddSelection(data);
     },
     opaChangeHandler(value, reset = true) {

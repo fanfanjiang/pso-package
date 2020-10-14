@@ -9,7 +9,7 @@
     </div>
     <div v-if="data.isPublic" class="pso-dd-public">
       <pso-title>对外配置</pso-title>
-      <el-form ref="form" label-width="80px" label-position="left">
+      <el-form ref="form" label-width="120px" label-position="left">
         <pso-form-attach :cpnt="logo" @value-change="handleLogoChange">
           <el-button icon="el-icon-paperclip" plain size="mini">上传LOGO</el-button>
         </pso-form-attach>
@@ -24,6 +24,16 @@
         </el-form-item>
         <el-form-item label="是否提交">
           <el-switch v-model="data.submitable"></el-switch>
+        </el-form-item>
+        <el-form-item label="表单label宽度">
+          <el-input v-model="data.formLabelWith" size="mini"></el-input>
+        </el-form-item>
+        <el-form-item label="对齐方式">
+          <el-select size="mini" v-model="data.formLabelPosition">
+            <el-option label="顶部对齐" value="top"></el-option>
+            <el-option label="左对齐" value="left"></el-option>
+            <el-option label="右对齐" value="right"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <pso-title>发布数据规则</pso-title>
@@ -120,6 +130,9 @@ export default {
       this.data.rules.forEach((f) => {
         f.cpnt = this.makeCpnt(f, { [f.id]: f.val });
       });
+    }
+    if (typeof this.data.attach === "object") {
+      this.data.attach = "";
     }
     this.logo.data = genComponentData({ componentid: "attachment", _fieldName: "LOGO", _val: this.data.attach || "" });
     this.init = false;

@@ -15,6 +15,30 @@
         background-color: #f8f8f8;
     }
 
+    &.pso-wf-executor__m {
+        .pso-wf-executor__overview {
+            .pso-wf-executor__overview-item {
+                padding: 15px 2px !important;
+
+                >span {
+                    font-size: 11px !important;
+                }
+            }
+        }
+
+        .pso-wf-executor__main-content-wrapper {
+            font-size: 11px !important;
+        }
+
+        .el-card__body {
+            padding: 8px !important;
+
+            p {
+                font-size: 12px !important;
+            }
+        }
+    }
+
     .pso-wf-executor__overview {
         position: relative;
         display: flex;
@@ -128,6 +152,18 @@
 
             .pso-wf-executor__main-log {
                 padding: 10px;
+
+                .pso-wf-executor__log {
+                    padding: 0;
+                }
+
+                .el-timeline {
+                    padding-left: 0 !important;
+
+                    .el-timeline-item {
+                        padding-bottom: 10px;
+                    }
+                }
             }
 
             .pso-wf-executor__user {
@@ -291,7 +327,7 @@
         }
 
         .el-card__body {
-            padding: 20px;
+            padding: 12px;
 
             h4 {
                 margin-top: 0;
@@ -369,16 +405,22 @@
     font-size: 12px;
 
     &+.pso-wf-logs {
-        margin-top: 5px;
+        margin-top: 10px;
     }
 
     .pso-wf-logs__item {
         font-size: 12px;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
 
         >div {
             margin-bottom: 2px;
             font-size: 12px;
+
+            >span {
+                &+span {
+                    margin-left: 10px;
+                }
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
-import { CPNT } from "../const/form";
+import { CPNT, SUMMARY_OP } from "../const/form";
 import { FILTER_OP, FILTER_TYPE } from "../../share/const/filter";
 import { genComponentData } from '../components/form-designer/helper'
-import API from "../service/api.js"; 
+import API from "../service/api.js";
 
 export function transCMapToCondition(map) {
     try {
@@ -65,10 +65,29 @@ export async function makeFormByScript({ code, onEach }) {
 }
 
 export function makeSysFormFields() {
-    const sysFields = ['leaf_id', 'd_status'];
+    const sysFields = ['leaf_id', 'd_status', 'd_audit'];
     const fields = [];
     sysFields.forEach(f => {
         fields.push(genComponentData({ componentid: 'text', _fieldValue: f, _fieldName: f }))
     })
     return fields;
+}
+
+export function filterByDecimal(cpnt, value) {
+    try {
+        const { componentid, _decimalPlaces, _selectedOp } = cpnt;
+        if (componentid === 'summary' && SUMMARY_OP.datetime.includes(_selectedOp)) return value;
+
+        if (typeof _decimalPlaces !== "undefined" && _decimalPlaces && !_.isNaN(value) && !_.isNull(value) && value !== '') {
+            if (typeof value === "string") {
+                value = parseFloat(value);
+            }
+            return value.toFixed(_decimalPlaces);
+        }
+
+        return value;
+    } catch (e) {
+        console.log(e);
+        return value;
+    }
 }

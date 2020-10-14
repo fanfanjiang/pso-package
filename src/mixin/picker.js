@@ -62,7 +62,7 @@ export function pickerMixin({
             },
             resetPicker({ idName, reset = true, dataListName }) {
                 if (dataListName) {
-                    this.$set(this.baseObj, dataListName, []);
+                    this.$set(this.baseObj, dataListName, this.baseObj[dataListName] || []);
                     this.pickerListName = dataListName;
                 }
                 if (reset) this.baseObj[this.pickerListName] = [];

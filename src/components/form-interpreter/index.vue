@@ -1,7 +1,7 @@
 <template>
   <div class="pso-form">
     <transition name="el-fade-in">
-      <el-form v-if="!loading && store" label-width="80px" label-position="top" size="medium" v-loading="store.storeLoading">
+      <el-form v-if="!loading && store" :label-width="labelWidth" :label-position="labelPosition" size="medium" v-loading="store.storeLoading">
         <pso-form-component v-for="cpnt in store.root.childComponents" :key="cpnt.fid" :cpnt="cpnt"></pso-form-component>
       </el-form>
     </transition>
@@ -15,6 +15,7 @@ import FormStore from "../form-designer/model/store.js";
 import shortid from "shortid";
 import emitter from "../../mixin/emitter";
 import { FIELD_FORMAT } from "../../const/form";
+import { filterByDecimal } from "../../tool/form";
 
 export default {
   name: "pso-form-interpreter",
@@ -38,6 +39,14 @@ export default {
     mockAsstables: Object,
     hiddenCpnts: Array,
     extendAuth: Array,
+    labelPosition: {
+      type: String,
+      default: "top",
+    },
+    labelWidth: {
+      type: String,
+      default: "120px",
+    },
   },
   data() {
     return {
@@ -215,20 +224,7 @@ export default {
               }
             }
 
-            let val = cpntData._val;
-            if (typeof cpnt.data._decimalPlaces !== "undefined") {
-              try {
-                if (typeof val === "string") {
-                  val = parseFloat(val);
-                }
-                console.log(val);
-                val = val.toFixed(cpnt.data._decimalPlaces);
-              } catch (e) {
-                console.log(e);
-              }
-            }
-
-            mainData[cpntData._fieldValue] = val;
+            mainData[cpntData._fieldValue] = filterByDecimal(cpnt.data, cpntData._val);
           }
         }
       } catch (error) {

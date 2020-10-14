@@ -72,7 +72,7 @@ export const REVIEW_OP_TYPE = {
     end: {
         name: '结束',
         id: "end",
-        type: 'over',
+        type: 'finish',
         value: 4
     },
     rollback: {
@@ -93,28 +93,29 @@ export const REVIEW_OP_TYPE = {
         type: 'appoint',
         value: 32
     },
-    Copy: {
+    copy: {
         name: '抄送',
-        id: "Copy",
-        type: 'append',
+        id: "copy",
+        type: 'copy',
         value: 64
     },
-    Distribute: {
+    distribute: {
         name: '分发',
-        id: "Distribute",
-        type: 'append',
+        id: "distribute",
+        type: 'distribute',
         value: 128
     },
-    AddSign: {
+    countersign: {
         name: '加签',
-        id: "AddSign",
+        id: "countersign",
         type: 'append',
         value: 256
     }
 }
+
 export const REVIEW_OP_APPEND = 'append';
 
-export const REVIEW_OP_USER = [REVIEW_OP_TYPE.Copy, REVIEW_OP_TYPE.Distribute, REVIEW_OP_TYPE.AddSign];
+export const REVIEW_OP_USER = [REVIEW_OP_TYPE.copy.type, REVIEW_OP_TYPE.distribute.type, REVIEW_OP_TYPE.countersign.type];
 
 export const REVIEW_AUTH_TYPE = {
     anybody: {

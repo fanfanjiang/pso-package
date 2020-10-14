@@ -53,6 +53,7 @@ export default {
       })[0];
     },
     figure(data, field) {
+      console.log(data); 
       const op = this.cpnt.data._selectedOp;
       switch (op) {
         case SUMMARY_OP_TYPE.COUNT_FILLED:

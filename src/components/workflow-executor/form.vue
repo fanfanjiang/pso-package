@@ -47,7 +47,6 @@ export default {
       this.dispatch("PsoWfExecutorBox", "initialized", this.store);
     },
     formChangeHandler(data) {
-      console.log(data);
       this.store.setTableVal(data);
     },
   },

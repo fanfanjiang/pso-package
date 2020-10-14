@@ -1,41 +1,23 @@
 <template>
   <div class="pso-executor-op">
-    <el-popconfirm
-      v-if="justShowConfirm"
-      @onConfirm="confirm"
-      v-model="visible"
-      :title="confirmText"
-    >
-      <el-button slot="reference" plain :type="type" size="small">{{text}}</el-button>
+    <el-popconfirm v-if="justShowConfirm" @onConfirm="confirm" v-model="visible" :title="confirmText">
+      <el-button slot="reference" plain :type="type" size="small">{{ text }}</el-button>
     </el-popconfirm>
-    <el-popover
-      v-else
-      placement="top"
-      width="300"
-      transition="el-zoom-in-top"
-      trigger="click"
-      v-model="visible"
-    >
-      <el-radio-group v-if="store.curStep.atype==='tag'" v-model="store.data.opinion" size="mini">
+    <el-popover v-else placement="top" width="300" transition="el-zoom-in-top" trigger="click" v-model="visible">
+      <el-radio-group v-if="store.curStep.atype === 'tag'" v-model="store.data.opinion" size="mini">
         <template v-if="showOkTag">
-          <el-radio :label="text" v-for="text of WF_TAG_TEXT_PASS" :key="text">{{text}}</el-radio>
+          <el-radio :label="text" v-for="text of WF_TAG_TEXT_PASS" :key="text">{{ text }}</el-radio>
         </template>
         <template v-else>
-          <el-radio :label="text" v-for="text of WF_TAG_TEXT_REJECT" :key="text">{{text}}</el-radio>
+          <el-radio :label="text" v-for="text of WF_TAG_TEXT_REJECT" :key="text">{{ text }}</el-radio>
         </template>
       </el-radio-group>
-      <el-input
-        v-if="showOption"
-        type="textarea"
-        :rows="2"
-        placeholder="请输入意见"
-        v-model="store.data.opinion"
-      ></el-input>
+      <el-input v-if="showOption" type="textarea" :rows="2" placeholder="请输入意见" v-model="store.data.opinion"></el-input>
       <div class="pso-executor-op__confitm">
-        <el-button size="small" type="text" @click="visible=false">取消</el-button>
-        <el-button type="primary" size="small" @click="confirm">{{text}}</el-button>
+        <el-button size="small" type="text" @click="visible = false">取消</el-button>
+        <el-button type="primary" size="small" @click="confirm">{{ text }}</el-button>
       </div>
-      <el-button slot="reference" plain :type="type" size="small">{{text}}</el-button>
+      <el-button slot="reference" plain :type="type" size="small">{{ text }}</el-button>
     </el-popover>
   </div>
 </template>
@@ -82,6 +64,7 @@ export default {
   methods: {
     confirm() {
       this.visible = false;
+      this.store.data.opinion = this.store.data.opinion || (this.showOkTag ? "通过" : "不同意");
       this.$emit("confirm", true);
     },
   },

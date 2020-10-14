@@ -9,11 +9,11 @@
             </div>
             <div class="pso-wf-executor__main-content-wrapper" id="executorMain">
               <slot name="content" :store="store"></slot>
-              <div v-if="!isMobile" ref="wfTable" class="pso-wf-executor__main-content" v-html="store.cfg.wf_body_tp"></div>
+              <div ref="wfTable" class="pso-wf-executor__main-content" v-html="store.cfg.wf_body_tp"></div>
               <div class="pso-wf-executor__stamp" v-if="!store.loading" v-html="stamp.stamp" :style="stampStyle"></div>
-            </div>
-            <div class="pso-wf-executor__main-log">
-              <pso-wf-log :store="store"></pso-wf-log>
+              <div class="pso-wf-executor__main-log">
+                <pso-wf-log :store="store"></pso-wf-log>
+              </div>
             </div>
           </div>
           <transition name="el-zoom-in-bottom">
@@ -69,9 +69,8 @@ export default {
   components: { PsoWfMainform, PsoWfop, PsoWfopUser, PsoWfOverview, PsoWfForm, PsoWfAttach, PsoWfChart, PsoWfLog },
   mixins: [executor, op],
   data() {
-    return {
-      REVIEW_OP_TYPE: REVIEW_OP_TYPE,
-    };
+    this.REVIEW_OP_TYPE = REVIEW_OP_TYPE;
+    return {};
   },
   computed: {
     extendClass() {
@@ -82,7 +81,7 @@ export default {
     },
     executorClass() {
       return {
-        "pso-wf-executor__m": this.isMobile,
+        "pso-wf-executor__m": this.__isMobile__,
       };
     },
     stamp() {
@@ -105,10 +104,12 @@ export default {
       };
     },
   },
-  async created() {},
+  async created() {
+    this.store.showExtend = !this.__isMobile__;
+  },
   methods: {
-    async append(op) {
-      await this.nextStep(op);
+    async append() {
+      await this.nextStep(this.store.userOp.appendType);
     },
     doPrint() {
       this.print($("#executorMain").get(0));
