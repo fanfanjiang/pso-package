@@ -1,6 +1,6 @@
 <template>
   <div class="pso-upload__list">
-    <div class="pso-upload__list-item" v-for="(file, index) in files" :key="file.fid">
+    <div class="pso-upload__list-item" :style="showStyle" v-for="(file, index) in files" :key="file.fid">
       <div class="pso-upload__list-item-fix">
         <div class="pso-upload__list-item__progress" v-if="file.percentage !== 100">
           <el-progress :width="80" type="circle" :percentage="file.percentage"></el-progress>
@@ -48,12 +48,26 @@ export default {
       type: Boolean,
       default: true,
     },
+    width: String,
+    height: String,
   },
   data() {
     return {
       showViewer: false,
       fIndex: 0,
     };
+  },
+  computed: {
+    showStyle() {
+      const style = {};
+      if (this.width) {
+        style.width = this.width;
+      }
+      if (this.height) {
+        style.height = this.height;
+      }
+      return style;
+    },
   },
   methods: {
     goShowViewer(params) {

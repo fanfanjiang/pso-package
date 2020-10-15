@@ -28,14 +28,14 @@ export function makeFiles({ files, urlField = "url", nameField = "name" }) {
         file.name = file[nameField] || file['filename'];
         file.url = file[urlField];
         file.percentage = 100;
-        file.isImg = isImages(file.name);
-        file.icon = getFileIcon(file.name, file.url);
+        file.isImg = isImages(file.url);
+        file.icon = getFileIcon(file.url, file.url);
         if (file.res_id) file.leaf_id = file.res_id;
         file.style = {
             "background-image": `url(${file.icon})`
         };
         if (file.isImg) {
-            file.style["background-size"] = "cover";
+            file.style["background-size"] = "100% 100%";
         }
     }
     return files;

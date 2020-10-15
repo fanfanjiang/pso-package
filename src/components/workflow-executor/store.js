@@ -161,6 +161,13 @@ export default class WfStore {
         return this.data.instanceId ? this.data.nextUser : this.cfg.nextUser;
     }
 
+    get nextEmptyNode() {
+        if (this.doNextUser) {
+            const { target } = this.getFlowNode({ nid: this.doNextUser.current_step });
+            return target;
+        }
+    }
+
     // 新建流程实例
     newInstance() {
         //设置当前执行节点为开始节点

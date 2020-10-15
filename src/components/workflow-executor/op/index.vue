@@ -104,7 +104,11 @@ export default {
     },
     async confirm(unAppendForm = true) {
       if (this.store.isNextEmpty) {
-        this.$message({ message: "请选择下一步审核人，选择后点击下一步完成审核", type: "warning" });
+        let tip = "";
+        if (this.store.nextEmptyNode) {
+          tip = `“${this.store.nextEmptyNode.name}”的`;
+        }
+        this.$message({ message: `请选择下一步${tip}审核人，选择后点击下一步完成审核`, type: "warning", duration: 10000 });
         this.openUserOp({ text: "下一步", op: this.REVIEW_OP_TYPE.confirm.type });
       } else {
         await this.nextStep(this.REVIEW_OP_TYPE.confirm.type, unAppendForm);
@@ -135,7 +139,7 @@ export default {
     },
     distribute() {
       this.openUserOp({ text: "分发", op: this.REVIEW_OP_TYPE.distribute.type });
-    }, 
+    },
     countersign() {
       this.openUserOp({ text: "加签", op: this.REVIEW_OP_TYPE.countersign.type });
     },

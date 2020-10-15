@@ -2,7 +2,7 @@
   <pso-label :cpnt="cpnt">
     <div class="pso-form-upload">
       <el-popover
-        v-if="storeEditable"
+        v-if="cpntEditable"
         :visible-arrow="false"
         transition="el-zoom-in-top"
         popper-class="pso-upload-wrapper"
@@ -17,8 +17,15 @@
           </slot>
         </template>
       </el-popover>
-      <div class="pso-form-upload__files" v-if="preview && proxy.length">
-        <pso-file-list v-if="!loadingFile" :files="proxy" @delete="deleteFile" :remove="storeEditable"></pso-file-list>
+      <div class="pso-form-upload__files" :style="showStyle" v-if="preview && proxy.length">
+        <pso-file-list
+          v-if="!loadingFile"
+          :files="proxy"
+          @delete="deleteFile"
+          :remove="cpntEditable"
+          :width="cpnt.data._showwidth"
+          :height="cpnt.data._showheight"
+        ></pso-file-list>
         <pso-skeleton v-else :lines="1"></pso-skeleton>
       </div>
     </div>
@@ -57,6 +64,18 @@ export default {
       fIndex: 0,
       proxy: [],
     };
+  },
+  computed: {
+    showStyle() {
+      const style = {};
+      if (this.cpnt.data._showwidth) {
+        style.width = this.cpnt.data._showwidth;
+      }
+      if (this.cpnt.data._showheight) {
+        style.height = this.cpnt.data._showheight;
+      }
+      return style;
+    },
   },
   created() {
     this.cpnt.data._limit = 100;

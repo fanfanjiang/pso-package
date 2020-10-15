@@ -11,9 +11,9 @@
               <slot name="content" :store="store"></slot>
               <div ref="wfTable" class="pso-wf-executor__main-content" v-html="store.cfg.wf_body_tp"></div>
               <div class="pso-wf-executor__stamp" v-if="!store.loading" v-html="stamp.stamp" :style="stampStyle"></div>
-              <div class="pso-wf-executor__main-log">
-                <pso-wf-log :store="store"></pso-wf-log>
-              </div>
+            </div>
+            <div class="pso-wf-executor__main-log">
+              <pso-wf-log :store="store"></pso-wf-log>
             </div>
           </div>
           <transition name="el-zoom-in-bottom">

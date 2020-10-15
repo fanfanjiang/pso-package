@@ -134,14 +134,13 @@ export default {
     };
   },
   async created() {
-    //加载流程列表
     this.initializing = true;
+
     this.templetes = await this.API.getTempleteTree();
     this.forms = await this.API.getFormTree();
-    //加载表单列表
     this.workflows = await this.API.getWfTree();
-    const tagRet = await this.API.getTreeDimen();
-    this.tags = tagRet.data;
+    this.tags = (await this.API.getTreeDimen()).data;
+
     await this.getTpDetail(this.node[this.field], this.data);
 
     //初始获取表单和流程字段
