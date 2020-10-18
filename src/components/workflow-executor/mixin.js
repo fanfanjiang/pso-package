@@ -4,6 +4,9 @@ const UAParser = require("../../../share/util/u-agent");
 import WfStore from "./store";
 import { mapState } from "vuex";
 
+import PsoFormAttach from "../form-interpreter/components/attachment";
+import { genComponentData } from "../form-designer/helper";
+
 export const executor = {
     mixins: [emitter],
     componentName: "PsoWfExecutor",
@@ -90,5 +93,28 @@ export const op = {
             this.ResultNotify(result, "");
             this.dispatch("PsoWfExecutorBox", "op-excuted", { optype, status: this.store.data.status, result });
         }
+    }
+};
+
+export const opAttach = {
+    components: { PsoFormAttach },
+    data() {
+        return {
+            attach: { data: {} },
+        };
+    },
+    created() {
+        this.attach.data = genComponentData({ componentid: "attachment", _fieldName: "", _val: "" });
+        this.attach.data._fieldName = "";
+    },
+    methods: {
+        handleAttachChange({ value }) {
+            this.store.data.attachIds = value;
+            if (this.$refs.popover) {
+                this.$nextTick(() => {
+                    this.$refs.popover.updatePopper();
+                });
+            }
+        },
     }
 };

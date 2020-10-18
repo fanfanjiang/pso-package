@@ -8,7 +8,7 @@
         <sql-item :block="block" :params="params" :params-n="paramsN" :params-v="paramsV"></sql-item>
       </el-tab-pane>
     </el-tabs>
-  </div> 
+  </div>
 </template>
 <script>
 import shortid from "shortid";
@@ -47,6 +47,8 @@ export default {
         data_code: "",
         field_config: [],
         optype: "0",
+        is_split: "0",
+        split_field: "",
       });
       this.activeTab = id;
     },

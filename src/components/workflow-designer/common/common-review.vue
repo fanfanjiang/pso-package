@@ -8,9 +8,9 @@
     <el-form-item :label="pickerText">
       <div class="wf-panel-usersection">
         <div class="wf-panel-usersection__list">
-          <el-tag size="medium" closable @close="handleDelSelection(item)" v-for="(item, index) of node[list]" :key="index">{{
-            item.name
-          }}</el-tag>
+          <el-tag size="medium" closable @close="handleDelSelection(item)" v-for="(item, index) of node[list]" :key="index">
+            {{ item.name }}{{item.uid}}
+          </el-tag>
         </div>
         <pso-picker-user
           v-if="node[field] === REVIEW_AUTH_TYPE.anybody.value || node[field] === REVIEW_AUTH_TYPE.one.value"

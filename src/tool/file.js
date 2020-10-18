@@ -35,7 +35,7 @@ export function makeFiles({ files, urlField = "url", nameField = "name" }) {
             "background-image": `url(${file.icon})`
         };
         if (file.isImg) {
-            file.style["background-size"] = "100% 100%";
+            file.style["background-size"] = "cover";
         }
     }
     return files;

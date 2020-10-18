@@ -1,37 +1,37 @@
 <template>
-  <common-node
-    @click-node="$emit('click-node',$event)"
-    :node="node"
-    :pnode="pnode"
-    :readMode="readMode"
-    :workflowImage="workflowImage"
-  >
+  <common-node @click-node="$emit('click-node', $event)" :node="node" :pnode="pnode" :readMode="readMode" :workflowImage="workflowImage">
     <div class="wf-node-review" v-if="!wfDesigner.displaySmall">
       <div class="wf-node-review__header">
-        <span>{{node.name}}</span>
+        <span>{{ node.name }}</span>
         <i class="el-icon-edit-outline"></i>
       </div>
       <div class="wf-node-review__body">
         <div class="wf-node__info" v-if="reviewType">
           <span class="wf-node__info-title">审批类型</span>
-          <span class="wf-node__info-detail">{{reviewType}}</span>
+          <span class="wf-node__info-detail">{{ reviewType }}</span>
         </div>
-        <div class="wf-node__info" v-if="node.opList.length">
+        <div class="wf-node__info wf-node__info-opt" v-if="node.opList.length">
           <span class="wf-node__info-title">操作授权</span>
           <span class="wf-node__info-detail">
-            <el-tag size="mini" v-for="(item,index) of node.opList" :key="index">{{getOpName(item)}}</el-tag>
+            <el-tag size="mini" v-for="(item, i) of node.opList" :key="i">{{ getOpName(item) }}</el-tag>
           </span>
         </div>
         <div class="wf-node__info" v-if="node.opaitems.length">
-          <span class="wf-node__info-title">负责人</span>
+          <span class="wf-node__info-title">审核人</span>
           <span class="wf-node__info-detail">
-            <el-tag size="mini" v-for="(item,index) of node.opaitems" :key="index">{{item.name}}</el-tag>
+            <el-tag size="mini" v-for="(item, i) of node.opaitems" :key="i">{{ item.name }}</el-tag>
+          </span>
+        </div>
+        <div class="wf-node__info" v-if="node.copyList && node.copyList.length">
+          <span class="wf-node__info-title">抄送</span>
+          <span class="wf-node__info-detail">
+            <el-tag size="mini" v-for="(item, i) of node.copyList" :key="i">{{ item.name }}</el-tag>
           </span>
         </div>
       </div>
     </div>
     <el-tooltip v-else :open-delay="600" effect="dark" :content="node.name" placement="top-start">
-      <div class="wf-node__small wf-node__small__review">{{smallName}}</div>
+      <div class="wf-node__small wf-node__small__review">{{ smallName }}</div>
     </el-tooltip>
   </common-node>
 </template>

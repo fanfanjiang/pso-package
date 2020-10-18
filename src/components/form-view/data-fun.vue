@@ -23,7 +23,7 @@
     <el-dropdown size="small" @command="operateMore" v-if="moreable">
       <el-button class="el-dropdown-link" size="mini" type="text">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="downloadFormTp">下载模板</el-dropdown-item>
+        <el-dropdown-item command="downloadFormTp" v-if="opAddable">下载模板</el-dropdown-item>
         <el-dropdown-item v-if="opAddable">
           <el-form>
             <pso-form-attach :cpnt="uploadAttach" :data="{ data_code: store.formCfg.data_code }" :preview="false" :api="uploadAPI">

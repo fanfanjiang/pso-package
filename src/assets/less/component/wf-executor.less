@@ -171,7 +171,7 @@
                 bottom: 5px;
                 right: 5px;
                 box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-                width: 250px;
+                width: 300px;
                 background-color: #fff;
                 z-index: 2;
 
@@ -184,8 +184,9 @@
                 }
 
                 .pso-wf-executor__user-body {
-                    min-height: 100px;
+                    height: 160px;
                     padding: 10px;
+                    overflow: auto;
 
                     .el-tag {
                         margin-bottom: 5px;
@@ -196,9 +197,12 @@
                     }
                 }
 
-                .pso-wf-executor__user-footer {
-                    text-align: right;
+                .pso-wf-executor__user-comment {
                     padding: 10px;
+                }
+
+                .pso-executor-op__footer {
+                    margin: 10px;
                 }
             }
         }
@@ -218,6 +222,10 @@
                 display: flex;
                 justify-content: flex-end;
 
+                .pso-wf-executor__op-body {
+                    display: flex;
+                }
+
                 .el-radio-group {
                     display: flex;
                 }
@@ -232,6 +240,7 @@
                     &+.el-button {
                         margin-left: 10px;
                     }
+
                 }
 
                 .el-button {
@@ -292,6 +301,20 @@
         height: 100%;
         position: relative;
 
+        .wf-node-review__header {
+            i {
+                display: none;
+            }
+        }
+
+        .wf-node__info-opt {
+            display: none !important;
+        }
+
+        .wf-branchitem-node__footer {
+            display: none;
+        }
+
         .pso-wf__flowchart-card {
             position: absolute;
             top: 0;
@@ -320,14 +343,16 @@
 
     .pso-wf-executor__log {
         min-height: 100%;
-        padding: 20px 30px 0 0;
+        padding: 20px 10px 0 0;
 
         .el-timeline {
             padding-left: 0;
         }
 
-        .el-card__body {
-            padding: 12px;
+        .pso-wf-executor__log-item {
+            .pso-wf-executor__log-item-user {
+                color: @main-color;
+            }
 
             h4 {
                 margin-top: 0;
@@ -335,7 +360,12 @@
             }
 
             p {
-                margin-top: 5px;
+                margin-top: 0;
+
+                &+p {
+                    margin-top: 5px;
+                }
+
                 margin-bottom: 0;
             }
         }
@@ -467,5 +497,32 @@
 
     th {
         text-align: center !important;
+    }
+}
+
+
+.pso-executor-op__footer {
+    position: relative;
+    margin-top: 15px;
+
+    .pso-executor-op__footer-body {}
+
+    .pso-executor-op__footer-btn {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+
+    .el-form-item {
+        margin-bottom: 0;
+    }
+
+    .el-form-item__content {
+        line-height: inherit;
+    }
+
+    .pso-form-upload__files {
+        margin-top: 0px !important;
+        margin-bottom: 10px;
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <el-input size="small" :disabled="!cpnt.store.editable||cpnt.data._read" v-model="idVal"></el-input>
+    <el-input size="small" :disabled="!cpnt.store.editable || cpnt.data._read" v-model="idVal"></el-input>
   </pso-label>
 </template>
 <script>
@@ -33,6 +33,10 @@ export default {
     if (!instance_id) {
       if (this.cpnt.data._fieldFormat === FIELD_FORMAT.autotag.value) {
         if (this.cpnt.data._bind) {
+          const target = this.cpnt.store.search({ options: { fid: this.cpnt.data._bind }, onlyData: true });
+          if (target) {
+            this.cpnt.data._val = target._val;
+          }
           this.$on("cpnt-value-changed", ({ cpnt }) => {
             if (cpnt.fid === this.cpnt.data._bind) {
               this.cpnt.data._val = cpnt.data._val;
@@ -66,6 +70,7 @@ export default {
     },
     setTrueVal() {
       this.cpnt.data._val = this.idVal + this.scriptVal;
+      console.log(this.cpnt.data._val);
     },
   },
 };

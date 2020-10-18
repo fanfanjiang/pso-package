@@ -567,6 +567,15 @@ export default class API {
             throw error;
         }
     }
+
+    static async getStatisticData(data) {
+        try {
+            return await this.request('/api/templates/statistics', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }
 
 //请求拦截器

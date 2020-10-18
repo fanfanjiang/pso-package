@@ -69,6 +69,7 @@ export default class FormViewStore {
         //权限视图
         this.authViews = [];
         this.activeView = 0;
+        this.where = {};
 
         //页面的文字
         this.cpntText = {
@@ -148,7 +149,7 @@ export default class FormViewStore {
                     Vue.set(s, 'total', exist.total);
                 }
             });
-            await this.fetchCuzFastSwtich('curStatus', 'd_status')
+            await this.fetchCuzFastSwtich('curStatus', 'd_status');
         }
         this.starting = false;
     }
@@ -218,7 +219,7 @@ export default class FormViewStore {
         if (leaf_id) {
             const index = _.findIndex(this.instances, { leaf_id });
             if (index !== -1 && index < this.instances.length - 1) {
-                this.showInstance(this.instances[index + 1])
+                this.showInstance(this.instances[index + 1]);
             }
         }
     }
@@ -600,9 +601,9 @@ export default class FormViewStore {
         this.deFetch();
     }
 
-    dragHandler(newWidth, oldWidth, column, event) {
+    dragHandler(newWidth, oldWidth, column, event, tfield = 'field_name') {
         if (this.oriColData) {
-            const exist = _.find(this.oriColData, { field_name: column.property });
+            const exist = _.find(this.oriColData, { [tfield]: column.property });
             if (exist) {
                 exist.width = parseInt(newWidth);
             }

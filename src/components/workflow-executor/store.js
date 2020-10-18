@@ -15,6 +15,7 @@ const BASEDADA = {
     secret: WF_SECTRE[0],
     filetype: '',
     opinion: '',
+    attachIds: '',
     d_tag: '',
     msg_tag: '',
     creator_name: '',
@@ -43,7 +44,8 @@ export default class WfStore {
         this.userOp = {
             users: '',
             appendType: '',
-            text: ''
+            text: '',
+            title: ''
         }
 
         this.data = _.cloneDeep(BASEDADA);
@@ -176,7 +178,8 @@ export default class WfStore {
         this.userOp = {
             users: '',
             appendType: '',
-            text: ''
+            text: '',
+            title: ''
         }
     }
 
@@ -225,11 +228,18 @@ export default class WfStore {
         this.data.ctime = "";
         this.data.status = REVIEW_STATUS.save.value;
         this.log = [];
+        this.setTableLogVal(this.log);
+        this.setLogsFlow(this.log);
+        try {
+            this.prepareMainTableVal(this.data);
+        } catch (error) {
+            console.log('渲染主体错误：' + error);
+        }
     }
 
     setInstanceData(instanceData) {
         //设置基本实例参数
-        const { instance, steps, file, log, nextUser } = instanceData;
+        const { instance, steps, file, log, nextUser, nodes } = instanceData;
         Object.keys(instance).forEach(key => (this.data.hasOwnProperty(key) && (this.data[key] = instance[key])));
         this.data.filetype = this.data.filetype || instance.fileType;
         this.data.name = this.data.name || instance.instanceName;
@@ -258,9 +268,22 @@ export default class WfStore {
 
         //设置日志
         if (log) {
+            log.forEach(l => {
+                l.op_note = l.op_note || (l.op_result === 'pass' ? '通过' : '退回');
+            })
             this.log = log;
             this.setTableLogVal(log);
             this.setLogsFlow(log);
+        }
+
+        //设置审核人
+        if (nodes) {
+            for (let nid in nodes) {
+                const { target } = this.getFlowNode({ nid });
+                if (target) {
+                    target.opaitems = nodes[nid].map(n => ({ name: n.user_name }))
+                }
+            }
         }
 
         try {
@@ -286,11 +309,9 @@ export default class WfStore {
         const $wrapper = $('<div class="pso-wf-logs"></div>');
         for (let log of logs) {
             if (log.step_code === 'start') continue;
-            const note = log.op_note || (log.op_result === 'pass' ? '通过' : '退回');
             $wrapper.append(`<div class="pso-wf-logs__item">
-                               <div><span>步骤：${log.step_name}；</span><span>时间：${log.op_time}；</span><span>审核人：${log.user_name}；</span></div>
-                               <div>审核意见：${note}</div>
-                             </div>`);
+                    <div>${log.op_time}；在步骤${log.step_name}；审核人${log.user_name}  发布评论：${log.op_note}</div>
+                    </div>`);
         }
         $el.empty().append($wrapper);
     }
@@ -305,17 +326,14 @@ export default class WfStore {
             let format = $el.attr('format');
             if (format) {
                 const data = group[key][group[key].length - 1];
-                const note = data.op_note || (data.op_result === 'pass' ? '通过' : '退回');
                 format = format.replace(new RegExp(`#man#`, "g"), data.user_name);
                 format = format.replace(new RegExp(`#time#`, "g"), data.op_time);
-                format = format.replace(new RegExp(`#content#`, "g"), note);
+                format = format.replace(new RegExp(`#content#`, "g"), data.op_note);
                 $wrapper.html(format);
             } else {
-                group[key].forEach(item => {
-                    const note = item.op_note || (item.op_result === 'pass' ? '通过' : '退回');
+                group[key].forEach(log => {
                     $wrapper.append(`<div class="pso-wf-logs__item">
-                    <div><span>步骤：${item.step_name}；</span><span>时间：${item.op_time}；</span><span>审核人：${item.user_name}；</span></div>
-                    <div>审核意见：${note}</div>
+                    <div>${log.op_time}；在步骤${log.step_name}；审核人${log.user_name}  发布评论：${log.op_note}</div>
                     </div>`);
                 });
             }
@@ -528,6 +546,7 @@ export default class WfStore {
 
         let doNextUsers;
         let doNextStep;
+
         //下一步是空白人
         if (this.isNextEmpty && optype === REVIEW_OP_TYPE.confirm.type) {
             if (!this.userOp.users) {
@@ -546,9 +565,11 @@ export default class WfStore {
             instanceId: this.data.instanceId,
             note: this.data.opinion,
             stepid: this.curStep.nid,
+            attids: this.data.attach,
+            att_id: this.data.attachIds,
             doNextUsers,
             doNextStep,
-            optype
+            optype,
         }
 
         if (this.data.instanceId) {

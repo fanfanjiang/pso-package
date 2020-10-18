@@ -10,7 +10,7 @@
         >
         <transition name="el-zoom-in-center">
           <el-button
-            v-show="!justShowOne && selectedList.length"
+            v-show="cpnt.data._relate && !justShowOne && selectedList.length"
             type="danger"
             icon="el-icon-delete"
             size="mini"
@@ -188,7 +188,7 @@ export default {
       }
       if (this.cpnt.data._filter) {
         this.cpnt.data._filter.forEach((f) => {
-          if (f.value || f.sid) {
+          if (f.value !== "" || f.sid) {
             let value = f.value;
             if (f.sid) {
               const source = this.cpnt.store.searchByField(f.sid);
@@ -273,7 +273,7 @@ export default {
       this.astStore.analyzeFormCfg(ret.data, this.cpnt.data._showFields);
       this.store = this.astStore.store;
       this.fields = this.astStore.fields;
-      
+
       if (this.cpnt.store) {
         this.subAsstables = this.astStore.store.search({
           options: { componentid: "asstable" },

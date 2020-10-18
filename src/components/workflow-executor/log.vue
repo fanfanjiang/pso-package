@@ -1,28 +1,31 @@
 <template>
   <div class="pso-wf-executor__log">
     <el-timeline>
-      <el-timeline-item
-        v-for="(log,index) of store.log"
-        :key="index"
-        :timestamp="log.op_time"
-        placement="top"
-      >
-        <el-card>
-          <h4>{{log.step_name}}</h4>
-          <p>操作人：{{log.user_name}}</p>
-          <p>评论：{{log.op_note}}</p>
-        </el-card>
+      <el-timeline-item v-for="(log, i) of store.log" :key="i" :timestamp="log.op_time + '  ' + (log.step_name || '提交')" placement="top">
+        <div class="pso-wf-executor__log-item">
+          <p>
+            <span class="pso-wf-executor__log-item-user">{{ log.user_name }}</span>
+            <span v-if="log.step_code === 'start'">创建了记录：</span>
+            <span v-else>发表审核意见：</span>
+            {{ log.op_note }}
+          </p>
+          <p v-if="log.att_id">
+            <pso-attachment :ids="log.att_id"></pso-attachment>
+          </p>
+        </div>
       </el-timeline-item>
     </el-timeline>
   </div>
 </template>
 <script>
+import PsoAttachment from "../attachment";
 export default {
+  components: { PsoAttachment },
   props: {
     store: {
       type: Object,
-      default: () => ({})
-    }
-  }
+      default: () => ({}),
+    },
+  },
 };
 </script>

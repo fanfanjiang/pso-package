@@ -1,6 +1,6 @@
 <template>
   <div class="pso-wf-executor__op">
-    <div v-if="store.curStep">
+    <div class="pso-wf-executor__op-body" v-if="store.curStep">
       <el-button v-if="showSave" type="primary" plain size="small" @click="saveForm">暂存</el-button>
       <pso-wf-confirm
         :store="store"
@@ -8,6 +8,7 @@
         :op="REVIEW_OP_TYPE.confirm"
         :text="nextText"
         @confirm="confirm"
+        key="confirm"
       ></pso-wf-confirm>
       <pso-wf-confirm
         :store="store"
@@ -15,6 +16,7 @@
         :op="REVIEW_OP_TYPE.end"
         text="结束"
         @confirm="end"
+        key="end"
       ></pso-wf-confirm>
       <el-button v-if="showCommand(REVIEW_OP_TYPE.pickreject.value)" type="primary" plain size="small" @click="goPickreject"
         >指定</el-button
@@ -26,6 +28,7 @@
         type="danger"
         text="回退"
         @confirm="rollback"
+        key="rollback"
       ></pso-wf-confirm>
       <pso-wf-confirm
         :store="store"
@@ -34,6 +37,7 @@
         type="danger"
         text="打回"
         @confirm="reject"
+        key="reject"
       ></pso-wf-confirm>
     </div>
     <el-dropdown @command="handleCommand" v-if="store.data.instanceId" placement="top-end" trigger="click">
@@ -106,10 +110,10 @@ export default {
       if (this.store.isNextEmpty) {
         let tip = "";
         if (this.store.nextEmptyNode) {
-          tip = `“${this.store.nextEmptyNode.name}”的`;
+          tip = `${this.store.nextEmptyNode.name}`;
         }
-        this.$message({ message: `请选择下一步${tip}审核人，选择后点击下一步完成审核`, type: "warning", duration: 10000 });
-        this.openUserOp({ text: "下一步", op: this.REVIEW_OP_TYPE.confirm.type });
+        this.$message({ message: `请选择下一步${tip}的审核人，选择后点击确定完成审核`, type: "warning", duration: 10000 });
+        this.openUserOp({ title: tip || "审核人", text: "确定", op: this.REVIEW_OP_TYPE.confirm.type });
       } else {
         await this.nextStep(this.REVIEW_OP_TYPE.confirm.type, unAppendForm);
       }
@@ -143,7 +147,8 @@ export default {
     countersign() {
       this.openUserOp({ text: "加签", op: this.REVIEW_OP_TYPE.countersign.type });
     },
-    openUserOp({ text, op }) {
+    openUserOp({ text, op, title = "" }) {
+      this.store.userOp.title = title;
       this.store.userOp.text = text;
       this.store.userOp.appendType = op;
       this.store.showUserOp = true;

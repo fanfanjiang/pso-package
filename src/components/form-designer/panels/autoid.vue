@@ -12,27 +12,22 @@
         </el-select>
       </el-form-item>
       <el-form-item label="自定义脚本">
-        <el-button icon="el-icon-plus" plain size="small" @click="showDesigner=true">编辑脚本</el-button>
+        <el-button icon="el-icon-plus" plain size="small" @click="showDesigner = true">编辑脚本</el-button>
       </el-form-item>
-      <span>示例：{{sample}}</span>
+      <span>示例：{{ sample }}</span>
     </template>
     <el-form-item label="关联标签字段" v-else-if="cpnt.data._fieldFormat === FIELD_FORMAT.autotag.value">
       <el-select size="mini" v-model="cpnt.data._bind" placeholder="请选择" clearable>
-        <el-option
-          v-for="item in fieldOptions"
-          :key="item.fid"
-          :label="item._fieldName"
-          :value="item.fid"
-        ></el-option>
+        <el-option v-for="item in fieldOptions" :key="item.fid" :label="item._fieldName" :value="item.fid"></el-option>
       </el-select>
     </el-form-item>
-    <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner=false">
+    <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner = false">
       <template v-slot:whole>
         <formula-designer
           :formulable="false"
           :value="cpnt.data._source"
           :cpnts="formulaOptions"
-          @cancel="showDesigner=false"
+          @cancel="showDesigner = false"
           @confirm="handleConfirm"
         ></formula-designer>
       </template>
@@ -57,7 +52,7 @@ export default {
   },
   data() {
     return {
-      digit: ["3", "4", "5", "6"],
+      digit: ["1", "2", "3", "4", "5", "6"],
       dateFormat: [
         { n: "年月日", v: "YYYYMMDD" },
         { n: "年月日时", v: "YYYYMMDDHH" },

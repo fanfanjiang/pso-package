@@ -1,7 +1,13 @@
 <template>
   <div class="pso-form">
     <transition name="el-fade-in">
-      <el-form v-if="!loading && store" :label-width="labelWidth" :label-position="labelPosition" size="medium" v-loading="store.storeLoading">
+      <el-form
+        v-if="!loading && store"
+        :label-width="labelWidth"
+        :label-position="labelPosition"
+        size="medium"
+        v-loading="store.storeLoading"
+      >
         <pso-form-component v-for="cpnt in store.root.childComponents" :key="cpnt.fid" :cpnt="cpnt"></pso-form-component>
       </el-form>
     </transition>
@@ -120,6 +126,11 @@ export default {
         } else {
           this.store.updateInstance();
         }
+      }
+
+      //如果是复制模式
+      if (this.store.copyMode) {
+        this.store.instance_id = "";
       }
 
       this.$emit("data-loaded", this.store);

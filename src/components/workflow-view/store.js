@@ -92,7 +92,7 @@ export default class WFVStore extends FVStore {
 
             const status = _.find(this.wfStatuses, { instance_status: this.lastOp });
 
-            this.fetchCuzFastSwtich('curWfStatus', 'd_audit', status, 'instance_status');
+            await this.fetchCuzFastSwtich('curWfStatus', 'd_audit', status, 'instance_status');
         }
 
         this.starting = false;

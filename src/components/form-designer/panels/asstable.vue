@@ -176,8 +176,6 @@ export default {
       });
 
       this.filterFields = [].concat(this.cpnt.cache.fieldOptions, this.sysFields);
-      console.log(this.sysFields);
-      console.log(this.filterFields);
 
       this.cpnt.cache.defaultEl._option = id;
 

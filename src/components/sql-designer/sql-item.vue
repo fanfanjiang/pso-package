@@ -1,7 +1,7 @@
 <template>
   <div class="sql-block">
     <div class="sql-block__base">
-      <el-form label-position="left" label-width="90px">
+      <el-form label-position="left" label-width="110px">
         <el-form-item label="名称">
           <el-input size="mini" v-model="block.name"></el-input>
         </el-form-item>
@@ -29,6 +29,12 @@
           <el-radio-group v-model="block.optype">
             <el-radio v-for="itm in OPTYPE" :key="itm.v" :label="itm.v">{{ itm.n }}</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="组件分块匹配">
+          <el-switch size="mini" v-model="block.is_split" active-value="1" inactive-value="0"></el-switch>
+        </el-form-item>
+        <el-form-item label="匹配字段" v-if="block.is_split === '1'">
+          <el-input size="mini" :rows="2" type="textarea" v-model="block.split_field"></el-input>
         </el-form-item>
         <el-form-item label="脚本">
           <el-input size="mini" :rows="8" type="textarea" v-model="block.script"></el-input>

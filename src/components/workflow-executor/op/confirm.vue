@@ -3,7 +3,16 @@
     <el-popconfirm v-if="justShowConfirm" @onConfirm="confirm" v-model="visible" :title="confirmText">
       <el-button slot="reference" plain :type="type" size="small">{{ text }}</el-button>
     </el-popconfirm>
-    <el-popover v-else placement="top" width="300" transition="el-zoom-in-top" trigger="click" v-model="visible">
+    <el-popover
+      v-else
+      placement="top"
+      width="300"
+      transition="el-zoom-in-top"
+      trigger="click"
+      ref="popover"
+      :popper-options="{ boundariesElement: 'body', removeOnDestroy: true }"
+      v-model="visible"
+    >
       <el-radio-group v-if="store.curStep.atype === 'tag'" v-model="store.data.opinion" size="mini">
         <template v-if="showOkTag">
           <el-radio :label="text" v-for="text of WF_TAG_TEXT_PASS" :key="text">{{ text }}</el-radio>
@@ -13,9 +22,18 @@
         </template>
       </el-radio-group>
       <el-input v-if="showOption" type="textarea" :rows="2" placeholder="请输入意见" v-model="store.data.opinion"></el-input>
-      <div class="pso-executor-op__confitm">
-        <el-button size="small" type="text" @click="visible = false">取消</el-button>
-        <el-button type="primary" size="small" @click="confirm">{{ text }}</el-button>
+      <div class="pso-executor-op__footer">
+        <div class="pso-executor-op__footer-body">
+          <el-form>
+            <pso-form-attach :cpnt="attach" @value-change="handleAttachChange">
+              <el-button icon="el-icon-paperclip" plain size="mini"></el-button>
+            </pso-form-attach>
+          </el-form>
+        </div>
+        <div class="pso-executor-op__footer-btn">
+          <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+          <el-button :type="type" size="mini" @click="confirm">{{ text }}</el-button>
+        </div>
       </div>
       <el-button slot="reference" plain :type="type" size="small">{{ text }}</el-button>
     </el-popover>
@@ -23,8 +41,10 @@
 </template>
 <script>
 import { WF_TAG_TEXT_PASS, WF_TAG_TEXT_REJECT } from "../../../const/workflow";
+import { opAttach } from "../mixin";
 
 export default {
+  mixins: [opAttach],
   props: {
     op: Object,
     text: String,
@@ -61,6 +81,13 @@ export default {
       WF_TAG_TEXT_REJECT: WF_TAG_TEXT_REJECT,
     };
   },
+  watch: {
+    visible(val) {
+      if (val) {
+        this.store.data.opinion = "";
+      }
+    },
+  },
   methods: {
     confirm() {
       this.visible = false;
@@ -70,12 +97,3 @@ export default {
   },
 };
 </script>
-<style lang="less" scoped>
-.pso-executor-op {
-  display: inline-block;
-}
-.pso-executor-op__confitm {
-  text-align: right;
-  margin-top: 20px;
-}
-</style>

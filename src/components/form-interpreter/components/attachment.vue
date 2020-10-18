@@ -1,6 +1,17 @@
 <template>
   <pso-label :cpnt="cpnt">
     <div class="pso-form-upload">
+      <div class="pso-form-upload__files" :style="showStyle" v-if="preview && proxy.length">
+        <pso-file-list
+          v-if="!loadingFile"
+          :files="proxy"
+          @delete="deleteFile"
+          :remove="cpntEditable"
+          :width="cpnt.data._showwidth"
+          :height="cpnt.data._showheight"
+        ></pso-file-list>
+        <pso-skeleton v-else :lines="1"></pso-skeleton>
+      </div>
       <el-popover
         v-if="cpntEditable"
         :visible-arrow="false"
@@ -17,17 +28,6 @@
           </slot>
         </template>
       </el-popover>
-      <div class="pso-form-upload__files" :style="showStyle" v-if="preview && proxy.length">
-        <pso-file-list
-          v-if="!loadingFile"
-          :files="proxy"
-          @delete="deleteFile"
-          :remove="cpntEditable"
-          :width="cpnt.data._showwidth"
-          :height="cpnt.data._showheight"
-        ></pso-file-list>
-        <pso-skeleton v-else :lines="1"></pso-skeleton>
-      </div>
     </div>
   </pso-label>
 </template>
