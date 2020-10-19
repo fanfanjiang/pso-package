@@ -5,7 +5,8 @@
         <div class="pso-wf-executor__log-item">
           <p>
             <span class="pso-wf-executor__log-item-user">{{ log.user_name }}</span>
-            <span v-if="log.step_code === 'start'">创建了记录：</span>
+            <span v-if="log.step_code === 'start' && i === 0">创建了记录：</span>
+            <span v-else-if="log.step_code === 'start'">重新提交了记录：</span>
             <span v-else>发表审核意见：</span>
             {{ log.op_note }}
           </p>

@@ -241,12 +241,13 @@ export default {
   },
   methods: {
     async initialize() {
-      if (this.cfgId) {
-        if (this.watchFun.length) {
-          this.watchFun.forEach((f) => f());
-          this.watchFun = [];
-        }
+      
+      if (this.watchFun.length) {
+        this.watchFun.forEach((f) => f());
+        this.watchFun = [];
+      }
 
+      if (this.cfgId) {
         this.store = new FormviewStore({
           $vue: this,
           opAuth: this.defOpauth,

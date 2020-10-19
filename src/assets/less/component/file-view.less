@@ -33,6 +33,12 @@
         flex-basis: 100px;
         flex-shrink: 0;
 
+        @media (max-width: @screen-sm-min) {
+            .pso-upload__list-panel {
+                opacity: 1 !important;
+            }
+        }
+
         &:hover {
             .pso-upload__list-panel {
                 opacity: 1;

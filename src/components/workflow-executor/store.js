@@ -38,6 +38,7 @@ export default class WfStore {
         this.formStore = null;
         this.copy = false;
         this.copyInstanceId = '';
+        this.executorPrintRef = null;
 
         this.extend = {};
 
@@ -253,7 +254,7 @@ export default class WfStore {
                 this.cfg.wf_map_tp.executingNodes = steps;
             }
 
-            const ret = this.getFlowNode({ nid: this.data.step, cb: item => item.done = true })
+            const ret = this.getFlowNode({ nid: this.data.step, cb: item => item.done = true });
             if (ret && ret.target) {
                 this.setCurStep(ret.target);
             }
@@ -304,7 +305,7 @@ export default class WfStore {
 
     setLogsFlow(logs) {
         //主体审核流
-        const $el = $("#executorMain").find(`[field=wf_logs]`);
+        const $el = $(this.executorPrintRef).find(`[field=wf_logs]`);
         if (!$el.get(0)) return;
         const $wrapper = $('<div class="pso-wf-logs"></div>');
         for (let log of logs) {
@@ -320,7 +321,7 @@ export default class WfStore {
         //替换主体审核日志部分
         const group = _.groupBy(data, "step_code");
         for (let key in group) {
-            const $el = $("#executorMain").find(`[field=${key}]`);
+            const $el = $(this.executorPrintRef).find(`[field=${key}]`);
             if (!$el.get(0)) continue;
             const $wrapper = $('<div class="pso-wf-logs"></div>');
             let format = $el.attr('format');
@@ -355,7 +356,7 @@ export default class WfStore {
     setTableVal({ cpnt, value, proxy, fields, store }) {
         const { data } = cpnt;
         if (!data._fieldValue) return;
-        const $el = $("#executorMain").find(`[field=${data._fieldValue}]`);
+        const $el = $(this.executorPrintRef).find(`[field=${data._fieldValue}]`);
         if (!$el.get(0)) return;
 
         //人员和部门
@@ -416,6 +417,7 @@ export default class WfStore {
                     }
                 } else {
                     if (proxy.valList.length) {
+                        $el.css({ display: 'block', overflow: 'auto' });
                         $el.append(this.makeStaticTable(fields, proxy.valList, sequence === '1', store));
                         const parentTd = $('.pso-static-table').parentsUntil('td');
                         if (parentTd.get(0)) {
@@ -439,7 +441,7 @@ export default class WfStore {
             $ftr.append(`<th>项次</th>`);
         }
         for (let f of fields) {
-            $colgroup.append(f.width ? `<col width="${f.width}">` : `<col>`);
+            $colgroup.append(`<col width="${f.width || 120}">`);
             $ftr.append(`<th>${f.display}</th>`);
         }
         for (let i = 0; i < data.length; i++) {

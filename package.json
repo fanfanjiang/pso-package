@@ -1,6 +1,6 @@
 {
-  "name": "pbpm", 
-  "version": "0.2.14",
+  "name": "pbpm",
+  "version": "0.2.19",
   "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",

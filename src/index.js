@@ -143,7 +143,7 @@ const components = {
     PsoAffix,
     PsoStatistics,
     PsoStaScript,
-    
+
     //混合视图
     PsoFvAst,
     PsoFvWv

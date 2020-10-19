@@ -7,6 +7,7 @@
         :disabled="!cpnt.store.editable || cpnt.data._read"
         v-model="cpnt.data._val"
         filterable
+        clearable
         :placeholder="cpnt.data._placeholder"
       >
         <el-option

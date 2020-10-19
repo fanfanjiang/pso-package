@@ -27,6 +27,7 @@ export default {
   created() {
     this.attach.data = genComponentData({ componentid: "attachment", _fieldName: "", _val: this.store.data.attach || "" });
     this.attach.data._fieldName = "";
+    this.attach.data._read = this.store.data.instanceId; 
   },
   methods: {
     handleAttachChange({ value }) {

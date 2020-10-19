@@ -9,6 +9,7 @@
             :condition="store.defCondition"
             :fieldsOptions="store.conditionOptions"
             fixedfield
+            fixed
           ></pso-data-filter>
         </transition>
       </div>

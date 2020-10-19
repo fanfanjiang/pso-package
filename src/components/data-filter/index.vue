@@ -1,9 +1,15 @@
 <template>
   <div class="data-filter" :class="classObj">
-    <div class="data-filter__or" v-for="(orCondition,orIndex) in conditionMap" :key="orIndex">
-      <el-divider v-if="orIndex!==0&&!(fixed||fixedfield)" content-position="center">或</el-divider>
-      <div class="data-filter__and" v-for="(andCondition,andIndex) in orCondition" :key="andIndex">
-        <el-divider v-if="andIndex!==0&&!(fixed||fixedfield)" content-position="left">且</el-divider>
+    <div class="data-filter-header">
+      <div><i class="fa fa-filter"></i>筛选</div>
+      <el-tooltip class="item" effect="dark" content="清空" placement="top-start">
+        <el-button size="mini" icon="el-icon-refresh-right" circle @click="refreshCondition"></el-button>
+      </el-tooltip>
+    </div>
+    <div class="data-filter__or" v-for="(orCondition, orIndex) in conditionMap" :key="orIndex">
+      <el-divider v-if="orIndex !== 0 && !(fixed || fixedfield)" content-position="center">或</el-divider>
+      <div class="data-filter__and" v-for="(andCondition, andIndex) in orCondition" :key="andIndex">
+        <el-divider v-if="andIndex !== 0 && !(fixed || fixedfield)" content-position="left">且</el-divider>
         <div class="data-filter__picker">
           <pso-datafilteritem
             :fixed="fixed"
@@ -11,39 +17,27 @@
             :pick="andCondition"
             :fieldsOptions="fieldsOptions"
           ></pso-datafilteritem>
-          <i
-            v-if="!(fixed||fixedfield)"
-            class="data-filter__del el-icon-delete-solid"
-            @click="delCondition({orIndex,andIndex})"
-          ></i>
+          <i v-if="!(fixed || fixedfield)" class="data-filter__del el-icon-delete-solid" @click="delCondition({ orIndex, andIndex })"></i>
         </div>
       </div>
-      <div class="data-filter__andbtn" v-if="!(fixed||fixedfield)">
-        <el-button
-          @click="addCondition(orIndex)"
-          size="mini"
-          icon="el-icon-plus"
-          type="success"
-          plain
-        >且</el-button>
+      <div class="data-filter__andbtn" v-if="!(fixed || fixedfield)">
+        <el-button @click="addCondition(orIndex)" size="mini" icon="el-icon-plus" type="success" plain>且</el-button>
       </div>
     </div>
-    <div class="data-filter__orbtn" v-if="!(fixed||fixedfield)">
-      <el-button
-        @click="addCondition()"
-        size="mini"
-        icon="el-icon-plus"
-        type="success"
-        plain
-      >{{conditionMap.length?'或':'添加筛选条件'}}</el-button>
+    <div class="data-filter__orbtn" v-if="!(fixed || fixedfield)">
+      <el-button @click="addCondition()" size="mini" icon="el-icon-plus" type="success" plain>{{
+        conditionMap.length ? "或" : "添加筛选条件"
+      }}</el-button>
     </div>
   </div>
 </template>
 <script>
 import PsoDatafilteritem from "./filter";
 import { transCMapToCondition } from "../../tool/form";
- 
+import emitter from "../../mixin/emitter";
+
 export default {
+  mixins: [emitter],
   props: {
     value: [String, Array],
     condition: {
@@ -118,6 +112,9 @@ export default {
     delCondition({ orIndex, andIndex }) {
       this.conditionMap[orIndex].splice(andIndex, 1);
       if (!this.conditionMap[orIndex].length) this.conditionMap.splice(orIndex, 1);
+    },
+    refreshCondition() {
+      this.broadcast("PsoDatafilterItem", "refresh");
     },
   },
 };

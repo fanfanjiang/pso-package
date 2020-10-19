@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-view pso-view-wf" :class="viewClass" v-loading="!store || store.initializing">
+  <div class="pso-view pso-view-wf" ref="view" :class="viewClass" v-loading="!store || store.initializing">
     <template v-if="store && !store.initializing">
       <!-- 过滤器 -->
       <div class="pso-view-extend">
@@ -13,78 +13,88 @@
           ></pso-data-filter>
         </transition>
       </div>
-      <div class="pso-view-body">
-        <!-- 标题和权限视图过滤 -->
-        <div class="pso-view-header">
-          <div class="pso-view-header__l" v-if="!params.hideTitle">
-            <div class="pso-view-title">
-              <icon></icon>
-              <span>{{ pageTitle }}</span>
+      <div class="pso-view-body" ref="viewBody">
+        <div ref="header">
+          <!-- 标题和权限视图过滤 -->
+          <div class="pso-view-header">
+            <div class="pso-view-header__l" v-if="!params.hideTitle">
+              <div class="pso-view-title">
+                <icon></icon>
+                <span>{{ pageTitle }}</span>
+              </div>
+            </div>
+            <div class="pso-view-header__r">
+              <div class="pso-view-authtab" v-show="store.authViews.length > 1 && !params.hideAuthTab">
+                <el-tabs v-model="store.activeView">
+                  <el-tab-pane v-for="(ah, i) in store.authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
+                </el-tabs>
+              </div>
             </div>
           </div>
-          <div class="pso-view-header__r">
-            <div class="pso-view-authtab" v-show="store.authViews.length > 1 && !params.hideAuthTab">
-              <el-tabs v-model="store.activeView">
-                <el-tab-pane v-for="(ah, i) in store.authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
-              </el-tabs>
-            </div>
-          </div>
-        </div>
-        <!-- 视图切换 -->
-        <div class="pso-view-viewtab" v-if="!params.hideStatusTab">
-          <fast-switch key="wfStatuses" :store="store" switch="wfStatuses" model="curWfStatus" skey="d_audit"></fast-switch>
-          <fast-switch divider key="stages" :store="store" showtype="select" switch="stages" model="curStage" skey="d_stage"></fast-switch>
-        </div>
-        <!-- 排序标签 -->
-        <div class="pso-view-sorttag" v-if="store.sorts.length">
-          <el-tag size="small" v-for="(sort, i) in store.sorts" :key="i" closable @close="store.removeSort(i)">
-            {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
-          </el-tag>
-        </div>
-        <div class="pso-view-fun">
-          <div class="pso-view-fun-l">
-            <table-fun :store="store" :files="params.downloadFiles"></table-fun>
-          </div>
-          <div class="pso-view-fun-r">
-            <data-fun
+          <!-- 视图切换 -->
+          <div class="pso-view-viewtab" v-if="!params.hideStatusTab">
+            <fast-switch key="wfStatuses" :store="store" switch="wfStatuses" model="curWfStatus" skey="d_audit"></fast-switch>
+            <fast-switch
+              divider
+              key="stages"
               :store="store"
-              :addable="!params.hideNewBtn"
-              :changable="!params.hideChangeBtn"
-              :stageable="!params.hideStage"
-              :copyable="!params.hideCopyBtn"
-              :moreable="!params.hideMoreBtn"
-              :exportable="!params.hideExport"
-              @new="store.showInstance.call(store, null)"
-            >
-              <template #op>
-                <el-popconfirm
-                  confirmButtonText="确定"
-                  cancelButtonText="取消"
-                  icon="el-icon-info"
-                  iconColor="red"
-                  title="你确认吗"
-                  @onConfirm="store.handleBackout.call(store)"
-                  v-if="store.opBackoutable && !params.hideBackBtn"
-                >
-                  <el-button :disabled="!store.backoutable" slot="reference" size="mini" type="primary" plain>{{
-                    store.cpntText.backout
-                  }}</el-button>
-                </el-popconfirm>
-                <el-popconfirm
-                  confirmButtonText="确定"
-                  cancelButtonText="取消"
-                  icon="el-icon-info"
-                  iconColor="red"
-                  title="你确认吗"
-                  @onConfirm="store.handleArchive.call(store)"
-                  v-if="store.opArchiveable && !params.hideArchiveBtn"
-                >
-                  <el-button :disabled="!store.archiveable" slot="reference" size="mini" type="primary" plain>{{
-                    store.cpntText.archive
-                  }}</el-button>
-                </el-popconfirm>
-              </template>
-            </data-fun>
+              showtype="select"
+              switch="stages"
+              model="curStage"
+              skey="d_stage"
+            ></fast-switch>
+          </div>
+          <!-- 排序标签 -->
+          <div class="pso-view-sorttag" v-if="store.sorts.length">
+            <el-tag size="small" v-for="(sort, i) in store.sorts" :key="i" closable @close="store.removeSort(i)">
+              {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
+            </el-tag>
+          </div>
+          <div class="pso-view-fun">
+            <div class="pso-view-fun-l">
+              <table-fun :store="store" :files="params.downloadFiles"></table-fun>
+            </div>
+            <div class="pso-view-fun-r">
+              <data-fun
+                :store="store"
+                :addable="!params.hideNewBtn"
+                :changable="!params.hideChangeBtn"
+                :stageable="!params.hideStage"
+                :copyable="!params.hideCopyBtn"
+                :moreable="!params.hideMoreBtn"
+                :exportable="!params.hideExport"
+                @new="store.showInstance.call(store, null)"
+              >
+                <template #op>
+                  <el-popconfirm
+                    confirmButtonText="确定"
+                    cancelButtonText="取消"
+                    icon="el-icon-info"
+                    iconColor="red"
+                    title="你确认吗"
+                    @onConfirm="store.handleBackout.call(store)"
+                    v-if="store.opBackoutable && !params.hideBackBtn"
+                  >
+                    <el-button :disabled="!store.backoutable" slot="reference" size="mini" type="primary" plain>{{
+                      store.cpntText.backout
+                    }}</el-button>
+                  </el-popconfirm>
+                  <el-popconfirm
+                    confirmButtonText="确定"
+                    cancelButtonText="取消"
+                    icon="el-icon-info"
+                    iconColor="red"
+                    title="你确认吗"
+                    @onConfirm="store.handleArchive.call(store)"
+                    v-if="store.opArchiveable && !params.hideArchiveBtn"
+                  >
+                    <el-button :disabled="!store.archiveable" slot="reference" size="mini" type="primary" plain>{{
+                      store.cpntText.archive
+                    }}</el-button>
+                  </el-popconfirm>
+                </template>
+              </data-fun>
+            </div>
           </div>
         </div>
         <!-- 表格 -->
@@ -201,15 +211,24 @@ export default {
         this.initialize();
       },
     },
+    "store.starting"(val) {
+      if (this.store && !this.store.initializing && !val && this.$refs.header) {
+        const height = $(this.$refs.view).height() - $(this.$refs.header).height() - 65;
+        if (height > 100) {
+          this.store.tableHeight = height;
+        }
+      }
+    },
   },
   methods: {
     async initialize() {
-      if (this.params.wfId) {
-        if (this.watchFun.length) {
-          this.watchFun.forEach((f) => f());
-          this.watchFun = [];
-        }
 
+      if (this.watchFun.length) {
+        this.watchFun.forEach((f) => f());
+        this.watchFun = [];
+      }
+      
+      if (this.params.wfId) {
         this.store = new WFVStore({
           $vue: this,
           defSearchType: this.params.searchType,

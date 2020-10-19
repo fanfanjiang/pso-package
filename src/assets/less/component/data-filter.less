@@ -1,10 +1,36 @@
 .data-filter {
+    position: relative;
+
+    .data-filter-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0 0 0;
+
+        >div {
+            color: #999;
+            font-size: 14px;
+
+            i {
+                margin-right: 5px;
+            }
+        }
+    }
+
     .el-form-item {
         margin: 0;
     }
 
     &.fixedfield {
         padding: 0 10px;
+
+        .data-filter__and {
+            margin-top: 0px;
+
+            &+.data-filter__and {
+                margin-top: 8px;
+            }
+        }
 
         .branch-picker__body {
             flex-direction: column;
@@ -27,21 +53,6 @@
     }
 
     &.fixed {
-        .branch-picker {
-            display: flex;
-            align-items: center;
-        }
-
-        .branch-picker__name {
-            width: 140px;
-
-            .el-input {
-                input {
-                    font-size: 13px;
-                    padding-left: 0;
-                }
-            }
-        }
 
         .data-filter__and {
             margin-top: 5px;
@@ -53,9 +64,10 @@
 
         .branch-picker__body {
             margin-top: 0px !important;
+            flex-direction: column;
 
             .el-input-number {
-                width: 160px !important;
+                width: 100% !important;
 
                 .el-input {
                     width: 100% !important;
@@ -63,13 +75,13 @@
             }
 
             .el-date-editor {
-                width: 240px !important;
+                width: 100% !important;
 
             }
 
             .el-input,
             .el-select {
-                width: 160px !important;
+                width: 100% !important;
             }
         }
 

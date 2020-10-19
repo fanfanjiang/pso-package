@@ -7,13 +7,11 @@
             <div class="pso-wf-executor__main-header">
               <pso-wf-overview :store="store"></pso-wf-overview>
             </div>
-            <div class="pso-wf-executor__main-content-wrapper" id="executorMain">
+            <div class="pso-wf-executor__main-content-wrapper" ref="executorPrint">
               <slot name="content" :store="store"></slot>
               <div ref="wfTable" class="pso-wf-executor__main-content" v-html="store.cfg.wf_body_tp"></div>
+              <div class="pso-wf-executor__main-content-log" field="wf_logs"></div>
               <div class="pso-wf-executor__stamp" v-if="!store.loading" v-html="stamp.stamp" :style="stampStyle"></div>
-            </div>
-            <div class="pso-wf-executor__main-log">
-              <pso-wf-log :store="store"></pso-wf-log>
             </div>
           </div>
           <transition name="el-zoom-in-bottom">
@@ -107,12 +105,17 @@ export default {
   async created() {
     this.store.showExtend = !this.__isMobile__;
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.store.executorPrintRef = this.$refs.executorPrint;
+    });
+  },
   methods: {
     async append() {
       await this.nextStep(this.store.userOp.appendType);
     },
     doPrint() {
-      this.print($("#executorMain").get(0));
+      this.print(this.$refs.executorPrint);
     },
   },
 };

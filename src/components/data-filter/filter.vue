@@ -1,20 +1,8 @@
 <template>
   <div class="branch-picker">
-    <div class="branch-picker__name">
-      <el-select
-        :size="size"
-        filterable
-        v-model="pick.field"
-        @change="fieldChange" 
-        placeholder="请选择"
-        :disabled="(fixed||fixedfield)"
-      >
-        <el-option
-          v-for="item in fieldsOptions"
-          :key="item.fid"
-          :label="item.displayName||item._fieldName"
-          :value="item.fid"
-        ></el-option>
+    <div class="branch-picker__name" v-if="refreshable">
+      <el-select :size="size" filterable v-model="pick.field" @change="fieldChange" placeholder="请选择" :disabled="fixed || fixedfield">
+        <el-option v-for="item in fieldsOptions" :key="item.fid" :label="item.displayName || item._fieldName" :value="item.fid"></el-option>
       </el-select>
     </div>
     <div class="branch-picker__body">
@@ -24,29 +12,23 @@
         </el-select>
       </div>
       <div class="branch-picker__value" v-show="pick.op">
-        <el-input
-          :size="size"
-          v-if="pick.match===1"
-          v-model="pick.data"
-          placeholder="请输入内容"
-          clearable
-        ></el-input>
+        <el-input :size="size" v-if="pick.match === 1" v-model="pick.data" placeholder="请输入内容" clearable></el-input>
         <el-select
           :size="size"
-          v-else-if="pick.match===2||pick.match===3"
+          v-else-if="pick.match === 2 || pick.match === 3"
           v-model="pick.data"
           placeholder="请选择"
-          :multiple="pick.match===3"
+          :multiple="pick.match === 3"
         >
           <el-option
             v-for="item in dataOptions"
             :key="item._optionValue"
-            :label="item._optionName||item._optionValue"
+            :label="item._optionName || item._optionValue"
             :value="item._optionValue"
           ></el-option>
         </el-select>
         <el-date-picker
-          v-else-if="pick.match===4"
+          v-else-if="pick.match === 4"
           :size="size"
           v-model="pick.data"
           type="datetime"
@@ -55,37 +37,33 @@
           align="right"
           clearable
         ></el-date-picker>
-        <div class="branch-picker__split" v-else-if="pick.match===5">
+        <div class="branch-picker__split" v-else-if="pick.match === 5">
           <el-input-number :size="size" v-model="minNum" controls-position="right" clearable></el-input-number>
           <span class="branch-picker__split-line">-</span>
           <el-input-number :size="size" v-model="maxNum" controls-position="right" clearable></el-input-number>
         </div>
         <el-date-picker
           :size="size"
-          v-else-if="pick.match===6"
+          v-else-if="pick.match === 6"
           v-model="pick.data"
-          :type="curOp.type||'daterange'"
-          :value-format="curOp.vformat||curOp.format||'yyyy-MM-dd'"
-          :format="curOp.format||'yyyy-MM-dd'"
+          :type="curOp.type || 'daterange'"
+          :value-format="curOp.vformat || curOp.format || 'yyyy-MM-dd'"
+          :format="curOp.format || 'yyyy-MM-dd'"
         ></el-date-picker>
-        <div class="branch-picker__checkbox" v-else-if="pick.match===7">
-          <el-checkbox
-            :size="size"
-            :indeterminate="isIndeterminate"
-            v-model="checkAll"
-            @change="handleCheckAllChange"
-          >全选</el-checkbox>
+        <div class="branch-picker__checkbox" v-else-if="pick.match === 7">
+          <el-checkbox :size="size" :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
           <el-checkbox-group v-model="pick.data" @change="handleCheckItemChange">
             <el-checkbox
               v-for="o in dataOptions"
-              :label="o._optionValue||o._optionName"
-              :key="o._optionValue||o._optionName"
+              :label="o._optionValue || o._optionName"
+              :key="o._optionValue || o._optionName"
               :size="size"
-            >{{o._optionName||o._optionValue}}</el-checkbox>
+              >{{ o._optionName || o._optionValue }}</el-checkbox
+            >
           </el-checkbox-group>
         </div>
-        <date-week v-else-if="pick.match===8" v-model="pick.data" :size="size"></date-week>
-        <div v-else-if="pick.match===99">
+        <date-week v-else-if="pick.match === 8" v-model="pick.data" :size="size"></date-week>
+        <div v-else-if="pick.match === 99">
           <el-form>
             <pso-form-component :force-show="true" :cpnt="cpnt" @value-change="valueChangeHandler"></pso-form-component>
           </el-form>
@@ -104,6 +82,7 @@ import FormStore from "../form-designer/model/store.js";
 import DateWeek from "../date/date-week";
 
 export default {
+  componentName: "PsoDatafilterItem",
   components: { PsoFormComponent, DateWeek },
   props: {
     pick: {
@@ -123,6 +102,10 @@ export default {
     fixedfield: {
       type: Boolean,
       default: false,
+    },
+    refreshable: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
@@ -175,6 +158,10 @@ export default {
         this.opChange();
       }
     }
+
+    this.$on("refresh", () => {
+      this.valueChangeHandler({ value: this.curOp.arraytype ? [] : "" });
+    });
   },
   methods: {
     makeCpnt(fid) {
