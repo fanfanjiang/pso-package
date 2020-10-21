@@ -106,6 +106,10 @@ export const FIELD_FORMAT = {
         label: '扩展',
         value: 'common_x'
     },
+    number: {
+        label: '数值',
+        value: 'int'
+    },
     user: {
         label: '用户',
         value: 'user'

@@ -36,9 +36,9 @@
         <el-form-item label="匹配字段" v-if="block.is_split === '1'">
           <el-input size="mini" :rows="2" type="textarea" v-model="block.split_field"></el-input>
         </el-form-item>
-        <el-form-item label="脚本">
-          <el-input size="mini" :rows="8" type="textarea" v-model="block.script"></el-input>
-        </el-form-item>
+        <div class="sql-editor">
+          <codemirror ref="codemirror" :options="sqlOptions" v-model="block.script" @ready="onCodemirrorReady" />
+        </div>
       </el-form>
     </div>
     <div class="sql-block__extend" v-if="extendable">
@@ -50,22 +50,22 @@
         position="left"
         @select="handleFieldCheck"
       ></picker-form>
-      <el-table size="mini" :data="block.field_config" style="width: 100%" height="400">
-        <el-table-column type="index" :index="1"></el-table-column>
-        <el-table-column prop="display" label="目标字段" width="200"></el-table-column>
+      <el-table size="mini" :data="block.field_config" style="width: 100%">
+        <el-table-column type="index" :index="1" width="20"></el-table-column>
+        <el-table-column prop="display" label="目标字段" width="200" show-overflow-tooltip></el-table-column>
         <el-table-column label="来源字段">
           <template slot-scope="scope">
             <el-input size="mini" v-model="scope.row.efield"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="公式">
+        <el-table-column label="公式" width="100">
           <template slot-scope="scope">
             <el-select size="mini" v-model="scope.row.formula" filterable>
               <el-option v-for="(f, i) in FORMULAR" :key="i" :label="f.n" :value="f.v"></el-option>
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="条件">
+        <el-table-column label="条件" width="80">
           <template slot-scope="scope">
             <el-select size="mini" v-model="scope.row.condition" filterable>
               <el-option v-for="(d, i) in CONDITION" :key="i" :label="d.n" :value="d.v"></el-option>
@@ -138,11 +138,29 @@ export default {
     this.RELATE = RELATE;
     this.FORMULAR = FORMULAR;
     this.CONDITION = CONDITION;
-    return {};
+    return {
+      showHint: true,
+      sqlOptions: {
+        tabSize: 4,
+        styleActiveLine: true,
+        lineNumbers: true,
+        line: true,
+        lineWrapping: true,
+        mode: "text/x-mysql",
+        extraKeys: { Ctrl: "autocomplete" },
+        // hintOptions: {
+        //   hint: this.handleHint,
+        //   completeSingle: false,
+        // },
+      },
+    };
   },
   computed: {
     extendable() {
       return this.block.script_type === "1" && this.block.action_type && this.block.action_type !== "0";
+    },
+    codeRef() {
+      return this.$refs.codemirror.codemirror;
     },
   },
   created() {
@@ -163,6 +181,11 @@ export default {
     },
     delHandler(index) {
       this.block.field_config.splice(index, 1);
+    },
+    onCodemirrorReady(cm) {
+      cm.on("keypress", () => {
+        cm.showHint({ completeSingle: false });
+      });
     },
   },
 };

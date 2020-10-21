@@ -4,7 +4,7 @@
       <el-table-column label="状态值" width="100" prop="name"></el-table-column>
       <el-table-column label="执行脚本">
         <template slot-scope="scope">
-          {{scope.row.script}}
+          {{ scope.row.script }}
         </template>
       </el-table-column>
       <el-table-column label="操作" width="300" fixed="right">
@@ -13,11 +13,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pso-dialog title="设计脚本" :visible="showDeisgner" width="70%" @close="showDeisgner=false">
-      <div style="padding:20px;height:100%;overflow: auto;">
-        <sql-designer :sql="curSql" :params="fields" params-n="field_display" params-v="field_name"></sql-designer>
-      </div>
-    </pso-dialog>
+    <sql-designer :opener="showDeisgner" :sql="curSql" :params="fields" params-n="field_display" params-v="field_name"></sql-designer>
   </div>
 </template> 
 <script>
@@ -27,7 +23,7 @@ export default {
   props: ["data", "fields"],
   data() {
     return {
-      showDeisgner: false,
+      showDeisgner: { show: false },
       curSql: null,
       statuses: [
         { status: 0, name: "待提交", script: [] },
@@ -43,7 +39,7 @@ export default {
     this.statuses.forEach((item) => {
       const exist = _.findIndex(this.data, { status: item.status });
       if (exist === -1) {
-        this.data.push({ ...item }); 
+        this.data.push({ ...item });
       } else {
         if (typeof this.data[exist].script === "string") {
           this.data[exist].script = [];
@@ -55,7 +51,7 @@ export default {
   methods: {
     goDesigner(index) {
       this.curSql = this.data[index].script;
-      this.showDeisgner = true;
+      this.showDeisgner.show = true;
     },
   },
 };

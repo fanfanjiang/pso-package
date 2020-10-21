@@ -9,21 +9,11 @@
         <el-input size="mini" v-model="cpnt.data._placeholder" clearable></el-input>
       </el-form-item>
       <el-form-item label="字段长度">
-        <el-input-number
-          size="mini"
-          v-model="cpnt.data._fieldLen"
-          controls-position="right"
-          :min="3"
-        ></el-input-number>
+        <el-input-number size="mini" v-model="cpnt.data._fieldLen" controls-position="right" :min="3"></el-input-number>
       </el-form-item>
       <el-form-item label="字段类型">
         <el-select size="mini" v-model="cpnt.data._fieldFormat" placeholder="请选择">
-          <el-option
-            v-for="item in FIELD_FORMAT"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
+          <el-option v-for="item in FIELD_FORMAT" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="字段存储类型">
@@ -37,7 +27,7 @@
       </el-form-item>
       <el-form-item label="动态默认值">
         <el-select size="mini" v-model="cpnt.data._association" filterable clearable>
-          <el-option-group v-for="(g,index) in fieldsCollection" :key="index" :label="g.n">
+          <el-option-group v-for="(g, index) in fieldsCollection" :key="index" :label="g.n">
             <el-option v-for="opt in g.v" :key="opt.fid" :label="opt._fieldName" :value="opt.fid"></el-option>
           </el-option-group>
         </el-select>
@@ -68,8 +58,7 @@
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">
               通常用于隐藏一些不需要在新增记录时显示的字段。
-              <br />如：用于新订单的后续处理的字段，可以在新增记录时隐藏。
-              <br />但仍可以在自定义按钮和工作流中填写或更新
+              <br />如：用于新订单的后续处理的字段，可以在新增记录时隐藏。 <br />但仍可以在自定义按钮和工作流中填写或更新
             </div>
             <i class="tip el-icon-question"></i>
           </el-tooltip>
@@ -86,25 +75,15 @@
         <el-input
           size="mini"
           v-model.trim="cpnt.data._fieldValue"
-          :disabled="!!(!cpnt.data._fvEditable||(!!cpnt.store.data_code&&!cpnt.add&&cpnt.store.is_pub))"
+          :disabled="!!(!cpnt.data._fvEditable || (!!cpnt.store.data_code && !cpnt.add && cpnt.store.is_pub))"
           clearable
         ></el-input>
       </el-form-item>
       <el-form-item label="输出格式">
-        <el-input
-          size="mini"
-          :clearable="true"
-          type="textarea"
-          v-model.trim="cpnt.data._outputFormat"
-        ></el-input>
+        <el-input size="mini" :clearable="true" type="textarea" v-model.trim="cpnt.data._outputFormat"></el-input>
       </el-form-item>
       <el-form-item label="转换字段集">
-        <el-input
-          size="mini"
-          :clearable="true"
-          type="textarea"
-          v-model.trim="cpnt.data._transFields"
-        ></el-input>
+        <el-input size="mini" :clearable="true" type="textarea" v-model.trim="cpnt.data._transFields"></el-input>
       </el-form-item>
       <el-form-item label="字段说明">
         <el-input size="mini" type="textarea" :rows="2" v-model="cpnt.data._fieldInfo" clearable></el-input>
@@ -148,9 +127,8 @@ export default {
     panelHeader,
   },
   data() {
-    return {
-      FIELD_FORMAT: FIELD_FORMAT,
-    };
+    this.FIELD_FORMAT = FIELD_FORMAT;
+    return {};
   },
 };
 </script>

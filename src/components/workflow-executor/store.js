@@ -308,10 +308,14 @@ export default class WfStore {
         const $el = $(this.executorPrintRef).find(`[field=wf_logs]`);
         if (!$el.get(0)) return;
         const $wrapper = $('<div class="pso-wf-logs"></div>');
-        for (let log of logs) {
-            if (log.step_code === 'start') continue;
+        for (let i = 0; i < logs.length; i++) {
+            const log = logs[i];
+            let section = `审核人<span>${log.user_name}</span>  发布评论`;
+            if (log.step_code === 'start') {
+                section = `创建人<span>${log.user_name}</span>  提交记录`;
+            }
             $wrapper.append(`<div class="pso-wf-logs__item">
-                    <div>${log.op_time}；在步骤${log.step_name}；审核人${log.user_name}  发布评论：${log.op_note}</div>
+                    <div>${log.op_time}；在步骤<span>${log.step_name || '开始'}</span>；${section}：${log.op_note}</div>
                     </div>`);
         }
         $el.empty().append($wrapper);
@@ -334,7 +338,7 @@ export default class WfStore {
             } else {
                 group[key].forEach(log => {
                     $wrapper.append(`<div class="pso-wf-logs__item">
-                    <div>${log.op_time}；在步骤${log.step_name}；审核人${log.user_name}  发布评论：${log.op_note}</div>
+                    <div>${log.op_time}；在步骤${log.step_name || '开始'}；审核人${log.user_name}  发布评论：${log.op_note}</div>
                     </div>`);
                 });
             }

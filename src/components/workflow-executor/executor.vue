@@ -10,8 +10,8 @@
             <div class="pso-wf-executor__main-content-wrapper" ref="executorPrint">
               <slot name="content" :store="store"></slot>
               <div ref="wfTable" class="pso-wf-executor__main-content" v-html="store.cfg.wf_body_tp"></div>
-              <div class="pso-wf-executor__main-content-log" field="wf_logs"></div>
               <div class="pso-wf-executor__stamp" v-if="!store.loading" v-html="stamp.stamp" :style="stampStyle"></div>
+              <div v-show="store.log.length" class="pso-wf-executor__main-content-log" field="wf_logs"></div>
             </div>
           </div>
           <transition name="el-zoom-in-bottom">

@@ -1,20 +1,10 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <template v-if="cpnt.data._type === '2'&&cpntEditable">
-      <el-button
-        type="primary"
-        plain
-        icon="el-icon-plus"
-        size="mini"
-        @click="showTable=true"
-      >选择{{cpnt.data._fieldName}}</el-button>
-      <el-button
-        v-show="selected.length"
-        type="danger"
-        icon="el-icon-delete"
-        size="mini"
-        @click="handleDelList(selected)"
-      >取消所选数据</el-button>
+    <template v-if="cpnt.data._type === '2' && cpntEditable">
+      <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="showTable = true">选择{{ cpnt.data._fieldName }}</el-button>
+      <el-button v-show="selected.length" type="danger" icon="el-icon-delete" size="mini" @click="handleDelList(selected)"
+        >取消所选数据</el-button
+      >
     </template>
     <el-table
       v-show="proxy.valList.length"
@@ -43,34 +33,30 @@
           :width="f.width"
           :align="f.align"
         >
-          <template slot-scope="scope">{{scope.row[f.field]}}</template>
+          <template slot-scope="scope">{{ scope.row[f.field] }}</template>
         </el-table-column>
       </template>
       <template #empty>
         <pso-empty></pso-empty>
       </template>
     </el-table>
-    <el-dialog
-      width="70%"
-      append-to-body
-      close-on-click-modal
-      custom-class="form-table-dialog"
-      title="选择数据"
-      @close="showTable=false"
-      :visible="showTable"
-    >
-      <pscript-table
-        :data="table"
-        :fields="fields"
-        :condition-options="conditionOptions"
-        @selection-confirm="handleAddSelection"
-      ></pscript-table>
-    </el-dialog>
+    <pso-dialog :visible="showTable" width="90%" @close="showTable = false">
+      <template #title>
+        <div class="form-executor-header">
+          <div class="form-executor-header__l">
+            <div class="form-executor-title">
+              <i class="el-icon-finished"></i>
+              <span>选择数据</span>
+            </div>
+          </div>
+        </div>
+      </template>
+      <pscript-table :data="table" :fields-options="fields" @selection-confirm="handleAddSelection" @search="searchHandler"></pscript-table>
+    </pso-dialog>
   </pso-label>
 </template>
 <script>
 import cpntMixin from "../mixin";
-import { genComponentData } from "../../form-designer/helper";
 import PscriptTable from "../../pscript-table";
 import { pickerMixin } from "../../../mixin/picker";
 import debounce from "throttle-debounce/debounce";
@@ -93,8 +79,8 @@ export default {
       showTable: false,
       table: [],
       fields: [],
-      conditionOptions: [],
       selected: [],
+      condition: "",
       proxy: {
         valList: [],
       },
@@ -133,21 +119,11 @@ export default {
   },
   async created() {
     //列参数
-    this.fetch = debounce(500, this.fetchData);
+    this.fetch = debounce(200, this.fetchData);
 
     this.resetPicker({ idName: this.cpnt.data._saveField, reset: false });
 
     this.fields = _.orderBy(this.cpnt.data._column, ["number"], ["asc"]);
-    this.fields.forEach((f) => {
-      if (f.searchable === "1") {
-        const sItem = { componentid: "text", fid: f.field, _fieldValue: f.field, _fieldName: f.name, displayName: f.name };
-        if (f.searchList && f.searchList.length) {
-          sItem.componentid = "select";
-          sItem._option = f.searchList.map((i) => ({ _optionName: i.n, _optionValue: i.v }));
-        }
-        this.conditionOptions.push(genComponentData(sItem));
-      }
-    });
 
     //已经存储过，不能再修改
     if (this.cpnt.data._saveOnce && this.cpnt.store.instance_id) {
@@ -165,10 +141,21 @@ export default {
     }
   },
   methods: {
+    searchHandler(condition) {
+      this.condition = condition === "【】" ? "" : condition;
+      this.fetch();
+    },
     async fetchData() {
       //获取数据
       this.cpnt.store.storeLoading = true;
-      const ret = await this.API.getPscriptData({ script: this.cpnt.data._script, params: this.scriptParams });
+
+      const params = { script: this.cpnt.data._script, params: this.scriptParams };
+      if (this.condition) {
+        params.condition = this.condition;
+      }
+
+      const ret = await this.API.getPscriptData(params);
+
       this.cpnt.store.storeLoading = false;
       if (ret.success) {
         this.table = ret.data;

@@ -1,14 +1,34 @@
 <template>
-  <div class="sql-designer">
-    <div class="sql-designer__add">
-      <el-button size="mini" type="success" icon="el-icon-plus" @click="addSqlBlock">新增脚本</el-button>
+  <pso-dialog :visible="opener.show" width="100%" @close="opener.show = false">
+    <template #title>
+      <div class="form-executor-header sql-designer-header">
+        <div class="form-executor-header__l">
+          <div class="form-executor-title">
+            <i class="el-icon-edit-outline"></i>
+            <span>设计脚本</span>
+          </div>
+        </div>
+        <div class="sql-designer-header__body">
+          <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeSqlBlock">
+            <el-tab-pane v-for="(block, i) in sql" :key="i" :label="block.name" :name="block.id"></el-tab-pane>
+          </el-tabs>
+        </div>
+        <div class="form-executor-header__r">
+          <div class="sql-designer__add">
+            <el-button size="mini" type="success" icon="el-icon-plus" @click="addSqlBlock">新增脚本</el-button>
+          </div>
+        </div>
+      </div>
+    </template>
+    <div class="sql-designer">
+      <div class="sql-designer-body" v-if="sql && sql.length">
+        <transition name="el-fade-in">
+          <sql-item v-if="curBlock" :block="curBlock" :params="params" :params-n="paramsN" :params-v="paramsV"></sql-item>
+        </transition>
+      </div>
+      <pso-empty v-else text="暂无脚本"></pso-empty>
     </div>
-    <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeSqlBlock">
-      <el-tab-pane v-for="(block, i) in sql" :key="i" :label="block.name" :name="block.id">
-        <sql-item :block="block" :params="params" :params-n="paramsN" :params-v="paramsV"></sql-item>
-      </el-tab-pane>
-    </el-tabs>
-  </div>
+  </pso-dialog>
 </template>
 <script>
 import shortid from "shortid";
@@ -22,16 +42,24 @@ export default {
     params: Array,
     paramsN: String,
     paramsV: String,
+    opener: Object,
   },
   data() {
     return {
       activeTab: "",
     };
   },
-  created() {
-    if (this.sql.length) {
-      this.activeTab = this.sql[0].id;
-    }
+  watch: {
+    "opener.show"(show) {
+      if (show) {
+        this.resetActiveTab();
+      }
+    },
+  },
+  computed: {
+    curBlock() {
+      return _.find(this.sql, { id: this.activeTab });
+    },
   },
   methods: {
     addSqlBlock() {
@@ -56,6 +84,12 @@ export default {
       const index = _.findIndex(this.sql, { id });
       if (index !== -1) {
         this.sql.splice(index, 1);
+      }
+      this.resetActiveTab();
+    },
+    resetActiveTab() {
+      if (this.sql.length) {
+        this.activeTab = this.sql[0].id;
       }
     },
   },

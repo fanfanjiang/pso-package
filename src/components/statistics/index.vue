@@ -137,6 +137,11 @@ export default {
     paginationLayout() {
       return this.forceclick ? "prev, pager, next" : "total, sizes, prev, pager, next, jumper";
     },
+    viewClass() {
+      return {
+        "pso-view__expend": this.store && this.store.showFilter,
+      };
+    },
     tableParams() {
       const params = {
         data: this.store.instances,

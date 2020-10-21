@@ -1,4 +1,37 @@
+ .sql-designer-header {
+     .form-executor-header__l {
+         flex: initial !important;
+     }
+
+     .sql-designer-header__body {
+         flex: 1;
+         margin-left: 50px;
+
+         .el-tabs__header {
+             margin: 0;
+             border: none;
+         }
+
+         .el-tabs__nav {
+             border: none;
+         }
+
+         .el-tabs__item {
+             height: 28px;
+             line-height: 28px;
+         }
+     }
+ }
+
  .sql-designer {
+     position: relative;
+     height: 100%;
+     overflow: auto;
+
+     .sql-designer-body {
+         padding: 15px;
+     }
+
      .el-select {
          width: 100%;
      }
@@ -20,7 +53,43 @@
 
          .sql-block__extend {
              margin-left: 15px;
-             width: 640px;
+             width: 700px;
          }
+     }
+
+     .sql-editor {
+         border: 1px solid #dcdfe6;
+     }
+
+     .CodeMirror-line {
+         line-height: 24px !important;
+     }
+
+     .vue-codemirror {
+         height: 100%;
+         width: 100%;
+     }
+
+     .CodeMirror {
+         height: 100% !important;
+         width: 100%;
+         border-radius: 0;
+         border: none;
+     }
+
+     .code-widget {
+         display: inline-block;
+         height: 20px;
+         line-height: 20px;
+         background: #fd8647;
+         color: #fff;
+         margin: 0 4px;
+         border-radius: 3px;
+         padding: 0 8px;
+         font-size: 13px;
+     }
+
+     .CodeMirror-hints {
+         z-index: 99999999;
      }
  }
