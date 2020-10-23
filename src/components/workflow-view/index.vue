@@ -45,8 +45,8 @@
             ></fast-switch>
           </div>
           <!-- 排序标签 -->
-          <div class="pso-view-sorttag" v-if="store.sorts.length">
-            <el-tag size="small" v-for="(sort, i) in store.sorts" :key="i" closable @close="store.removeSort(i)">
+          <div class="pso-view-sorttag" v-if="store.operableSotrs.length">
+            <el-tag size="small" v-for="(sort, i) in store.operableSotrs" :key="i" closable @close="store.removeSort(i)">
               {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
             </el-tag>
           </div>

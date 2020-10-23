@@ -14,7 +14,7 @@
       <div class="pso-page-body__content">
         <div class="pso-page-body__wrapper" v-if="curNode" v-loading="loading">
           <div class="pso-page-body__header">
-            <pso-title>流程：{{curNode.node_display}}</pso-title>
+            <pso-title>流程：{{ curNode.node_display }}</pso-title>
             <div class="pso-page-body__btns">
               <el-button size="small" type="primary" plain @click="handleEditWf">设计流程</el-button>
               <el-button size="small" type="primary" plain @click="handleSaveWf">保存设置</el-button>
@@ -36,19 +36,24 @@
             </el-tabs>
           </div>
           <div class="pso-page-body__tabbody">
-            <template v-if="!!curNode.is_leaf&&!loading">
-              <div class="pso-page-wf__stage" v-if="curTab==='preview'">
+            <template v-if="!!curNode.is_leaf && !loading">
+              <div class="pso-page-wf__stage" v-if="curTab === 'preview'">
                 <pso-wf-stage :workflow-data="wfImage" read-mode v-if="wfImage"></pso-wf-stage>
               </div>
-              <pso-wf-table v-if="curTab==='table'"></pso-wf-table>
-              <pso-wf-agent v-if="curTab==='proxy'" :node="curNode"></pso-wf-agent>
-              <pso-wf-autoid v-if="curTab==='file'" :node="curNode"></pso-wf-autoid>
-              <pso-wf-tag v-if="curTab==='tag'" :data="tagData"></pso-wf-tag>
-              <pso-wf-text v-if="curTab==='text'" :data="textData"></pso-wf-text>
-              <pso-wf-subwf v-if="curTab==='subwf'" :data="subWfData"></pso-wf-subwf>
-              <pso-wf-script v-if="curTab==='script'" :data="script" :fields="formFields"></pso-wf-script>
+              <pso-wf-table v-if="curTab === 'table'"></pso-wf-table>
+              <pso-wf-agent v-if="curTab === 'proxy'" :node="curNode"></pso-wf-agent>
+              <pso-wf-autoid v-if="curTab === 'file'" :node="curNode"></pso-wf-autoid>
+              <pso-wf-tag v-if="curTab === 'tag'" :data="tagData"></pso-wf-tag>
+              <pso-wf-text v-if="curTab === 'text'" :data="textData"></pso-wf-text>
+              <pso-wf-subwf v-if="curTab === 'subwf'" :data="subWfData"></pso-wf-subwf>
+              <pso-wf-script
+                v-if="curTab === 'script'"
+                :data="script"
+                :fields="formFields"
+                :code="wfDesigner.formStore.data_code"
+              ></pso-wf-script>
             </template>
-            <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+            <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
           </div>
         </div>
       </div>
@@ -180,7 +185,7 @@ export default {
         await this.getBaseInfo(node);
         this.$store.commit(WF_RESET);
         await this.getWfCfg(node);
-        this.loading = false; 
+        this.loading = false;
       } else {
         this.curTab = "auth";
       }

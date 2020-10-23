@@ -1,6 +1,6 @@
 <template>
-  <div class="lay-vv" :class="viewClass" v-loading="saving">
-    <div class="lay-vv__t">
+  <div :class="viewClass" v-loading="saving">
+    <div class="lay-vv__t" :style="topStyle">
       <pso-form-view
         key="main"
         v-bind="params"
@@ -21,7 +21,7 @@
       >
       </pso-form-view>
     </div>
-    <div class="lay-vv__b" v-loading="initializing">
+    <div class="lay-vv__b" :style="bottomStyle" v-loading="initializing">
       <template v-if="asstables.length">
         <div class="lay-vv__b-header" v-show="asstables.length > 1">
           <el-tabs v-model="activeAst" @tab-click="changeAst">
@@ -66,10 +66,7 @@ export default {
   },
   computed: {
     viewClass() {
-      return {
-        "display-row": this.params.displayRow !== "1",
-        "no-b-header": this.asstables.length < 2,
-      };
+      return { "no-b-header": this.asstables.length < 2, ...this.layoutClass };
     },
     astFilter() {
       return this.params.asstables && Array.isArray(this.params.asstables) && this.params.asstables;

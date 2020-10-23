@@ -108,6 +108,7 @@ const FILTER_TYPE = {
         cid: 'number',
         name: '数值',
         op: [
+            { ...FILTER_OP.op9, match: 1 },
             { ...FILTER_OP.op1, match: 1 },
             { ...FILTER_OP.op2, match: 1 },
             { ...FILTER_OP.op3, match: 1 },
@@ -116,7 +117,6 @@ const FILTER_TYPE = {
             { ...FILTER_OP.op6, match: 1 },
             { ...FILTER_OP.op7, match: 1 },
             { ...FILTER_OP.op8, match: 1 },
-            { ...FILTER_OP.op9, match: 1 },
             { ...FILTER_OP.op10, match: 5, arraytype: true, defaultVal: [0, 0] },
         ]
     },
@@ -125,6 +125,7 @@ const FILTER_TYPE = {
         cid: 'text',
         name: '字符串',
         op: [
+            { ...FILTER_OP.op9, match: 1 },
             { ...FILTER_OP.op1, match: 1 },
             { ...FILTER_OP.op2, match: 1 },
             { ...FILTER_OP.op3, match: 1 },
@@ -133,7 +134,6 @@ const FILTER_TYPE = {
             { ...FILTER_OP.op6, match: 1 },
             { ...FILTER_OP.op7, match: 1 },
             { ...FILTER_OP.op8, match: 1 },
-            { ...FILTER_OP.op9, match: 1 },
         ]
     },
     select: {

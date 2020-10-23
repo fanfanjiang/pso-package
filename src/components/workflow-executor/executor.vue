@@ -23,7 +23,7 @@
         </div>
       </div>
     </transition>
-    <div class="pso-wf-executor__extend" :class="extendClass">
+    <div class="pso-wf-executor__extend">
       <div class="pso-wf-executor__switch" @click="store.showExtend = !store.showExtend">
         <i :class="switchClass"></i>
       </div>
@@ -71,15 +71,11 @@ export default {
     return {};
   },
   computed: {
-    extendClass() {
-      return {
-        "pso-wf-executor__extend__expend": !this.store.showBody,
-        "pso-wf-executor__extend__zoom": !this.store.showExtend,
-      };
-    },
     executorClass() {
       return {
         "pso-wf-executor__m": this.__isMobile__,
+        "pso-wf-executor__extend__expend": !this.store.showBody,
+        "pso-wf-executor__extend__zoom": !this.store.showExtend,
       };
     },
     stamp() {

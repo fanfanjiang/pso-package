@@ -50,7 +50,12 @@
               ></pso-form-view>
               <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
               <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData"></form-column>
-              <form-status v-if="curTab === 'status'" :data="staData" :fields="tableData"></form-status>
+              <form-status
+                v-if="curTab === 'status' && formStore"
+                :code="formStore.data_code"
+                :data="staData"
+                :fields="tableData"
+              ></form-status>
               <form-status v-if="curTab === 'stage'" :data="stageData" :fields="tableData"></form-status>
               <form-publish
                 v-if="curTab === 'publish' && formStore"

@@ -1,6 +1,6 @@
 <template>
-  <div class="lay-vv" :class="viewClass" v-loading="saving">
-    <div class="lay-vv__t">
+  <div :class="layoutClass" v-loading="saving">
+    <div class="lay-vv__t" :style="topStyle">
       <pso-form-view
         key="main"
         v-bind="params"
@@ -20,7 +20,7 @@
       >
       </pso-form-view>
     </div>
-    <div class="lay-vv__b" v-loading="initializing || initializingAst">
+    <div class="lay-vv__b" :style="bottomStyle" v-loading="initializing || initializingAst">
       <template v-if="mainCurRow">
         <pso-wf-view :params="workflowParams"></pso-wf-view>
       </template>
@@ -46,11 +46,6 @@ export default {
   computed: {
     opable() {
       return !!this.params.opable;
-    },
-    viewClass() {
-      return {
-        // "display-row": this.params.displayRow !== "1",
-      };
     },
     workflowParams() {
       let defForm = null;

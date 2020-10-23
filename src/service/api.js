@@ -576,6 +576,13 @@ export default class API {
         }
     }
 
+    static async debugSQLScript(data) {
+        try {
+            return await this.request('/api/sql/debug', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

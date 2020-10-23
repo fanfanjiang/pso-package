@@ -2,36 +2,14 @@
   <el-form :label-position="position" label-width="90px">
     <template v-if="!initializing">
       <el-form-item label="选择工作表">
-        <el-select
-          size="mini"
-          v-model="data[formField]"
-          filterable
-          placeholder="工作表"
-          @change="changeHandler"
-        >
-          <el-option
-            v-for="o in options"
-            :key="o.node_name"
-            :label="o.node_display"
-            :value="o.node_name"
-          ></el-option>
+        <el-select size="mini" v-model="data[formField]" filterable placeholder="工作表" @change="changeHandler">
+          <el-option v-for="o in options" :key="o.node_name" :label="o.node_display" :value="o.node_name"></el-option>
         </el-select>
       </el-form-item>
       <template v-loading="loading">
-        <el-form-item :label="f.n" v-for="(f,i) in fields" :key="i">
-          <el-select
-            size="mini"
-            v-model="data[f.f]"
-            filterable
-            :multiple="isArray(data[f.f])"
-            @change="selectHandler($event,f.f)"
-          >
-            <el-option
-              v-for="fo in fOptions"
-              :key="fo._fieldValue"
-              :label="fo.fieldDisplay"
-              :value="fo._fieldValue"
-            ></el-option>
+        <el-form-item :label="f.n" v-for="(f, i) in fields" :key="i">
+          <el-select size="mini" v-model="data[f.f]" filterable :multiple="isArray(data[f.f])" @change="selectHandler($event, f.f)">
+            <el-option v-for="fo in fOptions" :key="fo._fieldValue" :label="fo.fieldDisplay" :value="fo._fieldValue"></el-option>
           </el-select>
         </el-form-item>
       </template>
@@ -110,9 +88,12 @@ export default {
               d.field_format = f.data._fieldFormat;
               d.output_format = f.data._outputFormat;
             }
-            d.is_sys = f ? "0" : "1";
+
+            const noSys = f && f.field_name !== "d_tag" && f.field_name !== "d_name";
+
+            d.is_sys = noSys ? "0" : "1";
             d._fieldValue = d.field_name;
-            d.fieldDisplay = f ? `[${f.CPNT.name}][${f.data._fieldName}]${d.field_name}` : `[系统字段]${d.field_name}`;
+            d.fieldDisplay = noSys ? `${f.CPNT.name}@${f.data._fieldName}@${d.field_name}` : `系统@${d.field_name}`;
 
             if (this.source === "3") {
               if (!/\S+_s$/.test(d.field_name) && !/\S+_x$/.test(d.field_name)) {

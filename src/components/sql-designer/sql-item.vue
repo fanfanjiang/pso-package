@@ -1,7 +1,7 @@
 <template>
   <div class="sql-block">
     <div class="sql-block__base">
-      <el-form label-position="left" label-width="110px">
+      <el-form label-position="left" label-width="110px" size="mini">
         <el-form-item label="名称">
           <el-input size="mini" v-model="block.name"></el-input>
         </el-form-item>
@@ -139,7 +139,6 @@ export default {
     this.FORMULAR = FORMULAR;
     this.CONDITION = CONDITION;
     return {
-      showHint: true,
       sqlOptions: {
         tabSize: 4,
         styleActiveLine: true,
@@ -148,10 +147,6 @@ export default {
         lineWrapping: true,
         mode: "text/x-mysql",
         extraKeys: { Ctrl: "autocomplete" },
-        // hintOptions: {
-        //   hint: this.handleHint,
-        //   completeSingle: false,
-        // },
       },
     };
   },

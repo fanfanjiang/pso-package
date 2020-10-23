@@ -1,18 +1,14 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <div style="display:flex;align-items: center;">
-      <div class="pso-form-user-selectedlist" v-if="!loading&&proxy.list.length">
-        <el-tag
-          v-for="item in proxy.list"
-          size="medium"
-          :key="item.user_id"
-          :closable="cpntEditable"
-          @close="handleDelSelection(item)"
-        >{{item.user_name}}</el-tag>
+    <div style="display: flex; align-items: center">
+      <div class="pso-form-user-selectedlist" v-if="!loading && proxy.list.length">
+        <el-tag v-for="item in proxy.list" size="medium" :key="item.user_id" :closable="cpntEditable" @close="handleDelSelection(item)">{{
+          item.user_name
+        }}</el-tag>
       </div>
-      <pso-skeleton v-if="loading" :lines="1" :s-style="{width:'120px',padding:'0 5px'}"></pso-skeleton>
+      <pso-skeleton v-if="loading" :lines="1" :s-style="{ width: '120px', padding: '0 5px' }"></pso-skeleton>
       <pso-picker-user v-if="cpntEditable" :pattern="cpnt.data._type" @confirm="handleAddSelection">
-        <div style="margin-top: -4px;">
+        <div style="margin-top: -4px">
           <el-button size="mini" icon="el-icon-plus" circle></el-button>
         </div>
       </pso-picker-user>
@@ -66,6 +62,9 @@ export default {
       return await this.API.user({ data: { user_id }, method: "get" });
     },
     async setDataByIds(users) {
+      if (users && typeof users === "string") {
+        users = users.split(",");
+      }
       const list = [];
       for (let uid of users) {
         const userRet = await this.getUser(uid);

@@ -1,17 +1,18 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <div style="display:flex;align-items: center;">
-      <div class="pso-form-selectedlist" v-if="!loading&&proxy.list.length">
+    <div style="display: flex; align-items: center">
+      <div class="pso-form-selectedlist" v-if="!loading && proxy.list.length">
         <el-tag
           v-for="item in proxy.list"
           :key="item[tagIdName]"
-          :closable="cpnt.store.editable&&!cpnt.data._read"
+          :closable="cpnt.store.editable && !cpnt.data._read"
           @close="handleDelSelection(item)"
-        >{{item[tagDisplayName]}}</el-tag>
+          >{{ item[tagDisplayName] }}</el-tag
+        >
       </div>
-      <pso-skeleton v-if="loading" :lines="1" :s-style="{width:'120px',padding:'0 5px'}"></pso-skeleton>
+      <pso-skeleton v-if="loading" :lines="1" :s-style="{ width: '120px', padding: '0 5px' }"></pso-skeleton>
       <pso-picker-tag
-        v-if="cpnt.store.editable&&!cpnt.data._read"
+        v-if="cpnt.store.editable && !cpnt.data._read"
         ref="selector"
         :tree-option="cpnt.data._treeOptions"
         :pattern="cpnt.data._type"
@@ -68,6 +69,9 @@ export default {
   },
   methods: {
     async setDataByIds(tagData) {
+      if (tagData && typeof tagData === "string") {
+        tagData = tagData.split(",");
+      }
       this.loading = true;
       let ret = { data: [] };
       let idName = "";

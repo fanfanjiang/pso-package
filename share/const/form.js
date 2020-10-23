@@ -46,6 +46,8 @@ const CPNT = {
       { n: '_useRange', v: false },
       { n: '_min', v: '' },
       { n: '_max', v: '' },
+      { n: '_minField', v: '' },
+      { n: '_maxField', v: '' },
     ]
   },
   money: {
@@ -68,6 +70,8 @@ const CPNT = {
       { n: '_useRange', v: false },
       { n: '_min', v: '' },
       { n: '_max', v: '' },
+      { n: '_minField', v: '' },
+      { n: '_maxField', v: '' },
     ]
   },
   select: {

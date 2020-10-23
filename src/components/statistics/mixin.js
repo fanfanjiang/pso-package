@@ -45,7 +45,7 @@ export const StaMixin = {
                     this.watchFun = [];
                 }
 
-                this.store = new STAVStore({ $vue: this, outerParams: this.params.outerParams });
+                this.store = new STAVStore({ $vue: this, outerParams: this.params.outerParams, params: this.params.pluginParams });
 
                 if (this.params.viewAuth) {
                     this.store.analyzeAuthView(this.params.viewAuth, this.params.auth_config);

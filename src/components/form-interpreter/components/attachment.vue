@@ -96,9 +96,12 @@ export default {
     },
   },
   methods: {
-    async getImages() {
+    async setDataByIds(ids) {
+      this.getImages(ids);
+    },
+    async getImages(ids) {
       this.loadingFile = true;
-      const ret = await this.API.file({ data: { ids: this.cpnt.data._val }, method: "get" });
+      const ret = await this.API.file({ data: { ids: ids || this.cpnt.data._val }, method: "get" });
       this.loadingFile = false;
       makeFiles({ files: ret.data, urlField: "res_path", nameField: "res_name" });
       this.proxy = ret.data;

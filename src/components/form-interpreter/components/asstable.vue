@@ -267,7 +267,7 @@ export default {
       this.initializing = true;
       if (!this.cpnt.data._option) return;
 
-      const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
+      const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option, auth: 1 }, method: "get" });
 
       this.astStore = new ASTStore({ $vue: this, limit: 10 });
       this.astStore.analyzeFormCfg(ret.data, this.cpnt.data._showFields);
@@ -294,6 +294,9 @@ export default {
       this.initializing = false;
     },
     async setDataByIds(idList) {
+      if (idList && typeof idList === "string") {
+        idList = idList.split(",");
+      }
       this.loading = true;
       const list = [];
       for (let id of idList) {

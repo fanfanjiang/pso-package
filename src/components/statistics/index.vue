@@ -104,7 +104,7 @@
                 :background="!forceclick"
                 :small="forceclick"
                 :layout="paginationLayout"
-                :page-sizes="[store.dataTotal]"
+                :page-sizes="store.pageSize"
                 :total="store.dataTotal"
                 :page-size="store.limit"
                 :current-page="store.page"

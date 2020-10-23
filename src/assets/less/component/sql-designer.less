@@ -23,73 +23,161 @@
      }
  }
 
+ .sql-designer-wrapper {
+     position: relative;
+     height: 100%;
+     width: 100%;
+ }
+
  .sql-designer {
      position: relative;
      height: 100%;
-     overflow: auto;
+     width: 100%;
+     display: flex;
 
-     .sql-designer-body {
+     .sql-designer__op {
+         text-align: right;
+         margin-bottom: 10px;
+     }
+
+     .sql-designer-base {
+         padding: 15px;
+
+         .el-select {
+             width: 100%;
+         }
+     }
+
+     .sql-designer-gen {
+         padding: 15px;
+
+         .sql-designer-gen__header {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             margin-bottom: 20px;
+
+
+             .el-form-item__label {
+                 display: none;
+             }
+
+             .el-form-item {
+                 margin: 0;
+             }
+
+             .el-form-item__content {
+                 line-height: initial;
+             }
+         }
+     }
+
+     .sql-designer-field {
          padding: 15px;
      }
 
-     .el-select {
-         width: 100%;
-     }
-
-     .sql-designer__add {
-         margin-bottom: 15px;
-     }
-
-     .el-form-item {
-         margin-bottom: 15px;
-     }
-
-     .sql-block {
-         display: flex;
-
-         .sql-block__base {
-             flex: 1;
-         }
-
-         .sql-block__extend {
-             margin-left: 15px;
-             width: 700px;
-         }
-     }
-
-     .sql-editor {
-         border: 1px solid #dcdfe6;
-     }
-
-     .CodeMirror-line {
-         line-height: 24px !important;
-     }
-
-     .vue-codemirror {
+     .sql-designer-l {
+         width: 600px;
          height: 100%;
-         width: 100%;
+         overflow: auto;
+
+         .el-collapse {
+             border-top: none;
+
+             .el-collapse-item__header {
+                 padding-left: 15px;
+                 color: #999;
+                 background-color: #f7f7f7;
+                 height: 40px;
+                 line-height: 40px;
+             }
+
+             .el-collapse-item__content {
+                 padding: 0;
+             }
+         }
      }
 
-     .CodeMirror {
-         height: 100% !important;
-         width: 100%;
-         border-radius: 0;
-         border: none;
-     }
+     .sql-designer-r {
+         flex: 1;
+         height: 100%;
 
-     .code-widget {
-         display: inline-block;
-         height: 20px;
-         line-height: 20px;
-         background: #fd8647;
-         color: #fff;
-         margin: 0 4px;
-         border-radius: 3px;
-         padding: 0 8px;
-         font-size: 13px;
-     }
+         .sql-designer-ctl {
+             height: 40px;
+             background-color: #f7f7f7;
+             display: flex;
+             align-items: center;
+             justify-content: flex-end;
+             padding: 0 20px;
 
-     .CodeMirror-hints {
-         z-index: 99999999;
+             .sql-designer-ctl__btn {
+                 width: 30px;
+                 height: 30px;
+                 line-height: 30px;
+                 text-align: center;
+                 cursor: pointer;
+
+                 &:hover {
+                     i {
+                         color: #999;
+                     }
+                 }
+
+                 i {
+                     color: #666;
+                     font-size: 16px;
+                 }
+
+                 &+.sql-designer-ctl__btn {
+                     margin-left: 10px;
+                 }
+             }
+         }
+
+         .vue-codemirror {
+             height: calc(100% - 40px);
+             width: 100%;
+         }
+
+         .CodeMirror-line {
+             line-height: 24px !important;
+         }
+
+         .CodeMirror-gutters {
+             border: none;
+         }
+
+         .CodeMirror {
+             height: 100% !important;
+             width: 100%;
+             border-radius: 0;
+             border: none;
+         }
+
+         .CodeMirror-scroll {
+             overflow: auto !important;
+         }
+
+         .CodeMirror-linenumbers {
+             width: 30px;
+         }
+
+         .CodeMirror-hints {
+             z-index: 99999999;
+         }
      }
+ }
+
+
+ .code-widget {
+     display: inline-block;
+     height: 22px;
+     line-height: 20px;
+     background: #fd8647;
+     color: #fff;
+     margin: 0 4px;
+     border-radius: 2px;
+     padding: 0 8px;
+     font-size: 13px;
+     font-family: -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
  }

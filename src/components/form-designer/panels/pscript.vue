@@ -30,7 +30,6 @@
       <column-editor :data="cpnt.data._column" :formulable="false"></column-editor>
     </el-dialog>
     <el-dialog title="设置脚本" append-to-body :visible.sync="showScript" :width="'80%'">
-      {{ cpnt.data._script }}
       <div class="pso-table-controller">
         <el-button size="small" type="primary" plain @click="addScript">添加脚本</el-button>
       </div>
@@ -63,11 +62,14 @@
         </el-table-column>
       </el-table>
     </el-dialog>
-    <pso-dialog title="设计脚本" :visible="showDeisgner" width="80%" @close="showDeisgner = false">
-      <div style="padding: 20px; height: 100%; overflow: auto" v-if="curSql">
-        <sql-designer :sql="curSql" :params="fieldOptions" params-n="_fieldName" params-v="_fieldValue"></sql-designer>
-      </div>
-    </pso-dialog>
+    <sql-designer
+      :opener="showDeisgner"
+      :scode="cpnt.store.data_code"
+      :sql="curSql"
+      :params="fieldOptions"
+      params-n="_fieldName"
+      params-v="_fieldValue"
+    ></sql-designer>
   </div>
 </template>
 <script>
@@ -86,7 +88,7 @@ export default {
       showColum: false,
       showScript: false,
       curSql: null,
-      showDeisgner: false,
+      showDeisgner: { show: false },
     };
   },
   computed: {
@@ -126,7 +128,7 @@ export default {
         this.$set(this.cpnt.data._script[index], "sql", []);
       }
       this.curSql = this.cpnt.data._script[index].sql;
-      this.showDeisgner = true;
+      this.showDeisgner.show = true;
     },
   },
 };

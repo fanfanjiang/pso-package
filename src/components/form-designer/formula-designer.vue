@@ -284,17 +284,6 @@ export default {
       border-radius: 0;
       border: none;
     }
-    .code-widget {
-      display: inline-block;
-      height: 20px;
-      line-height: 20px;
-      background: #fd8647;
-      color: #fff;
-      margin: 0 4px;
-      border-radius: 3px;
-      padding: 0 8px;
-      font-size: 13px;
-    }
     .el-tabs__header {
       margin-bottom: 0;
     }

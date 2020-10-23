@@ -13,14 +13,21 @@
         </template>
       </el-table-column>
     </el-table>
-    <sql-designer :opener="showDeisgner" :sql="curSql" :params="fields" params-n="field_display" params-v="field_name"></sql-designer>
+    <sql-designer
+      :opener="showDeisgner"
+      :scode="code"
+      :sql="curSql"
+      :params="fields"
+      params-n="field_display"
+      params-v="field_name"
+    ></sql-designer>
   </div>
 </template> 
 <script>
 import SqlDesigner from "../sql-designer";
 export default {
   components: { SqlDesigner },
-  props: ["data", "fields"],
+  props: ["data", "fields", "code"],
   data() {
     return {
       showDeisgner: { show: false },

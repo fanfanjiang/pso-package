@@ -44,11 +44,14 @@
         </template>
       </el-table-column>
     </el-table>
-    <pso-dialog title="设计脚本" :visible="showDeisgner" width="100%" @close="showDeisgner = false">
-      <div style="padding: 20px; height: 100%; overflow: auto">
-        <sql-designer :sql="curSql" :params="fields" params-n="field_display" params-v="field_name"></sql-designer>
-      </div>
-    </pso-dialog>
+    <sql-designer
+      :opener="showDeisgner"
+      :scode="code"
+      :sql="curSql"
+      :params="fields"
+      params-n="field_display"
+      params-v="field_name"
+    ></sql-designer>
   </div>
 </template>
 <script>
@@ -58,11 +61,11 @@ import { formatJSONList } from "../../utils/util";
 
 export default {
   components: { SqlDesigner },
-  props: ["data", "fields"],
+  props: ["data", "fields", "code"],
   data() {
     return {
       curSql: null,
-      showDeisgner: false,
+      showDeisgner: { show: false },
     };
   },
   created() {
@@ -71,7 +74,7 @@ export default {
   methods: {
     goDesigner(index) {
       this.curSql = this.data[index].script;
-      this.showDeisgner = true;
+      this.showDeisgner.show = true;
     },
     addHandler() {
       this.data.push(_.cloneDeep(FORM_STATUS_FIELDS));

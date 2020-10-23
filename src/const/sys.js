@@ -35,6 +35,8 @@ export const FORM_COLUMN_FIELDS = {
     searchable: false,
     editable: false,
     clearZero: false,
+    defSort: "", //默认排序类型
+    defSortOrder: 0,//默认排序顺序
 }
 
 export const STATIC_COLUMN_FIELDS = {

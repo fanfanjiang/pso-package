@@ -20,24 +20,30 @@
         </div>
       </div>
     </template>
-    <div class="sql-designer">
-      <div class="sql-designer-body" v-if="sql && sql.length">
+    <div class="sql-designer-wrapper">
+      <template v-if="sql && sql.length">
         <transition name="el-fade-in">
-          <sql-item v-if="curBlock" :block="curBlock" :params="params" :params-n="paramsN" :params-v="paramsV"></sql-item>
+          <!-- <sql-item v-if="curBlock" :block="curBlock" :params="params" :params-n="paramsN" :params-v="paramsV"></sql-item> -->
+          <designer v-if="curBlock" :scode="scode" :block="curBlock" :params="params" :params-n="paramsN" :params-v="paramsV"></designer>
         </transition>
-      </div>
+      </template>
       <pso-empty v-else text="暂无脚本"></pso-empty>
     </div>
   </pso-dialog>
-</template>
+</template> 
 <script>
 import shortid from "shortid";
 import SqlItem from "./sql-item";
+import Designer from "./designer";
 export default {
-  components: { SqlItem },
+  components: { SqlItem, Designer },
   props: {
     sql: {
       type: Array,
+    },
+    scode: {
+      type: String,
+      default: "",
     },
     params: Array,
     paramsN: String,

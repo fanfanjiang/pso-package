@@ -41,12 +41,14 @@
           <el-table-column prop="searchable" label="筛选" width="70" sortable>
             <template slot-scope="scope">{{ scope.row.searchable }}</template>
           </el-table-column>
-          <el-table-column prop="sortable" label="排序" width="70" sortable></el-table-column>
+          <el-table-column prop="sortable" label="手动排序" width="100" sortable></el-table-column>
           <el-table-column prop="editable" label="编辑" width="70" sortable>
             <template slot-scope="scope">{{ scope.row.editable }}</template>
           </el-table-column>
           <el-table-column prop="cal" label="统计" width="70" sortable></el-table-column>
           <el-table-column prop="align" label="对齐方式" width="100" sortable></el-table-column>
+          <el-table-column prop="defSort" label="默认排序类型" width="120" sortable></el-table-column>
+          <el-table-column prop="defSortOrder" label="默认排序顺序" width="120" sortable></el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
@@ -58,7 +60,7 @@
       :center="true"
       :visible.sync="showEditor"
     >
-      <el-form label-position="left" label-width="90px" v-if="curRow" style="padding: 20px">
+      <el-form label-position="left" label-width="120px" v-if="curRow" style="padding: 20px">
         <el-form-item label="显示名称">
           <el-input size="mini" v-model="curRow.display"></el-input>
         </el-form-item>
@@ -79,7 +81,16 @@
         </el-form-item>
         <el-form-item label="清除多余零">
           <el-switch size="mini" v-model="curRow.clearZero"></el-switch>
-        </el-form-item> 
+        </el-form-item>
+        <el-form-item label="默认排序类型">
+          <el-select size="mini" clearable v-model="curRow.defSort">
+            <el-option label="降序" value="desc"></el-option>
+            <el-option label="升序" value="asc"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="默认排序顺序">
+          <el-input-number size="mini" v-model="curRow.defSortOrder" controls-position="right" :min="0"></el-input-number>
+        </el-form-item>
         <el-form-item label="对齐方式">
           <el-select size="mini" v-model="curRow.align">
             <el-option label="居中" value="center"></el-option>

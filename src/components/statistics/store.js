@@ -7,16 +7,23 @@ import Vue from "vue";
 export default class STAVStore extends FVStore {
     constructor(options) {
         super(options);
-        const { outerParams } = options;
+        const { outerParams, params = {} } = options;
         this.staCfg = null;
         this.showBack = false;
         this.header = null;
+        this.paging = false;
         this.menus = [];
         this.outerParams = outerParams;
+        this.params = params;
+        console.log(params);
     }
 
     get opExportable() {
         return true;
+    }
+
+    get pageSize() {
+        return this.paging ? [this.limit, 30, 50, 200, 500, 1000] : [this.dataTotal];
     }
 
     async initialize(id, query) {
@@ -116,13 +123,24 @@ export default class STAVStore extends FVStore {
 
     async fetchStatus() {
         this.starting = true;
-        const ret = await API.getStatisticData({ tp_code: this.staCfg.tp_code, leaf_auth: this.activeView, search_type: "init" });
+        const ret = await API.getStatisticData({
+            ...this.params,
+            limit: 10,
+            start: 0,
+            tp_code: this.staCfg.tp_code,
+            leaf_auth: this.activeView,
+            search_type: "init"
+        });
 
         if (ret.success) {
             if (ret.data.NAV) {
                 this.statuses = ret.data.NAV.map(s => {
                     s.name = s.status_name;
                 });
+            }
+
+            if (typeof ret.data.PAGE !== 'undefined') {
+                this.paging = true;
             }
             await this.fetchCuzFastSwtich('curStatus', 'd_status');
         }
@@ -133,7 +151,14 @@ export default class STAVStore extends FVStore {
 
         this.fetching = true;
 
-        const params = { tp_code: this.staCfg.tp_code, leaf_auth: this.activeView, keys: JSON.stringify({ ...this.defaultKeys }) };
+        const params = {
+            ...this.params,
+            limit: this.limit,
+            start: this.page - 1,
+            tp_code: this.staCfg.tp_code,
+            leaf_auth: this.activeView,
+            keys: JSON.stringify({ ...this.defaultKeys })
+        };
 
         if (this.curStatus) {
             params.search_type = "select";
@@ -177,8 +202,9 @@ export default class STAVStore extends FVStore {
                 console.log(error);
             }
 
+
             this.instances = ret.data.DATA;
-            this.dataTotal = ret.data.DATA.length;
+            this.dataTotal = ret.data.PAGE || ret.data.DATA.length;
             this.$vue.$emit("data-loaded", this.instances);
         }
 

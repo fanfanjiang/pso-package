@@ -41,13 +41,21 @@ export default {
   },
   computed: {
     minNum() {
-      return this.cpnt.data._useRange && typeof this.cpnt.data._min !== "undefined" ? this.cpnt.data._min : this.min;
+      return this.getLimitVal("min");
     },
     maxNum() {
-      return this.cpnt.data._useRange && typeof this.cpnt.data._max !== "undefined" ? this.cpnt.data._max : this.max;
+      return this.getLimitVal("max");
     },
     precisionVal() {
       return typeof this.cpnt.data._decimalPlaces === "undefined" ? this.precision : this.cpnt.data._decimalPlaces;
+    },
+  },
+  watch: {
+    minNum(num) {
+      this.checkVal();
+    },
+    maxNum(num) {
+      this.checkVal();
     },
   },
   created() {
@@ -58,6 +66,30 @@ export default {
     if (this.cpnt.data._autofocus) {
       this.$refs.cpnt.focus();
     }
+  },
+  methods: {
+    getLimitVal(type) {
+      const fieldTypeTarget = this.cpnt.data[`_${type}Field`];
+      const numberTypeTarget = this.cpnt.data[`_${type}`];
+      const limit = this[type];
+
+      if (this.cpnt.data._useRange) {
+        if (fieldTypeTarget) {
+          const cpnt = this.cpnt.store.searchByField(fieldTypeTarget, true);
+          if (cpnt) {
+            return cpnt._val;
+          }
+        } else if (typeof numberTypeTarget !== "undefined") {
+          return numberTypeTarget;
+        }
+      }
+      return limit;
+    },
+    checkVal() {
+      const oldVal = this.cpnt.data._val;
+      if (oldVal >= this.maxNum) this.cpnt.data._val = this.max;
+      if (oldVal <= this.minNum) this.cpnt.data._val = this.min;
+    },
   },
 };
 </script>

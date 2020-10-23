@@ -1,4 +1,44 @@
+
+//组件本身需要有displayRow和bottomHeight来定义布局方式
+export const SplitLayoutMixin = {
+    computed: {
+        layoutClass() {
+            return {
+                "display-row": this.displayRow,
+                'lay-vv': true,
+            };
+        },
+        topStyle() {
+            if (this.displayRow) {
+                return {
+                    height: '100%',
+                    width: `calc(100% - ${this.bottomHeight})`
+                }
+            } else {
+                return {
+                    height: `calc(100% - ${this.bottomHeight})`,
+                    width: '100%',
+                }
+            }
+        },
+        bottomStyle() {
+            if (this.displayRow) {
+                return {
+                    height: '100%',
+                    width: `${this.bottomHeight}`
+                }
+            } else {
+                return {
+                    height: `${this.bottomHeight}`,
+                    width: '100%',
+                }
+            }
+        }
+    },
+}
+
 export const FormAsMainMixin = {
+    mixins: [SplitLayoutMixin],
     data() {
         return {
             initializingAst: false,
@@ -14,6 +54,12 @@ export const FormAsMainMixin = {
     computed: {
         mainDataId() {
             return this.mainCurRow && this.mainCurRow.leaf_id;
+        },
+        displayRow() {
+            return this.params.displayRow !== "1";
+        },
+        bottomHeight() {
+            return this.params.bottomHeight || '60%';
         }
     },
     methods: {

@@ -117,6 +117,10 @@ export default class FormViewStore {
         return (this.opAuth & 4) === 4;
     }
 
+    get operableSotrs() {
+        return this.sorts.filter(s => s.operable);
+    }
+
     //初始化
     async initialize(id, usedColumn) {
         this.initializing = true;
@@ -408,8 +412,15 @@ export default class FormViewStore {
         this.conditionOptions = _.cloneDeep(fields);
 
         if (this.fields.length) {
+
+            //刷选条件配置
             const conditions = [];
+
+            //默认排序配置
+            const defSorts = [];
+
             this.fields.forEach((f) => {
+
                 const exist = _.find(fields, { field_name: f.field_name.replace("_x", "") });
                 if (exist) {
                     Object.assign(f, exist, { display: f.display, field_name: f.field_name, show: f.show });
@@ -419,9 +430,19 @@ export default class FormViewStore {
                 } else {
                     f.fid = f.fid || f.field_name;
                 }
+
+                if (f.defSort) {
+                    defSorts.push(f)
+                }
             });
             if (conditions.length) {
                 this.defCondition.push(conditions);
+            }
+
+            if (defSorts.length) {
+                _.orderBy(defSorts, ["defSortOrder"], ["asc"]).forEach(f => {
+                    this.makeSort({ prop: f.field_name, order: f.defSort, display: f.display, operable: f.sortable === '1', fetch: false });
+                })
             }
         } else {
             this.fields = fields;
@@ -580,10 +601,10 @@ export default class FormViewStore {
         this.deFetch();
     }
 
-    makeSort({ column, prop, order }) {
-        if (order === "descending") {
+    makeSort({ column, prop, order, display, operable = true, fetch = true }) {
+        if (order === "descending" || order === "desc") {
             order = "desc";
-        } else if (order === "ascending") {
+        } else if (order === "ascending" || order === "asc") {
             order = "asc";
         }
         const sortIndex = _.findIndex(this.sorts, { prop });
@@ -596,9 +617,12 @@ export default class FormViewStore {
         if (sortIndex !== -1) {
             this.sorts[sortIndex].order = order;
         } else {
-            this.sorts.push({ prop, order, name: _.find(this.fields, { field_name: prop }).display });
+            this.sorts.push({ prop, order, name: display || _.find(this.fields, { field_name: prop }).display, operable });
         }
-        this.deFetch();
+
+        if (fetch) {
+            this.deFetch();
+        }
     }
 
     dragHandler(newWidth, oldWidth, column, event, tfield = 'field_name') {

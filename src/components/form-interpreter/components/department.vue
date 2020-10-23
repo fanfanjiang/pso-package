@@ -1,17 +1,18 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <div style="display:flex;align-items: center;">
-      <div class="pso-form-dept-selectedlist" v-if="!loading&&proxy.list.length">
+    <div style="display: flex; align-items: center">
+      <div class="pso-form-dept-selectedlist" v-if="!loading && proxy.list.length">
         <el-tag
           v-for="item in proxy.list"
           :key="item.node_id"
-          :closable="cpnt.store.editable&&!cpnt.data._read"
+          :closable="cpnt.store.editable && !cpnt.data._read"
           @close="handleDelSelection(item)"
-        >{{item.node_display}}</el-tag>
+          >{{ item.node_display }}</el-tag
+        >
       </div>
-      <pso-skeleton v-if="loading" :lines="1" :s-style="{width:'120px',padding:'0 5px'}"></pso-skeleton>
+      <pso-skeleton v-if="loading" :lines="1" :s-style="{ width: '120px', padding: '0 5px' }"></pso-skeleton>
       <pso-picker-dept
-        v-if="cpnt.store.editable&&!cpnt.data._read"
+        v-if="cpnt.store.editable && !cpnt.data._read"
         ref="selector"
         :pattern="cpnt.data._type"
         @confirm="handleAddSelection"
@@ -77,6 +78,9 @@ export default {
   },
   methods: {
     async setDataByIds(depts) {
+      if (depts && typeof depts === "string") {
+        depts = depts.split(",");
+      }
       const list = [];
       for (let node_id of depts) {
         const node = _.find(this.orgs, { node_id: parseInt(node_id) });
