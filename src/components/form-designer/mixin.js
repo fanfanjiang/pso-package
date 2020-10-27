@@ -60,13 +60,15 @@ export const FormulaMixin = {
 export const formOp = {
     data() {
         return {
-            formStore: null
+            formStore: null,
+            formConfig: null,
         }
     },
     methods: {
         async makeFormStore(id, options = { designMode: false }) {
             const ret = await this.API.formsCfg({ data: { id }, method: "get" });
             if (!ret.success) return;
+            this.formConfig = ret.data;
             this.formStore = new FormStore({ ...ret.data, options });
             return this.formStore;
         }

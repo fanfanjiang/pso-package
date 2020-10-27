@@ -35,10 +35,63 @@
      width: 100%;
      display: flex;
 
-     .sql-designer__op {
-         text-align: right;
-         margin-bottom: 10px;
+     .form-wrapper {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+
+         &+.form-wrapper {
+             margin-top: 10px;
+         }
+
+         >form,
+         >div {
+             flex: 1;
+         }
+
+         >form {
+             &+.el-form-item {
+                 margin-left: 15px;
+             }
+
+             .el-form-item__label {
+                 line-height: inherit;
+                 padding: 0;
+             }
+
+             .el-form-item__content {
+                 line-height: inherit;
+             }
+         }
+
+         .el-form-item {
+             margin-bottom: 0;
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+
+             .el-form-item__label {
+                 padding: 0;
+             }
+
+             &+.el-form-item {
+                 margin-left: 15px;
+             }
+
+             &+form {
+                 margin-left: 15px;
+             }
+
+             label {
+                 width: 100px;
+             }
+
+             >div {
+                 flex: 2;
+             }
+         }
      }
+
 
      .sql-designer-base {
          padding: 15px;
@@ -48,32 +101,43 @@
          }
      }
 
-     .sql-designer-gen {
-         padding: 15px;
-
-         .sql-designer-gen__header {
-             display: flex;
-             justify-content: space-between;
-             align-items: center;
-             margin-bottom: 20px;
-
-
-             .el-form-item__label {
-                 display: none;
-             }
-
-             .el-form-item {
-                 margin: 0;
-             }
-
-             .el-form-item__content {
-                 line-height: initial;
-             }
-         }
+     .sql-designer__op {
+         text-align: right;
+         margin-bottom: 10px;
      }
 
      .sql-designer-field {
          padding: 15px;
+     }
+
+     .sql-designer-ctl__btn {
+         height: 30px;
+         line-height: 30px;
+         text-align: center;
+         cursor: pointer;
+         padding: 0 5px;
+
+         &:hover {
+
+             span,
+             i {
+                 color: #999;
+             }
+         }
+
+         span,
+         i {
+             color: @main-color;
+             font-size: 16px;
+         }
+
+         span {
+             margin-left: 5px;
+         }
+
+         &+.sql-designer-ctl__btn {
+             margin-left: 10px;
+         }
      }
 
      .sql-designer-l {
@@ -98,45 +162,78 @@
          }
      }
 
+     .sql-designer-debug {
+         position: absolute;
+         bottom: 0;
+         left: 31px;
+         right: 0;
+         z-index: 1;
+
+         .sql-designer-debug__header {
+             height: 40px;
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+             padding: 0 10px;
+             background-color: #f7f7f7;
+             overflow: hidden;
+
+             .el-tabs__header {
+                 margin-bottom: 0;
+             }
+
+             .el-tabs__item {
+                 height: 34px;
+                 line-height: 30px;
+             }
+
+             .el-tabs__nav-wrap::after {
+                 width: 0;
+             }
+         }
+
+         .sql-designer-debug__body {
+             height: 200px;
+             overflow: auto;
+
+             .sql-designer-debug__params {
+                 padding: 15px;
+             }
+
+             .sql-designer-debug__result {
+                 padding: 10px;
+                 line-height: 26px;
+             }
+         }
+     }
+
      .sql-designer-r {
          flex: 1;
          height: 100%;
+         position: relative;
 
          .sql-designer-ctl {
              height: 40px;
              background-color: #f7f7f7;
              display: flex;
              align-items: center;
-             justify-content: flex-end;
+             justify-content: space-between;
              padding: 0 20px;
 
-             .sql-designer-ctl__btn {
-                 width: 30px;
-                 height: 30px;
-                 line-height: 30px;
-                 text-align: center;
-                 cursor: pointer;
-
-                 &:hover {
-                     i {
-                         color: #999;
-                     }
-                 }
-
-                 i {
-                     color: #666;
-                     font-size: 16px;
-                 }
-
-                 &+.sql-designer-ctl__btn {
-                     margin-left: 10px;
-                 }
+             >div {
+                 display: flex;
+                 align-items: center;
+                 justify-content: flex-end;
              }
+
+
          }
 
          .vue-codemirror {
              height: calc(100% - 40px);
              width: 100%;
+             z-index: 0;
+             position: relative;
          }
 
          .CodeMirror-line {
@@ -168,6 +265,36 @@
      }
  }
 
+ .sql-designer-gen {
+     padding: 15px;
+     height: 100%;
+     overflow: auto;
+
+     .sql-designer__op {
+         text-align: right;
+         margin-bottom: 10px;
+     }
+
+     .sql-designer-gen__header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 20px;
+
+
+         .el-form-item__label {
+             display: none;
+         }
+
+         .el-form-item {
+             margin: 0;
+         }
+
+         .el-form-item__content {
+             line-height: initial;
+         }
+     }
+ }
 
  .code-widget {
      display: inline-block;

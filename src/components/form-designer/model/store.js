@@ -36,7 +36,7 @@ export default class FormStore {
         this.is_pub = 0;
 
         this.extendAuth = null;//额外的表单权限配置，因为流程那里需要
-        
+
         this.rule_config;
 
         this.__fieldAuth__ = []; //字段权限
@@ -137,6 +137,16 @@ export default class FormStore {
 
     _forEach(fun) {
         for (let key in this.cpntsMap) fun && fun(this.cpntsMap[key]);
+    }
+
+    //获取所有表单字段值，系统和非系统的
+    getInstanceValue() {
+        const data = { ...this.instance };
+        for (let k in this.cpntsMap) {
+            if (k === '0') continue;
+            data[this.cpntsMap[k].data._fieldValue] = this.cpntsMap[k].data._val;
+        }
+        return data;
     }
 
     updateInstance(instance) {

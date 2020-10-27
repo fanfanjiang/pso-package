@@ -149,7 +149,9 @@ export default {
       //获取数据
       this.cpnt.store.storeLoading = true;
 
-      const params = { script: this.cpnt.data._script, params: this.scriptParams };
+      const otherValue = this.cpnt.store.getInstanceValue();
+
+      const params = { script: this.cpnt.data._script, params: { ...otherValue, ...this.scriptParams } };
       if (this.condition) {
         params.condition = this.condition;
       }

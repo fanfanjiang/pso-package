@@ -7,7 +7,7 @@ export default class API {
 
     static URL_PREFIX = ''
 
-    static async request(url, { method = 'post', data = {}, headers = {} }) {
+    static async request(url, { method = 'post', data = {}, headers = {}, showMsg = true }) {
         url = `${this.URL_PREFIX}${url}`;
         if (method === 'get') {
             url += `?${Qs.stringify(data)}`;
@@ -16,7 +16,7 @@ export default class API {
             if (method === 'delete') data = { data: data };
             const ret = await axios({ method, url, data, headers });
             const message = ret.msg || ret.message;
-            if (!ret.success && message && ret.tag !== 99) {
+            if (showMsg && !ret.success && message && ret.tag !== 99) {
                 Message({ showClose: true, message, type: 'warning' });
             }
             return ret;
@@ -578,7 +578,7 @@ export default class API {
 
     static async debugSQLScript(data) {
         try {
-            return await this.request('/api/sql/debug', { data, method: 'post' });
+            return await this.request('/api/sql/debug', { data, method: 'post', showMsg: false });
         } catch (error) {
             throw error;
         }

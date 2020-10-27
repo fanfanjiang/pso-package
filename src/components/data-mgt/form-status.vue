@@ -44,14 +44,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <sql-designer
-      :opener="showDeisgner"
-      :scode="code"
-      :sql="curSql"
-      :params="fields"
-      params-n="field_display"
-      params-v="field_name"
-    ></sql-designer>
+    <sql-designer :opener="showDeisgner" :scode="code" :sql="curSql"></sql-designer>
   </div>
 </template>
 <script>

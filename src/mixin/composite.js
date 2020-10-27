@@ -59,7 +59,7 @@ export const FormAsMainMixin = {
             return this.params.displayRow !== "1";
         },
         bottomHeight() {
-            return this.params.bottomHeight || '60%';
+            return this.params.bottomHeight || '50%';
         }
     },
     methods: {

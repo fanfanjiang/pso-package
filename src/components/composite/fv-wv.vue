@@ -44,6 +44,9 @@ export default {
     };
   },
   computed: {
+    displayRow() {
+      return false;
+    },
     opable() {
       return !!this.params.opable;
     },

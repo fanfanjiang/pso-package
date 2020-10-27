@@ -17,8 +17,8 @@ export const OPTYPE = [
 
 export const RELATE = [
     { v: "0", n: "单表" },
-    { v: "1", n: "关联主表" },
-    { v: "2", n: "关联子表" },
+    { v: "1", n: "子查主表" },
+    { v: "2", n: "主查子表" },
 ];
 
 export const FORMULAR = [

@@ -61,7 +61,7 @@ export default {
     },
   },
   methods: {
-    loadedHandler(fields) {
+    loadedHandler({ fields }) {
       this.fields = fields;
     },
     addOption() {

@@ -65,7 +65,7 @@ export async function makeFormByScript({ code, onEach }) {
 }
 
 export function makeSysFormFields() {
-    const sysFields = ['leaf_id', 'd_status', 'd_audit'];
+    const sysFields = ['leaf_id', 'd_status', 'd_audit', 'd_stage', 'creator'];
     const fields = [];
     sysFields.forEach(f => {
         fields.push(genComponentData({ componentid: 'text', _fieldValue: f, _fieldName: f }))

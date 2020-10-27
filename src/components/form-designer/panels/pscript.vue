@@ -62,14 +62,7 @@
         </el-table-column>
       </el-table>
     </el-dialog>
-    <sql-designer
-      :opener="showDeisgner"
-      :scode="cpnt.store.data_code"
-      :sql="curSql"
-      :params="fieldOptions"
-      params-n="_fieldName"
-      params-v="_fieldValue"
-    ></sql-designer>
+    <sql-designer :opener="showDeisgner" :scode="cpnt.store.data_code" :sql="curSql"></sql-designer>
   </div>
 </template>
 <script>

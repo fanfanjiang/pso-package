@@ -1,9 +1,9 @@
 <template>
   <el-form :label-position="position" label-width="90px">
     <template v-if="!initializing">
-      <el-form-item label="选择工作表">
-        <el-select size="mini" v-model="data[formField]" filterable placeholder="工作表" @change="changeHandler">
-          <el-option v-for="o in options" :key="o.node_name" :label="o.node_display" :value="o.node_name"></el-option>
+      <el-form-item :label="fromText" :required="required">
+        <el-select size="mini" :clearable="clearable" v-model="data[formField]" filterable placeholder="工作表" @change="changeHandler">
+          <el-option v-for="o in formOptions" :key="o.node_name" :label="o.node_display" :value="o.node_name"></el-option>
         </el-select>
       </el-form-item>
       <template v-loading="loading">
@@ -33,6 +33,19 @@ export default {
       type: String,
       default: "top",
     },
+    fromText: {
+      type: String,
+      default: "选择工作表",
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+    filter: Array,
   },
   data() {
     return {
@@ -51,6 +64,15 @@ export default {
         return this.cache[this.curCode];
       }
       return [];
+    },
+    formOptions() {
+      if (this.filter) {
+        return this.options.filter((o) => {
+          return this.filter.includes(o.node_name);
+        });
+      } else {
+        return this.options;
+      }
     },
   },
   async created() {
@@ -85,15 +107,14 @@ export default {
             const f = store.searchByField(d.field_name);
 
             if (f) {
-              d.field_format = f.data._fieldFormat;
-              d.output_format = f.data._outputFormat;
+              Object.assign(d, f.data);
             }
 
-            const noSys = f && f.field_name !== "d_tag" && f.field_name !== "d_name";
+            const noSys = f && f.data._fieldValue !== "d_tag" && f.data._fieldValue !== "d_name";
 
             d.is_sys = noSys ? "0" : "1";
             d._fieldValue = d.field_name;
-            d.fieldDisplay = noSys ? `${f.CPNT.name}@${f.data._fieldName}@${d.field_name}` : `系统@${d.field_name}`;
+            d.fieldDisplay = noSys ? `${f.data._fieldName}@${d.field_name}@${f.CPNT.name}` : `系统@${d.field_name}`;
 
             if (this.source === "3") {
               if (!/\S+_s$/.test(d.field_name) && !/\S+_x$/.test(d.field_name)) {
@@ -106,7 +127,7 @@ export default {
         }
 
         this.$set(this.cache, this.curCode, fields);
-        this.$emit("loaded", fields);
+        this.$emit("loaded", { fields, store, config: this.formConfig, forms: this.options });
 
         this.loading = false;
       }

@@ -111,10 +111,10 @@ export default {
   },
   methods: {
     async getFormData() {
+      this.loading = true;
       if (this.dataInstance) {
         this.store.updateInstance(this.dataInstance);
       } else if (this.dataId) {
-        this.loading = true;
         const ret = await this.API.form({ data: { leaf_id: this.dataId, form_code: this.store.data_code } });
         this.store.updateInstance(ret.data);
       } else {
@@ -134,7 +134,10 @@ export default {
       }
 
       this.$emit("data-loaded", this.store);
-      this.loading = false;
+      
+      this.$nextTick(() => {
+        this.loading = false;
+      });
     },
     async getFormCfg() {
       //如果已经监听了，则先停止监听

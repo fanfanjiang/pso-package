@@ -28,7 +28,7 @@
           >{{ firstInstanceDisplay }}
         </el-tag>
         <view-table
-          v-if="!justShowOne"
+          v-if="!justShowOne && instances.length"
           :store="astStore"
           :params="tableParams"
           :dragable="false"
@@ -58,7 +58,6 @@
           :stageable="false"
           :params="formTableCfg"
           :def-keys="devKeysCfg"
-          table-max-height="400px"
           @selection-confirm="handleAddSelection"
         ></pso-form-view>
       </pso-dialog>
@@ -246,6 +245,11 @@ export default {
 
     this.cpnt._handleClickAdd = this.handleClickAdd;
     this.cpnt._setDefForm = this.setDefForm;
+
+    //提示
+    const tip = this.cpnt.data._fieldInfo;
+    const defaultTip = "操作提示：双击或单击已选数据可查看详情或编辑，在弹出的窗口右上角可选择删除，删除时请谨慎操作。";
+    this.cpnt.data._fieldInfo = tip + (tip ? `<br><br>${defaultTip}` : defaultTip);
 
     this.dispatch("PsoformInterpreter", "asstable-initialized", {
       cpnt: this.cpnt,

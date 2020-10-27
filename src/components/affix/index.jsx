@@ -24,9 +24,6 @@ const Affix = {
             placeholderStyle: undefined,
         }
     },
-    created() {
-
-    },
     mounted() {
         if (this.target) {
             setTimeout(() => {

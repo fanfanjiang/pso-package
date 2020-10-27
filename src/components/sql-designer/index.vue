@@ -23,8 +23,7 @@
     <div class="sql-designer-wrapper">
       <template v-if="sql && sql.length">
         <transition name="el-fade-in">
-          <!-- <sql-item v-if="curBlock" :block="curBlock" :params="params" :params-n="paramsN" :params-v="paramsV"></sql-item> -->
-          <designer v-if="curBlock" :scode="scode" :block="curBlock" :params="params" :params-n="paramsN" :params-v="paramsV"></designer>
+          <designer v-if="curBlock" :scode="scode" :block="curBlock"></designer>
         </transition>
       </template>
       <pso-empty v-else text="暂无脚本"></pso-empty>
@@ -45,9 +44,6 @@ export default {
       type: String,
       default: "",
     },
-    params: Array,
-    paramsN: String,
-    paramsV: String,
     opener: Object,
   },
   data() {
