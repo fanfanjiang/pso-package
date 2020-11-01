@@ -15,7 +15,7 @@
             <span class="pso-upload__list-panel__item" v-if="check" @click="goShowViewer({ index, file })">
               <i class="el-icon-zoom-in"></i>
             </span>
-            <span class="pso-upload__list-panel__item" v-if="download" @click="download(file)">
+            <span class="pso-upload__list-panel__item" v-if="downloadable" @click="download(file)">
               <i class="el-icon-download"></i>
             </span>
             <span class="pso-upload__list-panel__item" v-if="remove" @click="$emit('delete', file)">

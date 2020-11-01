@@ -158,21 +158,47 @@ export default class FormStore {
         }
 
         for (let key in this.cpntsMap) {
-            const cpntData = this.cpntsMap[key].data;
+            const cpnt = this.cpntsMap[key];
+            const cpntData = cpnt.data;
+
             if (cpntData._fieldValue) {
+
+                const setDefaultVal = () => {
+                    Vue.set(cpntData, '_val', cpntData._defaultValue || "");
+                }
+
                 if (instance) {
-                    if (typeof instance[cpntData._fieldValue] !== 'undefined' && !_.isNull(instance[cpntData._fieldValue])) {
-                        Vue.set(cpntData, '_val', instance[cpntData._fieldValue]);
+                    const cnptVal = instance[cpntData._fieldValue];
+                    if (typeof cnptVal !== 'undefined' && !_.isNull(cnptVal)) {
+                        if (this.copyMode && cpnt.componentid === 'asstable' && cpntData._new) {
+                            setDefaultVal();
+                        } else {
+                            Vue.set(cpntData, '_val', cnptVal);
+                        }
                     } else {
-                        Vue.set(cpntData, '_val', cpntData._defaultValue || "");
+                        setDefaultVal();
                     }
                 } else {
-                    Vue.set(cpntData, '_val', cpntData._defaultValue || "");
+                    setDefaultVal();
                 }
             }
         }
 
         this.setShowByRules();
+    }
+
+    //手动更新控件值
+    async updateInstanceManually(data, callback) {
+        for (let k in data) {
+            const cpnt = this.searchByField(k);
+            if (cpnt) {
+                if (cpnt.__setDataByIds) {
+                    await cpnt.__setDataByIds(data[k], callback);
+                } else {
+                    cpnt.data._val = data[k];
+                }
+            }
+        }
     }
 
     reload(data) {
@@ -275,7 +301,7 @@ export default class FormStore {
             r.controlIds.forEach(_fieldValue => {
                 const _cpnt = this.search({ options: { db: true }, dataOptions: { _fieldValue } })[0];
                 if (_cpnt) {
-                    Vue.set(_cpnt.data, 'showInRules', show)
+                    Vue.set(_cpnt.data, r.controlType == 2 ? '_required' : 'showInRules', show)
                 }
             })
         }

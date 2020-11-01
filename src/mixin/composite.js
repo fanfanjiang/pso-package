@@ -115,7 +115,7 @@ export const FormAsMainMixin = {
         changeAst() {
             if (!this.astStore) return;
             this.astStore._forEach((cpnt) => {
-                cpnt.data._fieldName = "";
+                cpnt.data._hideFieldName = true;
                 cpnt.data._hideForever = cpnt.data._hideOnNew = cpnt.data._option !== this.activeAst;
                 this.$set(cpnt.data, "forceShow", cpnt.data._option === this.activeAst);
             });

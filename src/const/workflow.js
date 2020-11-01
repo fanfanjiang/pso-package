@@ -199,3 +199,9 @@ export const WF_FIELD_AUTH = [
     { n: "编辑", v: 2 },
     { n: "必填", v: 4 },
 ];
+
+export const WF_EMPTY_TYPE = [
+    { n: "流程中选择", v: '0' },
+    { n: "第一步选择", v: '1' },
+    { n: "绑定表单字段", v: '2' },
+];

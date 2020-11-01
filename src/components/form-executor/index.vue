@@ -65,6 +65,8 @@
 </template>
 <script>
 import shortid from "shortid";
+import { imitateFormData } from "../../tool/form";
+
 export default {
   props: {
     params: {
@@ -121,6 +123,10 @@ export default {
     showNext() {
       return this.showSwitch && this.dataId !== this.instanceids[this.instanceids.length - 1];
     },
+    isTemporary() {
+      //暂存的数据，还没有真实提交
+      return this.formParams.dataInstance && this.formParams.dataInstance.__temporary__;
+    },
   },
   watch: {
     "params.dataId"() {
@@ -167,36 +173,50 @@ export default {
         const leaf_id = this.dataId || shortid.generate();
         const op = this.dataId ? 2 : 1;
 
-        if (this.autoSubmit) {
-          if (this.saving) return;
+        const afterChange = (trueId = "") => {
+          if (this.isTemporary) {
+            formData.dataArr[0]["__temporary__"] = true;
+            imitateFormData(formData.dataArr[0], this.store);
+          }
+          this.$emit("data-changed", { leaf_id: this.dataId || trueId, formData, op });
+          return { ...formData.dataArr[0], leaf_id: "" };
+        };
 
+        if (this.autoSubmit && !this.isTemporary) {
+          if (this.saving) return;
           this.saving = true;
           const ret = await this.API.form({ data: { leaf_id, formData }, method: "put" });
           this.saving = false;
-
           this.ResultNotify(ret);
-
           if (ret.success) {
-            this.$emit("data-changed", { leaf_id: this.dataId || ret.data.data, formData, op });
-            return { ...formData.dataArr[0], leaf_id: "" };
+            return afterChange(ret.data.data);
           }
         } else {
-          this.$emit("submit", { leaf_id, formData, op });
+          return afterChange(leaf_id);
         }
       }
     },
     async remove() {
-      this.removing = true;
       const leaf_id = this.dataId;
-      const ret = await this.API.form({
-        data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
-        method: "delete",
-      });
-      this.removing = false;
-      this.ResultNotify(ret);
-      if (ret.success) {
+
+      const afterRemove = () => {
         this.$emit("data-changed", { leaf_id, op: 3 });
         this.colseHandler();
+      };
+
+      if (!this.isTemporary) {
+        this.removing = true;
+        const ret = await this.API.form({
+          data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
+          method: "delete",
+        });
+        this.removing = false;
+        this.ResultNotify(ret);
+        if (ret.success) {
+          afterRemove();
+        }
+      } else {
+        afterRemove();
       }
     },
     clearCopy() {

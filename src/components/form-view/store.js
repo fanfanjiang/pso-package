@@ -198,7 +198,24 @@ export default class FormViewStore {
         }
         this.dataId = "";
         this.instance = { ...this.selectedList[0], leaf_id: "" };
+
+        for (let k in this.instance) {
+            const cpnt = this.store.searchByField(k);
+            if (cpnt && cpnt.componentid === 'asstable' && cpnt.data._new) {
+                this.instance[k] = '';
+            }
+        }
         this.showExecutor = true;
+    }
+
+    removeInstance(leaf_id) {
+        const dataIndex = _.findIndex(this.instances, { leaf_id });
+        if (dataIndex !== -1) {
+            this.instances.splice(dataIndex, 1)
+        }
+        if (this.curInstance && leaf_id === this.curInstance.leaf_id) {
+            this.curInstance = null;
+        }
     }
 
     showInstance(row) {
@@ -231,6 +248,7 @@ export default class FormViewStore {
     newInstance() {
         this.dataId = "";
         this.instance = null;
+        this.curInstance = null;
         this.showExecutor = true;
     }
 

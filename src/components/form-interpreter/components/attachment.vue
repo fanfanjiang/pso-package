@@ -9,6 +9,7 @@
           :remove="cpntEditable"
           :width="cpnt.data._showwidth"
           :height="cpnt.data._showheight"
+          :downloadable="downloadable"
         ></pso-file-list>
         <pso-skeleton v-else :lines="1"></pso-skeleton>
       </div>
@@ -56,6 +57,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    downloadable: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -80,7 +85,7 @@ export default {
   created() {
     this.cpnt.data._limit = 100;
     if (this.cpnt.data._val) {
-      this.getImages();
+      this.getImages(this.cpnt.data._val);
     }
   },
   watch: {
@@ -100,11 +105,15 @@ export default {
       this.getImages(ids);
     },
     async getImages(ids) {
-      this.loadingFile = true;
-      const ret = await this.API.file({ data: { ids: ids || this.cpnt.data._val }, method: "get" });
-      this.loadingFile = false;
-      makeFiles({ files: ret.data, urlField: "res_path", nameField: "res_name" });
-      this.proxy = ret.data;
+      if (ids) {
+        this.loadingFile = true;
+        const ret = await this.API.file({ data: { ids }, method: "get" });
+        this.loadingFile = false;
+        makeFiles({ files: ret.data, urlField: "res_path", nameField: "res_name" });
+        this.proxy = ret.data;
+      } else {
+        this.proxy = [];
+      }
     },
     confirm(fileList) {
       this.proxy = this.proxy.concat(fileList);

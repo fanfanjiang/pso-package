@@ -1,12 +1,17 @@
 <template>
   <div class="wf-panel-review">
-    <el-form :label-position="'top'" label-width="80px" :model="node">
+    <el-form :label-position="'top'" label-width="90px" :model="node" size="mini">
       <el-form-item label="名称">
         <el-input type="text" v-model="node.name" clearable></el-input>
       </el-form-item>
       <el-form-item label="审批类型">
         <el-select v-model="node.atype" placeholder="请选择">
           <el-option v-for="item in reviewType" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="空白人绑定" v-if="wfDesigner.emptyType === WF_EMPTY_TYPE[2].v">
+        <el-select v-model="node.bind_field" placeholder="请选择">
+          <el-option v-for="f in wfDesigner.fieldsOptions" :key="f._fieldValue" :label="f.displayName" :value="f._fieldValue"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="操作授权">
@@ -19,7 +24,7 @@
         <el-switch v-model="node.copiable" active-text="开启" active-value="1" inactive-value="0"></el-switch>
       </el-form-item>
       <pso-common-review
-        v-if="node.copiable==='1'"
+        v-if="node.copiable === '1'"
         :node="node"
         :type-filter="copyFilter"
         key="copy"
@@ -36,7 +41,7 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { REVIEW_TYPE, REVIEW_OP_TYPE, REVIEW_AUTH_TYPE } from "../../../const/workflow";
+import { REVIEW_TYPE, REVIEW_OP_TYPE, REVIEW_AUTH_TYPE, WF_EMPTY_TYPE } from "../../../const/workflow";
 
 import PsoCommonReview from "../../workflow-designer/common/common-review";
 import PsoWfUpdate from "../../workflow-designer/common/update";
@@ -45,6 +50,10 @@ import WfFormauth from "../../workflow-designer/common/form-auth";
 export default {
   components: { PsoCommonReview, PsoWfUpdate, WfFormauth },
   props: ["node"],
+  data() {
+    this.WF_EMPTY_TYPE = WF_EMPTY_TYPE;
+    return {};
+  },
   computed: {
     ...mapState(["wfDesigner"]),
     reviewType() {

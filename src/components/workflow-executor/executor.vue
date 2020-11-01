@@ -29,10 +29,15 @@
       </div>
       <div class="pso-wf-executor__extend-header">
         <el-tabs v-model="store.activeExtendTab">
-          <el-tab-pane v-if="store.showBody" label="数据" name="data"></el-tab-pane>
-          <el-tab-pane v-if="store.showBody" label="附件" name="attach"></el-tab-pane>
-          <el-tab-pane label="流程图" name="flowchart"></el-tab-pane>
-          <el-tab-pane v-if="store.showBody" label="日志" name="log"></el-tab-pane>
+          <template v-if="store.showBody">
+            <el-tab-pane label="数据" name="data"></el-tab-pane>
+            <el-tab-pane label="附件" name="attach"></el-tab-pane>
+            <el-tab-pane label="流程图" name="flowchart"></el-tab-pane>
+            <template v-if="store.data.instanceId">
+              <el-tab-pane label="讨论" name="chat"></el-tab-pane>
+              <el-tab-pane label="日志" name="log"></el-tab-pane>
+            </template>
+          </template>
         </el-tabs>
       </div>
       <div class="pso-wf-executor__extend-body">
@@ -43,7 +48,10 @@
         </div>
         <pso-wf-attach v-if="!store.configing" :store="store" v-show="store.activeExtendTab === 'attach'"></pso-wf-attach>
         <pso-wf-chart :store="store" v-show="store.activeExtendTab === 'flowchart'"></pso-wf-chart>
-        <pso-wf-log :store="store" v-show="store.activeExtendTab === 'log'"></pso-wf-log>
+        <template v-if="store.data.instanceId">
+          <pso-wf-log :store="store" v-show="store.activeExtendTab === 'log'"></pso-wf-log>
+          <pso-chat v-show="store.activeExtendTab === 'chat'"></pso-chat>
+        </template>
       </div>
     </div>
   </div>
@@ -61,10 +69,11 @@ import PsoWfForm from "./form";
 import PsoWfAttach from "./attach";
 import PsoWfChart from "./flowchart";
 import PsoWfLog from "./log";
+import PsoChat from "../chat";
 import { executor, op } from "./mixin";
 
 export default {
-  components: { PsoWfMainform, PsoWfop, PsoWfopUser, PsoWfOverview, PsoWfForm, PsoWfAttach, PsoWfChart, PsoWfLog },
+  components: { PsoWfMainform, PsoWfop, PsoWfopUser, PsoWfOverview, PsoWfForm, PsoWfAttach, PsoWfChart, PsoWfLog, PsoChat },
   mixins: [executor, op],
   data() {
     this.REVIEW_OP_TYPE = REVIEW_OP_TYPE;

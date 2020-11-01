@@ -1,0 +1,178 @@
+.pso-chat {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .el-avatar {
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    .pso-chat__history {
+        flex: 1;
+        overflow: auto;
+        padding: 10px 0;
+
+        .pso-chat-msg {
+            display: flex;
+            padding: 0 15px;
+
+            &+.pso-chat-msg {
+                margin-top: 15px;
+            }
+
+            &.pso-chat-msg__reverse {
+                flex-direction: row-reverse;
+
+                .pso-chat-msg__content {
+                    margin-right: 10px;
+                    margin-left: 0px;
+                    text-align: right;
+                }
+
+                .pso-chat-msg__header {
+                    flex-direction: row-reverse;
+
+                    .pso-chat-msg__name {
+                        margin-left: 10px;
+                        margin-right: 0 !important;
+                    }
+                }
+
+                .pso-chat-msg__body {
+                    border-radius: 10px 0 10px 10px !important;
+
+                    .pso-chat-msg__text {
+                        text-align: right;
+                    }
+                }
+            }
+
+            .pso-chat-msg__avatar {
+                .el-avatar {
+                    font-size: 12px;
+                }
+            }
+
+            .pso-chat-msg__content {
+                margin-left: 10px;
+
+                .pso-chat-msg__header {
+                    display: flex;
+
+                    .pso-chat-msg__name {
+                        margin-right: 10px;
+                    }
+
+                    .pso-chat-msg__time {
+                        color: #999;
+                        font-size: 12px;
+                    }
+                }
+
+                .pso-chat-msg__body {
+                    padding: 6px;
+                    border-radius: 0 10px 10px 10px;
+                    background: #fff;
+                    color: #000;
+                    margin-top: 3px;
+                    display: inline-block;
+
+                    .pso-chat-msg__attach {
+                        margin-top: 5px;
+                    }
+                }
+            }
+        }
+    }
+
+    .pso-chat__input {
+        background: #fff;
+        padding: 15px;
+    }
+
+    .pso-chat-input {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .pso-chat-input__body {
+            flex: 1;
+            display: flex;
+
+            .pso-chat-input__input {
+                flex: 1;
+                height: 100%;
+
+                .el-textarea {
+                    height: 100% !important;
+                }
+
+                textarea {
+                    height: 100% !important;
+                    border: none;
+                }
+            }
+        }
+
+        .pso-chat-input__footer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            .pso-chat-input__ctrl {
+                .el-form-item__content {
+                    line-height: inherit;
+                }
+            }
+
+            .pso-form-upload__files {
+                height: 60px;
+
+                .pso-upload__list-info__bg {
+                    background-size: contain;
+                }
+
+                .pso-upload__list-item {
+                    width: 60px;
+                    height: 60px;
+                    flex-basis: 60px;
+                }
+
+                &+span {
+                    display: inline-block;
+                }
+            }
+
+        }
+
+        .el-form-item {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.pso-button {
+    cursor: pointer;
+    height: 28px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 10px;
+    transition: all 0.2s ease-in-out;
+    border-radius: 3px;
+
+    &:hover {
+        background-color: @main-lighter-color;
+        color: @main-color;
+        transition: all 0.2s ease-in-out;
+    }
+
+    i {
+        font-size: 18px;
+    }
+}

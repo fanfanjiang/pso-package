@@ -15,7 +15,8 @@ const reviewParams = {
     opaitems: [],
     update: [],
     notification: { type: 2, value: '', list: [], pattern: 'checkbox' },
-    fieldsAuth: []
+    fieldsAuth: [],
+    bind_field: '',
 }
 
 export default {

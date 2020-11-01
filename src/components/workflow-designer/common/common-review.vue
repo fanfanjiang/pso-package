@@ -9,7 +9,7 @@
       <div class="wf-panel-usersection">
         <div class="wf-panel-usersection__list">
           <el-tag size="medium" closable @close="handleDelSelection(item)" v-for="(item, index) of node[list]" :key="index">
-            {{ item.name }}{{item.uid}}
+            {{ item.name }}{{ item.uid }}
           </el-tag>
         </div>
         <pso-picker-user
@@ -36,7 +36,7 @@
       </div>
     </el-form-item>
     <el-form-item label="主体权限项">
-      <el-select :multiple="true" v-model="node.bodyitemsList" placeholder="请选择">
+      <el-select :multiple="true" v-model="node.bodyitemsList" placeholder="请选择" size="mini">
         <el-option
           v-for="item in wfDesigner.permissionEntries"
           :key="item.body_id"

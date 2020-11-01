@@ -23,7 +23,7 @@ export default class STAVStore extends FVStore {
     }
 
     get pageSize() {
-        return this.paging ? [this.limit, 30, 50, 200, 500, 1000] : [this.dataTotal];
+        return this.paging ? [this.limit, 30, 50, 300, 500, 1000] : [this.dataTotal];
     }
 
     async initialize(id, query) {
@@ -94,6 +94,7 @@ export default class STAVStore extends FVStore {
                     const column = this.analyzeHeader(JSON.parse(this.staCfg.tp_head)[0].children);
                     if (column.length) {
                         this.header = column;
+                        this.$vue.$emit('header-inited', { header: this.header })
                     }
                 }
             } catch (error) {
@@ -125,7 +126,7 @@ export default class STAVStore extends FVStore {
         this.starting = true;
         const ret = await API.getStatisticData({
             ...this.params,
-            limit: 10,
+            limit: this.limit,
             start: 0,
             tp_code: this.staCfg.tp_code,
             leaf_auth: this.activeView,

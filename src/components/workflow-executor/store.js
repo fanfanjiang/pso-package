@@ -310,9 +310,9 @@ export default class WfStore {
         const $wrapper = $('<div class="pso-wf-logs"></div>');
         for (let i = 0; i < logs.length; i++) {
             const log = logs[i];
-            let section = `审核人<span>${log.user_name}</span>  发布评论`;
+            let section = `审核人<span>${log.user_name}</span><span>${log.op_result === 'pass' ? '通过' : '退回'}</span>并发布评论`;
             if (log.step_code === 'start') {
-                section = `创建人<span>${log.user_name}</span>  提交记录`;
+                section = `创建人<span>${log.user_name}${i === 0 ? '发起新的' : '重新提交'}</span>`;
             }
             $wrapper.append(`<div class="pso-wf-logs__item">
                     <div>${log.op_time}；在步骤<span>${log.step_name || '开始'}</span>；${section}：${log.op_note}</div>

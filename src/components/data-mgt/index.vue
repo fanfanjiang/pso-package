@@ -368,6 +368,7 @@ export default {
       const rules = [];
       this.rules.forEach((item) => {
         const rule = {
+          controlType: item.controlType,
           controlIds: item.controlIds,
           filters: [],
           type: item.type,

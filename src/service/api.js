@@ -173,6 +173,14 @@ export default class API {
         }
     }
 
+    static async updateWfAttach(data) {
+        try {
+            return await this.request('/api/workflow/attach', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async permissionEntries(params) {
         try {
             return await this.RESTful('/api/permissionEntries', Object.assign({ idField: 'body_id' }, params));
@@ -208,6 +216,14 @@ export default class API {
     static async resource(params) {
         try {
             return await this.RESTful('/api/resource', Object.assign({ idField: 'leaf_id' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async message(params) {
+        try {
+            return await this.RESTful('/api/message', Object.assign({ idField: 'leaf_id' }, params));
         } catch (error) {
             throw error;
         }

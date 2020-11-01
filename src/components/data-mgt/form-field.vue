@@ -4,12 +4,7 @@
       <div class="pso-page__tree narrow">
         <div class="tag-list">
           <el-tabs tab-position="left" @tab-click="handleTabClick" v-model="curTab">
-            <el-tab-pane
-              :label="getName(item)"
-              :name="item.field_name"
-              :key="item.field_name"
-              v-for="item in data"
-            ></el-tab-pane>
+            <el-tab-pane :label="getName(item)" :name="item.field_name" :key="item.field_name" v-for="item in data"></el-tab-pane>
           </el-tabs>
         </div>
       </div>
@@ -32,7 +27,7 @@ export default {
   data() {
     return {
       curNode: null,
-      curTab: ""
+      curTab: "",
     };
   },
   created() {
@@ -49,7 +44,7 @@ export default {
     },
     getName({ field_display, field_name }) {
       return `${field_display}(${field_name})`;
-    }
-  }
+    },
+  },
 };
 </script>

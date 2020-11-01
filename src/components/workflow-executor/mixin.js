@@ -1,11 +1,11 @@
 import emitter from "../../mixin/emitter";
+import { Attach } from "../../mixin/form";
+
 import { REVIEW_OP_TYPE, REVIEW_STATUS } from "../../const/workflow";
 const UAParser = require("../../../share/util/u-agent");
 import WfStore from "./store";
 import { mapState } from "vuex";
 
-import PsoFormAttach from "../form-interpreter/components/attachment";
-import { genComponentData } from "../form-designer/helper";
 
 export const executor = {
     mixins: [emitter],
@@ -97,15 +97,9 @@ export const op = {
 };
 
 export const opAttach = {
-    components: { PsoFormAttach },
-    data() {
-        return {
-            attach: { data: {} },
-        };
-    },
+    mixins: [Attach],
     created() {
-        this.attach.data = genComponentData({ componentid: "attachment", _fieldName: "", _val: "" });
-        this.attach.data._fieldName = "";
+        this.createCpnt();
     },
     methods: {
         handleAttachChange({ value }) {

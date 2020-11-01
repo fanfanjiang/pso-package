@@ -134,7 +134,7 @@ export default {
       }
 
       this.$emit("data-loaded", this.store);
-      
+
       this.$nextTick(() => {
         this.loading = false;
       });
@@ -190,12 +190,32 @@ export default {
       try {
         for (let cpnt of Object.values(cpnts)) {
           const cpntData = cpnt.data;
-          if (cpnt.CPNT.host_db && cpntData._val.dataArr.length) {
-            data.children.push({
-              data_code: cpntData._val.data_code,
-              dataArr: cpntData._val.dataArr.filter((subItem) => subItem.optype !== 3),
-            });
+          if (cpnt.CPNT.host_db) {
+            if (cpntData._val.dataArr.length) {
+              data.children.push({
+                data_code: cpntData._val.data_code,
+                dataArr: cpntData._val.dataArr.filter((subItem) => subItem.optype !== 3),
+              });
+            }
           } else if (cpnt.CPNT.db && !cpnt.parent.CPNT.host_db) {
+            //提取关联表中的未提交临时数据，目前只做一层
+            //todo:可以处理多次未提交数据，最后递归生成
+            if (cpntData.componentid === "asstable") {
+              const tempList = [];
+              cpntData._proxy.valList.forEach((d) => {
+                if (d.__temporary__) {
+                  tempList.push(d);
+                }
+              });
+              if (tempList.length) {
+                data.children.push({
+                  target: cpntData._fieldValue,
+                  data_code: cpntData._option,
+                  dataArr: tempList,
+                });
+              }
+            }
+
             //空值检查
             if (cpntData._required && (typeof cpntData._val === "undefined" || cpntData._val === "")) {
               throw new Error(`${cpntData._fieldName}不能为空`);

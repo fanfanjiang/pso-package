@@ -4,7 +4,7 @@ import nodeField from "../../components/workflow-designer/node-field";
 import API from "../../service/api.js";
 import { transCMapToCondition } from "../../tool/form";
 import FormStore from "../../components/form-designer/model/store.js";
-import { WF_AUTH_TYPE } from "../../const/workflow";
+import { WF_EMPTY_TYPE, WF_AUTH_TYPE } from "../../const/workflow";
 
 export function genNode(tid) {
     let newNode = Object.assign({ tid, nid: shortid.generate(), children: [] }, _.cloneDeep(nodeField.default));
@@ -35,7 +35,8 @@ const STATE = {
     initializing: true,
     formStore: {},
     displaySmall: false,
-    fieldsOptions: []
+    fieldsOptions: [],
+    emptyType: WF_EMPTY_TYPE[0].v
 }
 
 export default {
@@ -179,6 +180,7 @@ export default {
                 wf_map_tp: JSON.stringify(node),
                 wf_auth_type: state.wfAuthType,
                 wf_filetype: state.wfFiletype.join(','),
+                empty_type: state.emptyType,
                 permissionEntries: state.permissionEntries
             }
             return data;
@@ -215,6 +217,7 @@ export default {
                 state.formId = data.map_data_code;
                 state.tableContent = data.wf_body_tp;
                 state.wfAuthType = data.wf_auth_type;
+                state.emptyType = data.empty_type || WF_EMPTY_TYPE[0].v;
                 await dispatch(MUT_TYPES.WF_FORM_SELECT, { id: state.formId, reset: false });
             }
 

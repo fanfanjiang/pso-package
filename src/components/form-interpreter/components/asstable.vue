@@ -120,6 +120,7 @@ export default {
       unsavedSelf: null,
       subAsstables: [],
       addDataCallback: null,
+      cachedIds: [],
     };
   },
   computed: {
@@ -151,6 +152,7 @@ export default {
         modifiable: this.cpntEditable,
         checkbox: this.cpntEditable,
         tableSize: "small",
+        checkbox: this.cpnt.data._relate,
       };
     },
     editable() {
@@ -160,10 +162,11 @@ export default {
       return {
         formId: this.astStore.store.data_code,
         dataId: this.astStore.dataId,
+        dataInstance: this.astStore.curInstance,
         dataDefault: this.defForm,
         addable: this.cpnt.data.__forceAdd__ || this.editable,
         editable: this.editable,
-        deletable: this.editable,
+        deletable: this.editable && !this.cpnt.data._relate,
         mockAsstables: this.unsavedSelf,
       };
     },
@@ -214,7 +217,12 @@ export default {
   },
   watch: {
     "proxy.valList"(data) {
-      this.astStore.instances = data;
+      if (this.astStore) {
+        this.astStore.instances = data;
+        if (this.astStore.$table) {
+          this.astStore.$table.clearSelection();
+        }
+      }
       this.cpnt.data._val = _.map(data, "leaf_id").join(",");
       this.dispatch("PsoformInterpreter", "asstable-selected", { cpnt: this.cpnt, data, store: this.store });
     },
@@ -231,7 +239,6 @@ export default {
   },
   async created() {
     await this.initialize();
-
     //初始赋值
     if (this.cpnt.data._val && typeof this.cpnt.data._val === "string") {
       await this.setDataByIds(this.cpnt.data._val.split(","));
@@ -248,7 +255,7 @@ export default {
 
     //提示
     const tip = this.cpnt.data._fieldInfo;
-    const defaultTip = "操作提示：双击或单击已选数据可查看详情或编辑，在弹出的窗口右上角可选择删除，删除时请谨慎操作。";
+    const defaultTip = "操作提示：双击或单击数据可查看详情或编辑，在弹出的窗口右上角可删除数据，删除时请谨慎操作。";
     this.cpnt.data._fieldInfo = tip + (tip ? `<br><br>${defaultTip}` : defaultTip);
 
     this.dispatch("PsoformInterpreter", "asstable-initialized", {
@@ -296,19 +303,31 @@ export default {
       }
 
       this.initializing = false;
+
+      if (this.cachedIds.length) {
+        await this.setDataByIds(this.cachedIds);
+        this.cachedIds = [];
+      }
     },
-    async setDataByIds(idList) {
+    async setDataByIds(idList, callback) {
       if (idList && typeof idList === "string") {
         idList = idList.split(",");
       }
-      this.loading = true;
-      const list = [];
-      for (let id of idList) {
-        const data = await this.astStore.findById(id);
-        if (data) list.push(data);
+      if (this.astStore && this.astStore.findById && !this.initializing) {
+        this.loading = true;
+        const list = [];
+        for (let id of idList) {
+          const data = await this.astStore.findById(id);
+          if (data) list.push(data);
+        }
+        if (callback) {
+          await callback(list);
+        }
+        this.handleAddSelection(list);
+        this.loading = false;
+      } else {
+        return (this.cachedIds = idList);
       }
-      this.handleAddSelection(list);
-      this.loading = false;
     },
     handleClickAdd(callback) {
       //设置数据修改回调
@@ -332,13 +351,20 @@ export default {
     },
     async dataChangeHandler({ leaf_id, op, formData }) {
       if (op === 1 || op === 2) {
+        const isTemporary = formData.dataArr[0]["__temporary__"];
         let data;
-        if (this.dataId) {
-          data = await this.astStore.findById(this.dataId);
-          data && this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
+
+        if (isTemporary) {
+          data = formData.dataArr[0];
         } else {
-          data = await this.astStore.findById(leaf_id);
+          data = await this.astStore.findById(this.dataId || leaf_id);
         }
+
+        if (this.dataId && data) {
+          //删除列表中修改的数据
+          this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
+        }
+
         if (data) {
           this.handleAddSelection([data]);
 
@@ -351,6 +377,7 @@ export default {
         }
       } else if (op === 3) {
         this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
+        this.astStore.removeInstance(leaf_id);
       }
     },
     setDefForm(data, clearOnClose = true) {

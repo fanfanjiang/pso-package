@@ -3,31 +3,27 @@
     <div class="pso-form_rule-l">
       <pso-title info="为选择的字段设置条件，只有当表单满足条件时才显示这些字段">显示规则</pso-title>
       <div class="rule-list">
-        <div
-          :class="ruleListClass(index)"
-          class="rule-list-item"
-          v-for="(r,index) in rules"
-          :key="index"
-          @click="handleRuleClick(index)"
-        >
-          <div>规则{{index+1}}</div>
+        <div :class="ruleListClass(index)" class="rule-list-item" v-for="(r, index) in rules" :key="index" @click="handleRuleClick(index)">
+          <div>规则{{ index + 1 }}</div>
           <i class="rule-list-item__del el-icon-delete-solid" @click.stop="handleRuleDel(index)"></i>
         </div>
       </div>
-      <div class="rule-btn-add" @click="handleRuleAdd">
-        <i class="el-icon-plus"></i>添加规则
-      </div>
+      <div class="rule-btn-add" @click="handleRuleAdd"><i class="el-icon-plus"></i>添加规则</div>
     </div>
     <div class="pso-form_rule-r">
       <div v-if="curRule">
         <pso-title>设置规则</pso-title>
+        <h4>选择规则类型</h4>
+        <el-select size="mini" v-model="curRule.controlType" placeholder="规则类型">
+          <el-option v-for="(t, i) in ctrlType" :key="i" :label="t.n" :value="t.v"></el-option>
+        </el-select>
         <h4>选择显示字段</h4>
         <div class="rule-set">
           <div class="rule-set__display">
-            <el-select size="mini" v-model="curRule.controlIds" multiple placeholder="选择显示字段">
+            <el-select size="mini" v-model="curRule.controlIds" filterable multiple placeholder="选择字段">
               <el-option
-                v-for="f in fields"
-                :key="f._fieldValue"
+                v-for="(f, i) in fields"
+                :key="i"
                 :label="f._fieldName"
                 :value="f._fieldValue"
                 :disabled="isFieldDisabled(f._fieldValue)"
@@ -36,53 +32,37 @@
           </div>
           <div class="rule-set__filter">
             <h4>满足以下条件时显示</h4>
-            <div class="rule-set__filter-item" v-for="(f,index) in curRule.filters" :key="index">
+            <div class="rule-set__filter-item" v-for="(f, index) in curRule.filters" :key="index">
               <div class="rule-set__filter-item-wrapper">
                 <div class="rule-set__filter-item__op">
-                  <div class="rule-set__filter-item__op-title">{{f.name}}</div>
+                  <div class="rule-set__filter-item__op-title">{{ f.name }}</div>
                   <el-select size="mini" v-model="f.op" placeholder="选择操作">
-                    <el-option
-                      v-for="(f,index) in getOp(f.cid)"
-                      :key="index"
-                      :label="f.name"
-                      :value="index"
-                    ></el-option>
+                    <el-option v-for="(f, index) in getOp(f.cid)" :key="index" :label="f.name" :value="index"></el-option>
                   </el-select>
-                  <i
-                    class="rule-set__filter-item__op-del el-icon-close"
-                    @click="handleFilterDel(index)"
-                  ></i>
+                  <i class="rule-set__filter-item__op-del el-icon-close" @click="handleFilterDel(index)"></i>
                 </div>
-                <div class="rule-set__filter-item__val" v-if="f.op||f.op===0">
-                  <el-input size="mini" v-if="getMatch(f)===1" v-model="f.val" placeholder="请输入内容"></el-input>
+                <div class="rule-set__filter-item__val" v-if="f.op || f.op === 0">
+                  <el-input size="mini" v-if="getMatch(f) === 1" v-model="f.val" placeholder="请输入内容"></el-input>
                   <el-form v-else>
                     <pso-form-component
                       :force-show="true"
                       :cpnt="f.cpnt"
-                      @value-change="valueChangeHandler($event,f)"
+                      @value-change="valueChangeHandler($event, f)"
                     ></pso-form-component>
                   </el-form>
                 </div>
               </div>
-              <div class="rule-set__filter-item__type" v-if="curRule.filters.length-1!==index">
+              <div class="rule-set__filter-item__type" v-if="curRule.filters.length - 1 !== index">
                 <el-select size="mini" v-model="curRule.type">
                   <el-option v-for="rt in ruleType" :key="rt.n" :label="rt.n" :value="rt.v"></el-option>
                 </el-select>
               </div>
             </div>
             <div class="rule-set__filter-add">
-              <el-dropdown
-                v-if="curRule.controlIds.length"
-                trigger="click"
-                @command="handleFilterAdd"
-              >
+              <el-dropdown v-if="curRule.controlIds.length" trigger="click" @command="handleFilterAdd">
                 <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus">添加筛选条件</el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item
-                    v-for="(f,index) in avlFilter"
-                    :key="index"
-                    :command="index"
-                  >{{f._fieldName}}</el-dropdown-item>
+                  <el-dropdown-item v-for="(f, index) in avlFilter" :key="index" :command="index">{{ f._fieldName }}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
               <div v-else>请选择显示字段</div>
@@ -103,12 +83,16 @@ export default {
   props: ["store", "rules"],
   components: { PsoFormComponent },
   data() {
+    this.ruleType = [
+      { n: "且", v: 1 },
+      { n: "或", v: 2 },
+    ];
+    this.ctrlType = [
+      { n: "显示", v: 1 },
+      { n: "必填", v: 2 },
+    ];
     return {
       curRule: null,
-      ruleType: [
-        { n: "且", v: 1 },
-        { n: "或", v: 2 },
-      ],
     };
   },
   created() {
@@ -145,6 +129,9 @@ export default {
     },
     handleRuleClick(index) {
       this.curRule = this.rules[index];
+      if (typeof this.curRule.controlType === "undefined") {
+        this.$set(this.curRule, "controlType", 1);
+      }
     },
     handleRuleDel(index) {
       if (this.curRule === this.rules[index]) this.curRule = null;
@@ -152,6 +139,7 @@ export default {
     },
     handleRuleAdd() {
       this.rules.push({
+        controlType: 1,
         controlIds: [],
         filters: [],
         type: this.ruleType[0].v,

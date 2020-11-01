@@ -2,7 +2,15 @@ import { CPNT, SUMMARY_OP } from "../const/form";
 import { FILTER_OP, FILTER_TYPE } from "../../share/const/filter";
 import { genComponentData } from '../components/form-designer/helper'
 import API from "../service/api.js";
+import Vue from 'vue';
 
+/**
+ *转换condition
+ *
+ * @export
+ * @param {*} map
+ * @returns
+ */
 export function transCMapToCondition(map) {
     try {
         const condition = [];
@@ -45,6 +53,13 @@ export function transCMapToCondition(map) {
     }
 }
 
+/**
+ *通过统计插件列表配置生成相对应的组件数据
+ *
+ * @export
+ * @param {*} { code, onEach }
+ * @returns
+ */
 export async function makeFormByScript({ code, onEach }) {
     const ret = await API.getTreeNode({ code });
     if (ret.data.data.tp_content) {
@@ -64,6 +79,12 @@ export async function makeFormByScript({ code, onEach }) {
     }
 }
 
+/**
+ *生成系统字段组件数据
+ *
+ * @export
+ * @returns
+ */
 export function makeSysFormFields() {
     const sysFields = ['leaf_id', 'd_status', 'd_audit', 'd_stage', 'creator'];
     const fields = [];
@@ -73,6 +94,14 @@ export function makeSysFormFields() {
     return fields;
 }
 
+/**
+ *检查组件值是否符合小数点位数要求，修改至符合要求
+ *
+ * @export
+ * @param {*} cpnt
+ * @param {*} value
+ * @returns
+ */
 export function filterByDecimal(cpnt, value) {
     try {
         const { componentid, _decimalPlaces, _selectedOp } = cpnt;
@@ -89,5 +118,54 @@ export function filterByDecimal(cpnt, value) {
     } catch (e) {
         console.log(e);
         return value;
+    }
+}
+
+/**
+ *获取组件值的显示名称
+ *
+ * @export
+ * @param {*} cpnt
+ * @param {*} proxy
+ * @returns  显示名称
+ */
+export function getDisplayOfCpnt(cpnt, proxy) {
+    proxy = cpnt.data._proxy || proxy;
+    let value = '';
+    if (proxy) {
+        //人员和部门
+        if (cpnt.componentid === "user" || cpnt.componentid === "department") {
+            const name = cpnt.componentid === "user" ? "user_name" : "node_display";
+            if (proxy.list.length) {
+                value = _.map(proxy.list, name).join(",");
+            }
+        }
+
+        //标签
+        if (cpnt.componentid === "tag") {
+            const name = cpnt.data._source === "tree" ? "node_display" : "tag_name";
+            if (proxy.list.length) {
+                value = _.map(proxy.list, name).join(",");
+            }
+        }
+    }
+    return value;
+}
+
+/**
+ *模仿后端返回的数据，给字段加_x的中文名
+ *
+ * @export
+ * @param {*} data 
+ * @param {*} store
+ */
+export function imitateFormData(data, store) {
+    for (let k in data) {
+        const cpnt = store.searchByField(k);
+        if (cpnt) {
+            if (['user', 'tag', 'department'].includes(cpnt.data.componentid)) {
+                Vue.set(data, `${k}_x`, getDisplayOfCpnt(cpnt));
+            }
+        }
     }
 }
