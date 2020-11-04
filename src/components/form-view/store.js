@@ -718,13 +718,15 @@ export default class FormViewStore {
         })
     }
 
-    async addOrUpdate({ leaf_id = "", formData }, refresh = true) {
+    async addOrUpdate({ leaf_id = "", formData }, refresh = true, emit = true) {
         if (formData) {
             const dataId = leaf_id || shortid.generate();
             const ret = await API.form({ data: { leaf_id: dataId, formData }, method: "put" });
             this.$vue.ResultNotify(ret);
             if (ret.success) {
-                this.$vue.$emit("data-changed", { leaf_id: leaf_id || ret.data.data, formData, op: leaf_id ? 2 : 1 });
+                if (emit) {
+                    this.$vue.$emit("data-changed", { leaf_id: leaf_id || ret.data.data, formData, op: leaf_id ? 2 : 1 });
+                }
                 if (refresh) {
                     this.fetchStatus();
                 }

@@ -35,6 +35,10 @@ export const CONDITION = [
     { v: "1", n: "是" },
 ];
 
+export const INDEX = [
+    { n: "确认", v: "$CONFIRM;select count(1) from T[] where;$" },
+];
+
 export default {
     TYPE,
     OP,
@@ -42,5 +46,6 @@ export default {
     RELATE,
     FORMULAR,
     CONDITION,
+    INDEX
 }
 

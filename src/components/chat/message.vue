@@ -1,17 +1,20 @@
 <template>
   <div :class="msgClass">
     <div class="pso-chat-msg__avatar">
-      <pso-avatar size="small" :nick="message.nick"></pso-avatar>
+      <pso-avatar size="small" :nick="message.user_name"></pso-avatar>
     </div>
     <div class="pso-chat-msg__content">
       <div class="pso-chat-msg__header">
-        <span class="pso-chat-msg__name">{{ message.nick }}</span>
-        <span class="pso-chat-msg__time">{{ formatTime(message.time) }}</span>
+        <span class="pso-chat-msg__name">{{ message.user_name }}</span>
+        <span class="pso-chat-msg__time">{{ formatTime(message.com_time) }}</span>
+        <transition name="el-fade-in">
+          <i class="el-icon-loading" v-if="message.submitting"></i>
+        </transition>
       </div>
       <div class="pso-chat-msg__body">
-        <div class="pso-chat-msg__text">{{ message.message }}</div>
-        <div class="pso-chat-msg__attach" v-if="message.attach">
-          <pso-attachment :ids="message.attach"></pso-attachment>
+        <div class="pso-chat-msg__text" v-show="message.com_content">{{ message.com_content }}</div>
+        <div class="pso-chat-msg__attach" v-if="message.att_id">
+          <pso-attachment :ids="message.att_id"></pso-attachment>
         </div>
       </div>
     </div>
@@ -29,7 +32,7 @@ export default {
   computed: {
     msgClass() {
       return {
-        "pso-chat-msg__reverse": this.message.user_id === this.store.curUser.user_id,
+        "pso-chat-msg__reverse": this.message.com_user === this.store.curUser.user_id,
         "pso-chat-msg": true,
       };
     },

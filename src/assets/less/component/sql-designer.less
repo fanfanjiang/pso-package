@@ -34,6 +34,7 @@
      height: 100%;
      width: 100%;
      display: flex;
+     overflow: hidden;
 
      .form-wrapper {
          display: flex;
@@ -168,6 +169,7 @@
          left: 31px;
          right: 0;
          z-index: 1;
+         background-color: #fff;
 
          .sql-designer-debug__header {
              height: 40px;
@@ -207,27 +209,27 @@
          }
      }
 
-     .sql-designer-r {
+     .sql-designer-ctl {
+         height: 40px;
+         background-color: #f7f7f7;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         padding: 0 20px;
+
+         >div {
+             display: flex;
+             align-items: center;
+             justify-content: flex-end;
+         }
+     }
+
+     .sql-designer-c {
          flex: 1;
          height: 100%;
          position: relative;
 
-         .sql-designer-ctl {
-             height: 40px;
-             background-color: #f7f7f7;
-             display: flex;
-             align-items: center;
-             justify-content: space-between;
-             padding: 0 20px;
 
-             >div {
-                 display: flex;
-                 align-items: center;
-                 justify-content: flex-end;
-             }
-
-
-         }
 
          .vue-codemirror {
              height: calc(100% - 40px);
@@ -261,6 +263,30 @@
 
          .CodeMirror-hints {
              z-index: 99999999;
+         }
+     }
+
+     .sql-designer-r {
+         width: 300px;
+         display: flex;
+         flex-direction: column;
+
+         .sql-designer-tip {
+             flex: 1;
+             border-left: 5px solid #f7f7f7;
+         }
+     }
+
+     .sql-designer-tip {
+
+         .el-textarea {
+             height: 100%;
+
+             textarea {
+                 height: 100%;
+                 border: none;
+                 padding: 5px;
+             }
          }
      }
  }

@@ -3,8 +3,9 @@
     <el-form-item label="源类型">
       <el-radio-group size="small" v-model="cpnt.data._source" @change="handleSourceChange">
         <el-radio label="tree">树节点</el-radio>
+        <el-radio label="folder">文件夹</el-radio>
         <el-radio label="table">列表</el-radio>
-        <el-radio label="data">数据</el-radio>
+        <!-- <el-radio label="data">数据</el-radio> -->
       </el-radio-group>
     </el-form-item>
     <el-form-item label="单选多选">
@@ -13,12 +14,7 @@
     </el-form-item>
     <el-form-item label="值类型">
       <el-select size="small" v-model="dataType" clearable>
-        <el-option
-          v-for="item in treeTypes"
-          :key="item.dimen_tag"
-          :label="item.tag_name"
-          :value="item.dimen_tag"
-        ></el-option>
+        <el-option v-for="item in treeTypes" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="默认值">
@@ -30,12 +26,9 @@
         @confirm="handleAddSelection"
       ></pso-picker-tag>
       <div :key="cpnt.fid">
-        <el-tag
-          v-for="item in proxy.list"
-          :key="item[tagIdName]"
-          closable
-          @close="handleDelSelection(item)"
-        >{{item[tagDisplayName]}}</el-tag>
+        <el-tag v-for="item in proxy.list" :key="item[tagIdName]" closable @close="handleDelSelection(item)">{{
+          item[tagDisplayName]
+        }}</el-tag>
       </div>
     </el-form-item>
     <el-form-item label="设置">

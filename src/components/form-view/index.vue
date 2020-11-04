@@ -78,7 +78,7 @@
         <div class="pso-view-table" v-loading="store.starting">
           <view-table :store="store" :params="{ ...params, ...$props }">
             <template v-slot:column="scope">
-              <slot name="column" v-bind:data="{ row: scope.row }"></slot>
+              <slot name="column" v-bind:data="scope.data"></slot>
             </template>
           </view-table>
         </div>
@@ -88,6 +88,7 @@
         :title="store.formCfg.data_name"
         :opener="store"
         :instanceids="store.instanceids"
+        :auto-submit="autoSubmit"
         @data-changed="dataChangeHandler"
         @prev="store.showPrev.call(store, $event)"
         @next="store.showNext.call(store, $event)"
@@ -241,7 +242,6 @@ export default {
   },
   methods: {
     async initialize() {
-      
       if (this.watchFun.length) {
         this.watchFun.forEach((f) => f());
         this.watchFun = [];

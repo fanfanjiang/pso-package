@@ -34,7 +34,7 @@
             </ul>
           </div>
         </div>
-        <div class="pso-picker__body-r" ref="tableWrapper" v-if="source !== 'tree'">
+        <div class="pso-picker__body-r" ref="tableWrapper" v-if="!treeMode">
           <div class="pso-picker__table-header">
             <pso-search v-model="options.keys.tag_name.value"></pso-search>
             <el-divider direction="vertical"></el-divider>
@@ -137,26 +137,29 @@ export default {
       }
       return options;
     },
+    treeMode() {
+      return this.source === "tree" || this.source === "folder";
+    },
     idName() {
-      return this.source === "tree" ? "node_id" : "tag_no";
+      return this.treeMode ? "node_id" : "tag_no";
     },
     displayName() {
-      return this.source === "tree" ? "node_display" : "tag_name";
+      return this.treeMode ? "node_display" : "tag_name";
     },
     showCheckbox() {
-      return this.source === "tree" ? this.pattern === "checkbox" : false;
+      return this.treeMode ? this.pattern === "checkbox" : false;
     },
     pickerClass() {
       return {
-        "pso-picker__l__wider": this.source === "tree",
+        "pso-picker__l__wider": this.treeMode,
         "pso-picker__c__show": this.showCenter,
       };
     },
     pickerWidth() {
-      return this.source === "tree" ? 360 : this.__isMobile__ ? 360 : 500;
+      return this.treeMode ? 360 : this.__isMobile__ ? 360 : 500;
     },
     autoNodeClick() {
-      return this.source !== "tree";
+      return !this.treeMode;
     },
     showCenter() {
       return this.source === "data";
@@ -237,10 +240,10 @@ export default {
       this.show = false;
     },
     checkSelectedNodes(list) {
-      this.selected = list.filter((node) => node.is_leaf);
+      this.selected = list.filter((node) => (this.source === "tree" ? node.is_leaf : !node.is_leaf));
     },
     async nodeClickHandler(node) {
-      if (this.source === "tree") {
+      if (this.treeMode) {
         this.checkSelectedNodes([node]);
       } else {
         if (!node.is_leaf) return;

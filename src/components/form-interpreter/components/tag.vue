@@ -42,11 +42,14 @@ export default {
     };
   },
   computed: {
+    treeMode() {
+      return this.cpnt.data._source === "tree" || this.cpnt.data._source === "folder";
+    },
     tagIdName() {
-      return this.cpnt.data._source === "tree" ? "node_id" : "tag_no";
+      return this.treeMode ? "node_id" : "tag_no";
     },
     tagDisplayName() {
-      return this.cpnt.data._source === "tree" ? "node_display" : "tag_name";
+      return this.treeMode ? "node_display" : "tag_name";
     },
   },
   watch: {
@@ -73,29 +76,29 @@ export default {
         tagData = tagData.split(",");
       }
       this.loading = true;
-      let ret = { data: [] };
+      let source = [];
       let idName = "";
       if (!this.tagTrees.length || !this.tagCollection.length) {
         await this.prepareData();
       }
-      if (this.cpnt.data._source === "tree") {
-        ret = this.tagTrees;
+      if (this.treeMode) {
+        source = this.tagTrees;
         idName = "node_id";
         tagData = tagData.map((val) => parseInt(val));
       } else {
-        ret = this.tagCollection;
+        source = this.tagCollection;
         idName = "tag_no";
       }
       const list = [];
-      ret.data.forEach((item) => {
+      source.forEach((item) => {
         if (tagData.indexOf(item[idName]) !== -1) list.push(item);
       });
       this.handleAddSelection(list);
       this.loading = false;
     },
     async prepareData() {
-      this.tagTrees = await this.API.trees({ data: { dimen: 5 } });
-      this.tagCollection = await this.API.tag({ data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } });
+      this.tagTrees = (await this.API.trees({ data: { dimen: 5 } })).data.tagtree;
+      this.tagCollection = (await this.API.tag({ data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } })).data;
     },
     handleTagAdd(data) {
       this.handleAddSelection(data);

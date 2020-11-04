@@ -43,10 +43,6 @@
 
                 .pso-chat-msg__body {
                     border-radius: 10px 0 10px 10px !important;
-
-                    .pso-chat-msg__text {
-                        text-align: right;
-                    }
                 }
             }
 
@@ -61,6 +57,7 @@
 
                 .pso-chat-msg__header {
                     display: flex;
+                    align-items: center;
 
                     .pso-chat-msg__name {
                         margin-right: 10px;
@@ -69,6 +66,10 @@
                     .pso-chat-msg__time {
                         color: #999;
                         font-size: 12px;
+                    }
+
+                    i {
+                        margin-right: 5px;
                     }
                 }
 
@@ -97,10 +98,12 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        position: relative;
 
         .pso-chat-input__body {
             flex: 1;
             display: flex;
+            height: 60px;
 
             .pso-chat-input__input {
                 flex: 1;
@@ -121,8 +124,11 @@
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
+            position: relative;
 
-            .pso-chat-input__ctrl {
+            .pso-chat-input__file {
+                display: flex;
+
                 .el-form-item__content {
                     line-height: inherit;
                 }
@@ -144,6 +150,14 @@
                 &+span {
                     display: inline-block;
                 }
+            }
+
+            .pso-chat-input__ctrl {
+                position: absolute;
+                left: 40px;
+                right: 0;
+                display: flex;
+                justify-content: space-between;
             }
 
         }
@@ -174,5 +188,43 @@
 
     i {
         font-size: 18px;
+    }
+}
+
+.pso-chat-users-wrapper {
+    padding: 0;
+    position: absolute;
+    width: 200px;
+    background-color: #fff;
+    z-index: 2;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+}
+
+.pso-chat-users {
+    overflow: auto;
+    min-height: 22px;
+    max-height: 200px;
+
+    li {
+        display: flex;
+        align-items: center;
+        padding: 4px 0 4px 8px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: @main-lighter-color;
+        }
+
+        .el-avatar {
+            font-size: 8px;
+            margin-right: 10px;
+            background-color: @main-color;
+        }
+
+        span {
+            &:nth-child(2) {
+                font-size: 12px;
+            }
+        }
     }
 }

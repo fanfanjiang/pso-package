@@ -253,8 +253,9 @@ export default {
               });
 
               if (ret.data.length) {
-                if (ret.data.length === 1 && ret.data[0].leaf_Id === this.store.instance_id) return;
-                throw new Error(`${cpntData._fieldName}的数据已存在，不能重复提交，请修改`);
+                if (ret.data.length === 1 && ret.data[0].leaf_id !== this.store.instance_id) {
+                  throw new Error(`${cpntData._fieldName}的数据已存在，不能重复提交，请修改`);
+                }
               }
             }
 

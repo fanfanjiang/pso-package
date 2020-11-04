@@ -70,18 +70,19 @@ export const op = {
         },
         async nextStep(optype, isAppendForm = true) {
             try {
-                const formData = await this.store.getFormData();
+                let formData = null;
+                if (optype === REVIEW_OP_TYPE.confirm.type) {
+                    formData = await this.store.getFormData();
+                }
                 this.dispatch("PsoWfExecutorBox", "op-before-next", { optype, formData });
-                if (formData) {
-                    const ret = await this.store.doNextStep({ optype, formData: isAppendForm ? formData : null });
-                    if (ret.data && ret.data.instance) {
-                        //必须选择下一步执行人
-                        this.store.setInstanceData(ret.data.instance);
-                        this.confirm(false);
-                        this.store.steping = false;
-                    } else {
-                        this.excuted(ret, optype);
-                    }
+                const ret = await this.store.doNextStep({ optype, formData: isAppendForm ? formData : null });
+                if (ret.data && ret.data.instance) {
+                    //必须选择下一步执行人
+                    this.store.setInstanceData(ret.data.instance);
+                    this.confirm(false);
+                    this.store.steping = false;
+                } else {
+                    this.excuted(ret, optype);
                 }
             } catch (error) {
                 console.log(error);

@@ -75,6 +75,11 @@
                 @loaded="targetFormCheck"
               ></picker-form>
             </div>
+            <div class="form-wrapper">
+              <el-form-item label="索引" required>
+                <el-checkbox v-model="block.is_index" true-label="1" false-label="0">开启索引</el-checkbox>
+              </el-form-item>
+            </div>
           </el-form>
         </el-collapse-item>
         <el-collapse-item title="脚本生成" name="generate">
@@ -139,7 +144,7 @@
         </el-collapse-item>
       </el-collapse>
     </div>
-    <div class="sql-designer-r">
+    <div class="sql-designer-c">
       <div class="sql-designer-ctl">
         <div class="sql-designer-ctl__l">
           <div v-if="extendable" class="sql-designer-ctl__btn" @click="showSelector = true">
@@ -193,6 +198,24 @@
             <pso-skeleton v-show="debuging" :lines="1"></pso-skeleton>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="sql-designer-r" v-show="block.is_index === '1'">
+      <div class="sql-designer-ctl">
+        <div class="sql-designer-ctl__l"></div>
+        <div class="sql-designer-ctl__r">
+          <el-dropdown @command="indexAddHandler" size="mini" trigger="click">
+            <div class="sql-designer-ctl__btn">
+              <i class="el-icon-plus"></i>
+            </div>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="(dex, i) in INDEX" :key="i" :command="dex.n">{{ dex.n }}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+      </div>
+      <div class="sql-designer-tip">
+        <el-input type="textarea" placeholder="请输入" v-model="block.index_script"> </el-input>
       </div>
     </div>
     <pso-dialog :visible="showSelector" width="50%" @close="showSelector = false">
@@ -588,6 +611,10 @@ export default {
         console.log(error);
         return null;
       }
+    },
+    indexAddHandler(n) {
+      const sql = _.find(this.INDEX, { n });
+      this.block.index_script += sql.v;
     },
   },
 };

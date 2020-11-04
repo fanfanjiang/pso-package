@@ -375,7 +375,7 @@ export default class WfStore {
 
         //标签
         if (cpnt.componentid === "tag" && proxy) {
-            const name = data._source === "tree" ? "node_display" : "tag_name";
+            const name = ["tree", 'folder'].includes(data._source) ? "node_display" : "tag_name";
             if (proxy.list.length) {
                 value = _.map(proxy.list, name).join(",");
             } else {
@@ -445,7 +445,7 @@ export default class WfStore {
             $ftr.append(`<th>项次</th>`);
         }
         for (let f of fields) {
-            $colgroup.append(`<col width="${f.width || 120}">`);
+            $colgroup.append(`<col width="${f.docWidth || f.width || 120}">`);
             $ftr.append(`<th>${f.display}</th>`);
         }
         for (let i = 0; i < data.length; i++) {

@@ -32,10 +32,9 @@
 </template> 
 <script>
 import shortid from "shortid";
-import SqlItem from "./sql-item";
 import Designer from "./designer";
 export default {
-  components: { SqlItem, Designer },
+  components: { Designer },
   props: {
     sql: {
       type: Array,
@@ -79,6 +78,8 @@ export default {
         optype: "0",
         is_split: "0",
         split_field: "",
+        is_index: "0",
+        index_script: "",
       });
       this.activeTab = id;
     },

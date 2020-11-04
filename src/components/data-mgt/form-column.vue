@@ -28,6 +28,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="width" label="列宽" width="60"></el-table-column>
+          <el-table-column prop="docWidth" label="签单列宽" width="110"></el-table-column>
           <el-table-column prop="using" label="启用" width="70" sortable>
             <template slot-scope="scope">
               <el-switch size="mini" v-model="scope.row.using" active-value="1" inactive-value="0"></el-switch>
@@ -66,6 +67,9 @@
         </el-form-item>
         <el-form-item label="列宽">
           <el-input-number size="mini" v-model="curRow.width" controls-position="right" :min="0"></el-input-number>
+        </el-form-item>
+        <el-form-item label="签单列宽">
+          <el-input-number size="mini" v-model="curRow.docWidth" controls-position="right" :min="0"></el-input-number>
         </el-form-item>
         <el-form-item label="筛选">
           <el-switch size="mini" v-model="curRow.searchable"></el-switch>

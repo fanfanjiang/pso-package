@@ -143,7 +143,7 @@ export function getDisplayOfCpnt(cpnt, proxy) {
 
         //标签
         if (cpnt.componentid === "tag") {
-            const name = cpnt.data._source === "tree" ? "node_display" : "tag_name";
+            const name = ["tree", 'folder'].includes(cpnt.data._source) ? "node_display" : "tag_name";
             if (proxy.list.length) {
                 value = _.map(proxy.list, name).join(",");
             }

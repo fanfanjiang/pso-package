@@ -17,13 +17,21 @@ import ChatStore from "./store";
 
 export default {
   components: { ChatMsg, ChatInput },
+  props: {
+    relatedId: String,
+    extend: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       store: null,
     };
   },
   created() {
-    this.store = new ChatStore({ curUser: this.$store.state.base.user, $vue: this });
+    this.store = new ChatStore({ curUser: this.$store.state.base.user, relatedId: this.relatedId, extend: this.extend, $vue: this });
+    this.store.initialize();
   },
   mounted() {
     this.store.refHistory = this.$refs.history;

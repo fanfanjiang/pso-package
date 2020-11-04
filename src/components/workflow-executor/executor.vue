@@ -50,7 +50,11 @@
         <pso-wf-chart :store="store" v-show="store.activeExtendTab === 'flowchart'"></pso-wf-chart>
         <template v-if="store.data.instanceId">
           <pso-wf-log :store="store" v-show="store.activeExtendTab === 'log'"></pso-wf-log>
-          <pso-chat v-show="store.activeExtendTab === 'chat'"></pso-chat>
+          <pso-chat
+            v-show="store.activeExtendTab === 'chat'"
+            :related-id="store.data.instanceId"
+            :extend="{ com_type: '0', com_code: store.cfg.wf_code }"
+          ></pso-chat>
         </template>
       </div>
     </div>
