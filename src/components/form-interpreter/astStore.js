@@ -10,4 +10,8 @@ export default class ASTStore extends FVStore {
         const ret = await API.formSearch({ form_code: this.store.data_code, leaf_auth: 4, keys: { leaf_id: { type: 1, value, } } });
         return ret.data[0];
     }
+
+    createTemporaryData() {
+
+    }
 }

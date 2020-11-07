@@ -22,6 +22,8 @@ export default class FormStore {
 
         this.beInstanceId = shortid.generate();
         this.instance_id = "";  //数据实例id
+        this.parentInstanceId = "";  //数据父级实例id
+
         this.editable = true;
         this.forceInsertSys = true;
 

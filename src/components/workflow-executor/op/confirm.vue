@@ -1,6 +1,6 @@
 <template>
   <div class="pso-executor-op">
-    <el-popconfirm v-if="justShowConfirm" @onConfirm="confirm" v-model="visible" :title="confirmText">
+    <el-popconfirm v-if="justShowConfirm" @confirm="confirm" v-model="visible" :title="confirmText">
       <el-button slot="reference" plain :type="type" size="small">{{ text }}</el-button>
     </el-popconfirm>
     <el-popover

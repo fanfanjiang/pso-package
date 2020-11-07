@@ -28,6 +28,7 @@ export default {
         "pso-wf-node__start": this.node.tid === "start",
         "pso-wf-node__done": this.node.done,
         "pso-wf-node__read": this.readMode,
+        "pso-wf-node__mark": this.workflowImage.markedNode ? this.workflowImage.markedNode.nid === this.node.nid : false,
         "pso-wf-node__click": this.workflowImage.clickedNode ? this.workflowImage.clickedNode.nid === this.node.nid : false,
         "pso-wf-node__excuting": this.workflowImage.executingNodes
           ? _.find(this.workflowImage.executingNodes, { step: this.node.nid })

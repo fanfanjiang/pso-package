@@ -25,7 +25,7 @@
         </el-form>
       </div>
       <div class="pso-executor-op__footer-btn">
-        <el-button size="mini" type="text" @click="$emit('close')">取消</el-button>
+        <el-button size="mini" type="text" @click="store.showUserOp = false">取消</el-button>
         <el-button type="success" size="mini" @click="handleConfirm">{{ store.userOp.text }}</el-button>
       </div>
     </div>

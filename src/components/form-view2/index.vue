@@ -104,7 +104,7 @@
                   icon="el-icon-info"
                   iconColor="red"
                   title="你确认要修改吗"
-                  @onConfirm="handleStatusChange(status)"
+                  @confirm="handleStatusChange(status)"
                 >
                   <span slot="reference">{{ status.name }}</span>
                 </el-popconfirm>
@@ -123,7 +123,7 @@
                   icon="el-icon-info"
                   iconColor="red"
                   title="你确认要修改吗"
-                  @onConfirm="handleStageChange(stage)"
+                  @confirm="handleStageChange(stage)"
                 >
                   <span slot="reference">{{ stage.name }}</span>
                 </el-popconfirm>

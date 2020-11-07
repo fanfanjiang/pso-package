@@ -22,6 +22,7 @@
                 :show-checkbox="showCheckbox"
                 @node-checked="nodeCheckHandler"
                 :check-after-load="autoNodeClick"
+                :node-data-filter="treeFilterHandler"
                 :tree-style="{ 'box-shadow': 'none', 'padding-right': '15px' }"
               ></pso-tree-common>
             </div>
@@ -104,6 +105,7 @@ export default {
       type: String,
       default: "",
     },
+    filter: [Array, String],
   },
   data() {
     return {
@@ -194,6 +196,21 @@ export default {
     });
   },
   methods: {
+    treeFilterHandler(data) {
+      if (!this.filter) return data;
+      const filter = this.filter === "string" ? this.filter.split(",") : _.cloneDeep(this.filter);
+      if (!this.filter.length) return data;
+      return data.filter((d) => {
+        let include = false;
+        for (let path of d.node_path.split("-")) {
+          console.log(path);
+          if (filter.includes(path)) {
+            include = true;
+          }
+        }
+        return include;
+      });
+    },
     async fetch(tag_no) {
       if (!this.show) return;
       this.loading = true;

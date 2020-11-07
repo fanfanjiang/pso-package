@@ -28,7 +28,7 @@
                     icon="el-icon-info"
                     iconColor="red"
                     title="你确定要删除吗"
-                    @onConfirm="remove"
+                    @confirm="remove"
                   >
                     <span slot="reference">删除</span>
                   </el-popconfirm>
@@ -49,10 +49,10 @@
         </div>
         <div class="form-executor-footer__r">
           <template v-if="addable">
-            <el-button v-if="keepable" size="small" @click="keepSubmitHander" :disabled="saving" :loading="saving"
-              >提交并继续创建</el-button
-            >
-            <el-button type="primary" size="small" @click="submitHandler(true)" :disabled="saving" :loading="saving">提交</el-button>
+            <el-button v-if="keepable" size="small" @click="keepSubmitHander" :disabled="saving" :loading="saving">
+              保存并继续创建
+            </el-button>
+            <el-button type="primary" size="small" @click="submitHandler(true)" :disabled="saving" :loading="saving">保存</el-button>
           </template>
           <template v-if="dataId">
             <el-button size="small" @click="submitHandler(false)" :disabled="saving" :loading="saving">保存</el-button>

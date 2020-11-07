@@ -17,6 +17,11 @@
         <el-option v-for="item in treeTypes" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
       </el-select>
     </el-form-item>
+    <el-form-item label="过滤关联字段">
+      <el-select v-model="cpnt.data._filterOptions" size="mini" placeholder="请选择" multiple>
+        <el-option v-for="f in fieldOptions" :key="f.fid" :label="f._fieldName" :value="f._fieldValue"></el-option>
+      </el-select>
+    </el-form-item>
     <el-form-item label="默认值">
       <pso-picker-tag
         ref="selector"
@@ -62,6 +67,17 @@ export default {
     },
     tagDisplayName() {
       return this.cpnt.data._source === "tree" ? "node_display" : "tag_name";
+    },
+    fieldOptions() {
+      return this.cpnt.store.search({
+        options: { db: true },
+        onlyData: true,
+        beforePush: (item) => {
+          if (item.fid === this.cpnt.fid) return false;
+          if (item.parent.CPNT.host_db) return false;
+          return true;
+        },
+      });
     },
   },
   watch: {

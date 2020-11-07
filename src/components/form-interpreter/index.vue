@@ -53,6 +53,10 @@ export default {
       type: String,
       default: "120px",
     },
+    parentInstanceId: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -118,14 +122,11 @@ export default {
         const ret = await this.API.form({ data: { leaf_id: this.dataId, form_code: this.store.data_code } });
         this.store.updateInstance(ret.data);
       } else {
-        if (this.dataDefault) {
-          this.store.updateInstance(this.dataDefault);
-        } else if (this.mockAsstables) {
-          this.store.updateInstance();
-          this.store.mockAsstables = this.mockAsstables;
-        } else {
-          this.store.updateInstance();
-        }
+        this.store.updateInstance(this.dataDefault);
+      }
+
+      if (this.mockAsstables) {
+        this.store.mockAsstables = this.mockAsstables;
       }
 
       //如果是复制模式
@@ -147,7 +148,13 @@ export default {
       }
 
       //获取表单配置
-      const baseEntity = { copyMode: this.copyMode, extendAuth: this.extendAuth, editable: this.editable };
+      const baseEntity = {
+        copyMode: this.copyMode,
+        extendAuth: this.extendAuth,
+        editable: this.editable,
+        parentInstanceId: this.parentInstanceId,
+      };
+      
       if (this.formEntity) {
         this.store = new FormStore({ ...this.formEntity, ...baseEntity });
       } else if (this.formId) {

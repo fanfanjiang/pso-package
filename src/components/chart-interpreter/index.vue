@@ -1,7 +1,7 @@
 <template>
   <div class="pso-chart" ref="chart">
     <div class="pso-chart-wrapper" v-loading="!loaded">
-      <div class="pso-chart-name">{{chartCfg.chartName}}</div>
+      <div class="pso-chart-name">{{ chartCfg.chartName }}</div>
       <div class="pso-chart-body">
         <component
           v-if="loaded"
@@ -67,7 +67,7 @@ export default {
       fields: [],
       chartHeight: "400px",
       conflict: [],
-      colors: [],
+      colors: ["#065279", "#ffc773", "#f47983", "#426666", "#E69D87", "#DD6B66", "#493131"],
     };
   },
   computed: {
@@ -134,7 +134,7 @@ export default {
   },
   created() {
     this.deGetForm = debounce(500, this.getFormCfg);
-    this.colors = _.shuffle(["#DD6B66", "#759AA0", "#E69D87", "#8DC1A9", "#f47983"]);
+    // this.colors = _.shuffle(["#f47983", "#8DC1A9", "#E69D87", "#DD6B66", "#759AA0"]);
   },
   mounted() {
     this.setHeight();

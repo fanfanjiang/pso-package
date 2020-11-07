@@ -73,11 +73,15 @@ export const op = {
                 let formData = null;
                 if (optype === REVIEW_OP_TYPE.confirm.type) {
                     formData = await this.store.getFormData();
+                    if (!formData) return;
                 }
                 this.dispatch("PsoWfExecutorBox", "op-before-next", { optype, formData });
                 const ret = await this.store.doNextStep({ optype, formData: isAppendForm ? formData : null });
                 if (ret.data && ret.data.instance) {
                     //必须选择下一步执行人
+                    if (!this.store.data.instanceId) {
+                        this.store.shouldAddEmptyButNot = { result: ret, status: 0, optype: 0 };
+                    }
                     this.store.setInstanceData(ret.data.instance);
                     this.confirm(false);
                     this.store.steping = false;

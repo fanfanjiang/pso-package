@@ -72,7 +72,7 @@
                     icon="el-icon-info"
                     iconColor="red"
                     title="你确认吗"
-                    @onConfirm="store.handleBackout.call(store)"
+                    @confirm="store.handleBackout.call(store)"
                     v-if="store.opBackoutable && !params.hideBackBtn"
                   >
                     <el-button :disabled="!store.backoutable" slot="reference" size="mini" type="primary" plain>{{
@@ -85,7 +85,7 @@
                     icon="el-icon-info"
                     iconColor="red"
                     title="你确认吗"
-                    @onConfirm="store.handleArchive.call(store)"
+                    @confirm="store.handleArchive.call(store)"
                     v-if="store.opArchiveable && !params.hideArchiveBtn"
                   >
                     <el-button :disabled="!store.archiveable" slot="reference" size="mini" type="primary" plain>{{
@@ -102,7 +102,7 @@
           <view-table :store="store" :params="{ ...params, ...$props, checkbox }"></view-table>
         </div>
       </div>
-      <pso-dialog :title="store.wfCfg.wf_name" :visible="store.showExecutor" :width="executorWidth" @close="store.showExecutor = false">
+      <pso-dialog :title="store.wfCfg.wf_name" :visible="store.showExecutor" :width="executorWidth" @close="excutorClosedHandler">
         <template #title>
           <div class="form-executor-header">
             <div class="form-executor-header__l">
@@ -119,7 +119,7 @@
           @before-save="$emit('executor-beforesave', $event)"
           @before-next="$emit('executor-beforenext', $event)"
           @excuted="store.handleExcuted.call(store, $event)"
-          @executor-initialized="$emit('executor-initialized', $event)"
+          @executor-initialized="executorInitedHandler"
         >
           <template slot="data" slot-scope="scope">
             <slot name="data" :store="scope.store"></slot>
@@ -222,12 +222,11 @@ export default {
   },
   methods: {
     async initialize() {
-
       if (this.watchFun.length) {
         this.watchFun.forEach((f) => f());
         this.watchFun = [];
       }
-      
+
       if (this.params.wfId) {
         this.store = new WFVStore({
           $vue: this,
@@ -281,6 +280,17 @@ export default {
     },
     makeKeys() {
       this.store.makeDefkeys({ defKeys: this.params.defKeys, defForm: this.params.defForm });
+    },
+    executorInitedHandler(evt) {
+      this.store.WFStore = evt;
+      this.$emit("executor-initialized", evt);
+    },
+    excutorClosedHandler() {
+      if (this.store.WFStore && this.store.WFStore.shouldAddEmptyButNot) {
+        this.store.handleExcuted(this.store.WFStore.shouldAddEmptyButNot);
+      } else {
+        this.store.showExecutor = false;
+      }
     },
   },
 };

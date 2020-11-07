@@ -10,12 +10,15 @@
             <div class="pso-wf-executor__main-content-wrapper" ref="executorPrint">
               <slot name="content" :store="store"></slot>
               <div ref="wfTable" class="pso-wf-executor__main-content" v-html="store.cfg.wf_body_tp"></div>
-              <div class="pso-wf-executor__stamp" v-if="!store.loading" v-html="stamp.stamp" :style="stampStyle"></div>
+              <div class="pso-wf-executor__stamp" v-if="!store.loading" v-html="store.statusEntity.stamp" :style="stampStyle"></div>
               <div v-show="store.log.length" class="pso-wf-executor__main-content-log" field="wf_logs"></div>
             </div>
           </div>
           <transition name="el-zoom-in-bottom">
-            <pso-wfop-user v-if="store.showUserOp" :store="store" @close="store.showUserOp = false" @confirm="append"></pso-wfop-user>
+            <pso-wfop-user v-if="store.showUserOp" :store="store" @confirm="append"></pso-wfop-user>
+          </transition>
+          <transition name="el-zoom-in-bottom">
+            <confirm-emptys v-if="store.showEmptys" :store="store"></confirm-emptys>
           </transition>
         </div>
         <div class="pso-wf-executor__footer">
@@ -74,14 +77,28 @@ import PsoWfAttach from "./attach";
 import PsoWfChart from "./flowchart";
 import PsoWfLog from "./log";
 import PsoChat from "../chat";
+import ConfirmEmptys from "./op/confirm-emptys";
 import { executor, op } from "./mixin";
 
 export default {
-  components: { PsoWfMainform, PsoWfop, PsoWfopUser, PsoWfOverview, PsoWfForm, PsoWfAttach, PsoWfChart, PsoWfLog, PsoChat },
+  components: {
+    PsoWfMainform,
+    PsoWfop,
+    PsoWfopUser,
+    PsoWfOverview,
+    PsoWfForm,
+    PsoWfAttach,
+    PsoWfChart,
+    PsoWfLog,
+    PsoChat,
+    ConfirmEmptys,
+  },
   mixins: [executor, op],
   data() {
     this.REVIEW_OP_TYPE = REVIEW_OP_TYPE;
-    return {};
+    return {
+      showedFlowChartTip: false,
+    };
   },
   computed: {
     executorClass() {
@@ -91,17 +108,10 @@ export default {
         "pso-wf-executor__extend__zoom": !this.store.showExtend,
       };
     },
-    stamp() {
-      try {
-        return _.find(Object.values(REVIEW_STATUS), { value: this.store.data.status });
-      } catch (error) {
-        return { stamp: "" };
-      }
-    },
     stampStyle() {
       return {
-        color: this.stamp.color,
-        "border-color": this.stamp.color,
+        color: this.store.statusEntity.color,
+        "border-color": this.store.statusEntity.color,
       };
     },
     switchClass() {
@@ -109,6 +119,21 @@ export default {
         "el-icon-d-arrow-right": this.store.showExtend,
         "el-icon-d-arrow-left": !this.store.showExtend,
       };
+    },
+  },
+  watch: {
+    "store.activeExtendTab"(val) {
+      if (this.showedFlowChartTip) {
+        return;
+      }
+      if (val === "flowchart") {
+        this.showedFlowChartTip = true;
+        this.$message({
+          showClose: true,
+          duration: 10000,
+          message: "流程图可缩放，拖动查看；蓝色代表你正在处理的步骤，黄色代表流程所处的步骤",
+        });
+      }
     },
   },
   async created() {

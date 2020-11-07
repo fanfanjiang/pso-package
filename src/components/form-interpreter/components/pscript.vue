@@ -60,6 +60,7 @@ import cpntMixin from "../mixin";
 import PscriptTable from "../../pscript-table";
 import { pickerMixin } from "../../../mixin/picker";
 import debounce from "throttle-debounce/debounce";
+import shortid from "shortid";
 
 export default {
   mixins: [
@@ -105,7 +106,7 @@ export default {
     "proxy.valList"(val) {
       this.cpnt.data._val = _.map(val, this.cpnt.data._saveField || "leaf_id").join(",");
       if (val.length) {
-        this.fillOut(val[0]);
+        this.fillOut(val);
       }
       this.dispatch("PsoformInterpreter", "pscript-selected", { cpnt: this.cpnt, data: val, store: this.store });
     },
@@ -119,7 +120,7 @@ export default {
   },
   async created() {
     //列参数
-    this.fetch = debounce(200, this.fetchData);
+    this.fetch = debounce(100, this.fetchData);
 
     this.resetPicker({ idName: this.cpnt.data._saveField, reset: false });
 
@@ -163,11 +164,16 @@ export default {
         this.table = ret.data;
 
         if (this.cpnt.data._type === "1" && ret.data.length && !this.saved) {
-          this.fillOut(ret.data[0]);
+          this.fillOut(ret.data);
         }
       }
     },
-    fillOut(data) {
+    fillOut(copyData) {
+      let data = copyData;
+      if (this.cpnt.data._copyType !== "2") {
+        data = copyData[0];
+      }
+
       //填充表单
       //保存本体字段值
       if (this.cpnt.data._saveField) {
@@ -176,14 +182,25 @@ export default {
         this.cpnt.data._val = 1;
       }
 
-      for (let key in data) {
-        const cpnt = this.cpnt.store.searchByField(key);
-        if (cpnt) {
-          if (cpnt.__setDataByIds) {
-            cpnt.__setDataByIds(data[key]);
-          } else {
-            cpnt.data._val = data[key];
+      if (this.cpnt.data._copyType !== "2") {
+        for (let key in data) {
+          const cpnt = this.cpnt.store.searchByField(key);
+          if (cpnt) {
+            if (cpnt.__setDataByIds) {
+              cpnt.__setDataByIds(data[key]);
+            } else {
+              cpnt.data._val = data[key];
+            }
           }
+        }
+      } else {
+        const target = this.cpnt.data._copyTarget;
+        if (target) {
+          data.forEach((d) => {
+            d.leaf_id = shortid.generate();
+            d.__temporary__ = true;
+          });
+          this.cpnt.store.updateInstanceManually({ [target]: data });
         }
       }
     },

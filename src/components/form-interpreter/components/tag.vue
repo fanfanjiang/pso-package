@@ -18,6 +18,7 @@
         :pattern="cpnt.data._type"
         :source="cpnt.data._source"
         @confirm="handleTagAdd"
+        :filter="filter"
       >
         <el-button size="mini" icon="el-icon-plus" circle></el-button>
       </pso-picker-tag>
@@ -39,6 +40,7 @@ export default {
         list: [],
         type: this.cpnt.data._type,
       },
+      filterCache: {},
     };
   },
   computed: {
@@ -50,6 +52,9 @@ export default {
     },
     tagDisplayName() {
       return this.treeMode ? "node_display" : "tag_name";
+    },
+    filter() {
+      return Object.values(this.filterCache).filter((d) => d);
     },
   },
   watch: {
@@ -68,7 +73,16 @@ export default {
     } else {
       this.proxy.valList = [];
     }
+
     this.dispatch("PsoformInterpreter", "cpnt-tag-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
+
+    if (this.cpnt.data._filterOptions && this.cpnt.data._filterOptions.length) {
+      this.$on("cpnt-value-changed", ({ cpnt }) => {
+        if (this.cpnt.data._filterOptions.includes(cpnt.data._fieldValue)) {
+          this.$set(this.filterCache, cpnt.data._fieldValue, cpnt.data._val);
+        }
+      });
+    }
   },
   methods: {
     async setDataByIds(tagData) {

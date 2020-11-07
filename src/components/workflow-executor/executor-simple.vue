@@ -11,7 +11,7 @@
             <pso-wf-log :store="store"></pso-wf-log>
           </div>
           <transition name="el-zoom-in-bottom">
-            <pso-wfop-user v-if="store.showUserOp" :store="store" @close="store.showUserOp = false" @confirm="append"></pso-wfop-user>
+            <pso-wfop-user v-if="store.showUserOp" :store="store" @confirm="append"></pso-wfop-user>
           </transition>
         </div>
         <div class="pso-wf-executor__footer">

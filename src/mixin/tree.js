@@ -222,7 +222,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
 
                 //树节点过滤
                 if (this.nodeDataFilter) {
-                    treeList = await this.nodeDataFilter(ret.data);
+                    treeList = await this.nodeDataFilter(ret.data.tagtree);
                 }
 
                 //将列表数据转化为树结构数据
@@ -253,7 +253,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     }
                 }
 
-                if (!this.rootable && data.length) {
+                if (!this.rootable && data.length && data[0].children) {
                     return data[0].children;
                 } else {
                     return data;

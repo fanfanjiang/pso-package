@@ -1,10 +1,10 @@
 import API from "../../service/api.js";
-import { REVIEW_OP_TYPE, REVIEW_OP_USER, REVIEW_STATUS, WF_IMPORTANCE, WF_SECTRE, WF_URGENT } from "../../const/workflow";
+import { REVIEW_OP_TYPE, REVIEW_OP_USER, REVIEW_STATUS, WF_IMPORTANCE, WF_SECTRE, WF_URGENT, WF_EMPTY_TYPE } from "../../const/workflow";
 import { filterByDecimal } from "../../tool/form.js";
 
 const BASEDADA = {
     instanceId: '',
-    status: 0,
+    status: REVIEW_STATUS.save.value,
     fileCode: "",
     creator: "",
     ctime: "",
@@ -20,7 +20,8 @@ const BASEDADA = {
     msg_tag: '',
     creator_name: '',
     attach: '',
-    nextUser: null
+    nextUser: null,
+    reviews: []
 }
 
 export default class WfStore {
@@ -39,6 +40,8 @@ export default class WfStore {
         this.copy = false;
         this.copyInstanceId = '';
         this.executorPrintRef = null;
+
+        this.shouldAddEmptyButNot = null;
 
         this.extend = {};
 
@@ -60,6 +63,7 @@ export default class WfStore {
             wf_body_tp: "",
             wf_status: "",
             map_data_code: "",
+            empty_type: '',
             files: [],
             nextUser: null //只是第一步审核的下一步审核人，此时流程实例还未建立
         }
@@ -75,6 +79,7 @@ export default class WfStore {
         this.showUserOp = false;
         this.showBody = true;
         this.showExtend = true;
+        this.showEmptys = false;
 
         this.curUser = {};
 
@@ -85,71 +90,6 @@ export default class WfStore {
                 this[option] = options[option];
             }
         }
-    }
-
-    get isCreator() {
-        return this.curUser.user_id === this.data.creator;
-    }
-
-    get hasCreatorPower() {
-        return (this.isCreator || !this.data.creator) && (
-            this.data.status === REVIEW_STATUS.save.value ||
-            this.data.status === REVIEW_STATUS.reject.value ||
-            this.data.status === REVIEW_STATUS.backout.value
-        );
-    }
-
-    get mustFillAsCreator() {
-        return this.isCreator && (
-            this.data.status === REVIEW_STATUS.reject.value ||
-            this.data.status === REVIEW_STATUS.backout.value
-        )
-    }
-
-    //初始化流程配置
-    async init({ cfgId, instanceId }) {
-
-        this.loading = true;
-        this.configing = true;
-
-        const ret = await API.workflowcfg({ data: { node_id: cfgId, nextUser: true } });
-        if (ret.success && ret.data) {
-
-            //设置流程图参数
-            const node = JSON.parse(ret.data.wf_map_tp);
-            const startChildren = node.splice(1);
-            node[0].children = startChildren;
-
-            ret.data.wf_map_tp = {
-                wfName: ret.data.wf_name,
-                formName: "",
-                selectedNode: { nid: '' }, //当前执行人所在的流程节点
-                clickedNode: { nid: '' }, //流程图操作中选择的节点
-                executingNodes: [], //流程正在执行中的节点集合,仅仅为了展示
-                node
-            }
-
-            this.cfg = ret.data;
-
-            try {
-                //文本设置
-                if (this.cfg.wf_list_column) {
-                    const text = JSON.parse(this.cfg.wf_list_column);
-                    text.forEach(item => {
-                        const exist = this.TEXT[item.id];
-                        if (exist) {
-                            exist.show = item.show;
-                            exist.value = item.value;
-                        }
-                    })
-                }
-            } catch (error) {
-
-            }
-
-        }
-        await this.setInstance(instanceId);
-        this.configing = false;
     }
 
     get startNode() {
@@ -171,6 +111,88 @@ export default class WfStore {
         }
     }
 
+    get isCreator() {
+        return this.curUser.user_id === this.data.creator;
+    }
+
+    get hasCreatorPower() {
+        return (this.isCreator || !this.data.creator) && (
+            this.data.status === REVIEW_STATUS.save.value ||
+            this.data.status === REVIEW_STATUS.reject.value ||
+            this.data.status === REVIEW_STATUS.backout.value
+        );
+    }
+
+    get shouldChooseEmptys() {
+        return this.hasCreatorPower && this.cfg.empty_type === WF_EMPTY_TYPE[1].v && this.data.reviews.length
+    }
+
+    get mustFillAsCreator() {
+        return this.isCreator && (
+            this.data.status === REVIEW_STATUS.reject.value ||
+            this.data.status === REVIEW_STATUS.backout.value
+        )
+    }
+
+    get statusEntity() {
+        const entity = _.find(Object.values(REVIEW_STATUS), { value: this.data.status });
+        if (this.cfg.wf_list_column && this.cfg.wf_list_column.length) {
+            const exist = _.find(this.cfg.wf_list_column, { id: entity.id })
+            if (exist && exist.value) {
+                entity.stamp = exist.value
+            }
+        }
+        return entity;
+    }
+
+    //初始化流程配置
+    async init({ cfgId, instanceId }) {
+
+        this.loading = true;
+        this.configing = true;
+
+        const ret = await API.workflowcfg({ data: { node_id: cfgId, nextUser: true } });
+        if (ret.success && ret.data) {
+
+            //设置流程图参数
+            const node = JSON.parse(ret.data.wf_map_tp);
+            const startChildren = node.splice(1);
+            node[0].children = startChildren;
+
+            ret.data.wf_map_tp = {
+                wfName: ret.data.wf_name,
+                formName: "",
+                selectedNode: { nid: '' }, //当前执行人所在的流程节点
+                markedNode: { nid: '' }, //当前执行人所在的流程节点
+                clickedNode: { nid: '' }, //流程图操作中选择的节点
+                executingNodes: [], //流程正在执行中的节点集合,仅仅为了展示
+                node
+            }
+
+            this.cfg = ret.data;
+
+            try {
+                //文本设置
+                if (this.cfg.wf_list_column) {
+                    this.cfg.wf_list_column = JSON.parse(this.cfg.wf_list_column);
+                    this.cfg.wf_list_column.forEach(item => {
+                        const exist = this.TEXT[item.id];
+                        if (exist) {
+                            exist.show = item.show;
+                            exist.value = item.value;
+                        }
+                    })
+                }
+            } catch (error) {
+
+            }
+
+        }
+        await this.setInstance(instanceId);
+        this.configing = false;
+    }
+
+
     // 新建流程实例
     newInstance() {
         //设置当前执行节点为开始节点
@@ -186,6 +208,19 @@ export default class WfStore {
 
     setCurStep(node) {
         this.cfg.wf_map_tp.selectedNode = this.curStep = node || this.cfg.wf_map_tp.node[0];
+    }
+
+    markNode(nid) {
+        if (!nid) {
+            return this.cfg.wf_map_tp.markedNode = null;
+        }
+        if (this.cfg.wf_map_tp.markedNode && this.cfg.wf_map_tp.markedNode.nid === nid) {
+            return
+        }
+        const { target } = this.getFlowNode({ nid });
+        if (target) {
+            this.cfg.wf_map_tp.markedNode = target;
+        }
     }
 
     getFlowNode({ nid, cb }) {
@@ -227,7 +262,11 @@ export default class WfStore {
         this.data.creator = "";
         this.data.creator_name = "";
         this.data.ctime = "";
+
+        //状体
         this.data.status = REVIEW_STATUS.save.value;
+        this.data.reviews = [];
+
         this.log = [];
         this.setTableLogVal(this.log);
         this.setLogsFlow(this.log);
@@ -240,11 +279,16 @@ export default class WfStore {
 
     setInstanceData(instanceData) {
         //设置基本实例参数
-        const { instance, steps, file, log, nextUser, nodes } = instanceData;
+        const { instance, steps, file, log, nextUser, nodes, reviews } = instanceData;
         Object.keys(instance).forEach(key => (this.data.hasOwnProperty(key) && (this.data[key] = instance[key])));
         this.data.filetype = this.data.filetype || instance.fileType;
         this.data.name = this.data.name || instance.instanceName;
         this.data.status = instance.instance_status;
+
+        if (reviews) {
+            reviews.forEach(r => r.empties = '');
+            this.data.reviews = reviews;
+        }
 
         //根据实例状态设置当前步骤
         if (this.hasCreatorPower) {
@@ -415,7 +459,7 @@ export default class WfStore {
                 }
             } else {
                 const sequence = $el.attr('sequence');
-                if (cpnt.data._type == 1) {
+                if (cpnt.data._type == 1 && display !== 'table') {
                     if (proxy.valList.length) {
                         $el.html(proxy.valList[0][cpnt.data._radioField || 'leaf_id']);
                     }
@@ -487,6 +531,7 @@ export default class WfStore {
             filetype,
             wf_code: this.cfg.wf_code,
             wfid: this.cfg.wf_code,
+            empty_type: this.cfg.empty_type,
             name: this.data.name,
             urgent: this.data.urgent,
             import: this.data.import,
@@ -550,32 +595,34 @@ export default class WfStore {
             throw new Error('参数错误');
         }
 
-        let doNextUsers;
-        let doNextStep;
+        const data = {
+            ...this.extend,
+            wf_code: this.cfg.wf_code,
+            empty_type: this.cfg.empty_type,
+            instanceId: this.data.instanceId,
+            note: this.data.opinion,
+            stepid: this.curStep.nid,
+            attids: this.data.attach,
+            att_id: this.data.attachIds,
+            optype,
+        }
+
+        if (this.shouldChooseEmptys) {
+            for (let r of this.data.reviews) {
+                if (!r.empties) {
+                    throw new Error('请设置审核人');
+                }
+            }
+            data.empties = this.data.reviews;
+        }
 
         //下一步是空白人
         if (this.isNextEmpty && optype === REVIEW_OP_TYPE.confirm.type) {
             if (!this.userOp.users) {
                 throw new Error('请选择下一步审核人');
             }
-            doNextUsers = this.userOp.users;
-            doNextStep = this.doNextUser.step_code;
-        } else {
-            doNextUsers = undefined;
-            doNextStep = undefined;
-        }
-
-        const data = {
-            ...this.extend,
-            wf_code: this.cfg.wf_code,
-            instanceId: this.data.instanceId,
-            note: this.data.opinion,
-            stepid: this.curStep.nid,
-            attids: this.data.attach,
-            att_id: this.data.attachIds,
-            doNextUsers,
-            doNextStep,
-            optype,
+            data.doNextUsers = this.userOp.users;
+            data.doNextStep = this.doNextUser.step_code;
         }
 
         if (this.data.instanceId) {
@@ -625,9 +672,11 @@ export default class WfStore {
             if (formData) {
                 data.formData = formData;
             }
+
+            this.shouldAddEmptyButNot = null;
             return await API.workflow({ data, method: "put" });
         } else {
-            return await this.newInstanceData({ nextStep: true, formData, doNextUsers, doNextStep })
+            return await this.newInstanceData({ nextStep: true, formData, doNextUsers: data.doNextUsers, doNextStep: data.doNextStep })
         }
     }
 }

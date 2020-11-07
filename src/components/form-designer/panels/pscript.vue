@@ -4,10 +4,21 @@
       <el-form-item label="脚本" required>
         <el-button @click="showScript = true" size="mini">设置脚本</el-button>
       </el-form-item>
-      <el-form-item label="存储方式" required>
+      <el-form-item label="展示方式" required>
         <el-select size="mini" v-model="cpnt.data._type" placeholder="请选择">
           <el-option label="自动填充" value="1"></el-option>
-          <el-option label="选择" value="2"></el-option>
+          <el-option label="列表选择" value="2"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="赋值方式" required>
+        <el-select size="mini" v-model="cpnt.data._copyType" placeholder="请选择">
+          <el-option label="自动赋值" value="1"></el-option>
+          <el-option label="导入子表" value="2"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="赋值子表字段" v-if="cpnt.data._copyType === '2'">
+        <el-select v-model="cpnt.data._copyTarget" size="mini" placeholder="请选择赋值字段">
+          <el-option v-for="item in fieldOptions" :key="item.fid" :label="item._fieldName" :value="item.fid"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="只保存一次" required>

@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-wf-executor__flowchart">
+  <div class="pso-wf-executor__flowchart multiple-users-exception">
     <pso-wf-stage
       @click-node="selectedNode"
       :workflowData="store.cfg.wf_map_tp"
@@ -13,7 +13,7 @@
           <span>指定流程节点</span>
           <el-button type="text" @click="store.cancelPickreject(false)">取消</el-button>
         </div>
-        <div class="pso-wf__flowchart-card-body">已选择节点：{{store.appointStep&&store.appointStep.name}}</div>
+        <div class="pso-wf__flowchart-card-body">已选择节点：{{ store.appointStep && store.appointStep.name }}</div>
         <div class="pso-wf__flowchart-card-footer" v-if="store.appointStep">
           <el-button type="success" size="mini" @click="pickreject">确定</el-button>
         </div>
@@ -42,6 +42,7 @@ export default {
   methods: {
     selectedNode(node) {
       //只有在指定模式下才执行
+      return;
       if (this.showBody) return;
       if (this.store.curStep && node.nid === this.store.curStep.nid)
         return this.$message({ message: "不能选择当前执行节点", type: "warning" });

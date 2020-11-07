@@ -10,7 +10,7 @@
           icon="el-icon-info"
           iconColor="red"
           :title="makeSureText(data.name)"
-          @onConfirm="$emit('change', data)"
+          @confirm="$emit('change', data)"
         >
           <span slot="reference">{{ data.name }}</span>
         </el-popconfirm>

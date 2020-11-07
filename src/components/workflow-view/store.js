@@ -17,6 +17,7 @@ export default class WFVStore extends FVStore {
         });
 
         this.wfCfg = null;
+        this.WFStore = null;
 
         this.wfStatuses = [];
         this.curWfStatus = undefined;
@@ -66,8 +67,8 @@ export default class WFVStore extends FVStore {
         data.forEach((d) => {
             d.name = d.status_name;
             d.value = d.instance_status;
-            if (d.instance_status === 7) d.name = this.cpntText.backout;
-            if (d.instance_status === 9) d.name = this.cpntText.archive;
+            if (d.instance_status === 7) d.name = `已${this.cpntText.backout}`;
+            if (d.instance_status === 9) d.name = `已${this.cpntText.archive}`;
         });
         return _.orderBy(data, ["instance_status"], ["asc"]);
     }

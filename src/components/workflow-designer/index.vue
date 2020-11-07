@@ -13,7 +13,7 @@
             <el-popconfirm
               v-if="wfDesigner.node_id"
               title="你确定要发布吗？"
-              @onConfirm="saveWorkflow('1')"
+              @confirm="saveWorkflow('1')"
             >
               <el-button slot="reference" type="primary" size="small">发布流程</el-button>
             </el-popconfirm>

@@ -85,52 +85,55 @@ export default {
   },
   methods: {
     async changeHandler() {
-      if (this.curCode && !this.cache[this.curCode]) {
-        this.loading = true;
+      // if (this.curCode && !this.cache[this.curCode]) {
+      this.loading = true;
 
-        let fields = [];
-        const store = await this.makeFormStore(this.curCode);
+      let fields = [];
+      const store = await this.makeFormStore(this.curCode);
 
-        fields = store.search({
-          options: { db: true },
-          onlyData: true,
-          beforePush: (item) => {
-            item.data.fieldDisplay = `[${item.CPNT.name}]${item.data._fieldName}`;
-            return !item.parent.CPNT.host_db;
-          },
-        });
+      fields = store.search({
+        options: { db: true },
+        onlyData: true,
+        beforePush: (item) => {
+          item.data.fieldDisplay = `[${item.CPNT.name}]${item.data._fieldName}`;
+          return !item.parent.CPNT.host_db;
+        },
+      });
 
-        if (this.source === "2" || this.source === "3") {
-          fields = [];
-          const ret = await this.API.getFormDict({ data_code: this.curCode });
-          ret.data.forEach((d) => {
-            const f = store.searchByField(d.field_name);
+      if (this.source === "2" || this.source === "3") {
+        fields = [];
+        const ret = await this.API.getFormDict({ data_code: this.curCode });
+        ret.data.forEach((d) => {
+          const f = store.searchByField(d.field_name);
 
-            if (f) {
-              Object.assign(d, f.data);
-            }
+          if (f) {
+            Object.assign(d, f.data);
+          }
 
-            const noSys = f && f.data._fieldValue !== "d_tag" && f.data._fieldValue !== "d_name";
+          const mixedBlood = d.field_name === "d_tag" || d.field_name === "d_name";
+          const noSys = f && !mixedBlood;
 
-            d.is_sys = noSys ? "0" : "1";
-            d._fieldValue = d.field_name;
-            d.fieldDisplay = noSys ? `${f.data._fieldName}@${d.field_name}@${f.CPNT.name}` : `系统@${d.field_name}`;
+          d.is_sys = noSys ? "0" : "1";
+          d._fieldValue = d.field_name;
+          d.fieldDisplay = noSys
+            ? `${f.data._fieldName}@${d.field_name}@${f.CPNT.name}`
+            : `系统@${d.field_name}@${mixedBlood ? f.data._fieldName : ""}`;
 
-            if (this.source === "3") {
-              if (!/\S+_s$/.test(d.field_name) && !/\S+_x$/.test(d.field_name)) {
-                fields.push(d);
-              }
-            } else {
+          if (this.source === "3") {
+            if (!/\S+_s$/.test(d.field_name) && !/\S+_x$/.test(d.field_name)) {
               fields.push(d);
             }
-          });
-        }
-
-        this.$set(this.cache, this.curCode, fields);
-        this.$emit("loaded", { fields, store, config: this.formConfig, forms: this.options });
-
-        this.loading = false;
+          } else {
+            fields.push(d);
+          }
+        });
       }
+
+      this.$set(this.cache, this.curCode, fields);
+      this.$emit("loaded", { fields, store, config: this.formConfig, forms: this.options });
+
+      this.loading = false;
+      // }
     },
     isArray(object) {
       return Array.isArray(object);

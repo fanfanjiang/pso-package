@@ -73,6 +73,7 @@ import PsoWfText from "./text";
 import PsoWfSubwf from "./wf-sub";
 import PsoWfAutoid from "./autoid";
 import PsoWfScript from "./script";
+import { REVIEW_STATUS } from "../../const/workflow";
 
 const _DATA = {
   tagData: [
@@ -124,6 +125,14 @@ const _DATA = {
       id: "urgent",
       show: false,
     },
+    ...Object.values(_.cloneDeep(REVIEW_STATUS)).map(({ id, name }) => {
+      return {
+        type: name,
+        value: "",
+        id,
+        show: true,
+      };
+    }),
   ],
   subWfData: [],
   script: [],

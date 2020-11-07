@@ -2,12 +2,12 @@
   <pso-label :cpnt="cpnt" v-loading="initializing || loading">
     <div class="pso-ip__ast" v-if="!initializing">
       <div class="pso-ip__ast-btns" style="margin-bottom: 5px" v-if="cpntEditable">
-        <el-button v-if="cpnt.data._relate" type="primary" plain icon="el-icon-plus" size="mini" @click="showTable = true"
-          >选择{{ cpnt.data._fieldName }}</el-button
-        >
-        <el-button v-if="cpnt.data._new" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd"
-          >添加{{ cpnt.data._fieldName }}</el-button
-        >
+        <el-button v-if="cpnt.data._relate" type="primary" plain icon="el-icon-plus" size="mini" @click="showTable = true">
+          选择{{ cpnt.data._fieldName }}
+        </el-button>
+        <el-button v-if="showAddBtn" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd">
+          添加{{ cpnt.data._fieldName }}
+        </el-button>
         <transition name="el-zoom-in-center">
           <el-button
             v-show="cpnt.data._relate && !justShowOne && selectedList.length"
@@ -15,8 +15,9 @@
             icon="el-icon-delete"
             size="mini"
             @click="handleDelList(selectedList)"
-            >取消所选数据</el-button
           >
+            取消所选数据
+          </el-button>
         </transition>
       </div>
       <div class="pso-form-asstable-table">
@@ -66,7 +67,7 @@
         :title="store.data_name"
         :opener="astStore"
         :instanceids="astStore.instanceids"
-        :keepable="false"
+        :keepable="true"
         @data-changed="dataChangeHandler"
         @prev="astStore.showPrev.call(astStore, $event)"
         @next="astStore.showNext.call(astStore, $event)"
@@ -130,8 +131,15 @@ export default {
     justShowOne() {
       return this.selectionType === "radio";
     },
+    showAddBtn() {
+      return this.cpnt.data._new && (!this.cpnt.data._relate && this.justShowOne ? !this.instances.length : true);
+    },
     instances() {
-      return this.astStore.instances;
+      if (this.astStore) {
+        return this.astStore.instances;
+      } else {
+        return [];
+      }
     },
     selectedList() {
       return this.astStore.selectedList;
@@ -168,6 +176,7 @@ export default {
         editable: this.editable,
         deletable: this.editable && !this.cpnt.data._relate,
         mockAsstables: this.unsavedSelf,
+        parentInstanceId: this.cpnt.store.instance_id,
       };
     },
     authCfg() {
@@ -239,15 +248,17 @@ export default {
   },
   async created() {
     await this.initialize();
+
     //初始赋值
     if (this.cpnt.data._val && typeof this.cpnt.data._val === "string") {
       await this.setDataByIds(this.cpnt.data._val.split(","));
-    } else {
-      if (this.cpnt.store && this.cpnt.store.mockAsstables && this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]) {
-        this.handleAddSelection([this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]]);
-      } else {
-        this.proxy.valList = [];
+
+      //只有在请求后没有取到数据，且父级数据没有生成前，才可以设置模拟数据
+      if (!this.proxy.valList.length && !this.cpnt.store.parentInstanceId) {
+        this.setMockData();
       }
+    } else {
+      this.setMockData();
     }
 
     this.cpnt._handleClickAdd = this.handleClickAdd;
@@ -281,6 +292,7 @@ export default {
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option, auth: 1 }, method: "get" });
 
       this.astStore = new ASTStore({ $vue: this, limit: 10 });
+      this.cpnt.astStore = this.astStore;
       this.astStore.analyzeFormCfg(ret.data, this.cpnt.data._showFields);
       this.store = this.astStore.store;
       this.fields = this.astStore.fields;
@@ -309,6 +321,13 @@ export default {
         this.cachedIds = [];
       }
     },
+    setMockData() {
+      if (this.cpnt.store && this.cpnt.store.mockAsstables && this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]) {
+        this.handleAddSelection([this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]]);
+      } else {
+        this.proxy.valList = [];
+      }
+    },
     async setDataByIds(idList, callback) {
       if (idList && typeof idList === "string") {
         idList = idList.split(",");
@@ -317,7 +336,10 @@ export default {
         this.loading = true;
         const list = [];
         for (let id of idList) {
-          const data = await this.astStore.findById(id);
+          let data = id;
+          if (typeof id === "string") {
+            data = await this.astStore.findById(id);
+          }
           if (data) list.push(data);
         }
         if (callback) {

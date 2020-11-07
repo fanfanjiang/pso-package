@@ -423,7 +423,8 @@ const CPNT = {
       { n: '_type', v: 'radio' },
       { n: '_copy', v: false },
       { n: '_source', v: 'tree' },
-      { n: '_treeOptions', v: '' }
+      { n: '_treeOptions', v: '' },
+      { n: '_filterOptions', v: [] },
     ],
     op: FILTER_TYPE.string.op,
     fop: [{ ...OP_FILTER.op1 }],
@@ -535,7 +536,9 @@ const CPNT = {
       { n: '_saveOnce', v: true },
       { n: '_option', v: [] },
       { n: '_column', v: [] },
-      { n: '_saveField', v: '' }
+      { n: '_saveField', v: '' },
+      { n: '_copyType', v: '1' },
+      { n: '_copyTarget', v: '' },
     ]
   }
 }

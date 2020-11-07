@@ -11,13 +11,13 @@
         >
           <template v-slot:default="nodeData">
             <slot v-bind:data="nodeData"></slot>
-          </template> 
+          </template>
         </pso-tree-common>
       </div>
       <div class="pso-page-body__content">
         <div class="pso-page-body__wrapper" v-if="curNode" v-loading="loading">
           <div class="pso-page-body__header">
-            <pso-title>标签分类：{{curNode.node_display}}</pso-title>
+            <pso-title>标签分类：{{ curNode.node_display }}</pso-title>
           </div>
           <div class="pso-page-body__tab">
             <el-tabs v-model="curTab">
@@ -29,9 +29,9 @@
           </div>
           <div class="pso-page-body__tabbody">
             <template v-if="!!curNode.is_leaf">
-              <pso-tag-item v-if="curTab==='tag'" :node="curNode"></pso-tag-item>
+              <pso-tag-item v-if="curTab === 'tag'" :node="curNode"></pso-tag-item>
             </template>
-            <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+            <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
           </div>
         </div>
       </div>
@@ -50,29 +50,29 @@ export default {
       type: Object,
       default: () => {
         data_type: "";
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       loading: false,
       curNode: {},
       curTab: "tag",
-      leafAuthcfg: MENU_LEAF_AUTH
+      leafAuthcfg: MENU_LEAF_AUTH,
     };
   },
   computed: {
     treeOptions() {
       return {
         dimen: 5,
-        data_type: this.params.data_type
+        data_type: this.params.data_type,
       };
     },
     defaultNodeData() {
       return {
-        node_dimen: 5
+        node_dimen: 5,
       };
-    }
+    },
   },
   methods: {
     async nodeClickHandler(node) {
@@ -80,7 +80,7 @@ export default {
         this.curTab = "auth";
       }
       this.curNode = node;
-    }
-  }
+    },
+  },
 };
 </script>

@@ -355,7 +355,11 @@ export default class FormViewStore {
                 let keyList = defKeys.split(";");
                 keyList.forEach((item) => {
                     const key = item.split("#");
-                    this.defaultKeys[key[0]] = { value: key[1], type: key[2] };
+                    let value = key[1];
+                    if (value === '$user_id') {
+                        value = this.$vue.$store.state.base.user.user_id;
+                    }
+                    this.defaultKeys[key[0]] = { value, type: key[2] };
                 });
             }
 
