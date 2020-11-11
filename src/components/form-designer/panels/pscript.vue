@@ -16,11 +16,28 @@
           <el-option label="导入子表" value="2"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="赋值子表字段" v-if="cpnt.data._copyType === '2'">
-        <el-select v-model="cpnt.data._copyTarget" size="mini" placeholder="请选择赋值字段">
-          <el-option v-for="item in fieldOptions" :key="item.fid" :label="item._fieldName" :value="item.fid"></el-option>
-        </el-select>
-      </el-form-item>
+      <template v-if="cpnt.data._copyType === '2'">
+        <el-form-item label="赋值目标字段">
+          <el-select v-model="cpnt.data._copyTarget" size="mini" placeholder="请选择" clearable>
+            <el-option v-for="f in fieldOptions" :key="f.fid" :label="f._fieldName" :value="f._fieldValue"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="赋值自动生成来源字段">
+          <el-select v-model="cpnt.data._copySource" size="mini" placeholder="请选择" clearable>
+            <el-option v-for="f in fieldOptions" :key="f.fid" :label="f._fieldName" :value="f._fieldValue"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="赋值目标自动生成字段">
+          <el-select v-model="cpnt.data._copyTargetAutoGen" size="mini" placeholder="请选择" clearable>
+            <el-option v-for="f in autoGenFields" :key="f.fid" :label="f._fieldName" :value="f._fieldValue"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="赋值目标自动生成限制字段">
+          <el-select v-model="cpnt.data._copyTargetAutoLimit" size="mini" placeholder="请选择" multiple clearable>
+            <el-option v-for="f in autoGenFields" :key="f.fid" :label="f._fieldName" :value="f._fieldValue"></el-option>
+          </el-select>
+        </el-form-item>
+      </template>
       <el-form-item label="只保存一次" required>
         <el-switch v-model="cpnt.data._saveOnce" size="mini"></el-switch>
       </el-form-item>
@@ -106,6 +123,13 @@ export default {
           return true;
         },
       });
+    },
+    autoGenFields() {
+      if (!this.cpnt.data._copyTarget) return [];
+      const cpnt = this.cpnt.store.searchByField(this.cpnt.data._copyTarget);
+      if (cpnt && cpnt.cache.fieldOptions) {
+        return cpnt.cache.fieldOptions;
+      }
     },
   },
   methods: {

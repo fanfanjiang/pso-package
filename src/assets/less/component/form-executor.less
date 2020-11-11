@@ -83,7 +83,19 @@
 
         span {
             margin-left: 5px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: inline-block;
 
+            @media (max-width: @screen-md-min) {
+                width: 400px;
+            }
+
+            @media (max-width: @screen-sm-min) {
+                width: 120px;
+                font-size: 12px;
+            }
         }
     }
 

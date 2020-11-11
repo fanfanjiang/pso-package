@@ -1,6 +1,6 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <el-cascader size="small" v-if="show" v-model="proxy" :props="props" :disabled="!cpntEditable" filterable></el-cascader>
+    <el-cascader ref="cascader" size="small" v-if="show" v-model="proxy" :props="props" :disabled="!cpntEditable" filterable></el-cascader>
   </pso-label>
 </template>
 <script>
@@ -9,9 +9,10 @@ export default {
   mixins: [cpntMixin],
   data() {
     return {
-      show: true,
+      show: false,
       proxy: [],
       props: {
+        multiple: false,
         value: "city_name",
         label: "city_name",
         lazy: true,
@@ -19,34 +20,44 @@ export default {
           const { level } = node;
           let parent_id = level === 0 ? 0 : node.data.code_id;
           const ret = await this.API.getArea({ parent_id });
+          let leaf = false;
           if (
             (level === 0 && this.cpnt.data._type === "province") ||
             (level === 1 && this.cpnt.data._type === "city") ||
             (level === 2 && this.cpnt.data._type === "county")
           ) {
-            ret.data.forEach((item) => (item.leaf = true));
+            leaf = true;
           }
+          ret.data.forEach((d) => this.$set(d, "leaf", leaf));
           resolve(ret.data);
         },
       },
     };
   },
   watch: {
-    "cpnt.data._type"() {
-      this.show = false;
-      this.$nextTick(() => (this.show = true));
-    },
     proxy: {
       deep: true,
       handler(value) {
-        this.cpnt.data._val = value.join("/");
+        if (this.props.multiple) {
+          this.cpnt.data._val = value.map((d) => d.join("/")).join(",");
+        } else {
+          this.cpnt.data._val = value.join("/");
+        }
       },
     },
   },
   created() {
+    this.props.multiple = this.cpnt.data._saveType === "checkbox";
     if (this.cpnt.data._val) {
-      this.proxy = this.cpnt.data._val.split("/");
+      const data = this.cpnt.data._val.split(",");
+      const proxy = [];
+      if (this.props.multiple) {
+        this.proxy = data.map((d) => d.split("/"));
+      } else {
+        this.proxy = data[0].split("/");
+      }
     }
+    this.$nextTick(() => (this.show = true));
   },
 };
 </script>

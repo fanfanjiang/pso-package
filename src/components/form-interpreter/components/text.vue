@@ -9,6 +9,8 @@
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
       :autofocus="cpnt.data._autofocus"
+      :maxlength="cpnt.data._fieldLen / 2"
+      show-word-limit
       autosize
       @focus="focusing = true"
       @blur="handleInputBlur"

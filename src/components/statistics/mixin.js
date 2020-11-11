@@ -66,10 +66,12 @@ export const StaMixin = {
                     }),
 
                     this.$watch("store.condition", () => {
+                        this.store.page = 1;
                         this.store.deFetch();
                     }),
 
                     this.$watch("store.activeView", () => {
+                        this.store.page = 1;
                         this.store.fetchStatus();
                     })
                 );

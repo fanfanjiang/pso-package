@@ -10,7 +10,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="空白人绑定" v-if="wfDesigner.emptyType === WF_EMPTY_TYPE[2].v">
-        <el-select v-model="node.bind_field" placeholder="请选择">
+        <el-select v-model="node.bind_field" placeholder="请选择" filterable clearable>
           <el-option v-for="f in wfDesigner.fieldsOptions" :key="f._fieldValue" :label="f.displayName" :value="f._fieldValue"></el-option>
         </el-select>
       </el-form-item>

@@ -8,29 +8,19 @@
             <div class="form-designer__menu-bar" v-bar>
               <div class="form-designer__menu-body">
                 <div class="fd__menu-section" v-for="cpnList in menu" :key="cpnList.title">
-                  <div class="fd__menu-section-title">{{cpnList.title}}</div>
+                  <div class="fd__menu-section-title">{{ cpnList.title }}</div>
                   <div class="fd__menu-section-body" v-if="!roloadingMenu">
-                    <el-row
-                      :gutter="5"
-                      class="dropable"
-                      id="formDesignerMenu"
-                      put="false"
-                      pull="clone"
-                      sort="false"
-                    >
+                    <el-row :gutter="5" class="dropable" id="formDesignerMenu" put="false" pull="clone" sort="false">
                       <el-col
                         :span="12"
-                        :class="['dragable',...cpnt.class]"
+                        :class="['dragable', ...cpnt.class]"
                         v-for="cpnt in cpnList.children"
                         :key="cpnt.name"
                         :componentid="cpnt.componentid"
                       >
-                        <div
-                          class="fd__menu-section-item"
-                          @click.stop="menuClickHandler(cpnt,$event)"
-                        >
+                        <div class="fd__menu-section-item" @click.stop="menuClickHandler(cpnt, $event)">
                           <i :class="cpnt.icon"></i>
-                          <span class="fd__menu-section-item-title">{{cpnt.name}}</span>
+                          <span class="fd__menu-section-item-title">{{ cpnt.name }}</span>
                         </div>
                       </el-col>
                     </el-row>
@@ -40,15 +30,8 @@
             </div>
           </div>
           <div class="form-designer__stage">
-            <div class="form-designer__stage-title">{{stageName}}</div>
-            <div
-              class="form-designer__stage-body dropable"
-              fid="0"
-              componentid="0"
-              put="true"
-              pull="true"
-              sort="true"
-            >
+            <div class="form-designer__stage-title">{{ stageName }}</div>
+            <div class="form-designer__stage-body dropable" fid="0" componentid="0" put="true" pull="true" sort="true">
               <designer-cpnt v-for="cpnt in root.childComponents" :key="cpnt.fid" :cpnt="cpnt"></designer-cpnt>
             </div>
           </div>
@@ -92,7 +75,6 @@ export default {
             "autoid",
             // "unit",
             "rate",
-            "userform",
             // "timerange",
             // "credential",
             // "cascader",

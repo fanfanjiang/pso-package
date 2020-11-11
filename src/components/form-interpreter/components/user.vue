@@ -1,17 +1,24 @@
 <template>
   <pso-label :cpnt="cpnt">
     <div style="display: flex; align-items: center">
-      <div class="pso-form-user-selectedlist" v-if="!loading && proxy.list.length">
-        <el-tag v-for="item in proxy.list" size="medium" :key="item.user_id" :closable="cpntEditable" @close="handleDelSelection(item)">{{
-          item.user_name
-        }}</el-tag>
-      </div>
-      <pso-skeleton v-if="loading" :lines="1" :s-style="{ width: '120px', padding: '0 5px' }"></pso-skeleton>
-      <pso-picker-user v-if="cpntEditable" :pattern="cpnt.data._type" @confirm="handleAddSelection">
-        <div style="margin-top: -4px">
-          <el-button size="mini" icon="el-icon-plus" circle></el-button>
+      <template v-if="isFormSource">
+        <el-select v-model="formProxy" :disabled="!cpntEditable" clearable placeholder="请选择" filterable :multiple="multiple">
+          <el-option v-for="(f, i) in formSrcList" :key="i" :label="f[uname]" :value="f[uid]"> </el-option>
+        </el-select>
+      </template>
+      <template v-else>
+        <div class="pso-form-user-selectedlist" v-if="!loading && proxy.list.length">
+          <el-tag v-for="item in proxy.list" size="medium" :key="item.user_id" :closable="cpntEditable" @close="handleDelSelection(item)">
+            {{ item.user_name }}
+          </el-tag>
         </div>
-      </pso-picker-user>
+        <pso-picker-user v-if="cpntEditable" :pattern="cpnt.data._type" @confirm="handleAddSelection">
+          <div style="margin-top: -4px">
+            <el-button size="mini" icon="el-icon-plus" circle></el-button>
+          </div>
+        </pso-picker-user>
+      </template>
+      <pso-skeleton v-if="loading" :lines="1" :s-style="{ width: '120px', padding: '0 5px' }"></pso-skeleton>
     </div>
   </pso-label>
 </template>
@@ -29,15 +36,29 @@ export default {
         list: [],
         type: this.cpnt.data._type,
       },
+      formProxy: [],
+      formSrcList: [],
     };
   },
   computed: {
     ...mapState(["base"]),
+    isFormSource() {
+      return this.cpnt.data._sourceType === "2";
+    },
+    uid() {
+      return this.isFormSource ? this.cpnt.data._bindFormField : "user_id";
+    },
+    uname() {
+      return this.isFormSource ? `${this.cpnt.data._bindFormField}_x` : "user_name";
+    },
+    multiple() {
+      return this.cpnt.data._type === "checkbox";
+    },
   },
   watch: {
     "proxy.list"(val) {
       if (val && val.length) {
-        this.cpnt.data._val = _.map(val, "user_id").join(",");
+        this.cpnt.data._val = _.map(val, this.uid).join(",");
       } else {
         this.cpnt.data._val = "";
       }
@@ -46,18 +67,41 @@ export default {
   async created() {
     this.loading = true;
 
+    let initList = [];
     if (this.cpnt.data._val) {
-      await this.setDataByIds(this.cpnt.data._val.split(","));
+      initList = this.cpnt.data._val.split(",");
     } else if (this.cpnt.data._defaultValType === "current" && this.base.user && this.base.user.user_id) {
-      await this.setDataByIds([this.base.user.user_id]);
+      initList = [this.base.user.user_id];
+    }
+
+    if (this.isFormSource) {
+      this.resetPicker({ idName: this.uid, reset: false });
+      await this.getFormSource();
+      this.formProxy = this.multiple ? initList : initList.length ? initList[0] : "";
+      this.$watch("formProxy", {
+        deep: true,
+        handler(data) {
+          this.setDataByIds(data);
+        },
+      });
+    }
+
+    if (initList.length) {
+      await this.setDataByIds(initList);
     } else {
       this.proxy.valList = [];
     }
+
     this.loading = false;
     //初始化时
     this.dispatch("PsoformInterpreter", "cpnt-user-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   },
   methods: {
+    async getFormSource() {
+      const params = { limit: 9999999, page: 0, leaf_auth: 4, data_code: this.cpnt.data._bindForm, keys: JSON.stringify({}) };
+      const ret = await this.API.form({ data: params, method: "get" });
+      this.formSrcList = ret.data;
+    },
     async getUser(user_id) {
       return await this.API.user({ data: { user_id }, method: "get" });
     },
@@ -66,10 +110,17 @@ export default {
         users = users.split(",");
       }
       const list = [];
+
       for (let uid of users) {
-        const userRet = await this.getUser(uid);
-        if (userRet && userRet.user_id) list.push(userRet);
+        let data = null;
+        if (this.isFormSource) {
+          data = _.find(this.formSrcList, { [this.uid]: uid });
+        } else {
+          data = await this.getUser(uid);
+        }
+        if (data && data[this.uid]) list.push(data);
       }
+
       this.handleAddSelection(list);
     },
   },

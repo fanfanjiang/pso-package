@@ -93,6 +93,14 @@ import PsoAvatar from "./components/avatar";
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
 import PsoFvWv from "./components/composite/fv-wv";
+import PsoTagAny from "./components/composite/tag-any";
+import PsoFvFv from "./components/composite/fv-fv";
+import PsoFtreeFv from "./components/composite/ftree-fv";
+import PsoTreeFv from "./components/composite/tree-fv";
+import PsoWvAst from "./components/composite/wv-ast";
+import PsoWtreeFv from "./components/composite/wtree-fv";
+import PsoWtreeWv from "./components/composite/wtree-wv";
+import PsoTreeTimeline from "./components/composite/tree-timeline";
 
 const components = {
     PsoEmpty,
@@ -149,7 +157,15 @@ const components = {
 
     //混合视图
     PsoFvAst,
-    PsoFvWv
+    PsoFvWv,
+    PsoTagAny,
+    PsoFvFv,
+    PsoFtreeFv,
+    PsoTreeFv,
+    PsoWvAst,
+    PsoWtreeFv,
+    PsoWtreeWv,
+    PsoTreeTimeline
 }
 
 

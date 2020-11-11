@@ -67,7 +67,7 @@
         :title="store.data_name"
         :opener="astStore"
         :instanceids="astStore.instanceids"
-        :keepable="true"
+        :keepable="keepable"
         @data-changed="dataChangeHandler"
         @prev="astStore.showPrev.call(astStore, $event)"
         @next="astStore.showNext.call(astStore, $event)"
@@ -125,6 +125,9 @@ export default {
     };
   },
   computed: {
+    keepable() {
+      return typeof this.cpnt.data._keepable !== "undefined" ? this.cpnt.data._keepable : true;
+    },
     selectionType() {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";
     },
@@ -343,7 +346,7 @@ export default {
           if (data) list.push(data);
         }
         if (callback) {
-          await callback(list);
+          await callback(list, this);
         }
         this.handleAddSelection(list);
         this.loading = false;

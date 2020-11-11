@@ -237,6 +237,14 @@ export default class API {
         }
     }
 
+    static async resetUser(data) {
+        try {
+            return await this.request('/api/user/reset', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async wfFileType(data, method = 'get') {
         try {
             return await this.request('/api/workflowcfg/filetypes', { data, method });
@@ -389,6 +397,14 @@ export default class API {
     static async getFlowTrash(data = {}) {
         try {
             return await this.request('/api/workflow/trash', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getWfTimeline(data) {
+        try {
+            return await this.request('/api/workflow/timeline', { data, method: 'get' });
         } catch (error) {
             throw error;
         }

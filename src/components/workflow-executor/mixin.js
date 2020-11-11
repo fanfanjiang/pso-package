@@ -68,7 +68,7 @@ export const op = {
                 this.$message({ message: error.message, type: "warning" });
             }
         },
-        async nextStep(optype, isAppendForm = true) {
+        async nextStep(optype, isAppendForm = true, shouldCheckEmpty = true) {
             try {
                 let formData = null;
                 if (optype === REVIEW_OP_TYPE.confirm.type) {
@@ -76,14 +76,14 @@ export const op = {
                     if (!formData) return;
                 }
                 this.dispatch("PsoWfExecutorBox", "op-before-next", { optype, formData });
-                const ret = await this.store.doNextStep({ optype, formData: isAppendForm ? formData : null });
+                const ret = await this.store.doNextStep({ optype, formData, isAppendForm, shouldCheckEmpty });
                 if (ret.data && ret.data.instance) {
                     //必须选择下一步执行人
                     if (!this.store.data.instanceId) {
                         this.store.shouldAddEmptyButNot = { result: ret, status: 0, optype: 0 };
                     }
                     this.store.setInstanceData(ret.data.instance);
-                    this.confirm(false);
+                    this.confirm(false, true);
                     this.store.steping = false;
                 } else {
                     this.excuted(ret, optype);

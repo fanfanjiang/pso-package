@@ -131,11 +131,18 @@ export function filterByDecimal(cpnt, value) {
  */
 export function getDisplayOfCpnt(cpnt, proxy) {
     proxy = cpnt.data._proxy || proxy;
-    let value = '';
+    let value = cpnt.data._val;
     if (proxy) {
         //人员和部门
         if (cpnt.componentid === "user" || cpnt.componentid === "department") {
-            const name = cpnt.componentid === "user" ? "user_name" : "node_display";
+            let name = "node_display";
+            if (cpnt.componentid === "user") {
+                if (cpnt.data._sourceType === "2") {
+                    name = `${cpnt.data._bindFormField}_x`;
+                } else {
+                    name = "user_name";
+                }
+            }
             if (proxy.list.length) {
                 value = _.map(proxy.list, name).join(",");
             }

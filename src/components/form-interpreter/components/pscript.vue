@@ -112,7 +112,7 @@ export default {
     },
     scriptParams: {
       deep: true,
-      handler() {
+      handler(val) {
         this.proxy.valList = [];
         this.fetch();
       },
@@ -194,13 +194,36 @@ export default {
           }
         }
       } else {
-        const target = this.cpnt.data._copyTarget;
-        if (target) {
+        const { _copyTarget, _copySource, _copyTargetAutoGen, _copyTargetAutoLimit } = this.cpnt.data;
+        if (_copyTarget) {
+          let total = 0;
+          const autoGen = _copySource && _copyTargetAutoGen;
+          if (autoGen) {
+            const copySourceCpnt = this.cpnt.store.searchByField(_copySource);
+            if (copySourceCpnt) {
+              total = copySourceCpnt.data._val || 0;
+            }
+          }
           data.forEach((d) => {
             d.leaf_id = shortid.generate();
             d.__temporary__ = true;
+            if (autoGen && total) {
+              let limit = Infinity;
+              if (_copyTargetAutoLimit && _copyTargetAutoLimit.length) {
+                for (let l of _copyTargetAutoLimit) {
+                  if (_.isNumber(d[l]) && d[l] < limit) {
+                    limit = d[l];
+                  }
+                }
+              }
+              const minus = total >= limit ? limit : total;
+              d[_copyTargetAutoGen] = minus;
+              total = total - minus;
+            }
           });
-          this.cpnt.store.updateInstanceManually({ [target]: data });
+          this.cpnt.store.updateInstanceManually({ [_copyTarget]: data }, (list, $vue) => {
+            $vue.proxy.valList = [];
+          });
         }
       }
     },

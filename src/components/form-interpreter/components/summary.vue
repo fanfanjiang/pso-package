@@ -53,7 +53,6 @@ export default {
       })[0];
     },
     figure(data, field) {
-      console.log(data);
       const op = this.cpnt.data._selectedOp;
       switch (op) {
         case SUMMARY_OP_TYPE.COUNT_FILLED:
@@ -86,7 +85,7 @@ export default {
           } catch (error) {
             return 0;
           }
-        }).toFixed(this.cpnt.data._decimalPlaces || 0);
+        });
         if (op === SUMMARY_OP_TYPE.AVG) {
           this.cpnt.data._val = this.cpnt.data._val / data.length;
         }

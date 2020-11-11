@@ -92,7 +92,7 @@ export default class FormViewStore {
             }
         }
 
-        this.deFetch = debounce(500, (params) => {
+        this.deFetch = debounce(300, (params) => {
             this.fetch(params);
         });
 

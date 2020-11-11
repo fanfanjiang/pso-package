@@ -1,31 +1,36 @@
 <template>
-  <div class="pso-form-sub" :class="cpntClass" v-loading="saving">
-    <div class="pso-form-sub__l">
+  <div :class="layoutClass" v-loading="saving">
+    <div class="lay-vv__t" :style="topStyle">
       <pso-form-view
-        ref="mainTable"
         key="main"
         v-bind="params"
         :params="params"
-        :addable="false"
-        :deletable="false"
-        :edtail-editable="false"
-        :table-row-click="mainClick"
         :def-limit="20"
+        :table-row-click="mainRowClickHandler"
         :title-text="params.menu_name"
-        @initialized="mainLoaded"
-        @data-loaded="formDataLoadedHandler"
+        :addable="opable"
+        :deletable="opable"
+        :detailEditable="opable"
+        :modifiable="opable"
+        :checkbox="opable"
+        :changable="opable"
+        :stageable="opable"
+        @initialized="handleInitialized"
+        @data-loaded="mainLoadedHandler"
       >
       </pso-form-view>
     </div>
-    <div class="pso-form-sub__r" v-loading="initializing||loadingSub">
-      <template v-if="curRow">
-        <pso-form-view ref="assTable" key="assTable" v-bind="assParams" :params="assParams"></pso-form-view>
+    <div class="lay-vv__b" :style="bottomStyle" v-loading="initializing || initializingAst">
+      <template v-if="mainCurRow">
+        <pso-form-view v-bind="assParams" :params="assParams"></pso-form-view>
       </template>
     </div>
   </div>
 </template>
 <script>
+import { FormAsMainMixin } from "../../mixin/composite";
 export default {
+  mixins: [FormAsMainMixin],
   props: {
     params: {
       type: Object,
@@ -35,25 +40,23 @@ export default {
   data() {
     return {
       initializing: true,
-      loadingSub: false,
       saving: false,
-      dataId: "",
-      curRow: null,
     };
   },
   computed: {
-    cpntClass() {
-      return {
-        displayRow: this.params.displayRow === "1",
-      };
+    displayRow() {
+      return false;
+    },
+    opable() {
+      return !!this.params.opable;
     },
     assParams() {
       let defForm = null;
       const params = {};
-      if (this.curRow) {
+      if (this.mainCurRow) {
         if (this.params.sourceField && this.params.targetField) {
           defForm = {
-            [this.params.targetField]: this.curRow[this.params.sourceField],
+            [this.params.targetField]: this.mainCurRow[this.params.sourceField],
           };
         }
       }
@@ -66,66 +69,10 @@ export default {
     },
   },
   methods: {
-    async mainLoaded({ store, cfg, defForm }) {
-      this.defForm = defForm;
+    async handleInitialized(option) {
+      this.mainInitedHandler(option);
       this.initializing = false;
-    },
-    mainClick(row) {
-      this.loadingSub = true;
-      this.dataId = row.leaf_id;
-      this.curRow = row;
-      this.$nextTick(() => (this.loadingSub = false));
-      return true;
-    },
-    formDataLoadedHandler(data) {
-      if (data.length) {
-        if (this.dataId) {
-          const exist = _.find(data, { leaf_id: this.dataId });
-          if (exist) {
-            this.mainClick(exist);
-          }
-        } else {
-          this.mainClick(data[0]);
-        }
-      }
     },
   },
 };
 </script>
-<style lang="less" scoped>
-.pso-form-sub {
-  display: flex;
-  &.displayRow {
-    flex-direction: column;
-    height: 100%;
-    .pso-form-sub__l {
-      width: 100%;
-      height: 40%;
-      overflow-y: auto;
-    }
-    .pso-form-sub__r {
-      width: 100%;
-      height: 60%;
-      box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
-      overflow-y: auto;
-      z-index: 2;
-      padding: 0 15px 15px 15px;
-    }
-  }
-  .pso-form-sub__l {
-    width: 30%;
-  }
-  .pso-form-sub__r {
-    width: 70%;
-  }
-  .pso-form-sub__subtab {
-    width: 100%;
-    position: absolute;
-    background-color: #fff;
-    z-index: 2;
-  }
-  .pso-form-sub__form {
-    margin-top: 54px;
-  }
-}
-</style>

@@ -256,6 +256,7 @@ export default {
           }),
 
           this.$watch("store.condition", () => {
+            this.store.page = 1;
             this.store.deFetch();
           }),
 

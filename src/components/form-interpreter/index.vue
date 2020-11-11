@@ -154,7 +154,7 @@ export default {
         editable: this.editable,
         parentInstanceId: this.parentInstanceId,
       };
-      
+
       if (this.formEntity) {
         this.store = new FormStore({ ...this.formEntity, ...baseEntity });
       } else if (this.formId) {
@@ -223,15 +223,17 @@ export default {
               }
             }
 
-            //空值检查
-            if (cpntData._required && (typeof cpntData._val === "undefined" || cpntData._val === "")) {
-              throw new Error(`${cpntData._fieldName}不能为空`);
-            }
+            if (cpntData.__eventualShow__) {
+              //空值检查
+              if (cpntData._required && (typeof cpntData._val === "undefined" || cpntData._val === "")) {
+                throw new Error(`${cpntData._fieldName}不能为空`);
+              }
 
-            //正则检查
-            if (cpntData._regular && typeof cpntData._val !== "undefined" && cpntData._val !== "") {
-              if (!new RegExp(cpntData._regular).test(cpntData._val)) {
-                throw new Error(`${cpntData._fieldName}验证失败`);
+              //正则检查
+              if (cpntData._regular && typeof cpntData._val !== "undefined" && cpntData._val !== "") {
+                if (!new RegExp(cpntData._regular).test(cpntData._val)) {
+                  throw new Error(`${cpntData._fieldName}验证失败`);
+                }
               }
             }
 

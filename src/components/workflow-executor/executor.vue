@@ -123,11 +123,11 @@ export default {
   },
   watch: {
     "store.activeExtendTab"(val) {
-      if (this.showedFlowChartTip) {
+      if (this.$store.state.base.showedWFChartTip) {
         return;
       }
       if (val === "flowchart") {
-        this.showedFlowChartTip = true;
+        this.$store.state.base.showedWFChartTip = true;
         this.$message({
           showClose: true,
           duration: 10000,

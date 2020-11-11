@@ -1,5 +1,6 @@
 <template>
   <div class="formula-designer">
+    {{codeRef}}
     <div class="formula-designer__menu">
       <div class="formula-designer__menu-header">
         <el-tabs v-model="activeTab">

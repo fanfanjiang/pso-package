@@ -106,10 +106,15 @@ export default {
         return (this.store.curStep.op & command) === command;
       }
     },
-    async confirm(unAppendForm = true) {
-      if (this.store.shouldChooseEmptys) {
-        this.store.showEmptys = true;
-        this.store.activeExtendTab = "flowchart";
+    async confirm(unAppendForm = true, notClear) {
+      if (this.store.shouldChooseEmptys) { 
+        if (notClear) {
+          this.store.showEmptys = true;
+          this.store.activeExtendTab = "flowchart";
+          return;
+        } else {
+          this.store.clearEmptyReviewers();
+        }
       } else if (this.store.isNextEmpty) {
         let tip = "";
         if (this.store.nextEmptyNode) {
@@ -118,9 +123,10 @@ export default {
         this.$message({ message: `请选择下一步${tip}的审核人，选择后点击确定完成审核`, type: "warning", duration: 10000 });
         this.openUserOp({ title: tip || "审核人", text: "确定", op: this.REVIEW_OP_TYPE.confirm.type });
         this.store.activeExtendTab = "flowchart";
-      } else {
-        await this.nextStep(this.REVIEW_OP_TYPE.confirm.type, unAppendForm);
+        return;
       }
+
+      await this.nextStep(this.REVIEW_OP_TYPE.confirm.type, unAppendForm);
     },
     async reject() {
       await this.nextStep(this.REVIEW_OP_TYPE.reject.type);

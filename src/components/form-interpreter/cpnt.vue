@@ -52,7 +52,10 @@ export default {
       if (!_.isNull(cpnt.data.__auth__)) {
         showInAuth = (cpnt.data.__auth__ & 8) === 8;
       }
-      return show && showInRules && showInAuth;
+
+      const eventualShow = show && showInRules && showInAuth;
+      this.$set(cpnt.data, "__eventualShow__", eventualShow);
+      return eventualShow;
     },
   },
 };

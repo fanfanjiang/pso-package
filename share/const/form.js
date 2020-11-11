@@ -217,7 +217,7 @@ const CPNT = {
     host_db: false,
     chart: true,
     table_show: true,
-    data: [{ n: '_type', v: 'county' }]
+    data: [{ n: '_type', v: 'county' }, { n: '_saveType', v: 'radio' }]
   },
   attachment: {
     icon: "el-icon-paperclip",
@@ -389,9 +389,15 @@ const CPNT = {
     chart: true,
     table_show: true,
     value_format_id: 'user_id',
-    data: [{ n: '_type', v: 'radio' }, { n: '_defaultValType', v: 'choose' }, { n: '_bindForm', v: '' }, { n: '_bindFormField', v: '' }],
     op: FILTER_TYPE.user.op,
     fop: [{ ...OP_FILTER.op1 }],
+    data: [
+      { n: '_type', v: 'radio' },
+      { n: '_defaultValType', v: 'choose' },
+      { n: '_bindForm', v: '' },
+      { n: '_bindFormField', v: 'user_id' },
+      { n: '_sourceType', v: '1' },
+    ],
   },
   department: {
     icon: "fa fa-users",
@@ -506,19 +512,6 @@ const CPNT = {
     componentid: "graphiccard",
     data: [{ n: '_selectedTable', v: '' }, { n: '_titleField', v: '' }, { n: '_imgField', v: '' }, { n: '_infoField', v: '' }]
   },
-  userform: {
-    icon: "el-icon-user",
-    name: "用户表单",
-    componentid: "userform",
-    class: 'unSubTable',
-    layout: false,
-    db: true,
-    host_db: false,
-    chart: false,
-    table_show: true,
-    ass_db: false,
-    data: [{ n: '_option', v: '' }, { n: '_type', v: 1 }, { n: '_showFields', v: '' }, { n: '_new', v: true }, { n: '_relate', v: true }]
-  },
   pscript: {
     icon: "el-icon-monitor",
     name: "脚本数据",
@@ -539,6 +532,8 @@ const CPNT = {
       { n: '_saveField', v: '' },
       { n: '_copyType', v: '1' },
       { n: '_copyTarget', v: '' },
+      { n: '_copySource', v: '' },
+      { n: '_copyTargetAutoLimit', v: [] },
     ]
   }
 }

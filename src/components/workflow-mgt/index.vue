@@ -24,7 +24,6 @@
             <el-tabs v-model="curTab">
               <template v-if="!!curNode.is_leaf">
                 <el-tab-pane label="预览" name="preview"></el-tab-pane>
-                <el-tab-pane label="签单" name="table"></el-tab-pane>
                 <el-tab-pane label="代理" name="proxy"></el-tab-pane>
                 <el-tab-pane label="文号" name="file"></el-tab-pane>
                 <el-tab-pane label="快捷标签" name="tag"></el-tab-pane>
@@ -40,7 +39,6 @@
               <div class="pso-page-wf__stage" v-if="curTab === 'preview'">
                 <pso-wf-stage :workflow-data="wfImage" read-mode v-if="wfImage"></pso-wf-stage>
               </div>
-              <pso-wf-table v-if="curTab === 'table'"></pso-wf-table>
               <pso-wf-agent v-if="curTab === 'proxy'" :node="curNode"></pso-wf-agent>
               <pso-wf-autoid v-if="curTab === 'file'" :node="curNode"></pso-wf-autoid>
               <pso-wf-tag v-if="curTab === 'tag'" :data="tagData"></pso-wf-tag>
@@ -63,7 +61,6 @@
 <script>
 import PsoWfStage from "../workflow-designer/stage";
 import PsoTypebar from "../type-bar";
-import PsoWfTable from "../workflow-designer/table-editor";
 import { WF_INIT, WF_RESET } from "../../store/mutation-types";
 import { mapState } from "vuex";
 import PsoWfTageditor from "./tag-editor";
@@ -139,7 +136,7 @@ const _DATA = {
 };
 
 export default {
-  components: { PsoWfStage, PsoTypebar, PsoWfTable, PsoWfTageditor, PsoWfAgent, PsoWfTag, PsoWfText, PsoWfSubwf, PsoWfAutoid, PsoWfScript },
+  components: { PsoWfStage, PsoTypebar, PsoWfTageditor, PsoWfAgent, PsoWfTag, PsoWfText, PsoWfSubwf, PsoWfAutoid, PsoWfScript },
   props: {
     params: {
       type: Object,

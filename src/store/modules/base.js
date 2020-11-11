@@ -10,7 +10,8 @@ import Auth from "../../tool/auth";
 export default {
     state: {
         user: null,
-    }, 
+        showedWFChartTip: false
+    },
     mutations: {
         [APP_SET_USER](state, user) {
             state.user = user;

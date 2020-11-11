@@ -51,10 +51,10 @@ export default {
     },
   },
   watch: {
-    minNum(num) {
+    minNum(num, onum) {
       this.checkVal();
     },
-    maxNum(num) {
+    maxNum(num, onum) {
       this.checkVal();
     },
   },
@@ -87,8 +87,12 @@ export default {
     },
     checkVal() {
       const oldVal = this.cpnt.data._val;
-      if (oldVal >= this.maxNum) this.cpnt.data._val = this.max;
-      if (oldVal <= this.minNum) this.cpnt.data._val = this.min;
+      let newVal = this.cpnt.data._val;
+      if (_.isNumber(this.maxNum) && oldVal >= this.maxNum) newVal = this.maxNum;
+      if (_.isNumber(this.minNum) && oldVal <= this.minNum) newVal = this.minNum;
+      if (oldVal !== newVal) {
+        this.cpnt.data._val = newVal;
+      }
     },
   },
 };

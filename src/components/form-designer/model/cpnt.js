@@ -19,9 +19,11 @@ export default class Component {
 
         genComponentData(this.data);
 
-
         //默认组件名称
         this.data._fieldName = this.data._fieldName || this.CPNT.name;
+
+        //最终组件是否显示
+        this.data.__eventualShow__ = true;
 
         //显示
         if (store.hiddenCpnts.indexOf(this.data.fid) !== -1) {

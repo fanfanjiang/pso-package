@@ -1,7 +1,7 @@
 <template>
   <div class="pso-view" ref="view" :class="viewClass" v-loading="!store || store.initializing">
     <template v-if="store && !store.initializing">
-      <div class="pso-view-extend">
+      <div class="pso-view-extend" v-loading="store.starting">
         <transition name="el-fade-in">
           <pso-data-filter
             v-show="store.showFilter"

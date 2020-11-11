@@ -210,7 +210,7 @@ export default class STAVStore extends FVStore {
             } else {
                 this.dataTotal = ret.data.DATA.length;
             }
-            this.$vue.$emit("data-loaded", this.instances);
+            this.$vue.$emit("data-loaded", { data: this.instances, store: this });
         }
 
         this.fetching = false;
