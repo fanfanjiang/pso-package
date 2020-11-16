@@ -677,9 +677,7 @@ export default class FormViewStore {
         //旗帜标签
         const flagColor = this.checkFlag(f.field_name, d);
         if (flagColor) {
-            return flagColor.split(',').map(color => {
-                return `<span class="tag-flag-box" style="background-color: ${color};"></span>`
-            }).join('');
+            return this.getColorTagEl(flagColor);
         }
 
         try {
@@ -691,6 +689,12 @@ export default class FormViewStore {
         }
 
         return this.filterBadVal(_val);
+    }
+
+    getColorTagEl(flagColor) {
+        return flagColor.split(',').map(color => {
+            return `<span class="tag-flag-box" style="background-color: ${color};"></span>`
+        }).join('');
     }
 
     filterBadVal(val) {

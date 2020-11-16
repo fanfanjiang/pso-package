@@ -9,7 +9,7 @@
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
       :autofocus="cpnt.data._autofocus"
-      :maxlength="cpnt.data._fieldLen / 2"
+      :maxlength="cpnt.data._fieldLen"
       show-word-limit
       autosize
       @focus="focusing = true"
@@ -38,7 +38,7 @@ import debounce from "throttle-debounce/debounce";
 export default {
   mixins: [cpntMixin],
   props: {
-    type: {
+    type: { 
       type: String,
       default: "",
     },

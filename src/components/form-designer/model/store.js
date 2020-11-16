@@ -190,12 +190,12 @@ export default class FormStore {
     }
 
     //手动更新控件值
-    async updateInstanceManually(data, callback) {
+    async updateInstanceManually(data, options) {
         for (let k in data) {
             const cpnt = this.searchByField(k);
             if (cpnt) {
                 if (cpnt.__setDataByIds) {
-                    await cpnt.__setDataByIds(data[k], callback);
+                    await cpnt.__setDataByIds(data[k], options);
                 } else {
                     cpnt.data._val = data[k];
                 }

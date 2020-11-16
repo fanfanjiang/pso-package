@@ -204,10 +204,11 @@ export default {
               total = copySourceCpnt.data._val || 0;
             }
           }
+
           data.forEach((d) => {
             d.leaf_id = shortid.generate();
             d.__temporary__ = true;
-            if (autoGen && total) {
+            if (autoGen) {
               let limit = Infinity;
               if (_copyTargetAutoLimit && _copyTargetAutoLimit.length) {
                 for (let l of _copyTargetAutoLimit) {
@@ -218,12 +219,33 @@ export default {
               }
               const minus = total >= limit ? limit : total;
               d[_copyTargetAutoGen] = minus;
+              if (!minus) {
+                d.__dump__ = true;
+              }
               total = total - minus;
+            } else {
+              d.__dump__ = true;
             }
           });
-          this.cpnt.store.updateInstanceManually({ [_copyTarget]: data }, (list, $vue) => {
-            $vue.proxy.valList = [];
-          });
+
+          this.cpnt.store.updateInstanceManually(
+            { [_copyTarget]: data },
+            {
+              callback: (list, $vue) => {
+                const savedList = $vue.proxy.valList;
+                const newList = [];
+                savedList.forEach((l) => {
+                  if (!l.__temporary__) {
+                    newList.push(l);
+                  }
+                });
+                if (savedList.length !== newList.length) {
+                  $vue.proxy.valList = newList;
+                }
+              },
+              afterDataLoaded: true,
+            }
+          );
         }
       }
     },

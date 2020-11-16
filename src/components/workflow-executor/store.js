@@ -100,8 +100,9 @@ export default class WfStore {
     }
 
     get isNextEmpty() {
-        return [WF_EMPTY_TYPE[0].v].includes(this.cfg.empty_type) && this.data.nextUser && this.data.nextUser.auth_user === 'Empty';
+        return this.data.nextUser && this.data.nextUser.auth_user === 'Empty';
     }
+
 
     get doNextUser() {
         return this.data.instanceId ? this.data.nextUser : this.cfg.nextUser;
@@ -429,11 +430,13 @@ export default class WfStore {
         if (!$el.get(0)) return;
 
         //人员和部门
-        value = getDisplayOfCpnt(cpnt);
+        if (["user", "department", "tag"].includes(cpnt.componentid)) {
+            value = getDisplayOfCpnt(cpnt);
+        }
 
         value = data.__showVal__ || filterByDecimal(cpnt.data, value);
         const _unit = data._unit || '';
-        $el.html((!_.isNaN(value) && !_.isNull(value)) ? `${value} ${_unit}` : ''); 
+        $el.html((!_.isNaN(value) && !_.isNull(value)) ? `${value} ${_unit}` : '');
 
         //关联表
         if (cpnt.componentid === "asstable" && proxy && fields) {
@@ -523,6 +526,7 @@ export default class WfStore {
 
     clearEmptyReviewers() {
         this.data.reviews = [];
+        this.data.nextUser = null;
     }
 
     //创建流程实例数据
@@ -617,12 +621,16 @@ export default class WfStore {
         }
 
         if (this.shouldChooseEmptys) {
+            const reviews = [];
             for (let r of this.data.reviews) {
-                if (!r.empties) {
-                    throw new Error('请设置审核人');
+                if (r.empties) {
+                    reviews.push(r);
+                }
+                if (r.is_need === '1' && !r.empties) {
+                    throw new Error(`请设置${r.step_name}`);
                 }
             }
-            data.empties = this.data.reviews;
+            data.empties = reviews;
         } else if (this.isNextEmpty && optype === REVIEW_OP_TYPE.confirm.type) {
             if (!this.userOp.users) {
                 throw new Error('请选择下一步审核人');

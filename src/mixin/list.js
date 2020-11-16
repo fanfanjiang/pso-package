@@ -244,6 +244,10 @@ export const FormModifierMixin = {
                 try {
                     const formData = await this.$refs.modifier.makeData();
                     const data = formData.dataArr[0];
+                    if (this.modInstance) {
+                        data.__temporary__ = this.modInstance.__temporary__;
+                        data.__dump__ = this.modInstance.__dump__;
+                    }
                     if (data.leaf_id === this.modInstance.leaf_id && data[this.modifiedField] != this.modInstance[this.modifiedField]) {
                         this.handleSaved && this.handleSaved({ leaf_id: this.dataId, formData });
                     }

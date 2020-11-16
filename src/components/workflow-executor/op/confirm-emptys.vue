@@ -35,7 +35,7 @@ export default {
       this.store.showEmptys = false;
     },
     async confirmHandler() {
-      await this.nextStep(this.REVIEW_OP_TYPE.confirm.type, false, false);
+      await this.nextStep(this.REVIEW_OP_TYPE.confirm.type, true, false);
     },
   },
 };

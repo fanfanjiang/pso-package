@@ -43,6 +43,16 @@ const OP_TYPE = {
         name: '包含',
         value: ['LIKE(', ')'],
         id: 'op9'
+    },
+    op10: {
+        name: '为空',
+        value: 'EMPTY',
+        id: 'op10'
+    },
+    op11: {
+        name: '不为空',
+        value: 'NOTEMPTY',
+        id: 'op11'
     }
 }
 module.exports = OP_TYPE;

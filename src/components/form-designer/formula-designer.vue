@@ -1,6 +1,5 @@
 <template>
   <div class="formula-designer">
-    {{codeRef}}
     <div class="formula-designer__menu">
       <div class="formula-designer__menu-header">
         <el-tabs v-model="activeTab">
@@ -9,14 +8,9 @@
         </el-tabs>
       </div>
       <div class="formula-designer__menu-body">
-        <div class="formula-designer__formula" v-if="formulable" v-show="activeTab==='formula'">
+        <div class="formula-designer__formula" v-if="formulable" v-show="activeTab === 'formula'">
           <el-collapse v-model="activeFormula">
-            <el-collapse-item
-              v-for="f in FORMULA_LIST"
-              :title="f.name"
-              :name="f.name"
-              :key="f.name"
-            >
+            <el-collapse-item v-for="f in FORMULA_LIST" :title="f.name" :name="f.name" :key="f.name">
               <el-tooltip
                 popper-class="formula-tooltip"
                 v-for="item in f.list"
@@ -26,47 +20,34 @@
                 placement="right"
               >
                 <div slot="content" class="formula-designer__formula-tip">
-                  <div>{{item.input}}</div>
+                  <div>{{ item.input }}</div>
                   <div v-html="item.example"></div>
                 </div>
                 <div class="formula-designer__formula-item" @click="handleClickFormula(item)">
-                  <p>{{item.id}}</p>
-                  <p>{{item.info}}</p>
+                  <p>{{ item.id }}</p>
+                  <p>{{ item.info }}</p>
                 </div>
               </el-tooltip>
             </el-collapse-item>
           </el-collapse>
         </div>
-        <div class="formula-designer__field" v-show="activeTab==='field'">
-          <div
-            class="formula-designer__field-item"
-            v-for="(cpnt,index) in cpnts"
-            :key="index"
-            @click="handleClickCpnt(cpnt)"
-          >
-            <div>{{cpnt.fieldDisplay||cpnt._fieldName}}</div>
-            <div>{{getCPNT(cpnt).name}}</div>
+        <div class="formula-designer__field" v-show="activeTab === 'field'">
+          <div class="formula-designer__field-item" v-for="(cpnt, index) in cpnts" :key="index" @click="handleClickCpnt(cpnt)">
+            <div>{{ cpnt.fieldDisplay || cpnt._fieldName }}</div>
+            <div>{{ getCPNT(cpnt).name }}</div>
           </div>
         </div>
       </div>
     </div>
     <div class="formula-designer__body">
-      <div class="formula-designer__body__header">
-        <i class="el-icon-info"></i>在左侧点击选择函数或字段变量，且在英文输入法下编辑
-      </div>
+      <div class="formula-designer__body__header"><i class="el-icon-info"></i>在左侧点击选择函数或字段变量，且在英文输入法下编辑</div>
       <div class="formula-designer__body__content">
-        <codemirror
-          ref="codemirror"
-          :options="cmOptions"
-          v-model="code"
-          @changes="handleCodeChange"
-          @key-handled="handleKey"
-        />
+        <codemirror ref="codemirror" :options="cmOptions" v-model="code" @changes="handleCodeChange" @key-handled="handleKey" />
       </div>
       <div class="formula-designer__body__footer">
         <div class="formula-designer__test">
-          <div v-if="example">示例：{{example}}</div>
-          <div v-if="example">结果：{{result}}</div>
+          <div v-if="example">示例：{{ example }}</div>
+          <div v-if="example">结果：{{ result }}</div>
         </div>
         <div>
           <el-button type="text" size="small" @click="handleTest">测试</el-button>

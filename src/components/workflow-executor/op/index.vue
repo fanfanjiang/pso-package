@@ -107,7 +107,7 @@ export default {
       }
     },
     async confirm(unAppendForm = true, notClear) {
-      if (this.store.shouldChooseEmptys) { 
+      if (this.store.shouldChooseEmptys) {
         if (notClear) {
           this.store.showEmptys = true;
           this.store.activeExtendTab = "flowchart";

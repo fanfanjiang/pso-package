@@ -45,9 +45,6 @@ export default {
   props: {
     params: {
       type: Object,
-      default: () => {
-        data_type: "";
-      },
     },
   },
   data() {

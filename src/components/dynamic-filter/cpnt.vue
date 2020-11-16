@@ -26,6 +26,7 @@ export default {
     this.cpnt.data._hideForever = false;
     this.cpnt.data._hideOnNew = false;
     this.cpnt.data._fieldName = "";
+    this.$set(this.cpnt.data, "__forceEdit__", true);
   },
   mounted() {
     this.handleChange({ value: this.cpnt.data._val });

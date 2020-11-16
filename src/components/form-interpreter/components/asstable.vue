@@ -212,7 +212,7 @@ export default {
                 value = this.cpnt.store.instance[f.sid];
               }
             }
-            if (value) {
+            if (typeof value !== "undefined") {
               params.push(`${f.tid}#${value}#${f.op}`);
             }
           }
@@ -235,7 +235,10 @@ export default {
           this.astStore.$table.clearSelection();
         }
       }
-      this.cpnt.data._val = _.map(data, "leaf_id").join(",");
+      this.cpnt.data._val = _.map(
+        data.filter((d) => !d.__dump__),
+        "leaf_id"
+      ).join(",");
       this.dispatch("PsoformInterpreter", "asstable-selected", { cpnt: this.cpnt, data, store: this.store });
     },
     "cpnt.data._type": {
@@ -263,6 +266,8 @@ export default {
     } else {
       this.setMockData();
     }
+
+    await this.handleCached();
 
     this.cpnt._handleClickAdd = this.handleClickAdd;
     this.cpnt._setDefForm = this.setDefForm;
@@ -318,11 +323,15 @@ export default {
       }
 
       this.initializing = false;
-
-      if (this.cachedIds.length) {
-        await this.setDataByIds(this.cachedIds);
-        this.cachedIds = [];
+    },
+    async handleCached() {
+      for (let cached of this.cachedIds) {
+        if (cached.options) {
+          cached.options.afterDataLoaded = false;
+        }
+        await this.setDataByIds(cached.ids, cached.options);
       }
+      this.cachedIds = [];
     },
     setMockData() {
       if (this.cpnt.store && this.cpnt.store.mockAsstables && this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]) {
@@ -331,7 +340,8 @@ export default {
         this.proxy.valList = [];
       }
     },
-    async setDataByIds(idList, callback) {
+    async setDataByIds(idList, options = {}) {
+      const { callback } = options;
       if (idList && typeof idList === "string") {
         idList = idList.split(",");
       }
@@ -351,7 +361,7 @@ export default {
         this.handleAddSelection(list);
         this.loading = false;
       } else {
-        return (this.cachedIds = idList);
+        this.cachedIds.push({ ids: idList, options });
       }
     },
     handleClickAdd(callback) {

@@ -56,7 +56,7 @@ export default {
     },
   },
   watch: {
-    "proxy.list"(val) {
+    "proxy.list"(val) { 
       if (val && val.length) {
         this.cpnt.data._val = _.map(val, this.uid).join(",");
       } else {
@@ -115,13 +115,21 @@ export default {
         let data = null;
         if (this.isFormSource) {
           data = _.find(this.formSrcList, { [this.uid]: uid });
-        } else {
+        }
+        if (!data) {
           data = await this.getUser(uid);
+          if (data && this.isFormSource) {
+            data = { [this.uid]: uid, [this.uname]: data.user_name };
+            this.formSrcList.push(data);
+          }
         }
         if (data && data[this.uid]) list.push(data);
       }
-
-      this.handleAddSelection(list);
+      if (this.isFormSource) {
+        this.proxy.list = list;
+      } else {
+        this.handleAddSelection(list);
+      }
     },
   },
 };

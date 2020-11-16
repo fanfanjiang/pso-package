@@ -11,7 +11,7 @@
           <el-option v-for="item in opOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </div>
-      <div class="branch-picker__value" v-show="pick.op">
+      <div class="branch-picker__value" v-show="pick.op && pick.op !== 'op90' && pick.op !== 'op91'">
         <el-input :size="size" v-if="pick.match === 1" v-model="pick.data" placeholder="请输入内容" clearable></el-input>
         <el-select
           :size="size"
@@ -19,6 +19,7 @@
           v-model="pick.data"
           placeholder="请选择"
           :multiple="pick.match === 3"
+          clearable
         >
           <el-option
             v-for="item in dataOptions"
@@ -167,6 +168,7 @@ export default {
     makeCpnt(fid) {
       //生成真实CPNT
       this.cpnt = this.store.search({ options: { fid } });
+
       this.store.updateInstance({
         [this.cpnt.data._fieldValue]: (Array.isArray(this.pick.data) ? this.pick.data.join(",") : this.pick.data) || "",
       });
@@ -174,7 +176,10 @@ export default {
       this.cpnt.data._fieldName = "";
       this.cpnt.data._hideForever = false;
       this.cpnt.data._hideOnNew = false;
-
+      if (this.cpnt.componentid === "asstable") {
+        this.cpnt.data._new = false;
+        this.cpnt.data._relate = true;
+      }
       if (!this.pick.cpnt) this.pick.cpnt = {};
       Object.assign(this.pick.cpnt, { fid, componentid, _fieldName, _fieldValue });
     },

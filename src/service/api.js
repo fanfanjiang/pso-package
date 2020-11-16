@@ -325,9 +325,9 @@ export default class API {
         }
     }
 
-    static async getTagAttribute(data) {
+    static async getTagAttribute(data, options = {}) {
         try {
-            return await this.request('/api/tag/attribute', { data, method: 'get' });
+            return await this.request('/api/tag/attribute', { data, method: 'get', ...options });
         } catch (error) {
             throw error;
         }

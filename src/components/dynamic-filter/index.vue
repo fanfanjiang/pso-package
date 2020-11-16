@@ -1,12 +1,16 @@
 <template>
   <div class="dy-filter">
-    <div class="dy-filter__item" v-for="(c,i) in conditions" :key="i">
+    <div class="dy-filter__item" v-for="(c, i) in conditions" :key="i">
       <div class="dy-filter__item-t">
-        <span>{{getTarget(c)._fieldName}}</span>
+        <span>{{ getTarget(c)._fieldName }}</span>
         <el-select size="mini" v-model="c.op" placeholder="操作">
           <el-option label="等于" value="1"></el-option>
           <el-option label="包含" value="2"></el-option>
           <el-option label="在其中" value="4"></el-option>
+          <el-option label="大于" value="20"></el-option>
+          <el-option label="大于等于" value="21"></el-option>
+          <el-option label="小于" value="22"></el-option>
+          <el-option label="小于等于" value="23"></el-option>
         </el-select>
         <i class="dy-filter__item__del el-icon-close" @click="delCondition(i)"></i>
       </div>
@@ -15,13 +19,13 @@
           <el-option v-for="s in sources" :key="s.fid" :label="s._fieldName" :value="s._fieldValue"></el-option>
         </el-select>
         <cpnt v-else :data="getTarget(c)" v-model="c.value"></cpnt>
-        <el-dropdown v-if="!c.sid" @command="commandHandler($event,c)" size="mini" trigger="click">
+        <el-dropdown v-if="!c.sid" @command="commandHandler($event, c)" size="mini" trigger="click">
           <span class="el-dropdown-link">
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <template v-for="s in sources">
-              <el-dropdown-item :key="s._fieldValue" :command="s._fieldValue">{{s._fieldName}}</el-dropdown-item>
+              <el-dropdown-item :key="s._fieldValue" :command="s._fieldValue">{{ s._fieldName }}</el-dropdown-item>
             </template>
           </el-dropdown-menu>
         </el-dropdown>
@@ -35,7 +39,7 @@
         </span>
         <el-dropdown-menu slot="dropdown">
           <template v-for="t in targets">
-            <el-dropdown-item :key="t._fieldValue" :command="t._fieldValue">{{t._fieldName}}</el-dropdown-item>
+            <el-dropdown-item :key="t._fieldValue" :command="t._fieldValue">{{ t._fieldName }}</el-dropdown-item>
           </template>
         </el-dropdown-menu>
       </el-dropdown>

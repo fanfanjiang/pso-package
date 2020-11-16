@@ -97,7 +97,7 @@ export default {
     },
     viewClass() {
       return {
-        "pso-view__expend": this.showFilter,
+        "pso-view__expand": this.showFilter,
       };
     },
   },

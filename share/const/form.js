@@ -276,6 +276,7 @@ const CPNT = {
     chart: false,
     table_show: true,
     ass_db: true,
+    op: FILTER_TYPE.asstable.op,
     data: [
       { n: '_option', v: '' },
       { n: '_type', v: 1 },
@@ -432,7 +433,7 @@ const CPNT = {
       { n: '_treeOptions', v: '' },
       { n: '_filterOptions', v: [] },
     ],
-    op: FILTER_TYPE.string.op,
+    op: FILTER_TYPE.tag.op,
     fop: [{ ...OP_FILTER.op1 }],
   },
   signature: {

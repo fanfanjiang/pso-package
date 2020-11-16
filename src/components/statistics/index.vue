@@ -139,7 +139,7 @@ export default {
     },
     viewClass() {
       return {
-        "pso-view__expend": this.store && this.store.showFilter,
+        "pso-view__expand": this.store && this.store.showFilter,
       };
     },
     tableParams() {

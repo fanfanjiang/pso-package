@@ -5,7 +5,7 @@
         ref="cpnt"
         size="small"
         v-model="cpnt.data._val"
-        :disabled="!cpnt.store.editable || cpnt.data._read"
+        :disabled="!cpntEditable"
         :controls="false"
         :precision="precisionVal"
         :min="minNum"

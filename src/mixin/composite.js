@@ -133,7 +133,89 @@ export const FormAsMainMixin = {
         async saveAst() {
             if (!this.mainDataId) return;
             const formData = await this.$refs.formImage.makeData();
-            return await this.vStore.addOrUpdate({ leaf_id: this.mainDataId, formData });
+            return await this.vStore.addOrUpdate({ leaf_id: this.mainDataId, formData }, false);
         }
     }
+}
+
+export const TagMixin = {
+    props: {
+        params: {
+            type: Object,
+            default: () => ({}),
+        },
+    },
+    data() {
+        return {
+            curNode: null,
+            curTag: null,
+            tpCfg: null,
+            cpntParams: {},//组件参数
+        }
+    },
+    computed: {
+        treeOptions() {
+            return {
+                dimen: 5,
+                data_type: this.params.data_type,
+            };
+        },
+        currentCpnt() {
+            if (this.tpCfg && this.tpCfg.tp_component) {
+                return this.tpCfg.tp_component;
+            } else {
+                return "";
+            }
+        },
+    },
+    methods: {
+        async fetchNodes() {
+            return (await this.API.trees({ data: { rootable: true, lazy: false, ...this.treeOptions } })).data.tagtree;
+        },
+        async nodeClickHandler(node) {
+            if (node.is_leaf) {
+                this.curNode = node;
+                await this.fetchTags();
+            }
+        },
+        async fetchTags() {
+            this.loading = true;
+            const ret = await this.API.tag({ data: { tag_code: this.curNode.node_id } });
+            if (ret.success) {
+                this.tags = ret.data;
+                await this.handleTagClick({ name: this.tags[0].tag_no });
+            }
+            this.loading = false;
+        },
+        reset() {
+            this.cpntParams = {};
+        },
+        async handleTagClick({ name }) {
+            this.reset();
+            this.curTagTab = name;
+            this.initializing = true;
+            this.curTag = _.find(this.tags, { tag_no: name });
+
+            if (this.curTag.tag_config) {
+                const cfg = JSON.parse(this.curTag.tag_config);
+
+                if (cfg.tag_source) {
+                    this.$set(this.cpntParams, "plug_code", cfg.tag_source);
+                    this.$set(this.cpntParams, "viewAuth", parseInt(this.curNode.leaf_auth || 0));
+
+                    const ret = await this.API.templates({ data: { tp_code: cfg.tag_source }, method: "get" });
+
+                    if (ret.success && ret.data.tp) {
+                        cfg.tag_set.forEach((item) => this.$set(this.cpntParams, item.field, item.value));
+                        this.tpCfg = ret.data.tp;
+                    }
+                    if (this.cpntParams.where) {
+                        this.cpntParams.defForm = { [this.cpntParams.where]: this.curTag.tag_no };
+                    }
+
+                    this.initializing = false;
+                }
+            }
+        },
+    },
 }

@@ -31,7 +31,7 @@
         >
           <template slot-scope="scope">
             <div class="modifier-placeholder" :ref="scope.$index + f.field_name">
-              <span v-if="store.checkFlag(f.field_name, scope.row)" class="modifier-flag" v-html="store.formatListVal(scope.row, f)"></span>
+              <table-tag v-if="f.componentid === 'tag'" :store="store" :data="scope.row" :field="f"></table-tag>
               <span v-else-if="store.checkFile(f.field_name)" class="modifier-file">
                 <pso-attachment :ids="scope.row[f.field_name]" @initialized="attachInited"></pso-attachment>
               </span>
@@ -83,9 +83,10 @@
 </template>
 <script>
 import PsoAttachment from "../attachment";
+import TableTag from "./table-tag";
 import { FormModifierMixin } from "../../mixin/list";
 export default {
-  components: { PsoAttachment },
+  components: { PsoAttachment, TableTag },
   mixins: [FormModifierMixin],
   props: {
     params: {
@@ -155,9 +156,19 @@ export default {
   },
   created() {
     if (this.modifiable) {
-      this.initializeModifier(this.store.formCfg, this.store.store, async (data) => {
+      this.initializeModifier(this.store.formCfg, this.store.store, async (params) => {
         // 修改回调函数
-        await this.store.addOrUpdate(data, this.refresh);
+        const { formData } = params;
+        const data = formData.dataArr[0];
+        const { leaf_id, __dump__, __temporary__ } = data;
+        if (__dump__) {
+          data.__dump__ = false;
+        }
+        if (!__temporary__) {
+          await this.store.addOrUpdate(params, this.refresh);
+        } else {
+          this.store.$vue.$emit("data-changed", { leaf_id, op: 2, formData });
+        }
       });
     }
   },

@@ -210,7 +210,7 @@ export default {
             if (cpntData.componentid === "asstable") {
               const tempList = [];
               cpntData._proxy.valList.forEach((d) => {
-                if (d.__temporary__) {
+                if (d.__temporary__ && !d.__dump__) {
                   tempList.push(d);
                 }
               });

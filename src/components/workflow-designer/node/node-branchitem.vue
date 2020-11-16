@@ -1,33 +1,18 @@
 <template>
   <div class="pso-wf-container">
-    <div v-if="pnode.children[0].nid===node.nid" class="pso-wf-clb"></div>
-    <div v-if="pnode.children[pnode.children.length-1].nid===node.nid" class="pso-wf-crb"></div>
-    <common-node
-      class="pso-wf-branch-item"
-      :node="node"
-      :pnode="pnode"
-      :readMode="readMode"
-      :workflowImage="workflowImage"
-    >
+    <div v-if="pnode.children[0].nid === node.nid" class="pso-wf-clb"></div>
+    <div v-if="pnode.children[pnode.children.length - 1].nid === node.nid" class="pso-wf-crb"></div>
+    <common-node class="pso-wf-branch-item" :node="node" :pnode="pnode" :readMode="readMode" :workflowImage="workflowImage">
       <div class="wf-branchitem-node" v-if="!wfDesigner.displaySmall">
         <div class="wf-branchitem-node__body">
           <div class="wf-branchitem-node__empty" v-if="!node.conditionMap.length">所有数据可进入该分支</div>
-          <div
-            v-else
-            class="wf-branchitem-node__or"
-            v-for="(orCondition,orIndex) in node.conditionMap"
-            :key="orIndex"
-          >
-            <el-divider v-if="orIndex!==0" content-position="center">或</el-divider>
-            <div
-              class="wf-branchitem-node__and"
-              v-for="(andCondition,andIndex) in orCondition"
-              :key="andIndex"
-            >
+          <div v-else class="wf-branchitem-node__or" v-for="(orCondition, orIndex) in node.conditionMap" :key="orIndex">
+            <el-divider v-if="orIndex !== 0" content-position="center">或</el-divider>
+            <div class="wf-branchitem-node__and" v-for="(andCondition, andIndex) in orCondition" :key="andIndex">
               <div v-if="andCondition.op">
-                <span>{{andCondition.cpnt._fieldName}}</span>
-                <span>{{getOpName(andCondition.op)}}</span>
-                <span>{{getData(andCondition.data)}}</span>
+                <span>{{ andCondition.cpnt._fieldName }}</span>
+                <span>{{ getOpName(andCondition.op) }}</span>
+                <span>{{ getData(andCondition.data) }}</span>
               </div>
             </div>
           </div>
@@ -43,7 +28,7 @@
 </template>
 <script>
 import CommonNode from "../common/node";
-import { OP_TYPE } from "../../../const/op";
+import { FILTER } from "../../../const/op";
 import { mapState } from "vuex";
 
 export default {
@@ -54,7 +39,8 @@ export default {
   },
   methods: {
     getOpName(opid) {
-      return OP_TYPE[opid].name;
+      console.log(opid);
+      return FILTER.FILTER_OP[opid].name;
     },
     getData(data) {
       if (Array.isArray(data)) return data.join(" , ");

@@ -14,9 +14,9 @@
         ></pso-tree-common>
       </div>
       <div class="pso-page-body__content">
-        <div class="pso-page-body__wrapper" v-if="curNode&&!loadingInfo">
+        <div class="pso-page-body__wrapper" v-if="curNode && !loadingInfo">
           <div class="pso-page-body__header">
-            <pso-title :size="16">菜单：{{curNode.node_display}}</pso-title>
+            <pso-title :size="16">菜单：{{ curNode.node_display }}</pso-title>
             <div class="pso-page-body__btns">
               <el-button size="mini" type="primary" plain @click="updateNode">保存设置</el-button>
             </div>
@@ -29,14 +29,14 @@
             </el-tabs>
           </div>
           <div class="pso-page-body__body">
-            <pso-nodeauth v-if="curTab==='auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
-            <view-set v-if="curTab==='view'" :data="viewData"></view-set>
-            <div class="pso-menu-param" v-if="curTab==='param'" v-loading="saving||loadingInfo">
+            <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+            <view-set v-if="curTab === 'view'" :data="viewData"></view-set>
+            <div class="pso-menu-param" v-if="curTab === 'param'" v-loading="saving || loadingInfo">
               <el-form label-position="left" label-width="180px">
                 <template v-if="!params.hide">
                   <pso-title>基本参数</pso-title>
                   <el-form-item label="菜单名称">
-                    <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
+                    <el-input size="small" v-model="curNode.node_display" autocomplete="off"></el-input>
                   </el-form-item>
                   <el-form-item label="菜单图标">
                     <el-input size="small" v-model="curNode.menu_icon">
@@ -46,44 +46,29 @@
                     </el-input>
                   </el-form-item>
                   <el-form-item label="排序">
-                    <el-input-number
-                      size="small"
-                      v-model="curNode.node_serial"
-                      controls-position="right"
-                      :min="0"
-                    ></el-input-number>
+                    <el-input-number size="small" v-model="curNode.node_serial" controls-position="right" :min="0"></el-input-number>
                   </el-form-item>
                 </template>
                 <div v-if="!!curNode.is_leaf">
                   <el-form-item label="打开方式">
                     <el-select size="small" v-model="curNode.open_type">
-                      <el-option
-                        v-for="item in OPEN_TYPE"
-                        :key="item.v"
-                        :label="item.n"
-                        :value="item.v"
-                      ></el-option>
+                      <el-option v-for="item in OPEN_TYPE" :key="item.v" :label="item.n" :value="item.v"></el-option>
                     </el-select>
                   </el-form-item>
                   <el-form-item label="菜单类型">
                     <el-select size="small" v-model="curNode.menu_type">
-                      <el-option
-                        v-for="item in MENU_TYPE"
-                        :key="item.v"
-                        :label="item.n"
-                        :value="item.v"
-                      ></el-option>
+                      <el-option v-for="item in MENU_TYPE" :key="item.v" :label="item.n" :value="item.v"></el-option>
                     </el-select>
                   </el-form-item>
                   <plug-set
-                    v-if="curNode.menu_type===MENU_TYPE[0].v"
+                    v-if="curNode.menu_type === MENU_TYPE[0].v"
                     :data="curTpDetail"
                     :node="curNode"
                     @change="handleTagChange"
                     field="menu_link"
                   >
                     <template v-slot:default="slotProps">
-                      <slot v-bind:data="{node_name:curNode.node_name,set:slotProps.data}"></slot>
+                      <slot v-bind:data="{ node_name: curNode.node_name, set: slotProps.data }"></slot>
                     </template>
                   </plug-set>
                   <el-form-item v-else label="菜单链接">
@@ -117,8 +102,8 @@ export default {
       type: Object,
       default: () => {
         data_type: "";
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -138,7 +123,7 @@ export default {
       showIconBox: false,
       initTpCode: "",
       leafAuthcfg: MENU_LEAF_AUTH,
-      viewData: []
+      viewData: [],
     };
   },
   computed: {
@@ -146,26 +131,26 @@ export default {
       return {
         dimen: 1,
         node_id: this.typeVal.feildvalue,
-        data_type: this.params.data_type
+        data_type: this.params.data_type,
       };
     },
     defaultNodeData() {
       return {
-        node_dimen: 1
+        node_dimen: 1,
       };
     },
     paramsEditable() {
       return this.curNode.menu_type === this.MENU_TYPE[0].v && this.curNode.menu_link;
-    }
+    },
   },
   async created() {
     this.loadingBar = true;
     const ret = await this.API.getBar({ menu: true, data_type: this.params.data_type });
     if (ret.success) {
-      this.defBar = ret.data.map(item => {
+      this.defBar = ret.data.map((item) => {
         return {
           feildname: item.node_display,
-          feildvalue: item.node_name
+          feildvalue: item.node_name,
         };
       });
     }
@@ -200,20 +185,21 @@ export default {
       this.saving = true;
       const ret = await this.API.trees({
         data: {
+          open_type: "",
           ...this.curNode,
           dimen: this.curNode.node_dimen,
           code: this.curNode.node_name,
           param_value: JSON.stringify(this.curTpDetail),
-          auth_config: JSON.stringify(this.viewData)
+          auth_config: JSON.stringify(this.viewData),
         },
-        method: "put"
+        method: "put",
       });
       this.check(ret);
     },
     check(ret) {
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
       this.saving = false;
-    }, 
+    },
     handleIcon() {
       this.showIconBox = true;
     },
@@ -223,7 +209,7 @@ export default {
     },
     handleTagChange(data) {
       this.curTpDetail = data;
-    }
-  }
+    },
+  },
 };
 </script>

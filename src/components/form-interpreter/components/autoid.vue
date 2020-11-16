@@ -28,6 +28,9 @@ export default {
 
     if (instance_id) {
       this.idVal = this.cpnt.data._val;
+      this.$watch("idVal", (val) => {
+        this.setSimpleVal();
+      });
     }
 
     if (!instance_id) {
@@ -70,7 +73,9 @@ export default {
     },
     setTrueVal() {
       this.cpnt.data._val = this.idVal + this.scriptVal;
-      console.log(this.cpnt.data._val);
+    },
+    setSimpleVal() {
+      this.cpnt.data._val = this.idVal;
     },
   },
 };
