@@ -205,7 +205,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.__device__ = parser.getResult();
     Vue.prototype.__isMobile__ = Vue.prototype.__device__.device.type === 'mobile';
 };
-
+ 
 // auto install
 if (typeof window !== 'undefined' && window.Vue) {
     install(window.Vue);

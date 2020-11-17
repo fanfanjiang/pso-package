@@ -9,7 +9,7 @@
 <script>
 import PsoFileList from "../file-list/index.vue";
 import { makeFiles } from "../../tool/file";
-
+ 
 export default {
   components: { PsoFileList },
   props: {
