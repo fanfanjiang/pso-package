@@ -1,5 +1,12 @@
 <template>
   <div class="pso-wf-controller">
+    <div
+      class="pso-wf-controller_download"
+      @click="wfDesigner.displaySmall=!wfDesigner.displaySmall"
+    >
+      <i v-if="wfDesigner.displaySmall" class="el-icon-full-screen"></i>
+      <i v-else class="el-icon-crop"></i>
+    </div>
     <div class="pso-wf-controller_download" @click="$emit('downloadStage')">
       <i class="el-icon-download"></i>
     </div>
@@ -19,11 +26,20 @@ import { WF_STAGE_SET } from "../../store/mutation-types";
 import html2canvas from "html2canvas";
 
 export default {
+  props: {
+    displaySmall: {
+      type: Boolean,
+      default: false
+    }
+  },
   computed: {
     ...mapState(["wfDesigner"]),
     scaleText() {
       return parseInt(this.wfDesigner.stageScale * 100) + "%";
     }
+  },
+  created() {
+    this.wfDesigner.displaySmall = this.displaySmall;
   },
   methods: {
     ...mapMutations([WF_STAGE_SET]),

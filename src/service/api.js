@@ -3,41 +3,28 @@ import Qs from 'qs';
 import axios from 'axios';
 import Auth from '../tool/auth';
 
-//请求拦截器
-axios.interceptors.request.use((config) => {
-    //添加token
-    var token = Auth.getToken();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-}, (error) => {
-    return Promise.reject(error);
-});
-
 export default class API {
 
-    URL_PREFIX = ''
+    static URL_PREFIX = ''
 
-    static async  request(url, { method = 'post', data = {} }) {
+    static async request(url, { method = 'post', data = {}, headers = {}, showMsg = true }) {
         url = `${this.URL_PREFIX}${url}`;
         if (method === 'get') {
             url += `?${Qs.stringify(data)}`;
         }
         try {
             if (method === 'delete') data = { data: data };
-            const ret = await axios({ method, url, data });
+            const ret = await axios({ method, url, data, headers });
             const message = ret.msg || ret.message;
-            if (!ret.success && message) {
+            if (showMsg && !ret.success && message && ret.tag !== 99) {
                 Message({ showClose: true, message, type: 'warning' });
             }
             return ret;
         } catch (error) {
-            console.log(error);
             if (error.response && error.response.status === 401) {
                 Message({ showClose: true, message: '登录过期，请重新登录', type: 'warning' });
             } else {
-                Message({ showClose: true, message: '数据请求失败，请稍后再试', type: 'error' })
+                // Message({ showClose: true, message: '数据请求失败，请稍后再试', type: 'error' })
             }
         }
     }
@@ -93,6 +80,14 @@ export default class API {
     static async accessLogin(data) {
         try {
             return await this.request('/access_code', { data });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getAllMenu(data) {
+        try {
+            return await this.request('/api/tree/menu-all', { data, method: 'get' });
         } catch (error) {
             throw error;
         }
@@ -162,6 +157,30 @@ export default class API {
         }
     }
 
+    static async updateWfStatus(data) {
+        try {
+            return await this.request('/api/workflow/status', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getWfStatus(data) {
+        try {
+            return await this.request('/api/workflow/status', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateWfAttach(data) {
+        try {
+            return await this.request('/api/workflow/attach', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async permissionEntries(params) {
         try {
             return await this.RESTful('/api/permissionEntries', Object.assign({ idField: 'body_id' }, params));
@@ -202,6 +221,14 @@ export default class API {
         }
     }
 
+    static async message(params) {
+        try {
+            return await this.RESTful('/api/message', Object.assign({ idField: 'leaf_id' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async searchUsers(data) {
         try {
             return await this.request('/api/users/search', { data });
@@ -210,9 +237,17 @@ export default class API {
         }
     }
 
-    static async getFileTypes(data) {
+    static async resetUser(data) {
         try {
-            return await this.request('/api/workflowcfg/filetypes', { data, method: 'get' });
+            return await this.request('/api/user/reset', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async wfFileType(data, method = 'get') {
+        try {
+            return await this.request('/api/workflowcfg/filetypes', { data, method });
         } catch (error) {
             throw error;
         }
@@ -252,7 +287,7 @@ export default class API {
 
     static async getTreeNode(data) {
         try {
-            return await this.request('/api/tree/node', { data });
+            return await this.request('/api/tree/node', { data, method: 'get' });
         } catch (error) {
             throw error;
         }
@@ -290,9 +325,17 @@ export default class API {
         }
     }
 
-    static async getTagAttribute(data) {
+    static async getTagAttribute(data, options = {}) {
         try {
-            return await this.request('/api/tag/attribute', { data, method: 'get' });
+            return await this.request('/api/tag/attribute', { data, method: 'get', ...options });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateTag(data) {
+        try {
+            return await this.request('/api/tag/attribute', { data, method: 'put' });
         } catch (error) {
             throw error;
         }
@@ -305,4 +348,296 @@ export default class API {
             throw error;
         }
     }
+
+    static async getFormTree() {
+        try {
+            const ret = await this.trees({ data: { dimen: "3" } });
+            return ret.data.tagtree.filter(node => node.is_leaf);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getTempleteTree(type = [0, 1, 2, 3]) {
+        try {
+            const ret = await this.trees({ data: { dimen: "4" } });
+            return ret.data.tagtree.filter(node => type.includes(node.tp_type) && node.is_leaf);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getWfTree() {
+        try {
+            const ret = await this.trees({ data: { dimen: 7 } });
+            return ret.data.tagtree.filter(node => node.is_leaf);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getOrgTree() {
+        try {
+            const ret = await this.trees({ data: { dimen: 2 } });
+            return ret.data.tagtree.filter(node => node.is_leaf);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getMenuTree(cb) {
+        try {
+            const ret = await this.trees({ data: { dimen: 1 } });
+            return ret.data.tagtree.filter(node => node.is_leaf && (cb ? cb(node) : 1));
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFlowTrash(data = {}) {
+        try {
+            return await this.request('/api/workflow/trash', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getWfTimeline(data) {
+        try {
+            return await this.request('/api/workflow/timeline', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFormDict(data = {}) {
+        try {
+            return await this.request('/api/form/dict', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateNodeAuth(data = {}) {
+        try {
+            return await this.request('/api/tree/auth', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getNodeAuth(data = {}) {
+        try {
+            return await this.request('/api/tree/auth', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getBar(data = {}) {
+        try {
+            return await this.request('/api/common/bar', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getMenuInfo(data = {}) {
+        try {
+            return await this.request('/api/tree/menu', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateMenu(data = {}) {
+        try {
+            return await this.request('/api/tree/menu', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateFormTree(data = {}) {
+        try {
+            return await this.request('/api/tree/form', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFormInfo(data = {}) {
+        try {
+            return await this.request('/api/tree/form', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getTreeDimen(data = {}) {
+        try {
+            return await this.request('/api/tree/dimen', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateTreeDimen(data = {}) {
+        try {
+            return await this.request('/api/tree/dimen', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getTreeTrash(data = {}) {
+        try {
+            return await this.request('/api/tree/trash', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateTreeTrash(data = {}) {
+        try {
+            return await this.request('/api/tree/trash', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getTreeWf(data = {}) {
+        try {
+            return await this.request('/api/tree/wf', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateWfAgent(data = {}) {
+        try {
+            return await this.request('/api/workflowcfg/agent', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateUnit(data = {}) {
+        try {
+            return await this.request('/api/tag/unit', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFormStatus(data = {}) {
+        try {
+            return await this.request('/api/form/status', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+    static async updateFormStatus(data = {}) {
+        try {
+            return await this.request('/api/form/status', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    //获取字段权限
+    static async getFieldAuth(data = {}) {
+        try {
+            return await this.request('/api/form/auth', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    //设置字段权限
+    static async updateFieldAuth(data = {}) {
+        try {
+            return await this.request('/api/form/auth', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    //设置字段权限
+    static async updateFormStage(data = {}) {
+        try {
+            return await this.request('/api/form/stage', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getPscriptData(data = {}) {
+        try {
+            return await this.request('/api/form/script', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getWechatConfig(data = {}) {
+        try {
+            return await this.request('/api/common/wechat', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async uploadTempPdf(file) {
+        try {
+            const data = new FormData();
+            data.append("file", file);
+            return await this.request('/api/upload/temppdf', { data, method: 'post', headers: { 'Content-Type': 'multipart/form-data' } });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getStatisticData(data) {
+        try {
+            return await this.request('/api/templates/statistics', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async debugSQLScript(data) {
+        try {
+            return await this.request('/api/sql/debug', { data, method: 'post', showMsg: false });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
+
+//请求拦截器
+axios.interceptors.request.use((config) => {
+    //添加token
+    var token = Auth.getToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
+axios.interceptors.response.use((response) => {
+    if (response.status === 200) {
+        return Promise.resolve(response.data);
+    } else {
+        return Promise.reject(response);
+    }
+}, (error) => {
+    if (error.response && error.response.status === 401) {
+        API.handleAuthError && API.handleAuthError();
+    }
+    return Promise.reject(error);
+});

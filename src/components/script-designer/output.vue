@@ -2,7 +2,7 @@
   <component :is="currentView" />
 </template>
 <script>
-import less from "less";
+// import less from "less";
 import shortid from "shortid";
 
 export default {
@@ -49,14 +49,14 @@ export default {
   methods: {
     async createCss(lessInput) {
       try {
-        let output = await less.render(lessInput);
+        // let output = await less.render(lessInput);
         let style = document.createElement("style");
         style.setAttribute("type", "text/css");
         style.setAttribute("id", "css" + this.cssId);
         if (style.styleSheet) {
-          style.styleSheet.cssText = output.css;
+          style.styleSheet.cssText = lessInput;
         } else {
-          style.appendChild(document.createTextNode(output.css));
+          style.appendChild(document.createTextNode(lessInput));
         }
         let heads = document.getElementsByTagName("head");
         if (heads.length) {

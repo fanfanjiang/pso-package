@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-chart-card">
+  <div class="pso-chart-card" :style="{height:height}">
     <div class="pso-chart-card-body">
       <div class="pso-chart-card__top" v-if="cardData.length">
         <div class="pso-chart-card__top-title">{{cardData[0].name}}</div>
@@ -14,13 +14,13 @@
 </template>
 <script>
 export default {
-  props: ["chartConfig", "data"],
+  props: ["chartConfig", "data", "height"],
   computed: {
     cardData() {
       const cardData = [];
       try {
         const data = this.data.rows[0];
-        this.chartConfig.metrics.forEach(m => {
+        this.chartConfig.metrics.forEach((m) => {
           let value = data[m._fieldValue];
           if (typeof value !== "undefined") {
             cardData.push({ name: m.alias || m._fieldName, value: `${value} ${m.unit || ""}` });
@@ -30,7 +30,7 @@ export default {
         return [];
       }
       return cardData;
-    }
-  }
+    },
+  },
 };
 </script>

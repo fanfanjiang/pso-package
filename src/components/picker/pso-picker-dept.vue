@@ -3,28 +3,36 @@
     :pattern="pattern"
     :show="show"
     :requestOptions="requestOptions"
-    btn-text="选择部门"
+    :btn-text="text"
     @confirm="$emit('confirm',$event)"
-  ></pso-picker-tree>
+  >
+    <slot>
+      <el-button icon="el-icon-plus" plain size="mini">{{text}}</el-button>
+    </slot>
+  </pso-picker-tree>
 </template>
 <script>
 export default {
   props: {
     pattern: {
       type: String,
-      default: "radio"
+      default: "radio",
     },
     show: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
+    text: {
+      type: String,
+      default: "选择部门",
+    },
   },
   data() {
     return {
       requestOptions: {
-        node_dimen: "NODEDIMEN02"
-      }
+        dimen: 2,
+      },
     };
-  }
+  },
 };
 </script>

@@ -3,6 +3,7 @@
     <common-panel :cpnt="cpnt" info="关联相关工作表，可以从中引用或创建记录，如：订单关联商品" :needDefaultValue="false">
       <el-form-item label="选择工作表" v-loading="loading">
         <el-select
+          size="mini"
           v-model="cpnt.data._option"
           filterable
           placeholder="请选择"
@@ -10,9 +11,9 @@
         >
           <el-option
             v-for="item in options"
-            :key="item.node_id"
-            :label="item.node_name"
-            :value="item.node_id"
+            :key="item.node_name"
+            :label="item.node_display"
+            :value="item.node_name"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -20,8 +21,13 @@
         <el-radio v-model="cpnt.data._type" :label="1">单条</el-radio>
         <el-radio v-model="cpnt.data._type" :label="2">多条</el-radio>
       </el-form-item>
-      <el-form-item label="选择显示字段" v-loading="loading">
-        <el-select multiple v-model="showFields" placeholder="请选择" :key="cpnt.fid">
+      <el-form-item label="选择显示列表" v-loading="loading">
+        <el-select clearable size="mini" v-model="cpnt.data._showFields" placeholder="请选择">
+          <el-option v-for="item in column" :key="item.name" :label="item.name" :value="item.name"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="cpnt.data._type===1" label="选择单选显示字段" v-loading="loading">
+        <el-select size="mini" v-model="cpnt.data._radioField" placeholder="请选择">
           <el-option
             v-for="item in cpnt.cache.fieldOptions"
             :key="item._fieldValue"
@@ -30,67 +36,77 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <form-asstable
-        :key="cpnt.fid"
-        v-if="cpnt.cache.defaultEl._option"
-        :cpnt="{data:cpnt.cache.defaultEl}"
-      ></form-asstable>
       <el-form-item label="设置">
         <div class="act-panel_check">
-          <el-checkbox v-model="cpnt.data._new" :true-label="true" :false-label="false">允许新增关联数据</el-checkbox>
+          <el-switch size="mini" v-model="cpnt.data._new" active-text="允许新增关联数据"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">允许新增关联数据</div>
             <i class="tip el-icon-question"></i>
           </el-tooltip>
         </div>
         <div class="act-panel_check">
-          <el-checkbox v-model="cpnt.data._relate" :true-label="true" :false-label="false">允许关联已有数据</el-checkbox>
+          <el-switch size="mini" v-model="cpnt.data._relate" active-text="允许关联已有数据"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">允许关联已有数据</div>
             <i class="tip el-icon-question"></i>
           </el-tooltip>
         </div>
       </el-form-item>
+      <el-button
+        v-if="cpnt.data._relate"
+        icon="el-icon-plus"
+        plain 
+        size="mini"
+        @click="showDialog=true"
+      >筛选</el-button>
     </common-panel>
-  </div>
+    <el-dialog title="设置筛选条件" append-to-body :visible.sync="showDialog" width="40%">
+      <dynamic-filter
+        :targets="filterFields"
+        :sources="selfCpnts"
+        v-model="cpnt.data._filter"
+      ></dynamic-filter>
+    </el-dialog>
+  </div> 
 </template>
 <script>
 import commonPanel from "../common/common-panel";
-import FormAsstable from "../../form-interpreter/components/asstable";
 import { genComponentData } from "../helper";
 import FormStore from "../../form-designer/model/store.js";
+import DynamicFilter from "../../dynamic-filter";
+import { makeSysFormFields } from "../../../tool/form";
 
 export default {
   props: ["cpnt"],
   components: {
     commonPanel,
-    FormAsstable
+    DynamicFilter,
   },
   data() {
+    this.column = [];
     return {
       options: [],
-      loading: false
+      loading: false,
+      showDialog: false,
+      sysFields: [],
+      filterFields: [],
     };
   },
   computed: {
-    showFields: {
-      get() {
-        return !this.cpnt.data._showFields ? [] : this.cpnt.data._showFields.split(",");
-      },
-      set(val) {
-        this.cpnt.data._showFields = val.join(",");
-      }
-    }
+    selfCpnts() {
+      return this.cpnt.store.search({ options: { db: true }, onlyData: true }).concat(this.sysFields);
+    },
   },
   watch: {
     "cpnt.data._type"(type) {
       this.cpnt.cache.defaultEl._type = type;
-    }
+    },
   },
   created() {
+    this.sysFields = makeSysFormFields();
     this.getFormList();
     this.setCache();
-    if (this.cpnt.data._option) this.formChangeHandler(this.cpnt.data._option);
+    if (this.cpnt.data._option) this.formChangeHandler(this.cpnt.data._option, true);
   },
   beforeUpdate() {
     this.setCache();
@@ -111,55 +127,61 @@ export default {
             _required: false,
             _val: "",
             _relate: this.cpnt.data._relate,
-            _new: this.cpnt.data._new
+            _new: this.cpnt.data._new,
           })
         );
 
-        this.$watch(`cpnt.cache.defaultEl._val`, val => {
+        this.$watch(`cpnt.cache.defaultEl._val`, (val) => {
           this.cpnt.data._defaultValue = val;
         });
 
-        this.$watch(`cpnt.data._relate`, val => {
+        this.$watch(`cpnt.data._relate`, (val) => {
           this.cpnt.cache.defaultEl._relate = val;
         });
 
-        this.$watch(`cpnt.data._new`, val => {
+        this.$watch(`cpnt.data._new`, (val) => {
           this.cpnt.cache.defaultEl._new = val;
         });
       }
     },
     async getFormList() {
       this.loading = true;
-
-      const ret = await this.API.trees({
-        data: { node_id: this.cpnt.store.appid, appid: this.cpnt.store.appid, node_dimen: "nodedimen03" }
-      });
-      this.options = ret.data.filter(node => node.data_type === "form" && node.is_leaf);
+      this.options = await this.API.getFormTree();
 
       this.loading = false;
     },
-    async formChangeHandler(id) {
+    async formChangeHandler(id, notReset = false) {
       this.loading = true;
 
       this.cpnt.cache.defaultEl._option = "";
-      this.cpnt.data._showFields = "";
+      this.cpnt.data._outputFormat = id;
 
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
 
       const store = new FormStore(ret.data);
 
+      if (ret.data.display_columns && typeof ret.data.display_columns === "string") {
+        this.column = JSON.parse(ret.data.display_columns).column;
+      } else {
+        this.column = [];
+      }
+
       this.cpnt.cache.fieldOptions = store.search({
         options: { table_show: true },
         onlyData: true,
-        beforePush: item => !item.parent.CPNT.host_db
+        beforePush: (item) => {
+          item.data.fieldDisplay = `[${store.data_name}]${item.data._fieldName}`;
+          return !item.parent.CPNT.host_db;
+        },
       });
+
+      this.filterFields = [].concat(this.cpnt.cache.fieldOptions, this.sysFields);
 
       this.cpnt.cache.defaultEl._option = id;
 
-      this.cpnt.data._showFields = _.map(this.cpnt.cache.fieldOptions, "_fieldValue").join(",");
       this.loading = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

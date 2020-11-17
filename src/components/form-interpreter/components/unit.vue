@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
+  <pso-label :cpnt="cpnt">
     <div class="pso-form-selectedlist" v-if="proxy.list.length&&!loading">
       <el-tag
         v-for="item in proxy.list"
@@ -19,7 +19,7 @@
       @cancel="show=false"
       @confirm="handlePickTag"
     ></pso-picker-tag>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import { pickerMixin } from "../../../mixin/picker";
@@ -32,9 +32,9 @@ export default {
       loading: false,
       proxy: {
         list: [],
-        type: this.cpnt.data._type
+        type: this.cpnt.data._type,
       },
-      units: []
+      units: [],
     };
   },
   computed: {
@@ -70,10 +70,10 @@ export default {
     },
     relateName() {
       return this.cpnt.store.search({ options: { fid: this.cpnt.data._relateName } });
-    }
+    },
   },
   async created() {
-    this.resetPicker({ idName: this.tagIdName });
+    this.resetPicker({ idName: this.tagIdName, reset: false });
 
     //初始化事件
     this.$on("cpnt-value-changed", ({ cpnt }) => {
@@ -84,7 +84,7 @@ export default {
     if (this.cpnt.data._val) {
       this.loading = true;
       const ret = await this.API.tag({
-        data: { keys: JSON.stringify({ tag_no: { value: this.cpnt.data._val, type: 1 } }), start: 0, limit: 9999999 }
+        data: { keys: JSON.stringify({ tag_no: { value: this.cpnt.data._val, type: 1 } }), start: 0, limit: 9999999 },
       });
       if (ret.success && ret.data && ret.data.length) {
         this.proxy.list.push(ret.data[0]);
@@ -125,7 +125,7 @@ export default {
 
       //初始化单位
       if (this.relateUnit) {
-        this.relateUnit.data._option = this.units.map(item => ({ _optionValue: item.c_code, _optionName: item.c_specs }));
+        this.relateUnit.data._option = this.units.map((item) => ({ _optionValue: item.c_code, _optionName: item.c_specs }));
         if (forceReset) this.relateUnit.data._val = "";
       }
 
@@ -164,8 +164,8 @@ export default {
       if (this.relateSummary) {
         this.relateSummary.data._val = standardNum * (this.standardUnit ? this.standardUnit.c_multiple : 0);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

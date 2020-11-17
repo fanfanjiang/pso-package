@@ -30,12 +30,12 @@ const OP_TYPE = {
         id: 'op6'
     },
     op7: {
-        name: '包括',
+        name: '在其中',
         value: ['IN(', ')'],
         id: 'op7',
     },
     op8: {
-        name: '不包括',
+        name: '不在其中',
         value: ['NOTIN(', ')'],
         id: 'op8'
     },
@@ -45,10 +45,14 @@ const OP_TYPE = {
         id: 'op9'
     },
     op10: {
-        name: '动态范围',
-        value: '10',
+        name: '为空',
+        value: 'EMPTY',
         id: 'op10'
+    },
+    op11: {
+        name: '不为空',
+        value: 'NOTEMPTY',
+        id: 'op11'
     }
 }
-
 module.exports = OP_TYPE;

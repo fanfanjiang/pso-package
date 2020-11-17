@@ -17,15 +17,54 @@ export const REVIEW_TYPE = {
     }
 }
 
-export const REVIEW_OP_TYPE = {
+export const REVIEW_STATUS = {
     save: {
-        name: '暂存',
+        name: '待提交',
         id: "save",
-        type: 'save',
-        value: 1
+        value: 0,
+        stamp: "待提交",
+        color: "#2d8cf0"
     },
+    submited: {
+        name: '审批中',
+        id: "submited",
+        value: 1,
+        stamp: "审批中",
+        color: "#2d8cf0"
+    },
+    pass: {
+        name: '审批通过',
+        id: "pass",
+        value: 8,
+        stamp: "审批<br>通过",
+        color: "#67C23A"
+    },
+    reject: {
+        name: '审批拒绝',
+        id: "reject",
+        value: 2,
+        stamp: "审批<br>拒绝",
+        color: "#F56C6C"
+    },
+    backout: {
+        name: '已撤销',
+        id: "backout",
+        value: 7,
+        stamp: "已撤销",
+        color: "#909399"
+    },
+    archive: {
+        name: '已归档',
+        id: "archive",
+        value: 9,
+        stamp: "已归档",
+        color: "#E6A23C"
+    }
+}
+
+export const REVIEW_OP_TYPE = {
     confirm: {
-        name: '确认',
+        name: '通过',
         id: "confirm",
         type: 'next',
         value: 2
@@ -33,7 +72,7 @@ export const REVIEW_OP_TYPE = {
     end: {
         name: '结束',
         id: "end",
-        type: 'over',
+        type: 'finish',
         value: 4
     },
     rollback: {
@@ -54,28 +93,29 @@ export const REVIEW_OP_TYPE = {
         type: 'appoint',
         value: 32
     },
-    Copy: {
+    copy: {
         name: '抄送',
-        id: "Copy",
-        type: 'append',
+        id: "copy",
+        type: 'copy',
         value: 64
     },
-    Distribute: {
+    distribute: {
         name: '分发',
-        id: "Distribute",
-        type: 'append',
+        id: "distribute",
+        type: 'distribute',
         value: 128
     },
-    AddSign: {
+    countersign: {
         name: '加签',
-        id: "AddSign",
+        id: "countersign",
         type: 'append',
         value: 256
     }
 }
+
 export const REVIEW_OP_APPEND = 'append';
 
-export const REVIEW_OP_USER = [REVIEW_OP_TYPE.Copy, REVIEW_OP_TYPE.Distribute, REVIEW_OP_TYPE.AddSign];
+export const REVIEW_OP_USER = [REVIEW_OP_TYPE.copy.type, REVIEW_OP_TYPE.distribute.type, REVIEW_OP_TYPE.countersign.type];
 
 export const REVIEW_AUTH_TYPE = {
     anybody: {
@@ -147,3 +187,21 @@ export const REVIEW_LOG_FORMAT = [
     { name: "审核时间", id: "#time#" },
     { name: "审核意见", id: "#content#" }
 ]
+
+export const WF_AUTH_TYPE = [
+    { n: "正常流程", v: 0 },
+    { n: "仅保留重复审批人第一步", v: 1 },
+    { n: "仅保留重复审批人最后一步", v: 2 }
+]
+
+export const WF_FIELD_AUTH = [
+    { n: "查看", v: 1 },
+    { n: "编辑", v: 2 },
+    { n: "必填", v: 4 },
+];
+
+export const WF_EMPTY_TYPE = [
+    { n: "流程中选择", v: '0' },
+    { n: "第一步选择", v: '1' },
+    { n: "绑定表单字段", v: '2' },
+];

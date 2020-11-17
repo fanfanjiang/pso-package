@@ -1,17 +1,17 @@
 <template>
-  <div class="pso-form-remark">{{cpnt.data._defaultValue}}</div>
+  <div class="pso-form-remark">{{ cpnt.data._defaultValue }}</div>
 </template>
 <script>
 export default {
   name: "pso-section-actor",
-  props: ["cpnt"]
+  props: ["cpnt"],
 };
 </script>
 <style lang="less" scoped>
 .pso-form-remark {
   padding: 20px;
   color: #999;
-  background-color: #fff;
+  background-color: transparent;
   border-radius: 5px;
 }
 </style>

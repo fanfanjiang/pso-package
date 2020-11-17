@@ -1,12 +1,12 @@
 <template>
   <common-node
-    @clickNode="$emit('clickNode',$event)"
+    @click-node="$emit('click-node',$event)"
     :node="node"
     :pnode="pnode"
     :readMode="readMode"
     :workflowImage="workflowImage"
   >
-    <div class="wf-node-review">
+    <div class="wf-node-review" v-if="!wfDesigner.displaySmall">
       <div class="wf-node-review__header">
         <span>{{node.name}}</span>
         <i class="el-icon-edit-outline"></i>
@@ -22,13 +22,19 @@
         </div>
       </div>
     </div>
+    <div v-else class="wf-node__small">始</div>
   </common-node>
 </template>
 <script>
 import CommonNode from "../common/node";
+import { mapState } from "vuex";
+
 export default {
   props: ["node", "pnode", "workflowImage", "readMode"],
-  components: { CommonNode }
+  components: { CommonNode },
+  computed: {
+    ...mapState(["wfDesigner"]),
+  },
 };
 </script>
 <style lang="less" scoped>

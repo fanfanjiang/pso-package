@@ -22,10 +22,10 @@ export default {
                     name = parent.$options.componentName;
                 }
             }
-
-            if (parent) {
+            if (parent) {  
                 parent.$emit.apply(parent, [eventName].concat(params));
             }
+
         },
         broadcast(componentName, eventName, params) {
             broadcast.call(this, componentName, eventName, params);

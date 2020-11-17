@@ -1,10 +1,26 @@
+.pso-wf-mainform,
 .pso-form {
+
+    .el-form--label-left {
+        .el-form-item__label {
+            line-height: 36px !important;
+        }
+    }
+
+    .el-radio__label {
+        white-space: break-spaces !important;
+        line-height: 24px;
+    }
+
+    .el-form-item {
+        margin-bottom: 15px;
+    }
 
     .el-form-item__label {
         white-space: nowrap;
         text-overflow: ellipsis;
-        padding-bottom: 0;
-        line-height: 30px;
+        line-height: 20px !important;
+        padding: 0 !important;
     }
 
     .pso-form-table {
@@ -15,9 +31,202 @@
             padding: 10px;
         }
     }
+
+    .el-textarea {
+        span {
+            line-height: 22px;
+            height: 22px;
+        }
+    }
+
+    .el-date-editor.el-input,
+    .el-input-number,
+    .el-select,
+    .el-date-editor.el-input__inner {
+        width: 100%;
+    }
+}
+
+.pso-form-row {
+    display: flex;
+    flex-direction: row;
+
+    @media (max-width: @screen-md-min) {
+        flex-direction: column !important;
+
+        >div {
+            &+div {
+                margin-left: 0 !important;
+            }
+        }
+    }
+
+    >div {
+        flex: 1;
+
+        &+div {
+            margin-left: 10px;
+        }
+    }
 }
 
 .pso-drawer-footer__body {
     padding: 10px 20px;
     text-align: left;
+}
+
+.pso-form_rule {
+    display: flex;
+
+    .pso-form_rule-l {
+        flex: 1;
+    }
+
+    .pso-form_rule-r {
+        width: 300px;
+        margin-left: 20px;
+    }
+
+    .rule-list {
+        .rule-list-item {
+            padding: 20px;
+            background: #F6F6F6;
+            cursor: pointer;
+            position: relative;
+            .transition();
+
+            &.active {
+                background: #ECF5FF;
+            }
+
+            &+.rule-list-item {
+                margin-top: 15px;
+            }
+
+            .rule-list-item__del {
+                position: absolute;
+                right: 15px;
+                top: 15px;
+                color: #999;
+                .hover();
+
+                &:hover {
+                    color: #ED7B7B;
+                }
+            }
+        }
+    }
+
+    .rule-btn-add {
+        text-align: center;
+        height: 60px;
+        line-height: 60px;
+        background: #F1F0F0;
+        cursor: pointer;
+        color: #666;
+        border: 2px dotted #F1F0F0;
+        .hover();
+        margin-top: 15px;
+
+        i {
+            margin-right: 10px;
+        }
+
+        &:hover {
+            border: 2px dotted @main-color;
+        }
+    }
+
+    .rule-set-empty {
+        color: #999;
+        text-align: center;
+    }
+
+    .rule-set__filter {
+        height: 500px;
+        overflow-y: auto;
+
+        .rule-set__filter-item {
+
+
+            &+.rule-set__filter-item {
+                margin-top: 10px;
+            }
+
+            .rule-set__filter-item-wrapper {
+                background: #ECF5FF;
+                padding: 10px;
+            }
+
+            .rule-set__filter-item__op {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .el-select {
+                    width: 100px;
+                }
+
+                .rule-set__filter-item__op-del {
+                    cursor: pointer;
+                }
+            }
+
+            .rule-set__filter-item__val {
+                margin-top: 10px;
+
+                .el-form-item {
+                    margin-bottom: 0;
+                }
+            }
+
+            .rule-set__filter-item__type {
+                margin-top: 10px;
+                background: #fff;
+                width: 60px;
+            }
+        }
+    }
+
+    .rule-set__filter-add {
+        margin-top: 20px;
+    }
+}
+
+.cpnt-text {
+    position: relative;
+
+    .text-search__result {
+        position: absolute;
+        width: 100%;
+        max-height: 200px;
+        background: #fff;
+        top: 35px;
+        margin: 5px 0;
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+        border-radius: 5px;
+        border: 1px solid #e4e7ed;
+        box-sizing: border-box;
+        background-color: #fff;
+        overflow: auto;
+        z-index: 9;
+        padding: 10px 0;
+
+        .text-search__result-item {
+            cursor: pointer;
+            padding: 0 20px;
+            margin: 0;
+            line-height: 34px;
+            color: #606266;
+            font-size: 14px;
+            list-style: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &:hover {
+                color: @main-color  !important;
+            }
+        }
+    }
 }

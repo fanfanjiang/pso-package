@@ -3,7 +3,7 @@
     :visible-arrow="false"
     transition="el-zoom-in-top"
     placement="top-end"
-    width="400"
+    width="360"
     @show="opened=true"
     @after-leave="opened=false"
     v-model="show"
@@ -49,10 +49,6 @@ export default {
       type: String,
       default: "3"
     },
-    show: {
-      type: Boolean,
-      default: false
-    },
     pattern: {
       type: String,
       default: "radio"
@@ -60,6 +56,7 @@ export default {
   },
   data() {
     return {
+      show: false,
       opened: false,
       tableData: [],
       selected: []
@@ -78,10 +75,13 @@ export default {
     },
     handleCurrentChange(val) {
       if (this.pattern !== "radio") return;
-      this.selected = [val];
+      if (val) {
+        this.selected = _.cloneDeep([val]);
+      }
     },
     confirm() {
       this.$emit("confirm", this.selected);
+      this.show = false;
     }
   }
 };

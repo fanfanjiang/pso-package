@@ -30,14 +30,13 @@
       <script-output :code="store"></script-output>
     </div>
   </div>
-</template>
+</template> 
 <script>
 import ScriptOutput from "./output";
 import VueMaker from "./vue-maker";
-import MonacoEditor from "vue-monaco";
 
 export default {
-  components: { ScriptOutput, MonacoEditor },
+  components: { ScriptOutput },
   props: ["cpnts", "code"],
   data() {
     return {
@@ -45,9 +44,9 @@ export default {
       options: {
         contextmenu: false,
         minimap: {
-          enabled: false
-        }
-      }
+          enabled: false,
+        },
+      },
     };
   },
   created() {
@@ -58,12 +57,11 @@ export default {
       code = {
         htmlCode: maker.getHtml(),
         jsCode: maker.getJs(),
-        cssCode: maker.getCss()
+        cssCode: maker.getCss(),
       };
     }
-    console.log(code);
     this.store = Object.assign({ htmlCode: "", cssCode: "", jsCode: "" }, code);
-  }
+  },
 };
 </script>
 <style lang="less" scoped>

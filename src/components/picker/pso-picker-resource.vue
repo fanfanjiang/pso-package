@@ -14,40 +14,41 @@
   </pso-picker-common>
 </template>
 <script>
+import PsoPickerCommon from "./pso-picker-common";
+
 export default {
+  components: { PsoPickerCommon },
   props: {
     pattern: {
       type: String,
-      default: "radio"
+      default: "radio",
     },
     source: {
       type: String,
-      default: "tree"
+      default: "tree",
     },
-    options: Object
+    options: Object,
   },
   data() {
     return {
       treeOption: {
-        node_dimen: "NODEDIMEN06",
-        data_type: this.options.data_type,
-        resource_type: this.options.resource_type,
-        searchtype: "Resource"
+        dimen: 6,
+        data_type: "sysdoc",
       },
       props: {
         tableIdName: "leaf_id",
-        tableDisplayName: "r_name"
+        tableDisplayName: "r_name",
       },
       tableField: [
         { prop: "r_name", label: "资源名" },
-        { prop: "r_time", label: "添加时间" }
+        { prop: "r_time", label: "添加时间" },
       ],
-      currentNode: null
+      currentNode: null,
     };
   },
   methods: {
     treeFilter(list) {
-      return list.filter(item => item.is_leaf);
+      return list.filter((item) => item.is_leaf);
     },
     nodeClickFun(node) {
       this.currentNode = node;
@@ -56,11 +57,11 @@ export default {
       return await this.API.resource({
         data: {
           ...option,
-          keys: JSON.stringify({ node_id: { type: 1, value: this.currentNode.node_id } }),
-          start: option.start - 1
-        }
+          node_id: this.currentNode.node_id,
+          page: option.start - 1,
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>

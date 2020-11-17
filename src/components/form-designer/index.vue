@@ -1,7 +1,7 @@
 <template>
   <div class="pso-form-designer" v-loading="loading">
     <div class="pso-form-designer__header">
-      <pso-header title="表单设计" @back="$emit('back')" v-if="storeReady">
+      <pso-header title="表单设计" @back="$emit('back',{params})" v-if="storeReady">
         <template v-slot:btn>
           <el-button
             :disabled="!formStore.canUndo"
@@ -48,7 +48,6 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="auth">添加权限项</el-dropdown-item>
               <el-dropdown-item command="saveTemp">保存为模板</el-dropdown-item>
               <el-dropdown-item v-if="formStore.templateId" command="updateTemp">更新模板</el-dropdown-item>
               <el-dropdown-item>
@@ -68,13 +67,6 @@
     <div class="pso-form-designer__body">
       <designer-body @store-ready="formReadyHandler" :data="formCfg" v-if="!loading"></designer-body>
     </div>
-    <auth-editor
-      v-if="showAuthEditor"
-      :show="showAuthEditor"
-      @cancel="showAuthEditor=false"
-      @saved="authSavedHandler"
-    ></auth-editor>
-
     <el-dialog width="30%" title="保存模板" :visible.sync="showTempPop">
       <el-form size="mini" label-position="right">
         <el-form-item label="模板名称" label-width="80px">
@@ -87,7 +79,7 @@
               :key="item.node_id"
               closable
               @close="handleDelSelection(item)"
-            >{{item.node_name}}</el-tag>
+            >{{item.node_display}}</el-tag>
           </div>
           <pso-picker-tree
             rootable
@@ -114,7 +106,6 @@
 <script>
 import DesignerBody from "./designer-body";
 import PsoHeader from "../header";
-import AuthEditor from "../auth-editor";
 import { pickerMixin } from "../../mixin/picker";
 import shortid from "shortid";
 
@@ -123,13 +114,12 @@ export default {
   props: {
     params: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
-  components: { DesignerBody, PsoHeader, AuthEditor },
+  components: { DesignerBody, PsoHeader },
   data() {
     return {
-      showAuthEditor: false,
       saving: false,
       storeReady: false,
       formStore: {},
@@ -139,27 +129,21 @@ export default {
       showTempPop: false,
       savingCfg: false,
       treeOptions: {
-        node_dimen: "NODEDIMEN06",
-        data_type: "formtp",
-        resource_type: this.params.resource_type || "public",
-        searchtype: "Resource"
+        dimen: 6,
       },
       importTreeOption: {
-        node_dimen: "NODEDIMEN06",
-        data_type: "formtp",
-        resource_type: this.params.resource_type || "public",
-        searchtype: "Resource"
+        dimen: 6,
       },
       resource: {
         list: [],
-        type: "radio"
-      }
+        type: "radio",
+      },
     };
   },
   computed: {
     onlytemplate() {
       return !this.params.id && !this.params.pid;
-    }
+    },
   },
   async created() {
     if (this.params.id) {
@@ -181,23 +165,28 @@ export default {
         data: {
           ...this.params,
           data_code: store.data_code,
-          is_pub, 
+          is_pub,
           formName: store.data_name,
           children: store.root.data.children,
           dataMaps: store.cpntsDataMps,
-          permissionEntries: store.permissionEntries
+          permissionEntries: store.permissionEntries,
         },
-        method: this.params.id ? "put" : "post"
+        method: this.params.id ? "put" : "post",
       });
       if (!ret.success) return (this.saving = false);
+      if (!this.params.id) {
+        const { node_name } = ret.data;
+        this.params.id = this.formCfg.data_id = node_name;
+        this.params.pid = "";
+      }
       this.$notify({ title: "保存成功", type: "success" });
       this.$emit("saved");
+      this.saving = false;
     },
     async getFormCfg(id) {
       this.loading = true;
       const ret = await this.API.formsCfg({ data: { id }, method: "get" });
       if (ret.success) {
-        ret.data.data_config = JSON.parse(ret.data.data_design);
         ret.data.data_id = id;
         this.formCfg = ret.data;
       }
@@ -206,10 +195,6 @@ export default {
     formReadyHandler(store) {
       this.formStore = store;
       this.storeReady = true;
-    },
-    authSavedHandler(data) {
-      this.showAuthEditor = false;
-      this.formStore.permissionEntries.push(data);
     },
     prepareTempData() {
       if (!this.resource.list.length) {
@@ -228,22 +213,21 @@ export default {
       this.savingCfg = true;
       const ret = await this.API.resource({
         data: {
+          optype: data.leaf_id ? 1 : 0,
           ...data,
           r_data: {
-            data_config: this.formStore.root.data.children,
-            permissionEntries: this.formStore.permissionEntries
-          }
+            data_design: this.formStore.root.data.children,
+            permissionEntries: this.formStore.permissionEntries,
+          },
         },
-        method: data.leaf_id ? "put" : "post"
+        method: data.leaf_id ? "put" : "post",
       });
       this.savingCfg = false;
       this.showTempPop = false;
       if (ret.success) this.$notify({ title: "保存成功", type: "success" });
     },
     async handleCommand(command) {
-      if (command === "auth") {
-        this.showAuthEditor = true;
-      } else if (command === "saveTemp") {
+      if (command === "saveTemp") {
         this.tempName = this.tempName || this.formStore.data_name;
         this.showTempPop = true;
       } else if (command === "updateTemp") {
@@ -263,11 +247,11 @@ export default {
 
       this.formCfg = {
         templateId: leaf_id,
-        data_config: template.data_config || [],
+        data_design: template.data_design || template.data_config || [],
         permissionEntries: template.permissionEntries || [],
         data_name: r_name,
         data_id: this.formStore.data_id,
-        data_code: this.formStore.data_code
+        data_code: this.formStore.data_code,
       };
 
       this.$nextTick(() => {
@@ -275,9 +259,9 @@ export default {
       });
     },
     newTempFilter(nodes) {
-      return nodes.filter(node => node.is_leaf);
-    }
-  }
+      return nodes.filter((node) => node.is_leaf);
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

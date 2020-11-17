@@ -2,15 +2,20 @@
   <div class="pso-wf-stage-wrapper">
     <div class="pso-wf-stage-body" v-bar>
       <div class="pso-wf-stage-scroll" ref="wfStageScroll">
-        <div class="pso-wf-stage pso-wf-container" ref="wfStage" :style="stageStyle">
+        <div
+          class="pso-wf-stage pso-wf-container"
+          ref="wfStage"
+          :style="stageStyle"
+          :class="stageClass"
+        >
           <wf-node-start
-            @clickNode="$emit('clickNode',$event)"
+            @click-node="$emit('click-node',$event)"
             :readMode="readMode"
             :workflowImage="workflowImage"
             :node="workflowImage.node[0]"
           ></wf-node-start>
           <wf-node-el
-            @clickNode="$emit('clickNode',$event)"
+            @click-node="$emit('click-node',$event)"
             :readMode="readMode"
             :workflowImage="workflowImage"
             v-for="nodeItem in workflowImage.node[0].children"
@@ -23,7 +28,7 @@
       </div>
     </div>
     <div class="pso-wf-stage__controller">
-      <wf-controller ref="wfController" @downloadStage="downloadStage"></wf-controller>
+      <wf-controller :display-small="displaySmall" ref="wfController" @downloadStage="downloadStage"></wf-controller>
     </div>
   </div>
 </template>
@@ -46,13 +51,22 @@ export default {
     readMode: {
       type: Boolean,
       default: false
+    },
+    displaySmall: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
     ...mapState(["wfDesigner"]),
     stageStyle() {
       return {
-        transform: `scale(${this.wfDesigner.stageScale})`
+        transform: `scale(${this.wfDesigner.stageScale}) ${this.wfDesigner.displaySmall ? "rotateZ(-90deg)" : ""}`
+      };
+    },
+    stageClass() {
+      return {
+        "pso-wf-stage__small": this.wfDesigner.displaySmall
       };
     },
     workflowImage() {

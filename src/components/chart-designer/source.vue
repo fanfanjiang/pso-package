@@ -18,7 +18,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import { CD_SOURCE_SET } from "../../store/mutation-types";
 
 import draggable from "vuedraggable";
- 
+
 export default {
   components: { draggable },
   computed: {

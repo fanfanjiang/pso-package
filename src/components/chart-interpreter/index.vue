@@ -1,18 +1,23 @@
 <template>
   <div class="pso-chart" ref="chart">
     <div class="pso-chart-wrapper" v-loading="!loaded">
-      <div class="pso-chart-name">{{chartCfg.chartName}}</div>
-      <component
-        v-if="loaded"
-        v-bind:is="currentChart"
-        :cfg="formCfg"
-        :settings="chartSettings"
-        :chart-config="chartCfg"
-        :data="chartData"
-        :height="chartHeight"
-        :extend="extend"
-        :colors="colors"
-      ></component>
+      <div class="pso-chart-name">{{ chartCfg.chartName }}</div>
+      <div class="pso-chart-body">
+        <component
+          v-if="loaded"
+          v-bind:is="currentChart"
+          :cfg="formCfg"
+          :settings="chartSettings"
+          :chart-config="chartCfg"
+          :data="chartData"
+          :height="chartHeight"
+          :extend="extend"
+          :colors="colors"
+        ></component>
+        <div class="pso-chart-body__bg"></div>
+        <div class="pso-chart-body__border-top"></div>
+        <div class="pso-chart-body__border-bottom"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -20,10 +25,19 @@
 import VeTable from "./table";
 import VeCard from "./card";
 import { CHART, FIGER_OP, DIMEN_OP, SORT_VAL } from "../../const/chart";
-import dayjs from "dayjs";
 import { transCMapToCondition } from "../../tool/form";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
+import debounce from "throttle-debounce/debounce";
+import { makeFormByScript } from "../../tool/form";
+
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import weekYear from "dayjs/plugin/weekYear";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+dayjs.extend(weekYear);
+dayjs.extend(weekOfYear);
+dayjs.extend(advancedFormat);
 
 export default {
   components: { VeTable, VeCard },
@@ -31,12 +45,13 @@ export default {
   data() {
     return {
       loaded: false,
+      sourceType: "",
       chartData: {
         columns: [],
-        rows: []
+        rows: [],
       },
       formCfg: {
-        data_config: []
+        data_config: [],
       },
       chartCfg: {
         formId: "",
@@ -46,13 +61,13 @@ export default {
         chartName: "",
         chartRemark: "",
         dataLimit: {},
-        filter: []
+        filter: [],
       },
       group: {},
       fields: [],
       chartHeight: "400px",
       conflict: [],
-      colors: ["#065279", "#ffc773", "#426666", "#493131", "#f47983"]
+      colors: ["#065279", "#ffc773", "#f47983", "#426666", "#E69D87", "#DD6B66", "#493131"],
     };
   },
   computed: {
@@ -74,7 +89,7 @@ export default {
 
       //设置维度
       if (this.chartCfg.dimension && this.chartCfg.dimension.length) {
-        const dimension = this.chartCfg.dimension.map(m => m._fieldValue);
+        const dimension = this.chartCfg.dimension.map((m) => m._fieldValue);
         if (this.CHARTMODEL.dimensionType === "string") {
           setting.dimension = dimension.join(",");
         } else {
@@ -84,7 +99,7 @@ export default {
 
       //设置指标
       if (this.chartCfg.metrics && this.chartCfg.metrics.length) {
-        const metrics = this.chartCfg.metrics.map(m => m._fieldValue);
+        const metrics = this.chartCfg.metrics.map((m) => m._fieldValue);
         if (this.CHARTMODEL.metricsType === "string") {
           setting.metrics = metrics.join(",");
         } else {
@@ -93,12 +108,12 @@ export default {
       }
 
       //设置别名
-      this.formCfg.data_config.forEach(fieldItem => {
+      this.formCfg.data_config.forEach((fieldItem) => {
         setting.labelMap[fieldItem._fieldValue] = this.getSlias(fieldItem._fieldValue) || fieldItem._fieldName;
       });
 
       //根据冲突设置别名
-      this.conflict.forEach(fieldItem => {
+      this.conflict.forEach((fieldItem) => {
         setting.labelMap[fieldItem._fieldValue] = this.getSlias(fieldItem._fieldValue) || fieldItem._fieldName;
       });
 
@@ -107,15 +122,19 @@ export default {
       }
 
       return setting;
-    }
+    },
   },
   watch: {
     chartId: {
       immediate: true,
       handler(val) {
         if (typeof val !== "undefined") this.getChartCfg();
-      }
-    }
+      },
+    },
+  },
+  created() {
+    this.deGetForm = debounce(500, this.getFormCfg);
+    // this.colors = _.shuffle(["#f47983", "#8DC1A9", "#E69D87", "#DD6B66", "#759AA0"]);
   },
   mounted() {
     this.setHeight();
@@ -135,27 +154,33 @@ export default {
     async getChartCfg() {
       this.loaded = false;
       let ret = await this.API.templates({ data: { tp_type: "0", tp_code: this.chartId }, method: "get" });
-      this.chartCfg = Object.assign(this.chartCfg, JSON.parse(ret.data.tp_set));
-      this.getFormCfg();
+      this.chartCfg = Object.assign(this.chartCfg, JSON.parse(ret.data.tp.data_list));
+      this.deGetForm();
     },
     async reLoadChart(chartCfg) {
       //手动配置图表
       this.chartCfg = _.cloneDeep(Object.assign(this.chartCfg, chartCfg));
-      this.getFormCfg();
+      this.deGetForm();
     },
     async getFormCfg() {
       //加载表单配置
       if (!this.chartCfg.dimension || !this.chartCfg.metrics) return;
       this.loaded = false;
-      let ret = await this.API.formsCfg({ data: { id: this.chartCfg.formId }, method: "get" });
-      if (!ret.success) return;
-      const store = new FormStore(ret.data); 
-      ret.data.data_config = store.search({
-        options: { db: true },
-        onlyData: true,
-        beforePush: item => !item.parent.CPNT.host_db
-      });
-      this.formCfg = ret.data;
+
+      if (this.chartCfg.sourceType === "1") {
+        const ret = await this.API.formsCfg({ data: { id: this.chartCfg.formId }, method: "get" });
+        const store = new FormStore(ret.data);
+        const data_config = store.search({
+          options: { db: true },
+          onlyData: true,
+          beforePush: (item) => !item.parent.CPNT.host_db,
+        });
+        this.formCfg = { data_config, data_code: ret.data.data_code };
+      } else {
+        const { data_config, tp_code } = await makeFormByScript({ code: this.chartCfg.formId });
+        this.formCfg = { data_config, code: tp_code };
+      }
+
       this.chartData.columns = _.map(this.formCfg.data_config, "_fieldValue");
 
       await this.loadFormData();
@@ -163,8 +188,7 @@ export default {
     async loadFormData() {
       //加载表单数据
       this.loaded = false;
-      const data = { form_code: this.formCfg.data_code };
-
+      const data = { leaf_auth: 4 };
       if (this.chartCfg.filter.length) {
         data.condition = transCMapToCondition(this.chartCfg.filter);
       }
@@ -174,15 +198,20 @@ export default {
       this.setHeight();
     },
     async fetchAllData(options) {
-      let { limit = 10000, start = 0 } = options;
+      let { limit = 2000, page = 0 } = options;
       let data = [];
-      while (1) {
-        const ret = await this.API.form({ data: Object.assign(options, { limit, start }), method: "get" });
-        if (ret.data && ret.data.length) {
-          data = data.concat(ret.data);
-          start = start + limit;
+      if (this.chartCfg.sourceType === "1") {
+        while (1) {
+          const ret = await this.API.form({ data: { ...options, data_code: this.formCfg.data_code, limit, page }, method: "get" });
+          if (ret.data && ret.data.length) {
+            data = data.concat(ret.data);
+            page++;
+          }
+          if (ret.total < page * limit || !ret.data.length) break;
         }
-        if (ret.total < start || !ret.data.length) break;
+      } else {
+        const navRet = await this.API.getStatisticData({ tp_code: this.formCfg.code, search_type: "init" });
+        data = navRet.data.DATA;
       }
       return data;
     },
@@ -196,7 +225,7 @@ export default {
       //维度和数字冲突处理
 
       if (this.chartCfg.dimension && this.chartCfg.dimension.length && this.chartCfg.metrics && this.chartCfg.metrics.length) {
-        this.chartCfg.metrics.forEach(mItem => {
+        this.chartCfg.metrics.forEach((mItem) => {
           const sameDimen = _.find(this.chartCfg.dimension, { _fieldValue: mItem._fieldValue });
 
           if (sameDimen) {
@@ -209,15 +238,15 @@ export default {
 
       //数据预处理
       if (this.chartCfg.dimension && this.chartCfg.dimension.length) {
-        formData.forEach(d => {
+        formData.forEach((d) => {
           //冲突赋值
 
-          this.conflict.forEach(cfItem => {
+          this.conflict.forEach((cfItem) => {
             d[cfItem._fieldValue] = d[cfItem.copyFieldValue];
             cfItem._fieldName = d._fieldName;
           });
 
-          this.chartCfg.dimension.forEach(dim => {
+          this.chartCfg.dimension.forEach((dim) => {
             if (dim.op) {
               switch (dim.op) {
                 case DIMEN_OP.YEAR:
@@ -264,7 +293,7 @@ export default {
 
       //排序处理
       const sortList = [[], []];
-      this.chartCfg.dimension.concat(this.chartCfg.metrics).forEach(item => {
+      this.chartCfg.dimension.concat(this.chartCfg.metrics).forEach((item) => {
         if (item.chartSort && SORT_VAL[item.chartSort]) {
           sortList[0].push(item._fieldValue);
           sortList[1].push(SORT_VAL[item.chartSort]);
@@ -276,7 +305,7 @@ export default {
 
       //去重
       if (this.chartCfg.dimension && this.chartCfg.dimension.length) {
-        this.chartCfg.dimension.forEach(dim => {
+        this.chartCfg.dimension.forEach((dim) => {
           if (dim.uniq) {
             let uList = [];
             const uRet = _.groupBy(this.chartData.rows, dim._fieldValue);
@@ -320,31 +349,38 @@ export default {
     },
     setRows(ary) {
       let row = ary[0];
-      for (let mItem of this.chartCfg.metrics) {
-        switch (mItem.op) {
-          case FIGER_OP.SUM:
-            row[mItem._fieldValue] = _.sumBy(ary, a => {
-              return parseInt(a[mItem._fieldValue]);
-            });
-            break;
-          case FIGER_OP.COUNT:
-            let count = ary.length;
-            if (mItem.uniq) {
-              count = Object.keys(_.groupBy(ary, mItem._fieldValue)).length;
-            }
-            row[mItem._fieldValue] = count;
-            break;
-          case FIGER_OP.AVG:
-            row[mItem._fieldValue] =
-              _.sumBy(ary, a => {
-                return parseInt(a[mItem._fieldValue]);
-              }) / ary.length;
-            break;
+      if (row) {
+        for (let mItem of this.chartCfg.metrics) {
+          switch (mItem.op) {
+            case FIGER_OP.SUM:
+              row[mItem._fieldValue] = _.sumBy(ary, (a) => {
+                return parseInt(a[mItem._fieldValue] || 0);
+              });
+              break;
+            case FIGER_OP.COUNT:
+              let count = ary.length;
+              if (mItem.uniq) {
+                count = Object.keys(_.groupBy(ary, mItem._fieldValue)).length;
+              }
+              row[mItem._fieldValue] = count;
+              break;
+            case FIGER_OP.AVG:
+              row[mItem._fieldValue] =
+                _.sumBy(ary, (a) => {
+                  return parseInt(a[mItem._fieldValue]);
+                }) / ary.length;
+              break;
+            case FIGER_OP.FIRST:
+              row[mItem._fieldValue] = ary.sort((a, b) => {
+                return a[mItem._fieldValue] > b[mItem._fieldValue] ? 1 : -1;
+              })[0][mItem._fieldValue];
+              break;
+          }
         }
+        this.chartData.rows = this.chartData.rows.concat(row);
       }
-      this.chartData.rows = this.chartData.rows.concat(row);
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less">

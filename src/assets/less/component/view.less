@@ -1,0 +1,333 @@
+// 视图
+.pso-view {
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+
+    @media (max-width: @screen-md-min) {
+
+        .pso-view-header,
+        .pso-view-fun {
+            align-items: flex-start !important;
+        }
+
+        .pso-view-header {
+            flex-direction: column !important;
+        }
+
+        .pso-view-fun {
+            flex-direction: column-reverse !important;
+        }
+
+        .pso-view-fun-r {
+            overflow: auto;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .view-data-fun {
+            display: flex !important;
+        }
+
+        .pso-view-header__r {
+            width: 100%;
+            margin-top: 5px;
+
+            .el-tabs__item {
+                padding: 0 15px;
+            }
+        }
+
+        .pso-view-header__l {
+            width: 100%; 
+        }
+
+        .pso-view-table {
+            margin-top: 10px;
+        }
+    }
+
+    &.pso-view__expand {
+        .pso-view-extend {
+            width: 200px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .pso-view-body {
+            width: calc(100% - 200px);
+            transition: width 0.3s ease-in-out;
+        }
+    }
+
+    .pso-view-extend {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease-in-out;
+        overflow-y: auto;
+    }
+
+    .pso-view-body {
+        width: 100%;
+        padding: 10px;
+        overflow: auto;
+        transition: width 0.3s ease-in-out;
+
+        .pso-view-header {
+            display: flex;
+            margin-bottom: 10px;
+            justify-content: space-between;
+            align-items: center;
+
+
+
+            .pso-view-header__l {}
+
+            .pso-view-header__r {}
+
+            .pso-view-title {
+                display: flex;
+                align-items: center;
+                color: #666;
+
+                i {
+                    font-size: 18px;
+                }
+
+                span {
+                    font-weight: bold;
+                    font-size: 17px;
+                    margin-left: 5px;
+                    .show-a-line();
+                }
+            }
+
+            .pso-view-authtab {
+                margin-top: -5px;
+            }
+
+            .el-tabs__header {
+                margin: 0;
+            }
+
+            .el-tabs__nav-wrap::after {
+                content: none;
+            }
+        }
+
+        .pso-view-switch {}
+
+        .pso-view-viewtab {
+            display: flex;
+            align-items: center;
+
+            .el-badge {
+                &+.el-badge {
+                    margin-left: 10px;
+                }
+
+                &+.el-tag {
+                    margin-left: 10px;
+                }
+            }
+
+            .el-tag {
+                cursor: pointer;
+
+                &+.el-tag {
+                    margin-left: 10px;
+                }
+
+                &+.el-badge {
+                    margin-left: 10px;
+                }
+
+            }
+
+            .el-badge__content {
+                top: 3px;
+                right: 14px;
+            }
+
+        }
+
+        .pso-view-sorttag {
+            margin-top: 10px;
+
+            .el-tag {
+                &+.el-tag {
+                    margin-left: 10px;
+                }
+            }
+        }
+ 
+        .view-table-fun {
+            display: flex;
+            align-items: center;
+
+            .el-input {
+                width: 150px;
+            }
+        }
+
+        .view-data-fun {
+            .el-dropdown {
+
+                &+.el-dropdown,
+                &+button {
+                    margin-left: 10px;
+                }
+            }
+
+            button {
+
+                &+.el-dropdown,
+                &+button {
+                    margin-left: 10px;
+                }
+            }
+
+
+            .el-dropdown,
+            >span,
+            >button {
+
+                &+.el-dropdown,
+                &+span,
+                &+button {
+                    margin-left: 10px;
+                }
+            }
+        }
+
+        .pso-view-fun {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pso-view-table {
+
+            .pso-view-table__footer {
+                margin-top: 10px;
+                background-color: #fff;
+            }
+
+        }
+    }
+}
+
+.pso-switch-panel {
+    max-height: 300px;
+    overflow: scroll;
+
+    .pso-switch-panel__item {
+        &+.pso-switch-panel__item {
+            margin-top: 15px;
+        }
+    }
+
+    .el-switch {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+//旗帜标签
+.tag-flag-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    display: inline-block;
+
+    &+.tag-flag-box {
+        margin-left: 2px;
+    }
+}
+
+.modifier-placeholder-wrapper {
+    &:hover {
+        .modifier-trigger {
+            display: block;
+        }
+    }
+}
+
+.modifier-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 99%;
+    position: relative;
+
+    .modifier-flag {
+        display: flex;
+        align-items: center;
+    }
+
+    .modifier-file {
+        width: 100%;
+
+        .pso-upload__list-item {
+            width: 60px;
+            height: 60px;
+        }
+    }
+
+    .modifier-value {
+        width: 100%;
+    }
+
+    .modifier-trigger {
+        cursor: pointer;
+        font-size: 16px;
+        display: none;
+
+        &:hover {
+            color: @main-color
+        }
+    }
+}
+
+.modifier {
+    position: fixed;
+    background-color: #fff;
+    z-index: 999;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+
+    .el-input__inner,
+    .el-textarea__inner {
+        border-radius: 0;
+    }
+
+    .el-input__inner {
+        height: 41px;
+        line-height: 41px;
+    }
+
+    .el-form-item {
+        margin: 0 !important;
+    }
+
+    .pso-form-row {
+        >div {
+            margin: 0 !important;
+        }
+    }
+
+    .pso-number {
+        width: 100%;
+    }
+
+    input,
+    textarea {
+        min-height: 41px !important;
+        border-width: 2px;
+    }
+}
+
+
+.pso-formTable-formViewer {
+    padding: 15px;
+}

@@ -10,7 +10,8 @@ export function pickerMixin({
     return {
         data() {
             const data = {
-                idName
+                idName,
+                pickerListName: dataListName
             };
             if (!baseObjName) {
                 baseObjName = "selectionObj";
@@ -40,7 +41,7 @@ export function pickerMixin({
         methods: {
             handleAddSelection(data) {
                 if (data.length) {
-                    this.baseObj[dataListName] = _.uniqBy(this.baseObj[dataListName].concat(data), this.idName);
+                    this.baseObj[this.pickerListName] = _.uniqBy(this.baseObj[this.pickerListName].concat(data), this.idName);
                     if (this.baseObj[typeName] === radioVal) {
                         this.checkRadio(data[0]);
                     }
@@ -48,16 +49,23 @@ export function pickerMixin({
                 this[showName] = false;
             },
             handleDelSelection(data) {
-                this.baseObj[dataListName].splice(_.findIndex(this.baseObj[dataListName], { [this.idName]: data[this.idName] }), 1);
+                this.baseObj[this.pickerListName].splice(_.findIndex(this.baseObj[this.pickerListName], { [this.idName]: data[this.idName] }), 1);
+            },
+            handleDelList(list) {
+                list.forEach(item => this.handleDelSelection(item))
             },
             checkRadio(data) {
                 const dataFix = data ? 0 : 1;
-                const params = [dataFix, this.baseObj[dataListName].length - dataFix];
+                const params = [dataFix, this.baseObj[this.pickerListName].length - dataFix];
                 if (data) params.push(data);
-                this.baseObj[dataListName].splice(...params);
+                this.baseObj[this.pickerListName].splice(...params);
             },
-            resetPicker({ idName }) {
-                this.baseObj[dataListName] = [];
+            resetPicker({ idName, reset = true, dataListName }) {
+                if (dataListName) {
+                    this.$set(this.baseObj, dataListName, this.baseObj[dataListName] || []);
+                    this.pickerListName = dataListName;
+                }
+                if (reset) this.baseObj[this.pickerListName] = [];
                 if (idName) this.idName = idName;
             }
         }

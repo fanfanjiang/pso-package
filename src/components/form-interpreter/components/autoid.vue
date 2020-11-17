@@ -1,21 +1,82 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-input disabled :value="cpnt.data._val"></el-input>
-  </el-form-item>
+  <pso-label :cpnt="cpnt">
+    <el-input size="small" :disabled="!cpnt.store.editable || cpnt.data._read" v-model="idVal"></el-input>
+  </pso-label>
 </template>
 <script>
+import { FIELD_FORMAT } from "../../../const/form";
 import cpntMixin from "../mixin";
+import { cpntFix } from "../mixins";
+
 export default {
-  mixins: [cpntMixin],
+  mixins: [cpntMixin, cpntFix],
+  data() {
+    return {
+      emitSilent: true,
+      sourceField: "_source",
+      idVal: "",
+      scriptVal: "",
+    };
+  },
   async created() {
-    if (!this.cpnt.data._val && !this.cpnt.store.instance_id) {
-      let source = this.cpnt.data._source || `#date##no#`;
-      source = source.replace(/#date#/g, `[date(${this.cpnt.data._format})]`).replace(/#no#/g, `%0${this.cpnt.data._digit}d`);
-      const ret = await this.API.getFormNumber({ data_code: this.cpnt.store.data_code, keys: { [this.cpnt.data._fieldValue]: source } });
-      if (ret.success) {
-        this.cpnt.data._val = ret.data[this.cpnt.data._fieldValue];
+    let instance_id = this.cpnt.store.instance_id;
+
+    if (this.cpnt.store.copyMode) {
+      this.cpnt.data._val = "";
+      instance_id = "";
+    }
+
+    if (instance_id) {
+      this.idVal = this.cpnt.data._val;
+      this.$watch("idVal", (val) => {
+        this.setSimpleVal();
+      });
+    }
+
+    if (!instance_id) {
+      if (this.cpnt.data._fieldFormat === FIELD_FORMAT.autotag.value) {
+        if (this.cpnt.data._bind) {
+          const target = this.cpnt.store.search({ options: { fid: this.cpnt.data._bind }, onlyData: true });
+          if (target) {
+            this.cpnt.data._val = target._val;
+          }
+          this.$on("cpnt-value-changed", ({ cpnt }) => {
+            if (cpnt.fid === this.cpnt.data._bind) {
+              this.cpnt.data._val = cpnt.data._val;
+            }
+          });
+        }
+      } else {
+        if (this.cpnt.data._source) {
+          this.$watch("fixValue", (val) => {
+            this.scriptVal = this.goFormat(val);
+            this.setTrueVal();
+          });
+          this.$watch("idVal", (val) => {
+            this.setTrueVal();
+          });
+          this.scriptVal = this.goFormat(this.cpnt.data._source);
+          this.setTrueVal();
+          this.startWatch();
+        } else {
+          if (!instance_id) {
+            this.scriptVal = this.goFormat(`@__date__@@__no__@`);
+            this.setTrueVal();
+          }
+        }
       }
     }
-  }
+  },
+  methods: {
+    goFormat(source) {
+      return source.replace(/@__date__@/g, `[date(${this.cpnt.data._format})]`).replace(/@__no__@/g, `%0${this.cpnt.data._digit}d`);
+    },
+    setTrueVal() {
+      this.cpnt.data._val = this.idVal + this.scriptVal;
+    },
+    setSimpleVal() {
+      this.cpnt.data._val = this.idVal;
+    },
+  },
 };
 </script>

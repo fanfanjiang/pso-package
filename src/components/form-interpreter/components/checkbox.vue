@@ -1,26 +1,36 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-checkbox-group v-model="cpnt.data._val">
+  <pso-label :cpnt="cpnt">
+    <el-checkbox-group v-model="proxy" v-if="!reloading">
       <el-checkbox
-        v-for="opt in cpnt.data._option"
+        size="small"
+        v-for="opt in fixedOptions"
         :key="opt._optionValue"
-        :label="opt._optionName||opt._optionValue"
-        :value="opt._optionValue"
+        :label="opt._fixedVal||opt._optionValue"
         :disabled="!cpnt.store.editable||cpnt.data._read"
-      ></el-checkbox>
+      >{{opt._fixedName||opt._optionName||opt._optionValue}}</el-checkbox>
     </el-checkbox-group>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import cpntMixin from "../mixin";
+import { optionFix } from "../mixins";
+
 export default {
-  mixins: [cpntMixin],
+  mixins: [cpntMixin, optionFix],
+  data() {
+    return {
+      proxy: [],
+    };
+  },
   created() {
-    this.cpnt.data._val = this.cpnt.data._val
-      ? typeof this.cpnt.data._val === "string"
-        ? this.cpnt.data._val.split(",")
-        : this.cpnt.data._val
-      : [];
-  }
+    if (this.cpnt.data._val) {
+      this.proxy = this.cpnt.data._val.split(",");
+    }
+  },
+  watch: {
+    proxy(val) {
+      this.cpnt.data._val = val.join(",");
+    },
+  },
 };
 </script>

@@ -139,7 +139,7 @@ export default function AnimationStateManager() {
 
 				css(target, 'transform', 'translate3d(' + translateX + 'px,' + translateY + 'px,0)');
 
-				repaint(target); // repaint
+				repaint(target); // 重新绘制技巧
 
 				css(target, 'transition', 'transform ' + duration + 'ms' + (this.options.easing ? ' ' + this.options.easing : ''));
 				css(target, 'transform', 'translate3d(0,0,0)');

@@ -2,13 +2,13 @@ import MUT_TYPES from '../mutation-types';
 import API from "../../service/api.js";
 import { FIGER_DEFALUT_OP, SORT } from "../../const/chart";
 import FormStore from "../../components/form-designer/model/store.js";
-
+import { makeFormByScript } from '../../tool/form'
 import Vue from 'vue';
 
 const STATE = {
     initializing: false,
+    sourceType: "1",
     formId: '',
-    cfg: {},
     chartName: '',
     chartRemark: '',
     source: [],
@@ -98,15 +98,30 @@ export default {
     actions: {
         async  [MUT_TYPES.CD_SOURCE_GET]({ state, getters, commit, dispatch }, reset = false) {
             state.initializing = true;
+            console.log(reset);
 
             if (reset) {
-                commit(MUT_TYPES.CD_INIT, { ..._.cloneDeep(STATE), formId: state.formId });
+                commit(MUT_TYPES.CD_INIT, { ..._.cloneDeep(STATE), formId: state.formId, sourceType: state.sourceType });
             }
 
-            let ret = await API.formsCfg({ data: { id: state.formId }, method: "get" });
-            if (!ret.success) return;
-            state.cfg = ret.data;
-            const store = new FormStore(ret.data);
+            let cfg = null;
+            if (state.sourceType === '1') {
+                const ret = await API.formsCfg({ data: { id: state.formId }, method: "get" });
+                cfg = ret.data;
+            } else {
+                const ret = await makeFormByScript({ code: state.formId });
+                if (ret.data_config) {
+                    cfg = {
+                        data_name: "0",
+                        data_code: "0",
+                        data_id: "0",
+                        data_config: ret.data_config,
+                        forceInsertSys: false,
+                    }
+                }
+            }
+
+            const store = new FormStore({ ...cfg, designMode: false });
             const fields = store.search({
                 options: { db: true },
                 onlyData: true,

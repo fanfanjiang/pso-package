@@ -1,16 +1,19 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
+  <pso-label :cpnt="cpnt">
     <div class="pso-number">
       <el-input-number
+        ref="cpnt"
+        size="small"
         v-model="cpnt.data._val"
-        :disabled="!cpnt.store.editable||cpnt.data._read"
+        :disabled="!cpntEditable"
         :controls="false"
         :precision="precisionVal"
-        :min="min"
+        :min="minNum"
+        :max="maxNum"
       ></el-input-number>
-      <span v-if="cpnt.data._unit" class="pso-number-unit">{{cpnt.data._unit}}</span>
+      <span v-if="cpnt.data._unit" class="pso-number-unit">{{ cpnt.data._unit }}</span>
     </div>
-  </el-form-item>
+  </pso-label>
 </template>
 <script>
 import cpntMixin from "../mixin";
@@ -20,33 +23,78 @@ export default {
   props: {
     min: {
       type: Number,
-      default: -Infinity
+      default: -Infinity,
     },
     max: {
       type: Number,
-      default: Infinity
+      default: Infinity,
     },
     precision: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
-  created() {
-    if (this.cpnt.data._val === "") {
-      this.cpnt.data._val = 0;
-    }
+  data() {
+    return {
+      emitSilent: true,
+    };
   },
   computed: {
     minNum() {
-      return typeof this.cpnt.data._min === "undefined" ? this.min : this.cpnt.data._min;
+      return this.getLimitVal("min");
     },
     maxNum() {
-      return typeof this.cpnt.data._max === "undefined" ? this.max : this.cpnt.data._max;
+      return this.getLimitVal("max");
     },
     precisionVal() {
       return typeof this.cpnt.data._decimalPlaces === "undefined" ? this.precision : this.cpnt.data._decimalPlaces;
+    },
+  },
+  watch: {
+    minNum(num, onum) {
+      this.checkVal();
+    },
+    maxNum(num, onum) {
+      this.checkVal();
+    },
+  },
+  created() {
+    this.cpnt.data._val = parseFloat(this.cpnt.data._val || 0);
+    this.watchCpntVal();
+  },
+  mounted() {
+    if (this.cpnt.data._autofocus) {
+      this.$refs.cpnt.focus();
     }
-  }
+  },
+  methods: {
+    getLimitVal(type) {
+      const fieldTypeTarget = this.cpnt.data[`_${type}Field`];
+      const numberTypeTarget = this.cpnt.data[`_${type}`];
+      const limit = this[type];
+
+      if (this.cpnt.data._useRange) {
+        if (fieldTypeTarget) {
+          const cpnt = this.cpnt.store.searchByField(fieldTypeTarget, true);
+          if (cpnt) {
+            return cpnt._val;
+          }
+        } else if (typeof numberTypeTarget !== "undefined") {
+          return numberTypeTarget;
+        }
+      }
+      return limit;
+    },
+    checkVal() {
+      const oldVal = this.cpnt.data._val;
+      let newVal = this.cpnt.data._val;
+      if (_.isNumber(this.maxNum) && oldVal >= this.maxNum) newVal = this.maxNum;
+      if (_.isNumber(this.minNum) && oldVal <= this.minNum) newVal = this.minNum;
+      if (oldVal !== newVal) {
+        this.cpnt.data._val = newVal;
+      }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

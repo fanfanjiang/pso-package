@@ -6,14 +6,17 @@
         <el-select v-model="cpnt.data._defaultValue" placeholder="请选择">
           <el-option
             v-for="item in options"
-            :key="item.tp_code"
-            :label="item.tp_name"
-            :value="item.tp_code"
+            :key="item.node_name"
+            :label="item.node_display"
+            :value="item.node_name"
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="高度">
+        <el-input-number size="mini" v-model="cpnt.data._height" :min="0"></el-input-number>
+      </el-form-item>
     </el-form>
-  </div>
+  </div> 
 </template>
 <script>
 import panelHeader from "../common/panel-header";
@@ -21,11 +24,11 @@ import panelHeader from "../common/panel-header";
 export default {
   props: ["cpnt"],
   components: {
-    panelHeader
+    panelHeader,
   },
   data() {
     return {
-      options: []
+      options: [],
     };
   },
   created() {
@@ -33,10 +36,9 @@ export default {
   },
   methods: {
     async getcharts() {
-      let ret = await this.API.templates({ data: { tp_type: "0", id_leaf: 1 }, method: "get" });
-      this.options = ret.data;
-    }
-  }
+      this.options = await this.API.getTempleteTree([3]);
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

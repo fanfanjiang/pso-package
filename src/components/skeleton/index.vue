@@ -1,5 +1,5 @@
 <template>
-  <div :class="classObject">
+  <div :class="classObject" :style="sStyle">
     <pso-skeleton-heading v-if="heading" :img="headimg"></pso-skeleton-heading>
     <slot />
     <pso-skeleton-text :lines="lines"></pso-skeleton-text>
@@ -22,10 +22,10 @@ export default {
         "pso-skeleton": true,
         "pso-skeleton-is-rounded": this.rounded,
         "pso-skeleton-is-centered": this.centered,
-        "pso-skeleton-is-animated": this.animated
+        "pso-skeleton-is-animated": this.animated,
       };
-    }
-  }
+    },
+  },
 };
 </script>
 

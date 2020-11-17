@@ -16,11 +16,38 @@ export default class Component {
             }
         }
         const store = this.store;
-       
+
         genComponentData(this.data);
 
         //默认组件名称
         this.data._fieldName = this.data._fieldName || this.CPNT.name;
+
+        //最终组件是否显示
+        this.data.__eventualShow__ = true;
+
+        //显示
+        if (store.hiddenCpnts.indexOf(this.data.fid) !== -1) {
+            this.data._hideForever = true;
+        }
+
+        if (store.extendAuth) {
+            const exist = _.find(store.extendAuth, { id: this.data._fieldValue });
+            if (exist && exist.value) {
+                if ((1 & exist.value) === 1) {
+                    this.data._hideOnNew = this.data._hideForever = false;
+                }
+                if ((2 & exist.value) === 2) {
+                    Vue.set(this.data, '__forceEdit__', true)
+                }
+                if ((4 & exist.value) === 4) {
+                    this.data._required = true;
+                }
+            }
+        }
+
+        //权限
+        const auth = _.find(store.__fieldAuth__, { field_name: this.data._fieldValue }) || {};
+        this.data.__auth__ = auth.show_auth || null;
 
         //对以前数据的兼容处理
         this.compatible('_required');

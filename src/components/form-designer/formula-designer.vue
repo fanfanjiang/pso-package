@@ -3,19 +3,14 @@
     <div class="formula-designer__menu">
       <div class="formula-designer__menu-header">
         <el-tabs v-model="activeTab">
-          <el-tab-pane label="公式" name="formula"></el-tab-pane>
+          <el-tab-pane label="公式" name="formula" v-if="formulable"></el-tab-pane>
           <el-tab-pane label="字段" name="field"></el-tab-pane>
         </el-tabs>
       </div>
       <div class="formula-designer__menu-body">
-        <div class="formula-designer__formula" v-show="activeTab==='formula'">
+        <div class="formula-designer__formula" v-if="formulable" v-show="activeTab === 'formula'">
           <el-collapse v-model="activeFormula">
-            <el-collapse-item
-              v-for="f in FORMULA_LIST"
-              :title="f.name"
-              :name="f.name"
-              :key="f.name"
-            >
+            <el-collapse-item v-for="f in FORMULA_LIST" :title="f.name" :name="f.name" :key="f.name">
               <el-tooltip
                 popper-class="formula-tooltip"
                 v-for="item in f.list"
@@ -25,47 +20,34 @@
                 placement="right"
               >
                 <div slot="content" class="formula-designer__formula-tip">
-                  <div>{{item.input}}</div>
+                  <div>{{ item.input }}</div>
                   <div v-html="item.example"></div>
                 </div>
                 <div class="formula-designer__formula-item" @click="handleClickFormula(item)">
-                  <p>{{item.id}}</p>
-                  <p>{{item.info}}</p>
+                  <p>{{ item.id }}</p>
+                  <p>{{ item.info }}</p>
                 </div>
               </el-tooltip>
             </el-collapse-item>
           </el-collapse>
         </div>
-        <div class="formula-designer__field" v-show="activeTab==='field'">
-          <div
-            class="formula-designer__field-item"
-            v-for="(cpnt,index) in cpnts"
-            :key="index"
-            @click="handleClickCpnt(cpnt)"
-          >
-            <div>{{cpnt._fieldName}}</div>
-            <div>{{getCPNT(cpnt).name}}</div>
+        <div class="formula-designer__field" v-show="activeTab === 'field'">
+          <div class="formula-designer__field-item" v-for="(cpnt, index) in cpnts" :key="index" @click="handleClickCpnt(cpnt)">
+            <div>{{ cpnt.fieldDisplay || cpnt._fieldName }}</div>
+            <div>{{ getCPNT(cpnt).name }}</div>
           </div>
         </div>
       </div>
     </div>
     <div class="formula-designer__body">
-      <div class="formula-designer__body__header">
-        <i class="el-icon-info"></i>在左侧点击选择函数或字段变量，且在英文输入法下编辑
-      </div>
+      <div class="formula-designer__body__header"><i class="el-icon-info"></i>在左侧点击选择函数或字段变量，且在英文输入法下编辑</div>
       <div class="formula-designer__body__content">
-        <codemirror
-          ref="codemirror"
-          :options="cmOptions"
-          v-model="code"
-          @changes="handleCodeChange"
-          @key-handled="handleKey"
-        />
+        <codemirror ref="codemirror" :options="cmOptions" v-model="code" @changes="handleCodeChange" @key-handled="handleKey" />
       </div>
       <div class="formula-designer__body__footer">
         <div class="formula-designer__test">
-          <div v-if="example">示例：{{example}}</div>
-          <div v-if="example">结果：{{result}}</div>
+          <div v-if="example">示例：{{ example }}</div>
+          <div v-if="example">结果：{{ result }}</div>
         </div>
         <div>
           <el-button type="text" size="small" @click="handleTest">测试</el-button>
@@ -79,21 +61,17 @@
 <script>
 import { FORMULA, FORMULA_LIST } from "../../const/formula";
 import { CPNT } from "../../const/form";
-import { codemirror } from "vue-codemirror";
-import CodeMirror from "codemirror/lib/codemirror.js";
-import "codemirror/lib/codemirror.css";
-import "codemirror/addon/edit/matchbrackets";
-import "codemirror/addon/hint/show-hint.js";
-import "codemirror/addon/hint/show-hint.css";
 const FORMULA_KEY = Object.keys(FORMULA);
-const formulajs = require("@handsontable/formulajs");
 import dayjs from "dayjs";
 
 export default {
-  components: { codemirror },
   props: {
     cpnts: Array,
-    value: String
+    value: String,
+    formulable: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -102,30 +80,30 @@ export default {
       activeFormula: "",
       code: "",
       mirrorCursor: {
-        cursorHeight: 0.8
+        cursorHeight: 0.8,
       },
       cmOptions: {
         lineWrapping: true,
         extraKeys: { Ctrl: "autocomplete" },
         hintOptions: {
           hint: this.handleHint,
-          completeSingle: false
-        }
+          completeSingle: false,
+        },
       },
       showHint: true,
       example: "",
-      result: ""
+      result: "",
     };
   },
   computed: {
     codeRef() {
       return this.$refs.codemirror.codemirror;
-    }
+    },
   },
   created() {
-    Object.keys(formulajs).forEach(key => {
-      window[key] = formulajs[key];
-    });
+    if (!this.formulable) {
+      this.activeTab = "field";
+    }
   },
   mounted() {
     if (this.value) {
@@ -137,7 +115,7 @@ export default {
     handleTest() {
       try {
         let codeCopy = this.code;
-        this.cpnts.forEach(item => {
+        this.cpnts.forEach((item) => {
           let tempVal;
           switch (item._fieldRealType) {
             case "decimal":
@@ -176,7 +154,7 @@ export default {
 
       let n = 0;
       const matches = [];
-      codeRef.eachLine(line => {
+      codeRef.eachLine((line) => {
         const reg = /@[0-9a-zA-Z-_]+@/g;
         while (true) {
           const match = reg.exec(line.text);
@@ -192,9 +170,11 @@ export default {
             { line: n, ch: match.index },
             { line: n, ch: match.index + match[0].length },
             {
-              replacedWith: $(`<span class="code-widget"><span>${cpnt._fieldName}</span><span>${cpnt._defaultValue}</span></span>`)[0],
+              replacedWith: $(
+                `<span class="code-widget"><span>${cpnt.fieldDisplay || cpnt._fieldName}</span><span>${cpnt._defaultValue}</span></span>`
+              )[0],
               selectLeft: true,
-              selectRight: true
+              selectRight: true,
             }
           );
         }
@@ -209,10 +189,12 @@ export default {
         this.mirrorCursor,
         { line: this.mirrorCursor.line, ch: this.mirrorCursor.ch + text.length },
         {
-          replacedWith: $(`<span class="code-widget"><span>${cpnt._fieldName}</span><span>${cpnt._defaultValue}</span></span>`)[0],
+          replacedWith: $(
+            `<span class="code-widget"><span>${cpnt.fieldDisplay || cpnt._fieldName}</span><span>${cpnt._defaultValue}</span></span>`
+          )[0],
           selectLeft: true,
           selectRight: true,
-          handleMouseEvents: true
+          handleMouseEvents: true,
         }
       );
       this.mirrorCursor = codeRef.getCursor();
@@ -260,8 +242,8 @@ export default {
     },
     handleKey(editor, key) {
       this.showHint = !(key === "Enter");
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -283,17 +265,6 @@ export default {
       width: 100%;
       border-radius: 0;
       border: none;
-    }
-    .code-widget {
-      display: inline-block;
-      height: 20px;
-      line-height: 20px;
-      background: #fd8647;
-      color: #fff;
-      margin: 0 4px;
-      border-radius: 3px;
-      padding: 0 8px;
-      font-size: 13px;
     }
     .el-tabs__header {
       margin-bottom: 0;

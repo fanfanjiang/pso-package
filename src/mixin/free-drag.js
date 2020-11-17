@@ -33,13 +33,21 @@ export default function (stage = "stage", target = "target") {
       this.isMobile = parser.getResult().device.type === 'mobile'
     },
     mounted() {
-      on(this.$refs[stage], this.mousedown, this.dragstart);
-      on(document, this.mouseup, this.onDrop);
+      try {
+        on(this.$refs[stage], this.mousedown, this.dragstart);
+        on(document, this.mouseup, this.onDrop);
+      } catch (error) {
+        console.log('自由移动创建出错');
+      }
     },
     beforeDestroy() {
-      off(this.$refs[stage], this.mousedown, this.dragstart);
-      off(document, this.mouseup, this.onDrop);
-      this.onDrop();
+      try {
+        off(this.$refs[stage], this.mousedown, this.dragstart);
+        off(document, this.mouseup, this.onDrop);
+        this.onDrop();
+      } catch (error) {
+        console.log('自由移动销毁出错');
+      }
     },
     methods: {
       getClientX(evt) {

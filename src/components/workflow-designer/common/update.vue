@@ -1,26 +1,18 @@
 <template>
   <div>
     <el-divider content-position="left">更新设置</el-divider>
-    <div class="pso-wf-update" v-for="(upItem,index) of node.update" :key="index">
+    <div class="pso-wf-update" v-for="(upItem, index) of node.update" :key="index">
       <div class="pso-wf-update__body">
         <el-form-item label="将字段">
           <el-select v-model="upItem.fid" placeholder="请选择" @change="fieldChangeHandler(upItem)">
-            <el-option
-              v-for="item in options"
-              :key="item.fid"
-              :label="item.displayName"
-              :value="item.fid"
-            ></el-option>
+            <el-option v-for="item in options" :key="item.fid" :label="item.displayName" :value="item.fid"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="设置为" v-if="upItem.fid">
-          <template v-if="upItem.type===1">
+          <template v-if="upItem.type === 1">
             <div class="pso-wf-update__l">
               <div class="pso-wf-update__l-cpnt">
-                <pso-form-component
-                  :cpnt="upItem.cpnt"
-                  @value-change="valueChangeHandler($event,upItem)"
-                ></pso-form-component>
+                <pso-form-component :cpnt="upItem.cpnt" @value-change="valueChangeHandler($event, upItem)"></pso-form-component>
                 <!-- <el-input
                   v-if="getCpnt(upItem).componentid==='time'"
                   v-model="input"
@@ -28,33 +20,21 @@
                 ></el-input>
                 <el-input v-else v-model="upItem.value"></el-input>-->
               </div>
-              <el-dropdown trigger="click" @command="commandHandler($event,upItem)">
+              <el-dropdown trigger="click" @command="commandHandler($event, upItem)">
                 <span class="el-dropdown-link">
                   <i class="el-icon-plus el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item
-                    :command="dItem.fid"
-                    v-for="dItem in options"
-                    :key="dItem.fid"
-                  >{{dItem.displayName}}</el-dropdown-item>
+                  <el-dropdown-item :command="dItem.fid" v-for="dItem in options" :key="dItem.fid">{{
+                    dItem.displayName
+                  }}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
           </template>
           <template v-else>
-            <el-select
-              v-model="upItem.value"
-              clearable
-              placeholder="请选择"
-              @clear="clearHandler(upItem)"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.fid"
-                :label="item.displayName"
-                :value="item.fid"
-              ></el-option>
+            <el-select v-model="upItem.value" clearable placeholder="请选择" @clear="clearHandler(upItem)">
+              <el-option v-for="item in options" :key="item.fid" :label="item.displayName" :value="item.fid"></el-option>
             </el-select>
           </template>
         </el-form-item>
@@ -76,7 +56,7 @@ export default {
   components: { PsoFormComponent },
   data() {
     return {
-      store: {}
+      store: {},
     };
   },
   computed: {
@@ -85,18 +65,18 @@ export default {
       return this.wfDesigner.formStore.search({
         onlyData: true,
         options: { db: true },
-        beforePush: item => {
+        beforePush: (item) => {
           if (item.parent.CPNT.host_db) return false;
           item.data.displayName = `[${item.CPNT.name}]${item.data._fieldName}`;
           return true;
-        }
+        },
       });
-    }
+    },
   },
   created() {
     for (let upItem of this.node.update) {
       const cpnt = this.getCpnt(upItem);
-      if (!upItem.cpnt) upItem.cpnt = this.makeCpnt(upItem, { [cpnt.data._fieldValue]: upItem.value });
+      if (cpnt && !upItem.cpnt) upItem.cpnt = this.makeCpnt(upItem, { [cpnt.data._fieldValue]: upItem.value });
     }
   },
   methods: {
@@ -131,8 +111,8 @@ export default {
     clearHandler(update) {
       update.type = 1;
       update.value = "";
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

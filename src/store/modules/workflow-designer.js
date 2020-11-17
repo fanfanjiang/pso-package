@@ -4,6 +4,7 @@ import nodeField from "../../components/workflow-designer/node-field";
 import API from "../../service/api.js";
 import { transCMapToCondition } from "../../tool/form";
 import FormStore from "../../components/form-designer/model/store.js";
+import { WF_EMPTY_TYPE, WF_AUTH_TYPE } from "../../const/workflow";
 
 export function genNode(tid) {
     let newNode = Object.assign({ tid, nid: shortid.generate(), children: [] }, _.cloneDeep(nodeField.default));
@@ -12,13 +13,13 @@ export function genNode(tid) {
 }
 
 const STATE = {
-    appid: '3',
     pid: '',
     node_id: '',
     templateId: '',   //模板node_id
     wfName: '工作流名称',
     wfCode: '',
     wfFiletype: [], //发文编号
+    wfAuthType: WF_AUTH_TYPE[0].v,
     formId: '',
     formName: '',
     tableContent: '',
@@ -28,12 +29,14 @@ const STATE = {
     node: [],
     fields: [],
     formsList: [],
-    formAuthOptions: [],
     permissionEntries: [],
     fileTypes: [], //发文编号缓存
     loading: false,
     initializing: true,
-    formStore: {}
+    formStore: {},
+    displaySmall: false,
+    fieldsOptions: [],
+    emptyType: WF_EMPTY_TYPE[0].v
 }
 
 export default {
@@ -42,8 +45,7 @@ export default {
         [MUT_TYPES.WF_RESET](state) {
             Object.assign(state, _.cloneDeep(STATE))
         },
-        [MUT_TYPES.WF_NODE_INIT](state, { appid = "3", pid = '', node_id = "", node, templateId = '' }) {
-            state.appid = appid;
+        [MUT_TYPES.WF_NODE_INIT](state, { pid = '', node_id = "", node, templateId = '' }) {
             state.pid = pid;
 
             //如果有模板id，则不能更新node_id;
@@ -136,7 +138,6 @@ export default {
                             throw new Error('请完善');
                         }
                         node.op = node.opList.reduce((a, b) => a + b);
-                        node.authitemsList.length && (node.authitems = node.authitemsList.join(','));
                         node.bodyitemsList.length && (node.bodyitems = node.bodyitemsList.join(','));
                     }
 
@@ -170,16 +171,16 @@ export default {
             }
             traverse(node);
             const data = {
-                appid: state.appid,
                 pid: state.pid,
                 node_id: state.node_id,
                 wf_name: state.wfName,
-                wf_table_id: state.formId,
+                map_data_code: state.formId,
                 wf_list_column: '',
-                wf_list_data: "",
                 wf_code: state.wfCode || shortid.generate(),
-                wf_map_tp: node,
+                wf_map_tp: JSON.stringify(node),
+                wf_auth_type: state.wfAuthType,
                 wf_filetype: state.wfFiletype.join(','),
+                empty_type: state.emptyType,
                 permissionEntries: state.permissionEntries
             }
             return data;
@@ -187,11 +188,10 @@ export default {
         async [MUT_TYPES.WF_INIT]({ state, getters, commit, dispatch }, params) {
 
             //获取表单列表
-            const formTreeRet = await API.trees({ data: { node_id: '3', appid: '3', node_dimen: "nodedimen03" } });
-            state.formsList = formTreeRet.data.filter(node => node.data_type === "form" && node.is_leaf);
+            state.formsList = await API.getFormTree();
 
             //获取发文类型
-            const fRet = await API.getFileTypes();
+            const fRet = await API.wfFileType();
             state.fileTypes = fRet.data;
 
             if (params.node_id || params.templateId) {
@@ -203,7 +203,7 @@ export default {
                     if (!ret.success) return;
                     data = ret.data;
                     state.wfCode = data.wf_code;
-                    state.wfFiletype = _.map(data.selectedFileTypes, 'wf_filetype');
+                    state.wfFiletype = _.map(data.files, 'wf_filetype');
                 } else {
                     const ret = await API.resource({ data: { leaf_id: params.templateId } });
                     if (!ret || !ret.data) return;
@@ -214,8 +214,10 @@ export default {
                 params.node = typeof data.wf_map_tp === 'string' ? JSON.parse(data.wf_map_tp) : data.wf_map_tp;
                 params.node[0].children = params.node.splice(1);
                 state.wfName = data.wf_name;
-                state.formId = data.wf_table_id;
+                state.formId = data.map_data_code;
                 state.tableContent = data.wf_body_tp;
+                state.wfAuthType = data.wf_auth_type;
+                state.emptyType = data.empty_type || WF_EMPTY_TYPE[0].v;
                 await dispatch(MUT_TYPES.WF_FORM_SELECT, { id: state.formId, reset: false });
             }
 
@@ -224,20 +226,27 @@ export default {
             state.initializing = false;
         },
         async [MUT_TYPES.WF_FORM_SELECT]({ state, getters, commit }, { id, reset = true }) {
+            try {
+                state.formName = _.find(state.formsList, { node_name: id }).node_display;
+            } catch (error) {
 
-            state.formName = _.find(state.formsList, { node_id: id }).node_name;
+            }
             state.loading = true;
-
             if (reset) {
                 state.node[0].children = [];
             }
 
             const ret = await API.formsCfg({ data: { id }, method: "get" });
             state.formStore = new FormStore(ret.data);
-
-            //获取权限项
-            const pRet = await API.permissionEntries({ data: { data_code: ret.data.data_code }, method: "get" });
-            state.formAuthOptions = pRet.data;
+            state.fieldsOptions = state.formStore.search({
+                options: { db: true },
+                onlyMain: true,
+                onlyData: true,
+                beforePush: (item) => {
+                    item.data.displayName = `[${item.CPNT.name}]${item.data._fieldName}`;
+                    return true;
+                },
+            });
             state.loading = false;
         }
     },

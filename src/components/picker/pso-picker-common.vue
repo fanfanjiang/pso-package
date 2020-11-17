@@ -51,7 +51,7 @@
               :total="dataTotal"
               :page-size="options.limit"
               :current-page="options.start"
-              :pager-count="3"
+              :pager-count="5"
               @size-change="sizeChangeHandler"
               @current-change="currentChangeHandler"
               @prev-click="prevClickHandler"
@@ -100,7 +100,7 @@
   </el-popover>
 </template>
 <script>
-import PsoTypebar from "../pso-typebar";
+import PsoTypebar from "../type-bar";
 import debounce from "throttle-debounce/debounce";
 
 export default {
@@ -108,19 +108,19 @@ export default {
   props: {
     appid: {
       type: String,
-      default: "3"
+      default: "3",
     },
     show: {
       type: Boolean,
-      default: false
+      default: false,
     },
     pattern: {
       type: String,
-      default: "radio"
+      default: "radio",
     },
     source: {
       type: String,
-      default: "tree"
+      default: "tree",
     },
     typebarOption: Object,
     treeOption: Object,
@@ -128,7 +128,7 @@ export default {
     treeFilter: Function,
     nodeClickFun: Function,
     fetchTableFun: Function,
-    tableField: Array
+    tableField: Array,
   },
   data() {
     return {
@@ -139,10 +139,10 @@ export default {
       options: {
         start: 1,
         limit: 20,
-        filter: ""
+        filter: "",
       },
       dataTotal: 0,
-      typeBarVal: {}
+      typeBarVal: {},
     };
   },
   computed: {
@@ -174,22 +174,22 @@ export default {
     },
     pickerClass() {
       return {
-        "pso-picker__l__wider": this.source === "tree"
+        "pso-picker__l__wider": this.source === "tree",
       };
     },
     pickerWidth() {
-      return this.source === "tree" ? 400 : 620;
+      return this.source === "tree" ? 360 : this.__isMobile__ ? 360 : 600;
     },
     autoNodeClick() {
       return this.source !== "tree";
-    }
+    },
   },
   watch: {
     options: {
       deep: true,
       handler() {
         this.debouncedGetData();
-      }
+      },
     },
     source() {
       this.selected = [];
@@ -201,7 +201,7 @@ export default {
       if (val) {
         this.dataTable = [];
       }
-    }
+    },
   },
   created() {
     this.debouncedGetData = debounce(500, this.fetch);
@@ -225,7 +225,9 @@ export default {
     },
     handleCurrentChange(val) {
       if (this.pattern !== "radio") return;
-      this.selected = [val];
+      if (val) {
+        this.selected = _.cloneDeep([val]);
+      }
     },
     confirm() {
       this.$emit("confirm", _.cloneDeep(this.selected));
@@ -258,77 +260,7 @@ export default {
     },
     nextClickHandler() {
       this.options.start += 1;
-    }
-  }
+    },
+  },
 };
 </script>
-<style lang="less" scoped>
-@import "../../assets/less/variable";
-.pso-picker {
-  &.pso-picker__l__wider {
-    .pso-picker__body-l {
-      width: 100%;
-      flex: 1;
-    }
-  }
-}
-.pso-picker__body {
-  display: flex;
-  height: 330px;
-  width: 100%;
-
-  .pso-picker__body-l {
-    margin-right: 2px;
-    width: 200px;
-    height: 100%;
-    > div {
-      height: 100%;
-    }
-  }
-  .pso-picker__body-r {
-    width: calc(100% - 200px);
-  }
-}
-.pso-picker__footer {
-  margin-top: 10px;
-}
-.pso-picker__showlist {
-  display: flex;
-  flex-wrap: wrap;
-  > span {
-    margin: 2px;
-    box-sizing: content-box;
-  }
-}
-.pso-picker__controller {
-  margin-top: 10px;
-  text-align: right;
-}
-.pso-picker-menu {
-  padding: 10px;
-  > div {
-    padding: 10px 0;
-    cursor: pointer;
-    &:hover {
-      color: @main-color;
-    }
-  }
-}
-.pso-picker__table-header {
-  display: flex;
-  align-items: center;
-  @{deep} {
-    .el-input {
-      width: 140px;
-    }
-    .mu-input {
-      margin-bottom: 0;
-      width: 100px;
-      font-size: 14px;
-    }
-    .mu-input__focus {
-      color: @main-color;
-    }
-  }
-}
-</style>

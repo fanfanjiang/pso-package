@@ -1,0 +1,230 @@
+.pso-formTable {
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+
+    .pso-table-currow {
+        background-color: #E5E5E5;
+    }
+
+    &.pso-formTable__expend {
+
+        .pso-formTable__fixfilter {
+            width: 200px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .pso-formTable__body {
+            width: calc(100% - 200px);
+            transition: width 0.3s ease-in-out;
+        }
+    }
+
+    .pso-formTable__fixfilter {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease-in-out;
+        overflow-y: auto;
+    }
+
+    .pso-formTable__body {
+        width: 100%;
+        padding: 10px;
+        transition: width 0.3s ease-in-out;
+    }
+
+    .pso-formTable__top {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .pso-formTable__title {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        font-size: 16px;
+
+        svg {
+            height: 24px;
+            margin-right: 3px;
+        }
+
+        >span {
+            color: rgb(153, 151, 151);
+            font-weight: bold;
+            letter-spacing: 1.2px;
+        }
+    }
+
+    .pso-formTable-view {
+        margin-top: -10px;
+        flex: 1;
+
+        .el-tabs__header {
+            margin: 0;
+        }
+
+        .el-tabs__nav {
+            float: right;
+        }
+    }
+
+    .pso-formTable-tagfilter {
+        display: flex;
+        align-items: center;
+    }
+
+    .pso-formTable-status {
+        display: flex;
+        align-items: center;
+
+        .el-badge {
+            &+.el-badge {
+                margin-left: 10px;
+            }
+
+            &+.el-tag {
+                margin-left: 10px;
+            }
+        }
+
+        .el-tag {
+            cursor: pointer;
+
+            &+.el-tag {
+                margin-left: 10px;
+            }
+
+            &+.el-badge {
+                margin-left: 10px;
+            }
+
+        }
+
+        .el-badge__content {
+            top: 3px;
+            right: 14px;
+        }
+    }
+
+    .pso-formTable-status,
+    .pso-formTable-sort {
+
+        .el-tag {
+            cursor: pointer;
+
+            &+.el-tag {
+                margin-left: 10px;
+            }
+        }
+    }
+
+    .pso-formTable-sort {
+        margin-top: 10px;
+
+    }
+
+    .pso-formTable-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+        padding: 0px 10px;
+
+        .pso-formTable-header__left {
+            flex: 1;
+
+            .el-input {
+                width: 150px;
+            }
+        }
+
+        .pso-formTable-header__right {
+            .el-dropdown {
+
+                &+.el-dropdown,
+                &+button {
+                    margin-left: 10px;
+                }
+            }
+
+            button {
+
+                &+.el-dropdown,
+                &+button {
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+
+    .pso-formTable-footer {
+        margin: 15px 0;
+        background-color: #fff;
+    }
+
+
+
+    .pso-drawer-footer__body {
+        text-align: right;
+    }
+
+    .pso-formTable__filter {
+        position: relative;
+
+        .pso-formTable__filter-body {
+            max-height: 400px;
+            overflow: scroll;
+            padding-bottom: 30px;
+        }
+
+        .pso-formTable__filter-footer {
+            position: absolute;
+            text-align: right;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+        }
+    }
+}
+
+
+.pso-formTable-box {
+    .pso-formTable-box__item {
+        border-radius: 4px;
+        border: 1px solid #ebeef5;
+        background-color: #fff;
+        overflow: hidden;
+        color: #303133;
+        transition: .3s;
+
+        &:hover {
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+        }
+
+        .pso-formTable-box__item-pic {
+            height: 200px;
+
+            >img {
+                height: 100%;
+                width: auto;
+                display: block;
+                margin: 0 auto;
+            }
+        }
+
+        .pso-formTable-box__item-info {
+            padding: 10px;
+
+            >div {
+                display: flex;
+                justify-content: space-between;
+                font-size: 12px;
+                color: #666;
+            }
+        }
+    }
+}
+

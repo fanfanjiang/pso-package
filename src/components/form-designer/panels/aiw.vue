@@ -1,7 +1,7 @@
 <template>
   <common-panel :cpnt="cpnt" info="统计关联的记录中的数据。" :needDefaultValue="false">
     <el-form-item label="关联金额字段">
-      <el-select v-model="cpnt.data._option" placeholder="请选择">
+      <el-select v-model="cpnt.data._option" size="mini" placeholder="请选择">
         <el-option
           v-for="item in fieldOptions"
           :key="item.fid"
@@ -27,7 +27,15 @@ export default {
   },
   computed: {
     fieldOptions() {
-      this.watchOptProxy = this.cpnt.store.search({ options: { componentid: "money" }, onlyData: true });
+      this.watchOptProxy = this.cpnt.store.search({
+        options: { db: true },
+        onlyData: true,
+        beforePush: item => {
+          if (item.fid === this.cpnt.fid) return false;
+          if (item.parent.CPNT.host_db) return false;
+          return true;
+        }
+      });
       return this.watchOptProxy;
     }
   },

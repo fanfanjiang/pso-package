@@ -1,11 +1,11 @@
 <template>
   <div class="wf-table-editor">
     <div class="wf-table-editor__menu-wrapper">
-      <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, getMarkAttrs}">
+      <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, getMarkAttrs }">
         <div class="wf-table-editor__menu">
           <div class="wf-table-editor__menu-header">
             <span>操作</span>
-            <span>{{selectedOp}}</span>
+            <span>{{ selectedOp }}</span>
           </div>
           <el-select
             size="small"
@@ -13,12 +13,12 @@
             v-model="fieldValue"
             placeholder="插入字段"
             @change="setField(commands)"
-            @focus="selectedOp='插入工作表字段'"
+            @focus="selectedOp = '插入工作表字段'"
           >
             <el-option
               v-for="item in options"
               :key="item._fieldValue"
-              :label="item.displayName||item._fieldName"
+              :label="item.displayName || item._fieldName"
               :value="item._fieldValue"
             ></el-option>
           </el-select>
@@ -28,7 +28,7 @@
             v-model="perEntryVal"
             placeholder="插入权限项"
             @change="setPermission(commands)"
-            @focus="selectedOp='插入权限项'"
+            @focus="selectedOp = '插入权限项'"
           >
             <el-option
               v-for="item in wfDesigner.permissionEntries"
@@ -39,16 +39,20 @@
           </el-select>
           <div class="wf-table-editor__icon">
             <editor-menu-item
-              v-for="menuItem of menu"
-              :key="menuItem.type"
+              v-for="(menuItem, i) of menu"
+              :key="i"
               :type="menuItem.type"
               :tip="menuItem.tip"
               :src="menuItem.src"
-              :isActive="menuItem.type==='align'?(getMarkAttrs('align').textAlign === menuItem.src):(isActive[menuItem.type]&&isActive[menuItem.type](menuItem.params||{}))"
-              @click="commands[menuItem.method||menuItem.type](menuItem.params||{})"
-              @hover="selectedOp=menuItem.tip"
-              @mouseenter="selectedOp=menuItem.tip"
-              @mouseleave="selectedOp=''"
+              :isActive="
+                menuItem.type === 'align'
+                  ? getMarkAttrs('align').textAlign === menuItem.src
+                  : isActive[menuItem.type] && isActive[menuItem.type](menuItem.params || {})
+              "
+              @click="commands[menuItem.method || menuItem.type](menuItem.params || {})"
+              @hover="selectedOp = menuItem.tip"
+              @mouseenter="selectedOp = menuItem.tip"
+              @mouseleave="selectedOp = ''"
             ></editor-menu-item>
             <transition-group name="el-zoom-in-top">
               <template v-if="isActive.table()">
@@ -58,43 +62,71 @@
                   :type="menuItem.type"
                   :tip="menuItem.tip"
                   :src="menuItem.src"
-                  :isActive="isActive[menuItem.type]&&isActive[menuItem.type](menuItem.params||{})"
-                  @click="commands[menuItem.method||menuItem.type](menuItem.params||{})"
-                  @mouseenter="selectedOp=menuItem.tip"
-                  @mouseleave="selectedOp=''"
+                  :isActive="isActive[menuItem.type] && isActive[menuItem.type](menuItem.params || {})"
+                  @click="commands[menuItem.method || menuItem.type](menuItem.params || {})"
+                  @mouseenter="selectedOp = menuItem.tip"
+                  @mouseleave="selectedOp = ''"
                 ></editor-menu-item>
               </template>
             </transition-group>
           </div>
         </div>
       </editor-menu-bar>
+      <div class="wf-table-editor__table" v-if="asstableNode">
+        <el-divider>关联表配置</el-divider>
+        <div>
+          <el-select size="mini" v-model="asstableNode.attrs.display" placeholder="展示方式">
+            <el-option label="表格" value="table"></el-option>
+            <el-option label="脚本" value="script"></el-option>
+          </el-select>
+        </div>
+        <div style="margin-top: 15px" v-if="asstableNode.attrs.display === 'table'">
+          <el-switch
+            size="mini"
+            v-model="asstableNode.attrs.sequence"
+            active-value="1"
+            inactive-value="0"
+            active-text="显示序号"
+            inactive-text="不显示"
+          ></el-switch>
+        </div>
+        <div class="wf-table-editor__table-btn">
+          <el-button v-if="asstableNode.attrs.display === 'script'" type="primary" size="mini" @click="showDesigner = true"
+            >设置脚本</el-button
+          >
+        </div>
+      </div>
     </div>
     <div class="wf-table-editor__save" v-if="wfDesigner.wfCode">
       <el-button type="primary" size="mini" round :loading="saving" @click="saveHandler">保存主体</el-button>
     </div>
-    <div class="wf-table-editor__content" :style="contentStyle">
-      <editor-content :editor="editor" />
+    <div class="wf-table-editor__content">
+      <div :style="contentStyle">
+        <editor-content :editor="editor" v-if="editor" />
+      </div>
     </div>
     <transition name="el-zoom-in-top">
       <div class="wf-table-editor__review" v-if="fieldNode">
         <div class="wf-table-editor__review-header">审核展示配置</div>
-        <codemirror
-          ref="codemirror"
-          v-model="fieldNode.attrs.format"
-          @blur="blurHandler"
-          @focus="showDrop = true"
-        />
+        <codemirror ref="codemirror" v-model="fieldNode.attrs.format" @blur="blurHandler" @focus="showDrop = true" />
         <transition name="el-zoom-in-top">
           <ul class="dropdown" v-show="showDrop">
-            <li
-              v-for="item in reviewLogField"
-              :key="item.id"
-              @click="dropClickHandler(item)"
-            >{{item.name}}</li>
+            <li v-for="item in reviewLogField" :key="item.id" @click="dropClickHandler(item)">{{ item.name }}</li>
           </ul>
         </transition>
       </div>
     </transition>
+    <pso-drawer v-if="asstableNode" size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner = false">
+      <template v-slot:whole>
+        <formula-designer
+          v-if="asstableNode"
+          :value="asstableNode.attrs.format"
+          :cpnts="tableCpnt[asstableNode.attrs.field]"
+          @cancel="showDesigner = false"
+          @confirm="confirmScript"
+        ></formula-designer>
+      </template>
+    </pso-drawer>
   </div>
 </template>
 <script>
@@ -102,9 +134,6 @@ import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 import { genComponentData } from "../../form-designer/helper/index.js";
 import { WF_FIND_NODE } from "../../../store/mutation-types";
 import { REVIEW_LOG_FORMAT } from "../../../const/workflow";
-
-import { codemirror } from "vue-codemirror";
-import "codemirror/lib/codemirror.css";
 
 import { Editor, EditorContent, EditorFloatingMenu, EditorMenuBar } from "tiptap";
 import {
@@ -127,7 +156,7 @@ import {
   Table,
   TableHeader,
   TableCell,
-  TableRow
+  TableRow,
 } from "tiptap-extensions";
 
 import FieldNode from "./field-node";
@@ -135,161 +164,167 @@ import Align from "./align";
 import PermissionEntries from "./permission-entries";
 
 import EditorMenuItem from "./menu-item";
+import FormulaDesigner from "../../form-designer/formula-designer";
+import { formOp } from "../../form-designer/mixin";
 
 export default {
-  components: { EditorMenuItem, EditorContent, EditorMenuBar, EditorFloatingMenu, codemirror },
+  components: { EditorMenuItem, EditorContent, EditorMenuBar, EditorFloatingMenu, FormulaDesigner },
   componentName: "PsoWfEditorTable",
+  mixins: [formOp],
   data() {
     return {
       saving: false,
+      showDesigner: false,
       selectedOp: "",
       editor: null,
       menu: [
         {
           type: "bold",
-          tip: "加粗"
+          tip: "加粗",
         },
         {
           type: "italic",
-          tip: "斜体"
+          tip: "斜体",
         },
         {
           type: "strike",
-          tip: "删除线"
+          tip: "删除线",
         },
         {
           type: "underline",
-          tip: "下划线"
+          tip: "下划线",
         },
         {
           type: "paragraph",
-          tip: "段落文本"
+          tip: "段落文本",
         },
         {
           type: "align",
           tip: "居左",
           src: "left",
-          params: { textAlign: "left" }
+          params: { textAlign: "left" },
         },
         {
           type: "align",
           tip: "居中",
           src: "center",
-          params: { textAlign: "center" }
+          params: { textAlign: "center" },
         },
         {
           type: "align",
           tip: "居右",
           src: "right",
-          params: { textAlign: "right" }
+          params: { textAlign: "right" },
         },
         {
           type: "heading",
           tip: "h1",
           src: "h1",
-          params: { level: 1 }
+          params: { level: 1 },
         },
         {
           type: "heading",
           tip: "h2",
           src: "h2",
-          params: { level: 2 }
+          params: { level: 2 },
         },
         {
           type: "heading",
           tip: "h3",
           src: "h3",
-          params: { level: 3 }
+          params: { level: 3 },
         },
         {
           type: "heading",
           tip: "h4",
           src: "h4",
-          params: { level: 4 }
+          params: { level: 4 },
         },
         {
           type: "heading",
           tip: "h5",
           src: "h5",
-          params: { level: 5 }
+          params: { level: 5 },
         },
         {
           type: "bullet_list",
-          tip: "无序列表"
+          tip: "无序列表",
         },
         {
           type: "ordered_list",
-          tip: "有序列表"
+          tip: "有序列表",
         },
         {
           type: "blockquote",
-          tip: "引用"
+          tip: "引用",
         },
         {
           type: "table",
           tip: "表格",
           method: "createTable",
-          params: { rowsCount: 3, colsCount: 3, withHeaderRow: false }
+          params: { rowsCount: 3, colsCount: 3, withHeaderRow: false },
         },
         {
           type: "undo",
-          tip: "回退"
+          tip: "回退",
         },
         {
           type: "redo",
-          tip: "前进"
-        }
+          tip: "前进",
+        },
       ],
       tableMenu: [
         {
           type: "deleteTable",
-          tip: "删除表格"
+          tip: "删除表格",
         },
         {
           type: "addColumnBefore",
-          tip: "左插列"
+          tip: "左插列",
         },
         {
           type: "addColumnAfter",
-          tip: "右插列"
+          tip: "右插列",
         },
         {
           type: "deleteColumn",
-          tip: "删除列"
+          tip: "删除列",
         },
         {
           type: "addRowBefore",
-          tip: "上插行"
+          tip: "上插行",
         },
         {
           type: "addRowAfter",
-          tip: "下插行"
+          tip: "下插行",
         },
         {
           type: "deleteRow",
-          tip: "删除行"
+          tip: "删除行",
         },
         {
           type: "toggleCellMerge",
-          tip: "合并单元格"
-        }
+          tip: "合并单元格",
+        },
       ],
       fieldValue: "",
       perEntryVal: "",
       fieldNode: null,
+      asstableNode: null,
+      tableCpnt: {},
       showDrop: false,
       mirrorCursor: {
-        cursorHeight: 0.8
+        cursorHeight: 0.8,
       },
       coding: false,
-      reviewLogField: REVIEW_LOG_FORMAT
+      reviewLogField: REVIEW_LOG_FORMAT,
     };
   },
   computed: {
     ...mapState(["wfDesigner"]),
     contentStyle() {
       return {
-        "margin-top": this.fieldNode ? "140px" : "0px"
+        "margin-top": this.fieldNode ? "140px" : "0px",
       };
     },
     reviewList() {
@@ -307,10 +342,10 @@ export default {
           onlyData: true,
           onlyMain: true,
           options: { db: true },
-          beforePush: item => {
+          beforePush: (item) => {
             item.data.displayName = `[${item.CPNT.name}]${item.data._fieldName}`;
             return true;
-          }
+          },
         });
         list = list.concat(formRet);
       }
@@ -322,7 +357,8 @@ export default {
         genComponentData({ _fieldValue: "wf_fileCode", _fieldName: "[系统]流程编号", componentid: "text" }),
         genComponentData({ _fieldValue: "wf_import", _fieldName: "[系统]重要等级", componentid: "text" }),
         genComponentData({ _fieldValue: "wf_secret", _fieldName: "[系统]秘密等级", componentid: "text" }),
-        genComponentData({ _fieldValue: "wf_urgent", _fieldName: "[系统]加急程度", componentid: "text" })
+        genComponentData({ _fieldValue: "wf_urgent", _fieldName: "[系统]加急程度", componentid: "text" }),
+        genComponentData({ _fieldValue: "wf_logs", _fieldName: "[系统]审批过程", componentid: "text" }),
       ]);
 
       this.reviewList.forEach(({ target }) => {
@@ -330,7 +366,7 @@ export default {
       });
 
       return list;
-    }
+    },
   },
   mounted() {
     this.editor = new Editor({
@@ -352,20 +388,20 @@ export default {
         new Underline(),
         new History(),
         new Table({
-          resizable: true
+          resizable: true,
         }),
         new TableHeader(),
         new TableCell(),
         new TableRow(),
         new FieldNode(),
         new Align(),
-        new PermissionEntries()
+        new PermissionEntries(),
       ],
-      content: this.wfDesigner.tableContent
+      content: this.wfDesigner.tableContent,
     });
   },
   created() {
-    this.$on("field-click", node => {
+    this.$on("field-click", async (node) => {
       let reviewNode;
       this.reviewList.forEach(({ target }) => {
         if (target.nid === node.attrs.field) {
@@ -376,6 +412,20 @@ export default {
         this.fieldNode = reviewNode;
         this.$nextTick(() => this.decorate());
       } else {
+        const cpnt = _.find(this.options, { _fieldValue: node.attrs.field });
+        if (cpnt.componentid === "asstable") {
+          this.asstableNode = node;
+          if (!this.tableCpnt[node.attrs.field]) {
+            const store = await this.makeFormStore(cpnt._option);
+            this.tableCpnt[node.attrs.field] = store.search({
+              onlyData: true,
+              onlyMain: true,
+              options: { db: true },
+            });
+          }
+        } else {
+          this.asstableNode = null;
+        }
         this.fieldNode = null;
       }
     });
@@ -386,14 +436,16 @@ export default {
       commands.createField({
         name: cpnt.displayName || cpnt._fieldName,
         value: this.fieldValue,
-        format: ""
+        format: "",
+        display: "",
+        sequence: "",
       });
       this.fieldValue = "";
     },
     setPermission(commands) {
       commands.createPermission({
         name: _.find(this.wfDesigner.permissionEntries, { body_id: this.perEntryVal }).body_name,
-        value: this.perEntryVal
+        value: this.perEntryVal,
       });
       this.perEntryVal = "";
     },
@@ -417,7 +469,7 @@ export default {
         {
           replacedWith: $(`<span class="code-log">${log.name}</span>`)[0],
           selectLeft: true,
-          selectRight: true
+          selectRight: true,
         }
       );
       this.mirrorCursor = this.$refs.codemirror.codemirror.getCursor();
@@ -426,7 +478,7 @@ export default {
     decorate() {
       let n = 0;
       const matches = [];
-      this.$refs.codemirror.codemirror.eachLine(line => {
+      this.$refs.codemirror.codemirror.eachLine((line) => {
         const reg = /#[0-9a-zA-Z-_]+#/g;
         while (true) {
           const match = reg.exec(line.text);
@@ -444,7 +496,7 @@ export default {
             {
               replacedWith: $(`<span class="code-log">${log.name}</span>`)[0],
               selectLeft: true,
-              selectRight: true
+              selectRight: true,
             }
           );
         }
@@ -455,11 +507,17 @@ export default {
       const ret = await this.API.updateWfTable({ wf_code: this.wfDesigner.wfCode, wf_body_tp: this.exportHtml() });
       this.saving = false;
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
-    }
+    },
+    confirmScript(val) {
+      this.asstableNode.attrs.format = val;
+      this.showDesigner = false;
+    },
   },
   beforeDestroy() {
-    this.editor.destroy();
-  }
+    try {
+      this.editor.destroy();
+    } catch (error) {}
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -470,15 +528,15 @@ export default {
   position: relative;
   height: 100%;
   .wf-table-editor__save {
-    position: fixed;
+    position: absolute;
     right: 20px;
-    top: 70px;
+    top: 20px;
     z-index: 2;
   }
   .wf-table-editor__menu-wrapper {
-    position: fixed;
+    position: absolute;
     left: 20px;
-    top: 70px;
+    top: 20px;
     z-index: 2;
     box-shadow: 4px 4px 10px 0 rgba(25, 30, 40, 0.1);
     text-align: center;
@@ -571,9 +629,9 @@ export default {
 
 //审核操作
 .wf-table-editor__review {
-  position: fixed;
+  position: absolute;
   left: 260px;
-  top: 70px;
+  top: 20px;
   width: calc(100% - 278px);
   z-index: 3;
   .wf-table-editor__review-header {
@@ -629,6 +687,14 @@ export default {
       background-color: #fd8647;
       color: #fff;
     }
+  }
+}
+.wf-table-editor__table {
+  padding: 0 0 15px 0;
+  .wf-table-editor__table-btn {
+    text-align: left;
+    padding-left: 16px;
+    margin-top: 15px;
   }
 }
 </style>

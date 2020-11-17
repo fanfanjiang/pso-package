@@ -25,6 +25,7 @@
                       <pso-datafilter
                         v-if="!chartDesigner.initializing"
                         v-model="chartDesigner.filter"
+                        :condition="chartDesigner.filter"
                         :auto-trans="false"
                         :fieldsOptions="chartDesigner.conditionOptions"
                       ></pso-datafilter>
@@ -36,18 +37,31 @@
                   <el-button type="text" icon="fa fa-filter" slot="reference">筛选</el-button>
                 </el-popover>
               </h4>
+              <div style="margin-bottom:10px">
+                <el-select
+                  size="small"
+                  v-model="chartDesigner.sourceType"
+                  placeholder="请选择"
+                  filterable
+                  @change="chartDesigner.formId=''"
+                >
+                  <el-option label="表单" value="1"></el-option>
+                  <el-option label="统计" value="2"></el-option>
+                </el-select>
+              </div>
               <div>
                 <el-select
                   size="small"
                   v-model="chartDesigner.formId"
                   @change="formChangeHandler"
                   placeholder="请选择"
+                  filterable
                 >
                   <el-option
-                    v-for="item in formOptions"
-                    :key="item.node_id"
-                    :label="item.node_name"
-                    :value="item.node_id"
+                    v-for="item in sourceOptions"
+                    :key="item.node_name"
+                    :label="item.node_display"
+                    :value="item.node_name"
                   ></el-option>
                 </el-select>
               </div>
@@ -62,7 +76,7 @@
             <pso-cd-dimension></pso-cd-dimension>
             <pso-cd-figure></pso-cd-figure>
             <div class="pso-cd-chart">
-              <pso-chart-viewer ref="chartV" v-show="chartDesigner.formId"></pso-chart-viewer>
+              <pso-chart-interpreter ref="chartV" v-show="chartDesigner.formId"></pso-chart-interpreter>
             </div>
           </div>
         </div>
@@ -83,7 +97,7 @@
                   :key="index"
                   @click="setChartType(typeItem)"
                 >
-                  <el-tooltip open-delay="500" effect="dark" placement="top">
+                  <el-tooltip :open-delay="500" effect="dark" placement="top">
                     <div slot="content" v-html="typeItem.info"></div>
                     <div>
                       <img class="pso-svg" :src="getChartIcon(typeItem)" />
@@ -134,24 +148,30 @@ export default {
       chartType: _.cloneDeep(Object.values(CHART)),
       selectedChart: {},
       formOptions: [],
+      sqlOptions: [],
       showFilter: false,
-      watchRegistered: false
+      watchRegistered: false,
     };
   },
   computed: {
-    ...mapState(["chartDesigner"])
+    ...mapState(["chartDesigner"]),
+    sourceOptions() {
+      return this.chartDesigner.sourceType === "1" ? this.formOptions : this.sqlOptions;
+    },
   },
   watch: {
     "params.tpCode": {
       immediate: true,
       handler(val) {
         val && this.loadChartCfg();
-      }
-    }
+      },
+    },
   },
-  created() {
-    this.getFormList();
+  async created() {
+    this.chartDesigner.initializing = true;
+    await this.getFormList();
     this.selectedChart = this.chartType[0];
+    this.chartDesigner.initializing = false;
   },
   mounted() {
     SVGInjector(document.querySelectorAll(".pso-svg"));
@@ -162,8 +182,8 @@ export default {
       this.loadChart();
     },
     async getFormList() {
-      let ret = await this.API.trees({ data: { node_id: this.params.appid, appid: this.params.appid, node_dimen: "nodedimen03" } });
-      this.formOptions = ret.data.filter(node => node.data_type === "form");
+      this.formOptions = await this.API.getFormTree();
+      this.sqlOptions = await this.API.getTempleteTree([1]);
     },
     loadChart() {
       if (this.selectedChart.disabled) return;
@@ -180,36 +200,37 @@ export default {
         deep: true,
         handler() {
           this.loadChart();
-        }
+        },
       });
       this.$watch("chartDesigner.figure", {
         deep: true,
         handler() {
           this.loadChart();
-        }
+        },
       });
       this.$watch("chartDesigner.dataLimit", {
         deep: true,
         handler() {
           this.loadChart();
-        }
+        },
       });
       this.watchRegistered = true;
     },
     async loadChartCfg() {
-      let ret = await this.API.templates({ data: { tp_type: this.params.tpType, tp_code: this.params.tpCode } });
-      if (ret.data && ret.data.tp_set) {
-        const chartCfg = JSON.parse(ret.data.tp_set);
+      let ret = await this.API.templates({ data: { tp_type: this.params.tpType || 3, tp_code: this.params.tpCode } });
+      if (ret.data && ret.data.tp.data_list) {
+        const chartCfg = JSON.parse(ret.data.tp.data_list);
 
         this.$store.commit(CD_INIT, {
           formId: chartCfg.formId,
+          sourceType: chartCfg.sourceType,
           figure: chartCfg.metrics,
           dimension: chartCfg.dimension,
           chartRemark: chartCfg.chartRemark,
-          chartName: ret.data.tp_name,
-          dataLimit: chartCfg.dataLimit
+          chartName: ret.data.tp.tp_name,
+          dataLimit: chartCfg.dataLimit,
+          filter: chartCfg.filter,
         });
-
         await this.$store.dispatch(CD_SOURCE_GET);
 
         if (chartCfg.chartType) {
@@ -234,13 +255,14 @@ export default {
     getChartViewData() {
       return {
         formId: this.chartDesigner.formId,
+        sourceType: this.chartDesigner.sourceType,
         dimension: this.chartDesigner.dimension,
         metrics: this.chartDesigner.figure,
         chartName: this.chartDesigner.chartName,
         chartType: this.selectedChart.id,
         chartRemark: this.chartDesigner.chartRemark,
         dataLimit: this.chartDesigner.dataLimit,
-        filter: this.chartDesigner.filter
+        filter: this.chartDesigner.filter,
       };
     },
     async save() {
@@ -248,21 +270,21 @@ export default {
       let ret = await this.API.templates({
         data: {
           tp_code: this.params.tpCode,
-          tp_type: this.params.tpType,
+          tp_type: this.params.tpType || 3,
           tp_status: 1,
           tp_name: this.chartDesigner.chartName,
           tp_data: "1",
-          tp_set: JSON.stringify(this.getChartViewData())
+          data_list: JSON.stringify(this.getChartViewData()),
         },
-        method: "put"
+        method: "put",
       });
       if (ret.success) {
         this.$notify({ title: "成功", message: "成功保存", type: "success" });
         this.$emit("save");
       }
       this.chartDesigner.initializing = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less">

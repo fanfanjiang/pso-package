@@ -1,0 +1,63 @@
+.pso-dialog {
+    .el-dialog {
+        @media (max-width: @screen-md-min) {
+            width: 100% !important;
+            margin-top: 0 !important;
+        }
+    }
+
+    .pso-dialog-body {
+        @media (max-width: @screen-md-min) {
+            height: calc(100vh - 54px) !important;
+        }
+    }
+
+    .el-dialog {
+        margin: 0 auto;
+
+        .el-dialog__header {
+            padding: 0 15px;
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 54px;
+            border-bottom: 1px solid #e5e5e5;
+
+            .el-dialog__title {
+                color: #666;
+            }
+
+            .el-dialog__headerbtn {
+                position: relative;
+                top: auto;
+                right: auto;
+
+                >i {
+                    color: #333;
+                    font-size: 20px;
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .el-dialog__body {
+            background-color: #fff;
+            padding: 0;
+        }
+
+        .el-dialog__footer {
+            background-color: #fff;
+        }
+
+        .el-dialog__title {
+            font-size: 16px;
+            color: #666;
+            font-weight: bold;
+        }
+    }
+
+    .pso-dialog-body {
+        height: calc(100vh - 54px - 4vh);
+    }
+}

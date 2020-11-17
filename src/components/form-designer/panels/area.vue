@@ -1,5 +1,9 @@
 <template>
   <common-panel :cpnt="cpnt" info="从预设的地址中进行选择" :needPlaceholder="true" :needDefaultValue="false">
+    <el-form-item label="存储类型">
+      <el-radio v-model="cpnt.data._saveType" label="radio">单选</el-radio>
+      <el-radio v-model="cpnt.data._saveType" label="checkbox">多选</el-radio>
+    </el-form-item>
     <el-form-item label="选择类型">
       <el-radio v-model="cpnt.data._type" label="county">省-市-县</el-radio>
       <el-radio v-model="cpnt.data._type" label="city">省-市</el-radio>
@@ -17,17 +21,17 @@ export default {
   props: ["cpnt"],
   components: {
     commonPanel,
-    FormArea
+    FormArea,
   },
   data() {
     return {
-      area: {}
+      area: {},
     };
   },
   watch: {
     "cpnt.data._type"(val) {
       this.area.data._type = val;
-    }
+    },
   },
   created() {
     this.$set(
@@ -38,15 +42,15 @@ export default {
         _type: this.cpnt.data._type,
         _fieldName: "设置默认关联",
         _required: false,
-        _val: this.cpnt.data._defaultValue
+        _val: this.cpnt.data._defaultValue,
       })
     );
   },
   methods: {
     handleValChange({ value }) {
       this.cpnt.data._defaultValue = value;
-    }
-  }
+    },
+  },
 };
 </script>
 

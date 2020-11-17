@@ -11,7 +11,7 @@
     <el-form label-width="60px">
       <el-form-item label="别名">
         <el-input v-model="params.alias" autocomplete="off"></el-input>
-      </el-form-item>
+      </el-form-item> 
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="$emit('cancel')">取 消</el-button>

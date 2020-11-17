@@ -2,13 +2,16 @@
   <div class="pso-typebar">
     <pso-skeleton v-if="loading" :lines="1"></pso-skeleton>
     <div v-else class="pso-typebar-wrapper">
-      <el-tabs v-model="selectedType" @tab-click="typeClickHandler">
-        <el-tab-pane
-          :label="getTabName(typeItem)"
-          :name="typeItem.feildname"
-          v-for="typeItem of types"
-          :key="typeItem.feildvalue"
-        ></el-tab-pane>
+      <el-tabs v-model="selectedType">
+        <el-tab-pane v-for="item of types" :name="item.feildname" :key="item.feildvalue">
+          <el-badge
+            slot="label"
+            :value="item.total||0"
+            :hidden="!item.total"
+            is-dot
+            class="pso-typebar-badge"
+          >{{item.feildname}}</el-badge>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -18,7 +21,8 @@ export default {
   props: {
     skey: String,
     keys: Object,
-    filter: [Function, Object]
+    filter: [Function, Object],
+    defBar: Array
   },
   model: {
     prop: "value",
@@ -40,15 +44,19 @@ export default {
   },
   async created() {
     this.loading = true;
+    let data = [];
 
-    //参数配置
-    const options = { skey: this.skey };
-    if (this.keys) {
-      options.keys = this.keys;
+    if (this.defBar) {
+      data = this.defBar;
+    } else {
+      //参数配置
+      const options = { skey: this.skey };
+      if (this.keys) {
+        options.keys = this.keys;
+      }
+      const ret = await this.API.getCommonType(options);
+      data = ret.data;
     }
-
-    const ret = await this.API.getCommonType(options);
-    let data = ret.data;
 
     if (this.filter) {
       if (typeof this.filter === "function") {
@@ -84,21 +92,3 @@ export default {
   }
 };
 </script>
-<style lang="less" scoped>
-@deep: ~">>>";
-.pso-typebar {
-  padding: 0 15px;
-  height: 40px;
-}
-@{deep} {
-  .el-tabs__header {
-    margin: 0;
-  }
-  .pso-skeleton {
-    padding-top: 10px;
-  }
-  .pso-skeleton-text__line {
-    margin: 0;
-  }
-}
-</style>

@@ -26,13 +26,14 @@ export const DIMEN_OP_LIST = {
 export const FIGER_OP = {
     SUM: '求和',
     COUNT: "计数",
-    AVG: '平均值'
+    AVG: '平均值',
+    FIRST: '首位'
 }
 
 export const FIGER_OP_LIST = {
     decimal: [FIGER_OP.SUM, FIGER_OP.COUNT, FIGER_OP.AVG],
     string: [FIGER_OP.COUNT],
-    datetime: [FIGER_OP.COUNT]
+    datetime: [FIGER_OP.COUNT, FIGER_OP.FIRST]
 }
 
 export const FIGER_DEFALUT_OP = {
@@ -83,7 +84,7 @@ export const CHART = {
         metricsLimit: 9999,
         extend: {
             series: {
-                label: { show: true, position: "top" }
+                label: { show: true, color: '#fff' }
             }
         }
     },
@@ -98,7 +99,19 @@ export const CHART = {
         metricsLimit: 9999,
         extend: {
             series: {
-                label: { show: true, position: "right" }
+                label: { show: true, color: '#fff' }
+            }
+        },
+        setting: {
+            itemStyle: {
+                "normal": {
+                    "borderWidth": 0,
+                    "borderColor": "#ccc"
+                },
+                "emphasis": {
+                    "borderWidth": 0,
+                    "borderColor": "#ccc"
+                }
             }
         }
     },
@@ -111,6 +124,18 @@ export const CHART = {
         metricsType: 'string',
         dimensionLimit: 9999,
         metricsLimit: 1,
+        setting: {
+            itemStyle: {
+                "normal": {
+                    "borderWidth": 0,
+                    "borderColor": "#ccc"
+                },
+                "emphasis": {
+                    "borderWidth": 0,
+                    "borderColor": "#ccc"
+                }
+            }
+        }
     },
     ring: {
         icon: "",

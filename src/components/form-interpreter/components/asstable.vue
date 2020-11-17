@@ -1,121 +1,91 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required" v-loading="loading">
-    <div class="pso-form-asstable-table">
-      <el-table
-        ref="table"
-        border
-        v-loading="loadingTable"
-        :data="proxy.valList"
-        style="width: 100%"
-        size="mini"
-        max-height="500"
-        @row-click="instanceClick"
-        @selection-change="handleSelectionChange"
-        v-show="proxy.valList.length"
-      >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          :prop="tableField._fieldValue"
-          :label="tableField._fieldName"
-          v-for="(tableField) of showFields"
-          :key="tableField.fid"
-        >
-          <template slot-scope="scope">
-            <el-tag
-              disable-transitions
-              v-if="tableField.componentid === 'attachment'"
-              size="mini"
-            >附件</el-tag>
-            <el-tag
-              disable-transitions
-              v-else-if="tableField.componentid === 'table'"
-              size="mini"
-            >{{tableField.name}}</el-tag>
-            <div v-else>{{decodeURIComponent(scope.row[tableField._fieldValue])}}</div>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <el-button
-      type="primary"
-      plain
-      icon="el-icon-plus"
-      size="small"
-      @click="handleClickAdd"
-    >添加{{cpnt.data._fieldName}}</el-button>
-    <el-button
-      v-show="selectedList.length"
-      type="danger"
-      icon="el-icon-delete"
-      size="small"
-      @click="handleDelSelection(selectedList)"
-    >取消所选关联数据</el-button>
-    <el-dialog
-      width="70%"
-      append-to-body
-      close-on-click-modal
-      custom-class="form-table-dialog"
-      title="选择关联数据"
-      @close="showTable=false"
-      :visible="showTable"
-    >
-      <pso-form-table
-        :cfgId="cpnt.data._option"
-        checkbox
-        :deletable="deletable"
-        :operate="deletable"
-        :selection-type="selectionType"
-        :addable="cpnt.data._new"
-        :edtail-editable="false"
-        @selection-confirm="handleAddSelection"
-      ></pso-form-table>
-    </el-dialog>
-    <pso-drawer
-      size="40%"
-      :visible="showFormViewer"
-      :title="store.data_name"
-      @close="showFormViewer=false"
-    >
-      <div class="pso-formTable-formViewer" v-if="store.data_code">
-        <pso-form-interpreter
-          ref="formImage"
-          :form-id="store.data_id"
-          :data-id="dataId"
-          :editable="!dataId"
-        ></pso-form-interpreter>
-      </div>
-      <template v-slot:footer>
-        <div class="pso-drawer-footer__body">
+  <pso-label :cpnt="cpnt" v-loading="initializing || loading">
+    <div class="pso-ip__ast" v-if="!initializing">
+      <div class="pso-ip__ast-btns" style="margin-bottom: 5px" v-if="cpntEditable">
+        <el-button v-if="cpnt.data._relate" type="primary" plain icon="el-icon-plus" size="mini" @click="showTable = true">
+          选择{{ cpnt.data._fieldName }}
+        </el-button>
+        <el-button v-if="showAddBtn" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd">
+          添加{{ cpnt.data._fieldName }}
+        </el-button>
+        <transition name="el-zoom-in-center">
           <el-button
-            v-if="dataId"
+            v-show="cpnt.data._relate && !justShowOne && selectedList.length"
             type="danger"
-            size="small"
-            @click="handleDeleteForm"
-            :disabled="deletingFrom"
-            :loading="deletingFrom"
-          >删除</el-button>
-          <el-button
-            type="primary"
-            size="small"
-            @click="handleSaveForm"
-            :disabled="savingFrom"
-            :loading="savingFrom"
-          >保存</el-button>
-        </div>
-      </template>
-    </pso-drawer>
-  </el-form-item>
+            icon="el-icon-delete"
+            size="mini"
+            @click="handleDelList(selectedList)"
+          >
+            取消所选数据
+          </el-button>
+        </transition>
+      </div>
+      <div class="pso-form-asstable-table">
+        <el-tag
+          v-if="justShowOne && instances.length"
+          :closable="cpntEditable"
+          @click="astStore.showInstance.call(astStore, instances[0])"
+          @close="handleDelList(instances)"
+          >{{ firstInstanceDisplay }}
+        </el-tag>
+        <view-table
+          v-if="!justShowOne && instances.length"
+          :store="astStore"
+          :params="tableParams"
+          :dragable="false"
+          :pagination="false"
+          :refresh="false"
+        ></view-table>
+      </div>
+      <pso-dialog
+        width="70%"
+        append-to-body
+        close-on-click-modal
+        custom-class="form-table-dialog"
+        title="选择关联数据"
+        @close="showTable = false"
+        :visible="showTable"
+      >
+        <pso-form-view
+          :cfgId="cpnt.data._option"
+          checkbox
+          :deletable="false"
+          :selection-type="selectionType"
+          :view-auth="formTableViewAuth"
+          :addable="false"
+          :edtail-editable="false"
+          selectable
+          :changable="false"
+          :stageable="false"
+          :params="formTableCfg"
+          :def-keys="devKeysCfg"
+          @selection-confirm="handleAddSelection"
+        ></pso-form-view>
+      </pso-dialog>
+      <pso-form-executor
+        :params="executorParams"
+        :title="store.data_name"
+        :opener="astStore"
+        :instanceids="astStore.instanceids"
+        :keepable="keepable"
+        @data-changed="dataChangeHandler"
+        @prev="astStore.showPrev.call(astStore, $event)"
+        @next="astStore.showNext.call(astStore, $event)"
+      ></pso-form-executor>
+    </div>
+  </pso-label>
 </template> 
 <script>
-import PsoFormTable from "../../form-table";
 import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
 import FormStore from "../../form-designer/model/store.js";
 import shortid from "shortid";
 
+import ASTStore from "../astStore";
+import ViewTable from "../../form-view/table";
+
 export default {
-  components: { PsoFormInterpreter: () => import("../index"), PsoFormTable },
+  components: { PsoFormInterpreter: () => import("../index"), ViewTable },
   mixins: [
     cpntMixin,
     pickerMixin({
@@ -125,144 +95,332 @@ export default {
       typeName: "_type",
       idName: "leaf_id",
       radioVal: 1,
-      checkboxVal: 2
-    })
+      checkboxVal: 2,
+    }),
   ],
   props: {
     deletable: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
+    this.clearDefFormOnClose = false;
     return {
+      initializing: true,
       loading: false,
       showTable: false,
-      selecedList: [],
-      loadingTable: false,
-      savingFrom: false,
-      deletingFrom: false,
+      astStore: null,
       store: {},
       proxy: {
         valList: [],
-        _type: this.cpnt.data._type
+        _type: this.cpnt.data._type,
       },
-      showFormViewer: false,
-      dataId: "",
-      selectedList: []
+      fields: [],
+      defForm: null,
+      unsavedSelf: null,
+      subAsstables: [],
+      addDataCallback: null,
+      cachedIds: [],
     };
   },
   computed: {
+    keepable() {
+      return typeof this.cpnt.data._keepable !== "undefined" ? this.cpnt.data._keepable : true;
+    },
     selectionType() {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";
     },
-    showFields() {
-      return this.store.search
-        ? this.store.search({
-            options: { table_show: true },
-            onlyData: true,
-            beforePush: item => !item.parent.CPNT.host_db
-          })
-        : [];
-    }
+    justShowOne() {
+      return this.selectionType === "radio";
+    },
+    showAddBtn() {
+      return this.cpnt.data._new && (!this.cpnt.data._relate && this.justShowOne ? !this.instances.length : true);
+    },
+    instances() {
+      if (this.astStore) {
+        return this.astStore.instances;
+      } else {
+        return [];
+      }
+    },
+    selectedList() {
+      return this.astStore.selectedList;
+    },
+    dataId() {
+      return this.astStore.dataId;
+    },
+    firstInstanceDisplay() {
+      if (this.instances.length) {
+        const data = this.instances[0];
+        const field = this.cpnt.data._radioField;
+        return data[`${field}_x`] || data[field || "leaf_id"];
+      }
+    },
+    tableParams() {
+      return {
+        selectionType: this.selectionType,
+        modifiable: this.cpntEditable,
+        checkbox: this.cpntEditable,
+        tableSize: "small",
+        checkbox: this.cpnt.data._relate,
+      };
+    },
+    editable() {
+      return this.cpnt.data._new && this.cpntEditable;
+    },
+    executorParams() {
+      return {
+        formId: this.astStore.store.data_code,
+        dataId: this.astStore.dataId,
+        dataInstance: this.astStore.curInstance,
+        dataDefault: this.defForm,
+        addable: this.cpnt.data.__forceAdd__ || this.editable,
+        editable: this.editable,
+        deletable: this.editable && !this.cpnt.data._relate,
+        mockAsstables: this.unsavedSelf,
+        parentInstanceId: this.cpnt.store.instance_id,
+      };
+    },
+    authCfg() {
+      if (this.cpnt.store && this.cpnt.store.sub_config) {
+        return _.find(this.cpnt.store.sub_config, { id: this.cpnt.data._fieldValue }) || {};
+      }
+      return {};
+    },
+    formTableViewAuth() {
+      if (this.authCfg.authable) {
+        return this.cpnt.data.__auth__ || 0;
+      } else {
+        return 4;
+      }
+    },
+    devKeysCfg() {
+      const params = [];
+      if (this.authCfg.status && this.authCfg.status.length) {
+        params.push(`d_status#${this.authCfg.status.join(",")}#4`);
+      }
+      if (this.cpnt.data._filter) {
+        this.cpnt.data._filter.forEach((f) => {
+          if (f.value !== "" || f.sid) {
+            let value = f.value;
+            if (f.sid) {
+              const source = this.cpnt.store.searchByField(f.sid);
+              if (source && source.data._val) {
+                value = source.data._val;
+              } else {
+                value = this.cpnt.store.instance[f.sid];
+              }
+            }
+            if (typeof value !== "undefined") {
+              params.push(`${f.tid}#${value}#${f.op}`);
+            }
+          }
+        });
+      }
+      return params.join(";");
+    },
+    formTableCfg() {
+      return {
+        searchType: this.authCfg.searchType,
+        auth_config: this.authCfg.authCfg,
+      };
+    },
   },
   watch: {
-    "proxy.valList"(val) {
-      this.cpnt.data._val = _.map(val, "leaf_id").join(",");
-      this.dispatch("PsoformInterpreter", "asstable-selected", { cpnt: this.cpnt, data: val, store: this.store });
+    "proxy.valList"(data) {
+      if (this.astStore) {
+        this.astStore.instances = data;
+        if (this.astStore.$table) {
+          this.astStore.$table.clearSelection();
+        }
+      }
+      this.cpnt.data._val = _.map(
+        data.filter((d) => !d.__dump__),
+        "leaf_id"
+      ).join(",");
+      this.dispatch("PsoformInterpreter", "asstable-selected", { cpnt: this.cpnt, data, store: this.store });
     },
     "cpnt.data._type": {
       handler(val) {
         this.proxy._type = val;
+      },
+    },
+    "astStore.showExecutor"(val) {
+      if (!val && this.clearDefFormOnClose) {
+        this.defForm = null;
       }
-    }
+    },
   },
   async created() {
-    await this.getFormCfg();
+    await this.initialize();
+
+    //初始赋值
     if (this.cpnt.data._val && typeof this.cpnt.data._val === "string") {
-      const list = [];
-      this.loading = true;
-      for (let id of this.cpnt.data._val.split(",")) {
-        const ret = await this.getFormData(id);
-        if (ret && ret.leaf_id) list.push(ret);
+      await this.setDataByIds(this.cpnt.data._val.split(","));
+
+      //只有在请求后没有取到数据，且父级数据没有生成前，才可以设置模拟数据
+      if (!this.proxy.valList.length && !this.cpnt.store.parentInstanceId) {
+        this.setMockData();
       }
-      this.proxy.valList = list;
-      this.loading = false;
+    } else {
+      this.setMockData();
     }
+
+    await this.handleCached();
+
+    this.cpnt._handleClickAdd = this.handleClickAdd;
+    this.cpnt._setDefForm = this.setDefForm;
+
+    //提示
+    const tip = this.cpnt.data._fieldInfo;
+    const defaultTip = "操作提示：双击或单击数据可查看详情或编辑，在弹出的窗口右上角可删除数据，删除时请谨慎操作。";
+    this.cpnt.data._fieldInfo = tip + (tip ? `<br><br>${defaultTip}` : defaultTip);
+
+    this.dispatch("PsoformInterpreter", "asstable-initialized", {
+      cpnt: this.cpnt,
+      data: this.cpnt.data._val,
+      value: this.cpnt.data._val,
+      proxy: this.proxy,
+      fields: this.astStore.fields,
+      store: this.store,
+    });
+
+    this.$on("data-changed", async (evt) => {
+      this.astStore.dataId = evt.leaf_id;
+      await this.dataChangeHandler(evt);
+      this.astStore.dataId = "";
+    });
   },
   methods: {
-    async getFormCfg() {
-      this.loading = true;
-      const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option }, method: "get" });
-      ret.data.data_id = this.cpnt.data._option;
-      ret.data.data_config = JSON.parse(ret.data.data_design);
-      this.store = new FormStore(ret.data);
-      this.loading = false;
-    },
-    async getFormData(value) {
-      this.loadingTable = true;
-      const ret = await this.API.formSearch({
-        form_code: this.store.data_code,
-        limit: 9999,
-        start: 0,
-        keys: {
-          leaf_id: {
-            type: 2,
-            value
+    async initialize() {
+      this.initializing = true;
+      if (!this.cpnt.data._option) return;
+
+      const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option, auth: 1 }, method: "get" });
+
+      this.astStore = new ASTStore({ $vue: this, limit: 10 });
+      this.cpnt.astStore = this.astStore;
+      this.astStore.analyzeFormCfg(ret.data, this.cpnt.data._showFields);
+      this.store = this.astStore.store;
+      this.fields = this.astStore.fields;
+
+      if (this.cpnt.store) {
+        this.subAsstables = this.astStore.store.search({
+          options: { componentid: "asstable" },
+          onlyMain: true,
+          onlyData: true,
+          beforePush: (item) => {
+            return item.data._option === this.cpnt.store.data_code;
+          },
+        });
+
+        if (this.subAsstables.length) {
+          if (this.cpnt.store.instance_id) {
+            this.defForm = { [this.subAsstables[0]._fieldValue]: this.cpnt.store.instance_id };
           }
         }
-      });
-      this.loadingTable = false;
-      return ret.data[0];
+      }
+
+      this.initializing = false;
     },
-    instanceClick(row) {
-      this.dataId = row.leaf_id;
-      this.showFormViewer = true;
+    async handleCached() {
+      for (let cached of this.cachedIds) {
+        if (cached.options) {
+          cached.options.afterDataLoaded = false;
+        }
+        await this.setDataByIds(cached.ids, cached.options);
+      }
+      this.cachedIds = [];
     },
-    handleSelectionChange(data) {
-      this.selectedList = data;
-    },
-    handleClickAdd() {
-      if (this.cpnt.data._relate) {
-        this.showTable = true;
-      } else if (this.cpnt.data._new) {
-        this.dataId = "";
-        this.showFormViewer = true;
+    setMockData() {
+      if (this.cpnt.store && this.cpnt.store.mockAsstables && this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]) {
+        this.handleAddSelection([this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]]);
+      } else {
+        this.proxy.valList = [];
       }
     },
-    async handleSaveForm() {
-      const leaf_id = this.dataId || shortid.generate();
-      try {
-        const formData = await this.$refs.formImage.makeData();
-        this.savingFrom = true;
-        const ret = await this.API.form({ data: { leaf_id, formData }, method: "put" });
-        if (ret.success) {
-          this.$notify({ title: "保存成功", type: "success" });
-          if (this.dataId) {
-            const index = _.findIndex(proxy.valList, { leaf_id });
-            this.proxy.valList.splice(index, 1, formData.dataArr[0]);
-          } else {
-            this.proxy.valList.push(formData.dataArr[0]);
+    async setDataByIds(idList, options = {}) {
+      const { callback } = options;
+      if (idList && typeof idList === "string") {
+        idList = idList.split(",");
+      }
+      if (this.astStore && this.astStore.findById && !this.initializing) {
+        this.loading = true;
+        const list = [];
+        for (let id of idList) {
+          let data = id;
+          if (typeof id === "string") {
+            data = await this.astStore.findById(id);
+          }
+          if (data) list.push(data);
+        }
+        if (callback) {
+          await callback(list, this);
+        }
+        this.handleAddSelection(list);
+        this.loading = false;
+      } else {
+        this.cachedIds.push({ ids: idList, options });
+      }
+    },
+    handleClickAdd(callback) {
+      //设置数据修改回调
+      this.addDataCallback = typeof callback === "function" ? callback : null;
+
+      //设置提前数据
+      if (this.subAsstables.length) {
+        if (!this.cpnt.store.instance_id) {
+          const data = { leaf_id: this.cpnt.store.beInstanceId };
+          for (let cpnt of Object.values(this.cpnt.store.cpntsMap)) {
+            if (cpnt.CPNT.layout || cpnt.componentid === "stage") continue;
+            data[cpnt.data._fieldValue] = cpnt.data._val;
+          }
+          this.unsavedSelf = { [this.subAsstables[0]._fieldValue]: data };
+        }
+      } else {
+        this.unsavedSelf = null;
+      }
+
+      this.astStore.newInstance();
+    },
+    async dataChangeHandler({ leaf_id, op, formData }) {
+      if (op === 1 || op === 2) {
+        const isTemporary = formData.dataArr[0]["__temporary__"];
+        let data;
+
+        if (isTemporary) {
+          data = formData.dataArr[0];
+        } else {
+          data = await this.astStore.findById(this.dataId || leaf_id);
+        }
+
+        if (this.dataId && data) {
+          //删除列表中修改的数据
+          this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
+        }
+
+        if (data) {
+          this.handleAddSelection([data]);
+
+          //新增数据回调
+          if (!this.dataId && this.addDataCallback) {
+            this.$nextTick(() => {
+              this.addDataCallback(data);
+            });
           }
         }
-        this.savingFrom = false;
-      } catch (error) {}
-      this.showFormViewer = false;
-    },
-    async handleDeleteForm() {
-      this.deletingFrom = true;
-      const leaf_id = this.dataId;
-      const ret = await this.API.form({
-        data: { leaf_id, datacode: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
-        method: "delete"
-      });
-      if (ret.success) {
-        this.$notify({ title: "删除成功", type: "success" });
+      } else if (op === 3) {
+        this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
+        this.astStore.removeInstance(leaf_id);
       }
-      this.deletingFrom = false;
-      this.showFormViewer = false;
-    }
-  }
+    },
+    setDefForm(data, clearOnClose = true) {
+      //一般用于外部强制设定表单数据
+      this.defForm = data;
+      this.clearDefFormOnClose = clearOnClose;
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

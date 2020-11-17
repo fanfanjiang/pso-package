@@ -1,7 +1,7 @@
 <template>
   <component
     v-bind:is="currentEl"
-    @clickNode="$emit('clickNode',$event)"
+    @click-node="$emit('click-node',$event)"
     :pnode="pnode"
     :node="node"
     :workflowImage="workflowImage"
@@ -9,7 +9,7 @@
   >
     <wf-node-el
       v-for="nodeItem in node.children"
-      @clickNode="$emit('clickNode',$event)"
+      @click-node="$emit('click-node',$event)"
       :key="nodeItem.nid"
       :node="nodeItem"
       :pnode="node"

@@ -1,6 +1,6 @@
 <template>
   <div class="pso-actor-chart">
-    <pso-chart-viewer v-if="cpnt.data._defaultValue" :chartId="cpnt.data._defaultValue"></pso-chart-viewer>
+    <pso-chart-interpreter v-if="cpnt.data._defaultValue" :chartId="cpnt.data._defaultValue"></pso-chart-interpreter>
   </div>
 </template>
 <script>

@@ -1,15 +1,24 @@
 import XLSX from 'xlsx';
 import x2js from 'x2js';
+import Vue from 'vue';
 
-export function listToTree({ list, pid = "pid", children = "children", id = "id", afterPush }) {
+export function listToTree({ list, pid = "pid", children = "children", id = "id", each, afterPush, beforePush }) {
     let map = {};
     let tree = [];
-    list.forEach(item => map[item[id]] = item);
+    list.forEach(item => {
+        each && each(item);
+        map[item[id]] = item
+    });
     list.forEach(item => {
         let parent = map[item[pid]];
         if (parent) {
             !parent[children] && (parent[children] = []);
-            parent[children].push(item);
+
+            if (beforePush) {
+                if (beforePush(item, parent)) parent[children].push(item);
+            } else {
+                parent[children].push(item);
+            }
             afterPush && afterPush(item, parent);
         } else {
             tree.push(item);
@@ -64,3 +73,45 @@ export async function checkUniq(data, field) {
     let fieldNames = _.map(data, field);
     return (_.uniq(fieldNames).length !== fieldNames.length) ? false : true;
 }
+
+export function formatJSONList(list, fieldObj, compare = true) {
+    let data = list;
+    if (typeof list === 'string') {
+        data = JSON.parse(list);
+    }
+    for (let item of data) {
+        for (let fKey in fieldObj) {
+            if (!item.hasOwnProperty(fKey) || (typeof item[fKey] === "object" && typeof fieldObj[fKey] !== 'object') || (typeof item[fKey] !== "object" && typeof fieldObj[fKey] === 'object')) {
+                Vue.set(item, fKey, _.cloneDeep(fieldObj[fKey]));
+            }
+        }
+        if (compare) {
+            for (let key in item) {
+                if (!fieldObj.hasOwnProperty(key)) {
+                    Vue.delete(item, key);
+                    delete item.key
+                }
+            }
+        }
+
+    }
+    return data;
+}
+
+export function assignList({ target, source, base, tid, sid, assemble }) {
+    target.forEach((t, i) => {
+        const exist = _.find(source, { [sid]: t[tid] });
+        if (!exist) {
+            delete target[i]
+        }
+    })
+    source.forEach(s => {
+        const exist = _.find(target, { [tid]: s[sid] });
+        if (exist) {
+            formatJSONList([exist], base)
+        } else {
+            target.push({ ...base, ...assemble(s) })
+        }
+    })
+}
+

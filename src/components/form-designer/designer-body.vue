@@ -8,29 +8,19 @@
             <div class="form-designer__menu-bar" v-bar>
               <div class="form-designer__menu-body">
                 <div class="fd__menu-section" v-for="cpnList in menu" :key="cpnList.title">
-                  <div class="fd__menu-section-title">{{cpnList.title}}</div>
+                  <div class="fd__menu-section-title">{{ cpnList.title }}</div>
                   <div class="fd__menu-section-body" v-if="!roloadingMenu">
-                    <el-row
-                      :gutter="20"
-                      class="dropable"
-                      id="formDesignerMenu"
-                      put="false"
-                      pull="clone"
-                      sort="false"
-                    >
+                    <el-row :gutter="5" class="dropable" id="formDesignerMenu" put="false" pull="clone" sort="false">
                       <el-col
                         :span="12"
-                        :class="['dragable',...cpnt.class]"
+                        :class="['dragable', ...cpnt.class]"
                         v-for="cpnt in cpnList.children"
                         :key="cpnt.name"
                         :componentid="cpnt.componentid"
                       >
-                        <div
-                          class="fd__menu-section-item"
-                          @click.stop="menuClickHandler(cpnt,$event)"
-                        >
+                        <div class="fd__menu-section-item" @click.stop="menuClickHandler(cpnt, $event)">
                           <i :class="cpnt.icon"></i>
-                          <span class="fd__menu-section-item-title">{{cpnt.name}}</span>
+                          <span class="fd__menu-section-item-title">{{ cpnt.name }}</span>
                         </div>
                       </el-col>
                     </el-row>
@@ -40,15 +30,8 @@
             </div>
           </div>
           <div class="form-designer__stage">
-            <div class="form-designer__stage-title">{{stageName}}</div>
-            <div
-              class="form-designer__stage-body dropable"
-              fid="0"
-              componentid="0"
-              put="true"
-              pull="true"
-              sort="true"
-            >
+            <div class="form-designer__stage-title">{{ stageName }}</div>
+            <div class="form-designer__stage-body dropable" fid="0" componentid="0" put="true" pull="true" sort="true">
               <designer-cpnt v-for="cpnt in root.childComponents" :key="cpnt.fid" :cpnt="cpnt"></designer-cpnt>
             </div>
           </div>
@@ -74,58 +57,45 @@ export default {
   components: { DesignerCpnt, DesignerPanel },
   props: {
     data: {
-      type: Object
+      type: Object,
     },
     components: {
       type: Object,
       default: () => {
         return {
-          常用控件: [
-            "text",
-            "number",
-            "money",
-            "select",
-            "checkbox",
-            "cascader",
-            "time",
-            "phone",
-            "email",
-            "area",
-            "attachment",
-            "user",
-            "department"
-          ],
+          常用控件: ["text", "number", "money", "select", "checkbox", "time", "area", "attachment", "user", "department", "rich"],
           布局控件: ["row", "div"],
           高级控件: [
-            "table",
+            // "table",
             "asstable",
             "summary",
             "assfield",
             "formula",
             "tag",
             "autoid",
-            "unit",
+            // "unit",
             "rate",
-            "timerange",
-            "credential",
-            "rich",
-            "signature"
+            // "timerange",
+            // "credential",
+            // "cascader",
+            "pscript",
+            "signature",
           ],
-          特殊控件: ["section", "remark", "aiw"]
+          特殊控件: ["section", "remark", "aiw", "phone", "email"],
         };
-      }
+      },
     },
     stageName: {
       type: String,
-      default: "表单设计"
-    }
+      default: "表单设计",
+    },
   },
   data() {
     return {
       store: null,
       root: null,
       dragAndDrop: null,
-      roloadingMenu: false
+      roloadingMenu: false,
     };
   },
   computed: {
@@ -134,28 +104,29 @@ export default {
       for (let key in this.components) {
         menus.push({
           title: key,
-          children: this.components[key].map(cpntName => _.cloneDeep(CPNT[cpntName]))
+          children: this.components[key].map((cpntName) => _.cloneDeep(CPNT[cpntName])),
         });
       }
       return menus;
-    }
+    },
   },
   created() {
     this.store = new FormStore(this.data);
     this.root = this.store.root;
+    this.store.__menu__ = _.union(..._.map(this.menu, "children"));
     this.$emit("store-ready", this.store);
 
     this.dragAndDrop = DragAndDrop.init({
-      onAdd: evt => {
+      onAdd: (evt) => {
         this.cpntAddHandler(evt);
         $(evt.item).remove();
       },
-      onUpdate: evt => {
+      onUpdate: (evt) => {
         this.cpntAddHandler(evt);
       },
-      onShowclone: evt => {
+      onShowclone: (evt) => {
         this.reloadMenu();
-      }
+      },
     });
   },
   methods: {
@@ -165,7 +136,7 @@ export default {
         newIndex: evt.newIndex,
         to: getComponentParams(evt.to),
         from: isMenu(evt.from) ? null : getComponentParams(evt.from),
-        target: getComponentParams(evt.item)
+        target: getComponentParams(evt.item),
       });
     },
     reloadMenu() {
@@ -178,13 +149,9 @@ export default {
       this.store.setCurrentCpnt(this.root);
     },
     menuClickHandler(cpnt, evt) {
-      const target = $(evt.target)
-        .parents(".dragable")
-        .get(0);
+      const target = $(evt.target).parents(".dragable").get(0);
 
-      const tParent = $(evt.target)
-        .parents(".dropable")
-        .get(0);
+      const tParent = $(evt.target).parents(".dropable").get(0);
 
       const clone = $(target).clone(true);
 
@@ -195,9 +162,7 @@ export default {
       const dragContainer = getDragableByFid(this.store.fid);
       let dropContainer = getDropableByFid(this.store.fid);
       if (!dropContainer) {
-        dropContainer = $(dragContainer)
-          .parents(".dropable")
-          .get(0);
+        dropContainer = $(dragContainer).parents(".dropable").get(0);
 
         if (!isRoot(dropContainer) && $(dropContainer).children().length > 1) {
           dropContainer = getRoot();
@@ -212,17 +177,16 @@ export default {
 
       this.dragAndDrop.animateAll(dropContainer, () => {
         $(clone).remove();
-
         this.store.append({
           oldIndex: 0,
           newIndex: $(dropContainer).children().length,
           to: getComponentParams(dropContainer),
           from: null,
-          target: getComponentParams(target)
+          target: getComponentParams(target),
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -278,18 +242,18 @@ export default {
       width: 300px;
       background-color: #f1f2f3;
       .form-designer__menu-body {
-        padding: 15px 20px;
+        padding: 10px;
         .fd__menu-section {
           margin-top: 15px;
           .fd__menu-section-title {
             font-size: 14px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             color: #666;
           }
           .fd__menu-section-body {
             .dragable {
-              margin-bottom: 15px;
+              margin-bottom: 5px;
               &:active {
                 padding: 0;
               }
@@ -297,6 +261,9 @@ export default {
           }
         }
       }
+    }
+    .fd__menu-section-item-title {
+      font-size: 12px;
     }
   }
 }

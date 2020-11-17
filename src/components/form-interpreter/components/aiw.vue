@@ -1,7 +1,7 @@
 <template>
-  <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-input type="text" :disabled="true" :value="transWords"></el-input>
-  </el-form-item>
+  <pso-label :cpnt="cpnt">
+    <el-input size="small" type="text" :disabled="true" :value="transWords"></el-input>
+  </pso-label>
 </template>
 <script>
 const MoneyWords = require("../../../utils/sumInWords");
@@ -22,7 +22,7 @@ export default {
         }
       }
       return (this.cpnt.data._val = "");
-    }
-  }
+    },
+  },
 };
 </script>

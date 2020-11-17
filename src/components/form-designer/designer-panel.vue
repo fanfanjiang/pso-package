@@ -3,8 +3,8 @@
     <template v-for="cpnt in store.cpntsMap">
       <component
         v-show="store.fid===cpnt.fid"
-        :key="cpnt.fid"
         v-bind:is="currentEL(cpnt)"
+        :key="cpnt.fid"
         :cpnt="cpnt"
       ></component>
     </template>
@@ -13,7 +13,7 @@
 <script>
 const componentsMap = {};
 const requireComponent = require.context("./panels", true);
-requireComponent.keys().forEach(fileName => {
+requireComponent.keys().forEach((fileName) => {
   const componentConfig = requireComponent(fileName);
   const componentName = _.upperFirst(
     _.camelCase(
@@ -31,8 +31,8 @@ export default {
   methods: {
     currentEL(cpnt) {
       return `pso-panel-${cpnt.componentid}`;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
