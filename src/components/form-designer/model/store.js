@@ -41,6 +41,7 @@ export default class FormStore {
 
         this.rule_config;
 
+        //由node端拼接的字段
         this.__fieldAuth__ = []; //字段权限
 
         this.cpntsDataMps = {};

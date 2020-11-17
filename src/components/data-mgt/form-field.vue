@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-page">
+  <div class="pso-page" style="height: 600px">
     <div class="pso-page-body">
       <div class="pso-page__tree narrow">
         <div class="tag-list">
