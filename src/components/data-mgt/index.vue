@@ -425,6 +425,7 @@ export default {
         sub_config: JSON.stringify(this.asstable),
         export_config: JSON.stringify(this.upload),
       });
+
       this.saving = false;
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
     },
