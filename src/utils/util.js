@@ -99,12 +99,13 @@ export function formatJSONList(list, fieldObj, compare = true) {
 }
 
 export function assignList({ target, source, base, tid, sid, assemble }) {
-    target.forEach((t, i) => {
+    for (let i = target.length - 1; i >= 0; i--) {
+        const t = target[i];
         const exist = _.find(source, { [sid]: t[tid] });
         if (!exist) {
-            delete target[i]
+            target.splice(i, 1)
         }
-    })
+    }
     source.forEach(s => {
         const exist = _.find(target, { [tid]: s[sid] });
         if (exist) {
