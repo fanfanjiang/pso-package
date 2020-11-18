@@ -126,7 +126,7 @@ export default {
   },
   computed: {
     keepable() {
-      return typeof this.cpnt.data._keepable !== "undefined" ? this.cpnt.data._keepable : true;
+      return typeof this.cpnt.data._keepable !== "undefined" ? this.cpnt.data._keepable : !this.justShowOne;
     },
     selectionType() {
       return this.cpnt.data._type === 1 ? "radio" : "checkbox";

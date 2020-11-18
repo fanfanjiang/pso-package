@@ -14,7 +14,7 @@
       </el-form-item>
       <el-form-item label="权限项描述">
         <el-input v-model="formData.body_note" autocomplete="off"></el-input>
-      </el-form-item>
+      </el-form-item> 
       <slot></slot>
     </el-form>
     <div slot="footer" class="dialog-footer">

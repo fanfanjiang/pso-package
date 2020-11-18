@@ -101,6 +101,10 @@ export function formatJSONList(list, fieldObj, compare = true) {
 export function assignList({ target, source, base, tid, sid, assemble }) {
     for (let i = target.length - 1; i >= 0; i--) {
         const t = target[i];
+        if (!t) {
+            target.splice(i, 1);
+            continue;
+        }
         const exist = _.find(source, { [sid]: t[tid] });
         if (!exist) {
             target.splice(i, 1)
