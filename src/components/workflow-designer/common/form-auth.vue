@@ -4,15 +4,15 @@
       <div class="wf-auth-item__name">字段</div>
       <div class="wf-auth-item__ctl">
         <el-checkbox-group v-model="controls" @change="handleGroupChecked">
-          <el-checkbox v-for="AU in WF_FIELD_AUTH" :label="AU.v" :key="AU.n">{{AU.n}}</el-checkbox>
+          <el-checkbox v-for="AU in WF_FIELD_AUTH" :label="AU.v" :key="AU.n">{{ AU.n }}</el-checkbox>
         </el-checkbox-group>
       </div>
     </div>
-    <div class="wf-auth-item" v-for="(fa,i) in node.fieldsAuth" :key="i">
-      <div class="wf-auth-item__name">{{getField(fa.id)._fieldName}}</div>
+    <div class="wf-auth-item" v-for="(fa, i) in node.fieldsAuth" :key="i">
+      <div class="wf-auth-item__name">{{ getField(fa.id)._fieldName }}</div>
       <div class="wf-auth-item__ctl">
         <el-checkbox-group v-model="fa.proxy" @change="handleChecked(fa)">
-          <el-checkbox v-for="AU in WF_FIELD_AUTH" :label="AU.v" :key="AU.n">{{AU.n}}</el-checkbox>
+          <el-checkbox v-for="AU in WF_FIELD_AUTH" :label="AU.v" :key="AU.n">{{ AU.n }}</el-checkbox>
         </el-checkbox-group>
       </div>
     </div>
@@ -46,16 +46,22 @@ export default {
       }
     });
 
-    this.node.fieldsAuth.forEach((f, i) => {
-      const exist = this.getField(f.id);
-      if (!exist) {
-        delete this.node.fieldsAuth[i];
-      } else {
-        if (!f.proxy) {
-          this.$set(f, "proxy", this.figureToList(f.value));
+    for (let i = this.node.fieldsAuth.length - 1; i >= 0; i--) {
+      const f = this.node.fieldsAuth[i];
+      if (!f) {
+        this.node.fieldsAuth.splice(i, 1);
+      }
+      if (f) {
+        const exist = this.getField(f.id);
+        if (!exist) {
+          this.node.fieldsAuth.splice(i, 1);
+        } else {
+          if (!f.proxy) {
+            this.$set(f, "proxy", this.figureToList(f.value));
+          }
         }
       }
-    });
+    }
   },
   methods: {
     getField(f) {
