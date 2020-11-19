@@ -535,6 +535,7 @@ const CPNT = {
       { n: '_copyTarget', v: '' },
       { n: '_copySource', v: '' },
       { n: '_copyTargetAutoLimit', v: [] },
+      { n: '_selectType', v: 'radio' },
     ]
   }
 }
