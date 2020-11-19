@@ -4,6 +4,12 @@
       <el-form-item label="脚本" required>
         <el-button @click="showScript = true" size="mini">设置脚本</el-button>
       </el-form-item>
+      <el-form-item label="多选单选" required>
+        <el-select size="mini" v-model="cpnt.data._selectType" placeholder="请选择">
+          <el-option label="单选" value="radio"></el-option>
+          <el-option label="多选" value="checkbox"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="展示方式" required>
         <el-select size="mini" v-model="cpnt.data._type" placeholder="请选择">
           <el-option label="自动填充" value="1"></el-option>

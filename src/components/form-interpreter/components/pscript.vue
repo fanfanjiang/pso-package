@@ -51,7 +51,13 @@
           </div>
         </div>
       </template>
-      <pscript-table :data="table" :fields-options="fields" @selection-confirm="handleAddSelection" @search="searchHandler"></pscript-table>
+      <pscript-table
+        :data="table"
+        :selection-type="cpnt.data._selectType"
+        :fields-options="fields"
+        @selection-confirm="handleAddSelection"
+        @search="searchHandler"
+      ></pscript-table>
     </pso-dialog>
   </pso-label>
 </template>
@@ -61,6 +67,7 @@ import PscriptTable from "../../pscript-table";
 import { pickerMixin } from "../../../mixin/picker";
 import debounce from "throttle-debounce/debounce";
 import shortid from "shortid";
+import { FILTER_TYPE } from "../../../../share/const/filter";
 
 export default {
   mixins: [
@@ -70,20 +77,22 @@ export default {
       showName: "showTable",
       dataListName: "valList",
       idName: "leaf_id",
+      typeName: "type",
     }),
   ],
   components: { PscriptTable },
   data() {
     return {
       initializing: false,
-      saved: false,
       showTable: false,
       table: [],
       fields: [],
       selected: [],
       condition: "",
+      skipedFirstRecord: true,
       proxy: {
         valList: [],
+        type: this.cpnt.data._selectType,
       },
     };
   },
@@ -101,14 +110,24 @@ export default {
     fieldsShow() {
       return this.fields.filter((item) => item.show === "1");
     },
+    shouldSaveOnce() {
+      return this.cpnt.data._saveOnce && this.cpnt.store.instance_id;
+    },
+    shouldAutoRecord() {
+      return this.cpnt.data._type === "1";
+    },
+    saveField() {
+      return this.cpnt.data._saveField || "leaf_id";
+    },
   },
   watch: {
-    "proxy.valList"(val) {
-      this.cpnt.data._val = _.map(val, this.cpnt.data._saveField || "leaf_id").join(",");
-      if (val.length) {
-        this.fillOut(val);
+    "proxy.valList"(data) {
+      if (this.skipedFirstRecord) {
+        this.record(data);
       }
-      this.dispatch("PsoformInterpreter", "pscript-selected", { cpnt: this.cpnt, data: val, store: this.store });
+      this.skipedFirstRecord = true;
+      this.cpnt.data._val = _.map(data, this.saveField).join(",");
+      this.dispatch("PsoformInterpreter", "pscript-selected", { cpnt: this.cpnt, data, store: this.store });
     },
     scriptParams: {
       deep: true,
@@ -126,25 +145,32 @@ export default {
 
     this.fields = _.orderBy(this.cpnt.data._column, ["number"], ["asc"]);
 
-    //已经存储过，不能再修改
-    if (this.cpnt.data._saveOnce && this.cpnt.store.instance_id) {
-      this.saved = true;
-    }
+    this.skipedFirstRecord = !this.shouldSaveOnce;
 
-    //开始都请求一次，无论参数有没有值
+    //开始都请求一次，无论参数有没有值,如果是自动填充的，初始赋值已经在第一次请求中处理了
     await this.fetchData();
 
-    if (this.cpnt.data._val && this.cpnt.data._type === "2") {
-      const exist = _.find(this.table, { [this.cpnt.data._saveField]: this.cpnt.data._val });
-      if (exist) {
-        this.proxy.valList = [exist];
-      }
+    if (!this.shouldAutoRecord) {
+      this.setDataByIds(this.cpnt.data._val);
     }
   },
   methods: {
     searchHandler(condition) {
       this.condition = condition === "【】" ? "" : condition;
       this.fetch();
+    },
+    setDataByIds(data) {
+      if (typeof data === "string") {
+        data = data.split(",");
+      }
+      const list = [];
+      data.forEach((d) => {
+        const exist = _.find(this.table, { [this.saveField]: d });
+        if (exist) {
+          list.push(exist);
+        }
+      });
+      this.handleAddSelection(list);
     },
     async fetchData() {
       //获取数据
@@ -160,36 +186,46 @@ export default {
       const ret = await this.API.getPscriptData(params);
 
       this.cpnt.store.storeLoading = false;
+
       if (ret.success) {
         this.table = ret.data;
 
-        if (this.cpnt.data._type === "1" && ret.data.length && !this.saved) {
-          this.fillOut(ret.data);
+        //自动填充
+        if (this.shouldAutoRecord) {
+          //直接触发填充
+          this.proxy.valList = ret.data || [];
         }
       }
     },
-    fillOut(copyData) {
-      let data = copyData;
-      if (this.cpnt.data._copyType !== "2") {
-        data = copyData[0];
-      }
-
+    record(data) {
       //填充表单
-      //保存本体字段值
-      if (this.cpnt.data._saveField) {
-        this.cpnt.data._val = data[this.cpnt.data._saveField];
-      } else {
-        this.cpnt.data._val = 1;
-      }
 
       if (this.cpnt.data._copyType !== "2") {
-        for (let key in data) {
-          const cpnt = this.cpnt.store.searchByField(key);
+        let fields = [];
+        if (this.table.length) {
+          fields = Object.keys(this.table[0]);
+        } else if (this.fields.length) {
+          fields = _.map(this.fields, "field");
+        }
+        for (let field of fields) {
+          const cpnt = this.cpnt.store.searchByField(field);
           if (cpnt) {
-            if (cpnt.__setDataByIds) {
-              cpnt.__setDataByIds(data[key]);
+            let value = _.map(data, field);
+            //查找字段
+            const definedField = _.find(this.fields, field);
+            if (definedField && definedField.searchType === FILTER_TYPE.number.id) {
+              value = value
+                .reduce((a, b) => {
+                  return parseFloat(a || 0) + parseFloat(b || 0);
+                })
+                .fixed(2);
             } else {
-              cpnt.data._val = data[key];
+              value = value.filter((v) => v).join(",");
+            }
+            if (cpnt.__setDataByIds) {
+              cpnt.__setDataByIds(value);
+            } else {
+              cpnt.data._val = value;
             }
           }
         }
