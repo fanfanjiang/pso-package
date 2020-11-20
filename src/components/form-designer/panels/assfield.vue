@@ -41,7 +41,6 @@ export default {
     tableOptions() {
       this.tableOptionsProxy = this.cpnt.store.search({
         options: { ass_db: true },
-        dataOptions: { _type: 1 },
         onlyData: true,
         beforePush: item => !!item.data._option
       });

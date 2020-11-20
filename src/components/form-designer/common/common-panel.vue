@@ -82,7 +82,7 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="fid">
-        <el-input disabled="disabled" size="mini" v-model.trim="cpnt.data.fid" clearable></el-input>
+        <el-input size="mini" v-model.trim="cpnt.data.fid" clearable></el-input>
       </el-form-item>
       <el-form-item label="输出格式">
         <el-input size="mini" :clearable="true" type="textarea" v-model.trim="cpnt.data._outputFormat"></el-input>
