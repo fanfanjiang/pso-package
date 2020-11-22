@@ -15,7 +15,7 @@
         </div>
         <div class="form-executor-header__r">
           <div class="sql-designer__add">
-            <el-button size="mini" type="success" icon="el-icon-plus" @click="addSqlBlock">新增脚本</el-button>
+            <el-button size="mini" type="success" icon="el-icon-plus" @click="addSqlBlock()">新增脚本</el-button>
           </div>
         </div>
       </div>
@@ -23,7 +23,7 @@
     <div class="sql-designer-wrapper">
       <template v-if="sql && sql.length">
         <transition name="el-fade-in">
-          <designer v-if="curBlock" :scode="scode" :block="curBlock"></designer>
+          <designer v-if="curBlock" :scode="scode" :block="curBlock" :names="names"></designer>
         </transition>
       </template>
       <pso-empty v-else text="暂无脚本"></pso-empty>
@@ -44,6 +44,7 @@ export default {
       default: "",
     },
     opener: Object,
+    names: Array,
   },
   data() {
     return {
@@ -63,16 +64,24 @@ export default {
     },
   },
   methods: {
-    addSqlBlock() {
+    addSqlBlock(option = {}) {
+      let { script = "", name } = option;
+      if (!name) {
+        if (this.names) {
+          name = this.names[0];
+        } else {
+          name = "脚本";
+        }
+      }
       const id = shortid.generate();
       this.sql.push({
         id,
-        name: "脚本",
+        name,
+        script,
         script_type: "0",
         action_type: "0",
         relate_type: "0",
         params: [],
-        script: "",
         data_code: "",
         field_config: [],
         optype: "0",
@@ -80,6 +89,7 @@ export default {
         split_field: "",
         is_index: "0",
         index_script: "",
+        child_config: [],
       });
       this.activeTab = id;
     },

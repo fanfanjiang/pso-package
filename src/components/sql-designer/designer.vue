@@ -6,7 +6,10 @@
           <el-form class="sql-designer-base" size="mini" label-position="top">
             <div class="form-wrapper">
               <el-form-item label="名称" required>
-                <el-input size="mini" v-model="block.name"></el-input>
+                <el-input v-if="!names" size="mini" v-model="block.name"></el-input>
+                <el-select v-else size="mini" v-model="block.name" filterable>
+                  <el-option v-for="(n, i) in names" :key="i" :label="n" :value="n"></el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="类型" required>
                 <el-select size="mini" v-model="block.script_type" filterable>
@@ -59,13 +62,17 @@
               ></picker-form>
             </div>
             <div class="form-wrapper">
+              <el-form-item label="索引">
+                <el-checkbox v-model="block.is_index" true-label="1" false-label="0">开启索引</el-checkbox>
+              </el-form-item>
               <el-form-item label="目标类型" required>
                 <el-select size="mini" v-model="block.action_type" filterable>
                   <el-option v-for="(itm, i) in OP" :key="i" :label="itm.n" :value="itm.v"></el-option>
                 </el-select>
               </el-form-item>
+            </div>
+            <div class="form-wrapper" v-if="extendable">
               <picker-form
-                v-if="extendable"
                 from-text="目标表"
                 form-field="data_code"
                 source="3"
@@ -75,10 +82,15 @@
                 @loaded="targetFormCheck"
               ></picker-form>
             </div>
-            <div class="form-wrapper">
-              <el-form-item label="索引" required>
-                <el-checkbox v-model="block.is_index" true-label="1" false-label="0">开启索引</el-checkbox>
-              </el-form-item>
+            <div v-if="copyProxy.length">
+              <el-divider content-position="left">子表配置</el-divider>
+              <div class="sql-designer-copyitem" v-for="(d, i) in copyProxy" :key="i">
+                <el-checkbox v-model="d.checked">{{ d.name }}</el-checkbox>
+                <div>
+                  <el-radio v-model="d.f_type" label="1">复制</el-radio>
+                  <el-radio v-model="d.f_type" label="2">链式</el-radio>
+                </div>
+              </div>
             </div>
           </el-form>
         </el-collapse-item>
@@ -290,6 +302,7 @@ export default {
       type: String,
       default: "",
     },
+    names: Array,
   },
   data() {
     Object.assign(this, SQLCONST);
@@ -334,9 +347,24 @@ export default {
       store: null,
       showInstancePicker: false,
       instance: null,
+      copyProxy: [],
     };
   },
   computed: {
+    copyTarget() {
+      const asts = [];
+      if (this.paramsOptions.length && this.targetFields.length) {
+        this.paramsOptions.forEach((d) => {
+          if (d.componentid === "asstable") {
+            const exist = _.find(this.targetFields, { _option: d._option });
+            if (exist) {
+              asts.push(exist);
+            }
+          }
+        });
+      }
+      return asts;
+    },
     extendable() {
       return this.block.script_type === "1" && this.block.action_type && this.block.action_type !== "0";
     },
@@ -415,8 +443,41 @@ export default {
     "block.relate_type"() {
       this.$refs.sourceTable.clearSelection();
     },
+    copyTarget: {
+      deep: true,
+      handler() {
+        if (this.block.data_code && !this.targetFields.length) return;
+        this.getCopyTarget();
+      },
+    },
+    copyProxy: {
+      deep: true,
+      handler() {
+        this.block.child_config = this.copyProxy.filter((d) => d.checked);
+      },
+    },
   },
   methods: {
+    getCopyTarget() {
+      const list = [];
+      this.copyTarget.forEach((d) => {
+        const item = { name: this.getForm(d._option).node_display, efield: d._option };
+        const exist = _.find(this.block.child_config, { efield: d._option });
+        let checked = false;
+        let f_type = "1";
+        if (exist) {
+          checked = exist.checked;
+          f_type = exist.f_type;
+        }
+        this.$set(item, "checked", checked);
+        this.$set(item, "f_type", f_type);
+        list.push(item);
+      });
+      this.copyProxy = list;
+    },
+    getForm(node_name) {
+      return _.find(this.forms, { node_name }) || {};
+    },
     onCodemirrorReady(cm) {
       cm.on("keypress", () => {
         cm.showHint({ completeSingle: false });
@@ -441,17 +502,19 @@ export default {
       this.showInstancePicker = false;
     },
     checkParams() {
-      this.store._forEach((cpnt) => {
-        if (this.block.params.includes(cpnt.data._fieldValue)) {
-          cpnt.data._hideForever = false;
-          cpnt.data._read = false;
-          this.$set(cpnt.data, "forceShow", true);
-        } else if (!cpnt.CPNT.layout) {
-          cpnt.data._hideForever = true;
-          this.$set(cpnt.data, "forceShow", false);
-        }
-        cpnt.data._required = false;
-      });
+      if (this.store) {
+        this.store._forEach((cpnt) => {
+          if (this.block.params.includes(cpnt.data._fieldValue)) {
+            cpnt.data._hideForever = false;
+            cpnt.data._read = false;
+            this.$set(cpnt.data, "forceShow", true);
+          } else if (!cpnt.CPNT.layout) {
+            cpnt.data._hideForever = true;
+            this.$set(cpnt.data, "forceShow", false);
+          }
+          cpnt.data._required = false;
+        });
+      }
     },
     prepareSource(data) {
       data.forEach((d) => {
@@ -602,7 +665,10 @@ export default {
       this.activeDebugTab = "result";
 
       try {
-        const data = await this.$refs.formImage.makeData();
+        let data = { dataArr: [{}] };
+        if (this.$refs.formImage) {
+          data = await this.$refs.formImage.makeData();
+        }
         this.debuging = true;
         const ret = await this.API.debugSQLScript({ script: this.block, scode: this.scode, paramvalue: data.dataArr[0] });
         this.debugResult += `[${dayjs().format("HH:mm:ss")}]     ${JSON.stringify(ret)}</br>`;
@@ -614,7 +680,10 @@ export default {
     },
     indexAddHandler(n) {
       const sql = _.find(this.INDEX, { n });
-      this.block.index_script += sql.v;
+      let text = sql.v;
+      text = text.replace("@main@", this.wrapTable());
+      text = text.replace("@sub@", `DATA_EXT_${this.querySubSource.data_code || ""}`);
+      this.block.index_script += text;
     },
   },
 };

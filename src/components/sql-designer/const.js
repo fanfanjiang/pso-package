@@ -36,7 +36,11 @@ export const CONDITION = [
 ];
 
 export const INDEX = [
-    { n: "确认", v: "$CONFIRM;select count(1) from T[] where;$" },
+    { n: "CONFIRM", v: "$CONFIRM;select count(1) from T[] where;$" },
+    { n: "NEXT", v: "NEXT||SELECT COUNT(1) FROM" },
+    { n: "LINKLEAF", v: "LINKLEAF||@main@||主表子表字段" },
+    { n: "COPYLEAF", v: "COPYLEAF||@main@||主表子表字段||@sub@" },
+    { n: "OVERRUN", v: "OVERRUN||psoscript" },
 ];
 
 export default {
