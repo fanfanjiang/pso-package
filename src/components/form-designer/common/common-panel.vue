@@ -5,7 +5,6 @@
       <el-form-item label="名称">
         <el-input size="mini" v-model.trim="cpnt.data._fieldName" clearable></el-input>
       </el-form-item>
-
       <el-form-item v-if="needPlaceholder" label="引导文字">
         <el-input size="mini" v-model="cpnt.data._placeholder" clearable></el-input>
       </el-form-item>
@@ -80,6 +79,9 @@
           :disabled="!!(!cpnt.data._fvEditable || (!!cpnt.store.data_code && !cpnt.add && cpnt.store.is_pub))"
           clearable
         ></el-input>
+      </el-form-item>
+      <el-form-item label="是否加密">
+        <el-switch size="mini" v-model="cpnt.data._encry" active-value="1" inactive-value="0"></el-switch>
       </el-form-item>
       <el-form-item label="fid">
         <el-input size="mini" v-model.trim="cpnt.data.fid" clearable></el-input>

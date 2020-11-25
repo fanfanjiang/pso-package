@@ -1,0 +1,43 @@
+.cms-designer {
+    .cms-designer__header {
+        padding: 0 0 10px 0;
+        text-align: right;
+    }
+
+    .cms-designer__body {
+        background-color: #f7f8f9;
+        min-height: 600px;
+
+        .cms-designer-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+            font-size: 24px;
+            height: 100%;
+            background-color: #fff;
+
+            &:hover {
+                >i {
+                    display: block;
+                }
+            }
+
+            >i {
+                position: absolute;
+                top: 5px;
+
+                cursor: pointer;
+                display: none;
+            }
+
+            .edit {
+                left: 5px;
+            }
+
+            .delete {
+                right: 5px;
+            }
+        }
+    }
+}

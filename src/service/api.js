@@ -157,6 +157,14 @@ export default class API {
         }
     }
 
+    static async apicfg(params) {
+        try {
+            return await this.RESTful('/api/apicfg', Object.assign({ idField: 'api_id' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async updateWfStatus(data) {
         try {
             return await this.request('/api/workflow/status', { data, method: 'post' });
@@ -358,7 +366,7 @@ export default class API {
         }
     }
 
-    static async getTempleteTree(type = [0, 1, 2, 3]) {
+    static async getTempleteTree(type = [0, 1, 2, 3, 4, 5]) {
         try {
             const ret = await this.trees({ data: { dimen: "4" } });
             return ret.data.tagtree.filter(node => type.includes(node.tp_type) && node.is_leaf);

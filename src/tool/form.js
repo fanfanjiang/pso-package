@@ -176,3 +176,7 @@ export function imitateFormData(data, store) {
         }
     }
 }
+
+export function checkUntransField(id) {
+    return (/\S+_s$/.test(id) || /\S+_x$/.test(id));
+}

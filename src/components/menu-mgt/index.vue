@@ -60,17 +60,11 @@
                       <el-option v-for="item in MENU_TYPE" :key="item.v" :label="item.n" :value="item.v"></el-option>
                     </el-select>
                   </el-form-item>
-                  <plug-set
-                    v-if="curNode.menu_type === MENU_TYPE[0].v"
-                    :data="curTpDetail"
-                    :node="curNode"
-                    @change="handleTagChange"
-                    field="menu_link"
-                  >
+                  <plugin-setter v-if="curNode.menu_type === MENU_TYPE[0].v" :data="curTpDetail" :node="curNode" field="menu_link">
                     <template v-slot:default="slotProps">
                       <slot v-bind:data="{ node_name: curNode.node_name, set: slotProps.data }"></slot>
                     </template>
-                  </plug-set>
+                  </plugin-setter>
                   <el-form-item v-else label="菜单链接">
                     <el-input v-model="curNode.menu_link" autocomplete="off"></el-input>
                   </el-form-item>
@@ -91,12 +85,12 @@
 </template>
 <script>
 import PsoNodeauth from "../node-auth";
-import PlugSet from "./plug-set";
-import ViewSet from "./view";
+import PluginSetter from "../plugin-setter";
+import ViewSet from "./view"; 
 import { MENU_TYPE, OPEN_TYPE, MENU_LEAF_AUTH } from "../../const/menu";
 import PsoPickerIcon from "../picker/pso-picker-icon";
 export default {
-  components: { PsoNodeauth, PlugSet, ViewSet, PsoPickerIcon },
+  components: { PsoNodeauth, PluginSetter, ViewSet, PsoPickerIcon },
   props: {
     params: {
       type: Object,
@@ -158,6 +152,7 @@ export default {
   },
   methods: {
     async nodeClickHandler(nodeData) {
+      console.log(nodeData);
       this.curNode = nodeData;
 
       this.loadingInfo = true;
@@ -206,9 +201,6 @@ export default {
     pickIcon(icon) {
       this.curNode.menu_icon = icon;
       this.showIconBox = false;
-    },
-    handleTagChange(data) {
-      this.curTpDetail = data;
     },
   },
 };

@@ -183,7 +183,7 @@ export default {
   data() {
     return {
       store: null,
-      showTip: true,
+      showTip: false,
       watchFun: [],
     };
   },
@@ -227,11 +227,6 @@ export default {
         }
       }
     },
-  },
-  mounted() {
-    setTimeout(() => {
-      this.showTip = false;
-    }, 3000);
   },
   methods: {
     async initialize() {

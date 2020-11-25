@@ -115,7 +115,11 @@ export function assignList({ target, source, base, tid, sid, assemble }) {
         if (exist) {
             formatJSONList([exist], base)
         } else {
-            target.push({ ...base, ...assemble(s) })
+            if (assemble) {
+                target.push({ ...base, ...assemble(s) })
+            } else {
+                target.push({ ...base, ...s })
+            }
         }
     })
 }

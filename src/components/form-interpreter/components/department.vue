@@ -33,10 +33,12 @@ export default {
     this.orgs = [];
     return {
       loading: false,
+      initialized: false,
       proxy: {
         list: [],
         type: this.cpnt.data._type,
       },
+      cachedIds: [],
     };
   },
   computed: {
@@ -53,18 +55,8 @@ export default {
   },
   async created() {
     this.loading = true;
-    this.orgs = await this.API.getOrgTree();
-    if (this.cpnt.data._val) {
-      this.setDataByIds(this.cpnt.data._val.split(","));
-    } else if (this.cpnt.data._defaultValType === "current" && this.base.user && this.base.user.deptid) {
-      this.setDataByIds([this.base.user.deptid]);
-    } else {
-      this.proxy.valList = [];
-    }
-    this.loading = false;
-    this.dispatch("PsoformInterpreter", "cpnt-dept-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
 
-    if (this.cpnt.data._bindUser) {
+    if (this.cpnt.data._bindUser && !this.cpnt.data._val) {
       this.$on("cpnt-value-changed", ({ cpnt, proxy }) => {
         if (cpnt.data._fieldValue === this.cpnt.data._bindUser && proxy) {
           if (proxy.list.length) {
@@ -75,13 +67,36 @@ export default {
         }
       });
     }
+
+    this.orgs = await this.API.getOrgTree();
+    this.initialized = true;
+    if (this.cpnt.data._val) {
+      this.setDataByIds(this.cpnt.data._val.split(","));
+    } else if (this.cpnt.data._defaultValType === "current" && this.base.user && this.base.user.deptid) {
+      this.setDataByIds([this.base.user.deptid]);
+    } else {
+      this.proxy.valList = [];
+    }
+    this.loading = false;
+    this.dispatch("PsoformInterpreter", "cpnt-dept-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
+    this.handleCached();
   },
   methods: {
+    async handleCached() {
+      if (this.cachedIds.length) {
+        await this.setDataByIds(this.cachedIds);
+        this.cachedIds = [];
+      }
+    },
     async setDataByIds(depts) {
       if (depts && typeof depts === "string") {
         depts = depts.split(",");
       }
       const list = [];
+      if (!this.initialized) {
+        this.cachedIds = this.cachedIds.concat(depts);
+        return;
+      }
       for (let node_id of depts) {
         const node = _.find(this.orgs, { node_id: parseInt(node_id) });
         if (node) list.push(node);

@@ -89,6 +89,7 @@ import PsoStatistics from "./components/statistics";
 import PsoStaScript from "./components/statistics/script";
 
 import PsoAvatar from "./components/avatar";
+import PsoApicfg from "./components/apicfg";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -165,7 +166,8 @@ const components = {
     PsoWvAst,
     PsoWtreeFv,
     PsoWtreeWv,
-    PsoTreeTimeline
+    PsoTreeTimeline,
+    PsoApicfg
 }
 
 

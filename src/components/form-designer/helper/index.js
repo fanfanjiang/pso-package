@@ -1,6 +1,7 @@
 import { CPNT } from "../../../const/form";
 import shortid from 'shortid';
 import Vue from 'vue';
+import { checkUntransField } from "../../../tool/form";
 
 const defalutCpntData = [
     { n: '_fieldType', v: 'String' },
@@ -25,6 +26,7 @@ const defalutCpntData = [
     { n: '_transFields', v: '' },
     { n: '_height', v: '' },
     { n: '_autofocus', v: false },
+    { n: '_encry', v: '0' },
 ]
 
 export function transferCpnt(target, componentid) {
@@ -54,7 +56,11 @@ export function genComponentData(target) {
         } else {
             do {
                 target.fid = shortid.generate();
-            } while (target.fid.indexOf('-') !== -1 || /^[0-9]/.test(target.fid))
+            } while (
+                target.fid.indexOf('-') !== -1
+                || /^[0-9]/.test(target.fid)
+                || checkUntransField(target.fid)
+            );
             Vue.set(target, '_fieldValue', target.fid);
         }
     }

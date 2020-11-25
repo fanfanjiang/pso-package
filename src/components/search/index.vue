@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-search">
+  <div class="pso-search" style="height: 40px; display: flex; align-items: center">
     <el-input
       ref="keywords"
       placeholder="搜索"
@@ -8,7 +8,7 @@
       clearable
       v-show="showKeywords"
       v-model="keywords"
-      @blur="onKeywordsBlur" 
+      @blur="onKeywordsBlur"
       @clear="showKeywords = false"
     ></el-input>
     <el-button v-show="!showKeywords" type="text" icon="el-icon-search" @click="onClickSearch">

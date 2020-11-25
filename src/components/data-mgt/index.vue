@@ -1,113 +1,83 @@
 <template>
-  <div class="pso-page">
-    <div class="pso-page-body">
-      <div class="pso-page__tree">
-        <pso-tree-common
-          ref="tree"
-          :request-options="treeOptions"
-          :default-node-data="defaultNodeData"
-          :default-nodeid="params.designedFormId"
-          :auto-edit="false"
-          @before-node-new="showWorksheetSelector = true"
-          @after-node-new="handleAfterNewdNode"
-          @node-click="nodeClickHandler"
-        ></pso-tree-common>
-      </div>
-      <div class="pso-page-body__content" v-loading="initializing">
-        <div class="pso-page-body__wrapper" v-if="curNode && !initializing">
-          <div class="pso-page-body__header">
-            <pso-title>工作表：{{ curNode.node_display }}({{ curNode.node_name }})</pso-title>
-            <div class="pso-dd-header__btns">
-              <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
-              <el-button size="mini" type="primary" plain @click="handleEditForm">设计表单</el-button>
-              <el-button size="mini" type="primary" plain @click="changeAllFormCol">转换所有列表配置</el-button>
+  <div :class="viewClass">
+    <div class="pso-view-extend">
+      <pso-tree-common
+        ref="tree"
+        :request-options="treeOptions"
+        :default-node-data="defaultNodeData"
+        :default-nodeid="params.designedFormId"
+        :auto-edit="false"
+        @before-node-new="newSheet"
+        @after-node-new="handleAfterNewdNode"
+        @node-click="nodeClickHandler"
+      ></pso-tree-common>
+    </div>
+    <div class="pso-view-body" v-loading="initializing">
+      <template v-if="curNode && !initializing">
+        <div class="pso-view-header">
+          <div class="pso-view-header__l" v-if="!params.hideTitle">
+            <div class="pso-view-title">
+              <i class="el-icon-document"></i>
+              <span>工作表：{{ curNode.node_display }}({{ curNode.node_name }})</span>
             </div>
           </div>
-          <div class="pso-page-body__tab">
-            <el-tabs v-model="curTab">
-              <template v-if="!!curNode.is_leaf">
-                <el-tab-pane label="数据" name="preview"></el-tab-pane>
-                <el-tab-pane label="字段" name="field"></el-tab-pane>
-                <el-tab-pane label="列表" name="list"></el-tab-pane>
-                <el-tab-pane label="状态" name="status"></el-tab-pane>
-                <el-tab-pane label="发布" name="publish"></el-tab-pane>
-                <el-tab-pane label="上传" name="upload"></el-tab-pane>
-                <el-tab-pane label="显示" name="rule"></el-tab-pane>
-                <el-tab-pane label="提交" name="submit"></el-tab-pane>
-                <el-tab-pane label="阶段" name="stage"></el-tab-pane>
-                <el-tab-pane label="子表" name="asstable"></el-tab-pane>
-              </template>
-              <el-tab-pane label="权限" name="auth"></el-tab-pane>
-            </el-tabs>
+          <div class="pso-view-header__r">
+            <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
+            <el-button size="mini" type="primary" plain @click="handleEditForm">设计表单</el-button>
           </div>
-          <div class="pso-page-body__tabbody" v-loading="saving">
+        </div>
+        <div class="pso-view-viewtab">
+          <el-tabs v-model="curTab" type="card">
             <template v-if="!!curNode.is_leaf">
-              <pso-form-view
-                v-show="curTab === 'preview'"
-                :key="curNode.node_id"
-                :cfg-id="curNode.node_name"
-                :view-auth="4"
-              ></pso-form-view>
-              <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
-              <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData"></form-column>
-              <form-status
-                v-if="curTab === 'status' && formStore"
-                :code="formStore.data_code"
-                :data="staData"
-                :fields="tableData"
-              ></form-status>
-              <form-status v-if="curTab === 'stage'" :data="stageData" :fields="tableData"></form-status>
-              <form-publish
-                v-if="curTab === 'publish' && formStore"
-                :data="pubCfg"
-                :node="curNode"
-                :store="formStore"
-                @save="saveConfig"
-              ></form-publish>
-              <form-upload
-                v-if="curTab === 'upload' && formStore"
-                :data="upload"
-                :code="curNode.node_name"
-                :store="formStore"
-              ></form-upload>
-              <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
-              <form-submit v-if="curTab === 'submit'" :data="subCfg" :fields="tableData"></form-submit>
-              <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
+              <el-tab-pane label="数据" name="preview"></el-tab-pane>
+              <el-tab-pane label="字段" name="field"></el-tab-pane>
+              <el-tab-pane label="列表" name="list"></el-tab-pane>
+              <el-tab-pane label="状态" name="status"></el-tab-pane>
+              <el-tab-pane label="发布" name="publish"></el-tab-pane>
+              <el-tab-pane label="上传" name="upload"></el-tab-pane>
+              <el-tab-pane label="显示" name="rule"></el-tab-pane>
+              <el-tab-pane label="提交" name="submit"></el-tab-pane>
+              <el-tab-pane label="阶段" name="stage"></el-tab-pane>
+              <el-tab-pane label="子表" name="asstable"></el-tab-pane>
+              <el-tab-pane label="内部API" name="innerapi"></el-tab-pane>
+              <el-tab-pane label="外部API" name="outerapi"></el-tab-pane>
             </template>
-            <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
-          </div>
+            <el-tab-pane label="权限" name="auth"></el-tab-pane>
+          </el-tabs>
         </div>
-      </div>
+        <div class="pso-view-table" v-loading="saving">
+          <template v-if="!!curNode.is_leaf">
+            <pso-form-view v-show="curTab === 'preview'" :key="curNode.node_id" :cfg-id="curNode.node_name" :view-auth="4"></pso-form-view>
+            <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
+            <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData"></form-column>
+            <form-status
+              v-if="curTab === 'status' && formStore"
+              :code="formStore.data_code"
+              :data="staData"
+              :fields="tableData"
+            ></form-status>
+            <form-status v-if="curTab === 'stage'" :data="stageData" :fields="tableData"></form-status>
+            <form-publish
+              v-if="curTab === 'publish' && formStore"
+              :data="pubCfg"
+              :node="curNode"
+              :store="formStore"
+              @save="saveConfig"
+            ></form-publish>
+            <form-upload v-if="curTab === 'upload' && formStore" :data="upload" :code="curNode.node_name" :store="formStore"></form-upload>
+            <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
+            <form-submit v-if="curTab === 'submit'" :data="subCfg" :fields="tableData"></form-submit>
+            <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
+            <form-iapicfg v-if="curTab === 'innerapi'" :data="inner_api" :fields="tableData"></form-iapicfg>
+            <form-oapicfg v-if="curTab === 'outerapi'"></form-oapicfg>
+          </template>
+          <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+        </div>
+      </template>
     </div>
-    <el-dialog
-      title="选择工作表类型"
-      width="30%"
-      custom-class="worksheet-dialog"
-      :append-to-body="true"
-      :center="true"
-      :visible.sync="showWorksheetSelector"
-    >
-      <div class="pso-worksheet-menu">
-        <div class="pso-worksheet-menu__tip">{{ curWsMenu.tip }}</div>
-        <div class="pso-worksheet-menu__list">
-          <div
-            :class="[{ 'pso-worksheet-menu__item': true, active: curWsMenu === item }]"
-            @mouseenter="curWsMenu = item"
-            @mouseleave="curWsMenu = {}"
-            @click="newSheet(item)"
-            v-for="(item, index) in worksheetMenu"
-            :key="index"
-          >
-            <img :src="curWsMenu === item ? item.icon[1] : item.icon[0]" :alt="item.name" />
-            <span>{{ item.name }}</span>
-          </div>
-        </div>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
-import { SHEET_MENU } from "./const.js";
 import { formOp } from "../form-designer/mixin.js";
 import PsoNodeauth from "../node-auth";
 import PsoTitle from "../title";
@@ -121,8 +91,11 @@ import FormRule from "./form-rule";
 import FormSubmit from "./form-submit";
 import FormAsstable from "./form-asstable";
 import FormUpload from "./form-upload";
+import FormIapicfg from "./form-iapicfg";
+import FormOapicfg from "./form-oapicfg";
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList } from "../../utils/util";
+import { MgtMixin } from "../../mixin/view";
 
 const _DATA = {
   tableData: [],
@@ -149,10 +122,24 @@ const _DATA = {
   subCfg: [],
   stageData: [],
   asstable: [],
+  inner_api: {
+    inner_type: "",
+    async_type: "",
+    async_stime: "",
+    async_etime: "",
+    inner_return: [],
+    inner_params: {},
+    field_config: {},
+    api_tag: "",
+    return_tag: "",
+    incre_type: "",
+    incre_field: "",
+  },
+  outer_api: {},
 };
 
 export default {
-  mixins: [formOp],
+  mixins: [formOp, MgtMixin],
   components: {
     FormField,
     PsoNodeauth,
@@ -165,6 +152,8 @@ export default {
     FormSubmit,
     FormAsstable,
     FormUpload,
+    FormIapicfg,
+    FormOapicfg,
   },
   props: {
     params: {
@@ -179,9 +168,6 @@ export default {
       initializing: true,
       appid: "Main",
       key: 0,
-      worksheetMenu: SHEET_MENU,
-      showWorksheetSelector: false,
-      curWsMenu: {},
       treeOptions: {
         dimen: 3,
         data_type: this.params.data_type,
@@ -206,13 +192,8 @@ export default {
     reset() {
       Object.assign(this.$data, _.cloneDeep(_DATA));
     },
-    async newSheet({ id }) {
-      if (id === "form") {
-        this.goForm({ pid: this.$refs.tree.nodePayload.parent.data.node_id });
-      }
-      if (id === "excel" || id === "xml") {
-        this.$refs.tree.nodePayload.showForm = true;
-      }
+    async newSheet() {
+      this.goForm({ pid: this.$refs.tree.nodePayload.parent.data.node_id });
     },
     async setSelect(data, tab = "preview") {
       this.initializing = true;
@@ -231,40 +212,6 @@ export default {
         await this.getFormInfo();
       }
       this.initializing = false;
-    },
-    async changeAllFormCol() {
-      this.saving = true;
-      const trees = await this.API.getFormTree();
-      for (let tr of trees) {
-        const ret = await this.API.getTreeNode({ code: tr.node_name });
-        const cfg = ret.data.data;
-        if (cfg.display_columns) {
-          const colCfg = JSON.parse(cfg.display_columns);
-          if (Array.isArray(colCfg)) {
-            if (colCfg.length) {
-              await this.API.updateFormTree({
-                data_code: tr.node_name,
-                display_columns: JSON.stringify({
-                  def: "默认",
-                  column: [
-                    {
-                      name: "默认",
-                      data: this.compareCol(colCfg, FORM_COLUMN_FIELDS),
-                    },
-                  ],
-                }),
-              });
-            } else {
-              await this.API.updateFormTree({
-                data_code: tr.node_name,
-                display_columns: "",
-              });
-            }
-          }
-        }
-      }
-      this.saving = false;
-      this.$message.error("完成");
     },
     compareCol(list) {
       const l = [];
@@ -326,6 +273,10 @@ export default {
         if (cfg.export_config) {
           this.upload = JSON.parse(cfg.export_config);
         }
+
+        if (cfg.inner_api) {
+          Object.assign(this.inner_api, JSON.parse(cfg.inner_api));
+        }
       }
     },
     nodeClickHandler(data) {
@@ -333,7 +284,6 @@ export default {
     },
     handleAfterNewdNode(data) {
       this.setSelect(data, "field");
-      this.showWorksheetSelector = false;
     },
     handleEditForm() {
       this.goForm({ id: this.curNode.node_name });
@@ -347,7 +297,7 @@ export default {
       this.tableData = ret.data;
       this.tableData.forEach((item) => {
         const field = formStore.searchByField(item.field_name, true);
-        item.field_display = field ? `[${field._fieldName}]${item.field_name}` : `[系统字段]${item.field_name}`;
+        item.field_display = field ? `${field._fieldName}[${item.field_name}]` : `系统字段[${item.field_name}]`;
       });
     },
     async getListTableData(formStore) {
@@ -413,7 +363,6 @@ export default {
       this.subCfg.forEach((item) => {
         subCfgData.push({ ...item, params: item.param.join(",") });
       });
-
       const ret = await this.API.updateFormTree({
         data_code: this.curNode.node_name,
         display_columns: JSON.stringify(this.colCfg),
@@ -424,6 +373,7 @@ export default {
         stage_config: JSON.stringify(this.stageData),
         sub_config: JSON.stringify(this.asstable),
         export_config: JSON.stringify(this.upload),
+        inner_api: JSON.stringify(this.inner_api),
       });
 
       this.saving = false;

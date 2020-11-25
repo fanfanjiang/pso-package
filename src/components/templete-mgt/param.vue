@@ -54,7 +54,7 @@
 </template>
 <script>
 import { TP_CTL_TYPE } from "../../const/menu";
-const _DATA = { field: "", value: "", picker: "", name: "", saveType: "1", relateParam: "" };
+import { PLUGIN_PARAMS } from "../../const/sys";
 const FORM = [
   { field: "cfgId", value: "", picker: "picker-form", name: "表单源", saveType: "1", relateParam: "" },
   { field: "where", value: "", picker: "input", name: "条件约束", saveType: "1", relateParam: "" },
@@ -98,11 +98,11 @@ export default {
     };
   },
   created() {
-    this.data.forEach((d) => Object.assign(d, { ..._DATA }, { ...d }));
+    this.data.forEach((d) => Object.assign(d, { ...PLUGIN_PARAMS }, { ...d }));
   },
   methods: {
     addParam() {
-      this.data.push({ ..._DATA });
+      this.data.push({ ...PLUGIN_PARAMS });
     },
     delParam(index) {
       this.data.splice(index, 1);

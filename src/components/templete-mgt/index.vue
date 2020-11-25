@@ -14,12 +14,7 @@
             <div v-if="nodeData.node.is_leaf">
               <el-form-item label="插件类型">
                 <el-select size="small" v-model="tpType">
-                  <el-option
-                    v-for="item in tpTypes"
-                    :key="item.value"
-                    :label="item.name"
-                    :value="item.value"
-                  ></el-option>
+                  <el-option v-for="item in tpTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </div>
@@ -29,16 +24,12 @@
       <div class="pso-page-body__content">
         <div class="pso-page-body__wrapper" v-if="curNode" v-loading="loading">
           <div class="pso-page-body__header">
-            <pso-title>插件：{{curNode.node_display}}</pso-title>
+            <pso-title>插件：{{ curNode.node_display }}</pso-title>
             <div class="pso-page-body__btns">
               <el-button size="small" type="primary" plain @click="saveTp">保存设置</el-button>
-              <el-button
-                v-if="curNode.tp_type===2||curNode.tp_type===3"
-                size="small"
-                type="primary"
-                plain
-                @click="editTp"
-              >编辑模板</el-button>
+              <el-button v-if="curNode.tp_type === 2 || curNode.tp_type === 3" size="small" type="primary" plain @click="editTp"
+                >编辑模板</el-button
+              >
             </div>
           </div>
           <div class="pso-page-body__tab">
@@ -48,25 +39,22 @@
                 <el-tab-pane label="参数" name="param"></el-tab-pane>
                 <el-tab-pane label="初始文本" name="textdef"></el-tab-pane>
                 <el-tab-pane label="文本" name="text"></el-tab-pane>
-                <el-tab-pane v-if="curNode.tp_type===1" label="列表" name="column"></el-tab-pane>
+                <el-tab-pane v-if="curNode.tp_type === 1" label="列表" name="column"></el-tab-pane>
+                <el-tab-pane v-if="curNode.tp_type === 5" label="设计" name="cms"></el-tab-pane>
               </template>
               <el-tab-pane label="权限" name="auth"></el-tab-pane>
             </el-tabs>
           </div>
           <div class="pso-page-body__tabbody">
             <template v-if="!!curNode.is_leaf">
-              <pso-tp-base v-if="curTab==='base'" :node="curNode"></pso-tp-base>
-              <pso-tp-param v-if="curTab==='param'" :data="paramData"></pso-tp-param>
-              <pso-tp-column
-                v-if="curTab==='column'&&!loading"
-                :data="columnData"
-                :header="tpHeader"
-                @save="saveTp"
-              ></pso-tp-column>  
-              <pso-tp-textdef v-if="curTab==='textdef'" :data="tpButtons"></pso-tp-textdef>
-              <pso-tp-text v-if="curTab==='text'" :data="tpText" :def-text="tpButtons"></pso-tp-text>
+              <pso-tp-base v-if="curTab === 'base'" :node="curNode"></pso-tp-base>
+              <pso-tp-param v-if="curTab === 'param'" :data="paramData"></pso-tp-param>
+              <pso-tp-column v-if="curTab === 'column' && !loading" :data="columnData" :header="tpHeader" @save="saveTp"></pso-tp-column>
+              <pso-tp-textdef v-if="curTab === 'textdef'" :data="tpButtons"></pso-tp-textdef>
+              <pso-tp-text v-if="curTab === 'text'" :data="tpText" :def-text="tpButtons"></pso-tp-text>
+              <cms-designer v-if="curTab === 'cms'" :layout="columnData"></cms-designer>
             </template>
-            <pso-nodeauth v-if="curTab==='auth'" :node="curNode"></pso-nodeauth>
+            <pso-nodeauth v-if="curTab === 'auth'" :node="curNode"></pso-nodeauth>
           </div>
         </div>
       </div>
@@ -82,6 +70,7 @@ import PsoTpText from "./text";
 import PsoTpTextdef from "./text-def";
 import { TP_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList } from "../../utils/util";
+import CmsDesigner from "../cms-designer";
 
 const _DATA = {
   columnData: [],
@@ -92,7 +81,7 @@ const _DATA = {
 };
 
 export default {
-  components: { PsoNodeauth, PsoTpBase, PsoTpParam, PsoTpColumn, PsoTpText, PsoTpTextdef },
+  components: { PsoNodeauth, PsoTpBase, PsoTpParam, PsoTpColumn, PsoTpText, PsoTpTextdef, CmsDesigner },
   props: {
     params: {
       type: Object,
@@ -127,6 +116,7 @@ export default {
   methods: {
     reset() {
       Object.assign(this.$data, _.cloneDeep(_DATA));
+      this.curTab = "base";
     },
     async nodeClickHandler(nodeData) {
       this.reset();
@@ -145,8 +135,13 @@ export default {
           }
 
           if (this.curNode.tp_content) {
-            this.columnData = formatJSONList(this.curNode.tp_content, STATIC_COLUMN_FIELDS);
+            if (this.curNode.tp_type === 2) {
+              this.columnData = formatJSONList(this.curNode.tp_content, STATIC_COLUMN_FIELDS);
+            } else {
+              this.columnData = JSON.parse(this.curNode.tp_content);
+            }
           }
+
           if (cfg.tp_head) {
             this.tpHeader = JSON.parse(cfg.tp_head);
             if (!Array.isArray(this.tpHeader)) {
@@ -194,7 +189,7 @@ export default {
       });
       this.ResultNotify(ret);
       this.loading = false;
-    }, 
+    },
     beforeNodeUpdate(data) {
       if (data.is_leaf) {
         data.tp_type = this.tpType;

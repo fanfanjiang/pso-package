@@ -1,14 +1,13 @@
 <template>
-  <div>
-    <div>
+  <div class="plugin-setter" v-loading="initializing">
+    <el-form label-position="left" label-width="180px" v-if="!initializing">
       <el-form-item label="选择插件">
-        <el-select size="mini" filterable v-model="node[field]" clearable @change="getTpDetail">
+        <el-select size="mini" filterable v-model="node[field]" clearable @change="pluginChangeHandler">
           <el-option v-for="item in templetes" :key="item.node_name" :label="item.node_display" :value="item.node_name"></el-option>
         </el-select>
       </el-form-item>
       <transition name="el-zoom-in-top">
         <div v-if="node[field] && data.length && !loadingTp">
-          <pso-title>插件参数</pso-title>
           <el-form-item v-for="tpItem in data" :key="tpItem.field" :label="tpItem.name">
             <template v-if="tpItem.picker === 'picker-form' || tpItem.picker === 'picker-wf'">
               <el-select
@@ -92,7 +91,7 @@
           </el-form-item>
         </div>
       </transition>
-    </div>
+    </el-form>
     <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner = false">
       <template v-slot:whole>
         <formula-designer
@@ -110,16 +109,23 @@
 import formulaDesigner from "../form-designer/formula-designer";
 import { formOp } from "../form-designer/mixin.js";
 import { genComponentData } from "../form-designer/helper";
+import { assignList } from "../../utils/util";
+import { PLUGIN_PARAMS } from "../../const/sys";
 
 export default {
   mixins: [formOp],
   components: { formulaDesigner },
-  props: ["data", "node", "field"],
+  props: {
+    data: Array,
+    node: Object,
+    field: String,
+    filter: Array,
+  },
   data() {
     return {
       initializing: true,
       loadingFields: true,
-      loadingTp: true,
+      loadingTp: false,
       loadingWf: false,
       templetes: [],
       forms: [],
@@ -136,12 +142,14 @@ export default {
   async created() {
     this.initializing = true;
 
-    this.templetes = await this.API.getTempleteTree();
+    this.templetes = await this.API.getTempleteTree(this.filter);
     this.forms = await this.API.getFormTree();
     this.workflows = await this.API.getWfTree();
     this.tags = (await this.API.getTreeDimen()).data;
 
-    await this.getTpDetail(this.node[this.field], this.data);
+    if (this.node[this.field]) {
+      await this.getTpDetail(this.node[this.field]);
+    }
 
     //初始获取表单和流程字段
     for (let d of this.data) {
@@ -152,45 +160,43 @@ export default {
         await this.handleFormChange(d.value);
       }
     }
-
+    console.log(this.data);
     this.initializing = false;
   },
   methods: {
-    async getTpDetail(code, originData) {
+    async pluginChangeHandler(code) {
+      this.data.splice(0, this.data.length - 1);
+      await this.getTpDetail(code);
+    },
+    async getTpDetail(code) {
       this.loadingTp = true;
-      if (code) {
-        const ret = await this.API.getTreeNode({ code });
-        if (ret.success) {
-          const cfg = ret.data.data;
-          const setting = JSON.parse(cfg.route_setting);
 
-          if (originData) {
-            const data = [];
-            setting.forEach((item) => {
-              const exist = _.find(originData, { field: item.field }) || {};
-              data.push({ ...item, ...exist });
-            });
-            this.data = data;
-          } else {
-            this.data = setting;
-          }
+      const ret = await this.API.getTreeNode({ code });
 
-          if (cfg.tp_content) {
-            this.fields = JSON.parse(cfg.tp_content);
-            this.makeCpnts(this.fields);
-          }
+      if (ret.success) {
+        const cfg = ret.data.data;
+        const setting = JSON.parse(cfg.route_setting);
+        assignList({
+          target: this.data,
+          source: setting,
+          tid: "field",
+          sid: "field",
+          base: PLUGIN_PARAMS,
+        });
 
-          //加载文本组
-          if (cfg.tp_text) {
-            this.text = JSON.parse(cfg.tp_text);
-          }
-        } else {
-          this.data = [];
+        if (cfg.tp_content) {
+          this.fields = JSON.parse(cfg.tp_content);
+          this.makeCpnts(this.fields);
+        }
+
+        //加载文本组
+        if (cfg.tp_text) {
+          this.text = JSON.parse(cfg.tp_text);
         }
       } else {
-        this.data = [];
+        this.data.splice(0, this.data.length - 1);
       }
-      this.$emit("change", this.data);
+
       this.loadingTp = false;
     },
     async handleFormChange(val, tpItem) {

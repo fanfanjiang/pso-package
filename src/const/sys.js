@@ -16,8 +16,20 @@ export const TP_TYPES = [
     {
         name: "图表插件",
         value: 3
+    },
+    {
+        name: "CMS组件",
+        value: 4
+    },
+    {
+        name: "CMS页面",
+        value: 5
     }
 ]
+
+export const PLUGIN_PARAMS = {
+    field: "", value: "", picker: "", name: "", saveType: "1", relateParam: ""
+}
 
 export const FORM_COLUMN_FIELDS = {
     field_name: '',

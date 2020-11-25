@@ -84,7 +84,7 @@
 <script>
 import PsoAttachment from "../attachment";
 import TableTag from "./table-tag";
-import { FormModifierMixin } from "../../mixin/list";
+import { FormModifierMixin } from "../../mixin/view";
 export default {
   components: { PsoAttachment, TableTag },
   mixins: [FormModifierMixin],

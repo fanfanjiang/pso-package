@@ -14,24 +14,20 @@
     <el-form-item label="描述">
       <el-input size="mini" v-model="data.tag_note" autocomplete="off"></el-input>
     </el-form-item>
-    <el-form-item label="规则" v-if="data.tag_type==='common'">
+    <el-form-item label="规则" v-if="data.tag_type === 'common'">
       <el-input size="mini" v-model="data.tag_rule" autocomplete="off"></el-input>
     </el-form-item>
-    <el-form-item
-      v-if="data.tag_type==='flag'"
-      label="标签颜色"
-      style="display: flex;align-items: center;"
-    >
+    <el-form-item v-if="data.tag_type === 'flag'" label="标签颜色" style="display: flex; align-items: center">
       <el-color-picker v-model="data.tag_rule" size="mini" :predefine="predefineColors"></el-color-picker>
     </el-form-item>
-    <plug-set :data="data.tag_set" :node="data" @change="handleTagChange" field="tag_source"></plug-set>
+    <plugin-setter :data="data.tag_set" :node="data" field="tag_source"></plugin-setter>
   </el-form>
 </template> 
 <script>
-import PlugSet from "../menu-mgt/plug-set";
+import PluginSetter from "../plugin-setter";
 
 export default {
-  components: { PlugSet },
+  components: { PluginSetter },
   props: ["data"],
   data() {
     return {
@@ -52,11 +48,12 @@ export default {
       predefineColors: ["#ff4500", "#ff8c00", "#ffd700", "#90ee90", "#00ced1", "#1e90ff", "#c71585"],
     };
   },
-  computed: {},
+  created() {
+    if (!this.data.tag_set) {
+      this.$set(this.data, "tag_set", []);
+    }
+  },
   methods: {
-    handleTagChange(data) {
-      this.data.tag_set = data;
-    },
     handleTypeChange(val) {
       if (val === "searchtag") {
         this.data.tag_rule = [];
