@@ -8,7 +8,7 @@
         <el-input
           type="textarea"
           autosize
-          placeholder="按Ctrl+Enter快速发表评论，支持@同事"
+          placeholder="按Ctrl+Enter快速发表评论"
           ref="chartInput"
           v-model="store.input"
           @input="handleInputChange"

@@ -52,6 +52,7 @@
           <el-dropdown-item command="countersign">加签</el-dropdown-item>
         </template>
         <el-dropdown-item command="print">打印</el-dropdown-item>
+        <el-dropdown-item command="chat">讨论</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -165,6 +166,9 @@ export default {
     },
     print() {
       this.$emit("print");
+    },
+    chat() {
+      this.store.activeExtendTab = "chat";
     },
   },
 };

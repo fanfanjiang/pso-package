@@ -165,6 +165,14 @@ export default class API {
         }
     }
 
+    static async apiauth(params) {
+        try {
+            return await this.RESTful('/api/apiauth', Object.assign({ idField: 'auth_id' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async updateWfStatus(data) {
         try {
             return await this.request('/api/workflow/status', { data, method: 'post' });

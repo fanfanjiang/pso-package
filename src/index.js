@@ -90,6 +90,7 @@ import PsoStaScript from "./components/statistics/script";
 
 import PsoAvatar from "./components/avatar";
 import PsoApicfg from "./components/apicfg";
+import PsoApiauth from "./components/apicfg/api-auth";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -167,7 +168,8 @@ const components = {
     PsoWtreeFv,
     PsoWtreeWv,
     PsoTreeTimeline,
-    PsoApicfg
+    PsoApicfg,
+    PsoApiauth
 }
 
 
@@ -207,7 +209,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.__device__ = parser.getResult();
     Vue.prototype.__isMobile__ = Vue.prototype.__device__.device.type === 'mobile';
 };
- 
+
 // auto install
 if (typeof window !== 'undefined' && window.Vue) {
     install(window.Vue);

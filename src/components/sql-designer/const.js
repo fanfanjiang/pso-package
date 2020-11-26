@@ -8,6 +8,7 @@ export const OP = [
     { v: "0", n: "选择" },
     { v: "1", n: "插入" },
     { v: "2", n: "更新" },
+    { v: "3", n: "插入或更新" },
 ];
 
 export const OPTYPE = [

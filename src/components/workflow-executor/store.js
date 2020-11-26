@@ -21,7 +21,8 @@ const BASEDADA = {
     creator_name: '',
     attach: '',
     nextUser: null,
-    reviews: []
+    reviews: [],
+    curUsernames: ''
 }
 
 export default class WfStore {
@@ -224,7 +225,7 @@ export default class WfStore {
     }
 
     setCurStep(node) {
-        this.cfg.wf_map_tp.selectedNode = this.curStep = node || this.cfg.wf_map_tp.node[0];
+        this.cfg.wf_map_tp.selectedNode = this.curStep = (node || this.cfg.wf_map_tp.node[0]);
     }
 
     markNode(nid) {
@@ -320,6 +321,7 @@ export default class WfStore {
         } else {
             if (steps && steps.length) {
                 this.cfg.wf_map_tp.executingNodes = steps;
+                this.data.curUsernames = _.map(steps, 'user_name').join(',')
             }
 
             const ret = this.getFlowNode({ nid: this.data.step, cb: item => item.done = true });

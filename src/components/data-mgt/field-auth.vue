@@ -5,16 +5,12 @@
         <div class="pso-na-check">
           <span>字段权限：</span>
           <el-checkbox-group v-model="fieldAuth">
-            <el-checkbox v-for="item in authCfg" :label="item.v" :key="item.v">{{item.n}}</el-checkbox>
+            <el-checkbox v-for="item in authCfg" :label="item.v" :key="item.v">{{ item.n }}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
       <div class="pso-na-controller">
-        <pso-picker-user
-          v-if="!selectedAuthItem.length"
-          pattern="checkbox"
-          @confirm="handleAddAuth"
-        >
+        <pso-picker-user v-if="!selectedAuthItem.length" pattern="checkbox" @confirm="handleAddAuth">
           <el-button size="mini" type="primary" plain>添加权限</el-button>
         </pso-picker-user>
         <template v-else>
@@ -36,7 +32,7 @@
         <el-table-column prop="user_name" label="用户" width="180"></el-table-column>
         <el-table-column label="权限">
           <template slot-scope="scope">
-            <el-tag v-for="itemVal in getAuthTag(scope.row.show_auth)" :key="itemVal">{{itemVal}}</el-tag>
+            <el-tag v-for="itemVal in getAuthTag(scope.row.show_auth)" :key="itemVal">{{ itemVal }}</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -44,7 +40,7 @@
         <el-pagination
           background
           layout="total, sizes, prev, pager, next, jumper"
-          :page-sizes="[30,50,100,200,500]"
+          :page-sizes="[30, 50, 100, 200, 500]"
           :total="dataTotal"
           :page-size="where.limit"
           :current-page="where.page"
@@ -65,7 +61,7 @@ export default {
   mixins: [pickerMixin({ baseObjName: "proxy", dataListName: "list", typeName: "type" })],
   props: {
     field: Object,
-    code: String
+    code: String,
   },
   components: { PsoTitle },
   data() {
@@ -75,15 +71,15 @@ export default {
       selectedAuthItem: [],
       proxy: {
         list: [],
-        type: "checkbox"
+        type: "checkbox",
       },
       where: {
         page: 1,
-        limit: 30
+        limit: 30,
       },
       dataTotal: 0,
       authData: [],
-      loadingTable: false
+      loadingTable: false,
     };
   },
   computed: {
@@ -96,21 +92,21 @@ export default {
     },
     selectFieldAuth() {
       return this.fieldAuth.length ? this.fieldAuth.reduce((a, b) => a + b) : 0;
-    }
+    },
   },
   watch: {
     "field.field_name": {
       immediate: true,
       handler() {
         this.getAuth();
-      }
+      },
     },
     where: {
       deep: true,
       handler() {
         this.getAuth();
-      }
-    }
+      },
+    },
   },
   methods: {
     async handleAddAuth(users) {
@@ -124,7 +120,7 @@ export default {
         data_code: this.code,
         field_name: this.field.field_name,
         show_auth: this.selectFieldAuth,
-        optype
+        optype,
       });
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
       this.proxy.list.splice(0);
@@ -136,7 +132,7 @@ export default {
         data_code: this.code,
         field_name: this.field.field_name,
         ...this.where,
-        page: this.where.page - 1
+        page: this.where.page - 1,
       });
       if (ret.success) {
         this.authData = ret.data;
@@ -162,13 +158,13 @@ export default {
     getAuthTag(value) {
       value = parseInt(value);
       const list = [];
-      this.authCfg.forEach(item => {
+      this.authCfg.forEach((item) => {
         if ((item.v & value) === item.v) {
           list.push(item.n);
         }
       });
       return list;
-    }
-  }
+    },
+  },
 };
 </script>
