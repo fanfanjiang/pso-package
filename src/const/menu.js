@@ -63,6 +63,10 @@ export const TP_CTL_TYPE = [
     {
         n: '文本',
         v: 'input'
+    },
+    {
+        n: 'SQL脚本编辑器',
+        v: 'picker-sql'
     }
 ];
 

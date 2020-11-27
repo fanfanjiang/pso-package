@@ -8,86 +8,85 @@
       </el-form-item>
       <transition name="el-zoom-in-top">
         <div v-if="node[field] && data.length && !loadingTp">
-          <el-form-item v-for="tpItem in data" :key="tpItem.field" :label="tpItem.name">
-            <template v-if="tpItem.picker === 'picker-form' || tpItem.picker === 'picker-wf'">
+          <el-form-item v-for="p in data" :key="p.field" :label="p.name">
+            <template v-if="p.picker === 'picker-form' || p.picker === 'picker-wf'">
               <el-select
-                v-if="tpItem.picker === 'picker-form'"
+                v-if="p.picker === 'picker-form'"
                 filterable
                 clearable
                 size="mini"
-                @change="handleFormChange($event, tpItem)"
-                v-model="tpItem.value"
+                @change="handleFormChange($event, p)"
+                v-model="p.value"
               >
                 <el-option v-for="item in forms" :key="item.node_name" :label="item.node_display" :value="item.node_name"></el-option>
               </el-select>
               <el-select
-                v-if="tpItem.picker === 'picker-wf'"
+                v-if="p.picker === 'picker-wf'"
                 filterable
                 clearable
                 size="mini"
-                @change="handleWfChange($event, tpItem)"
-                v-model="tpItem.value"
+                @change="handleWfChange($event, p)"
+                v-model="p.value"
               >
                 <el-option v-for="item in workflows" :key="item.node_name" :label="item.node_display" :value="item.node_name"></el-option>
               </el-select>
-              <slot v-bind:data="tpItem"></slot>
+              <slot v-bind:data="p"></slot>
             </template>
-            <el-select v-if="tpItem.picker === 'picker-tag'" filterable clearable size="mini" v-model="tpItem.value">
+            <el-select v-if="p.picker === 'picker-tag'" filterable clearable size="mini" v-model="p.value">
               <el-option v-for="item in tags" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
             </el-select>
-            <el-input v-if="tpItem.picker === 'input'" v-model="tpItem.value" size="mini" autocomplete="off"></el-input>
-            <el-switch v-if="tpItem.picker === 'picker-yes'" v-model="tpItem.value"></el-switch>
-            <el-select v-if="tpItem.picker === 'picker-text'" filterable clearable size="mini" v-model="tpItem.value">
+            <el-input v-if="p.picker === 'input'" v-model="p.value" size="mini" autocomplete="off"></el-input>
+            <el-switch v-if="p.picker === 'picker-yes'" v-model="p.value"></el-switch>
+            <el-select v-if="p.picker === 'picker-text'" filterable clearable size="mini" v-model="p.value">
               <el-option v-for="item in text" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
             <el-select
-              v-if="tpItem.picker === 'picker-field' && !loadingFields && getRelateItem(tpItem)"
+              v-if="p.picker === 'picker-field' && !loadingFields && getRelateItem(p)"
               filterable
               clearable
               size="mini"
-              :multiple="tpItem.saveType === '2'"
-              v-model="tpItem.value"
+              :multiple="p.saveType === '2'"
+              v-model="p.value"
             >
               <el-option
-                v-for="item in formCfg[getRelateItem(tpItem)].fields"
+                v-for="item in formCfg[getRelateItem(p)].fields"
                 :key="item.field_name"
                 :label="item.field_display"
                 :value="item.field_name"
               ></el-option>
             </el-select>
             <el-select
-              v-if="tpItem.picker === 'picker-column' && !loadingFields && !loadingWf && getRelateItem(tpItem)"
+              v-if="p.picker === 'picker-column' && !loadingFields && !loadingWf && getRelateItem(p)"
               filterable
               clearable
               size="mini"
-              v-model="tpItem.value"
+              v-model="p.value"
             >
               <el-option
-                v-for="item in formCfg[getRelateItem(tpItem)].column"
+                v-for="item in formCfg[getRelateItem(p)].column"
                 :key="item.name"
                 :label="item.name"
                 :value="item.name"
               ></el-option>
             </el-select>
             <el-select
-              v-if="tpItem.picker === 'picker-stafield'"
+              v-if="p.picker === 'picker-stafield'"
               filterable
               clearable
               size="mini"
-              :multiple="tpItem.saveType === '2'"
-              v-model="tpItem.value"
+              :multiple="p.saveType === '2'"
+              v-model="p.value"
             >
               <el-option v-for="f in fields" :key="f.field" :label="f.name" :value="f.field"></el-option>
             </el-select>
-            <el-button v-if="tpItem.picker === 'picker-staFormula'" size="mini" type="primary" plain @click="editScript(tpItem)"
-              >编辑脚本</el-button
-            >
+            <el-button v-if="p.picker === 'picker-staFormula'" size="mini" type="primary" plain @click="editScript(p)">编辑脚本</el-button>
             <pso-picker-resource
-              v-if="tpItem.picker === 'picker-file'"
+              v-if="p.picker === 'picker-file'"
               source="list"
               pattern="checkbox"
-              @confirm="handlefileChecked($event, tpItem)"
+              @confirm="handlefileChecked($event, p)"
             ></pso-picker-resource>
+            <el-button v-if="p.picker === 'picker-sql'" size="mini" type="primary" plain @click="editSql(p)"> 编辑脚本 </el-button>
           </el-form-item>
         </div>
       </transition>
@@ -103,6 +102,7 @@
         ></formula-designer>
       </template>
     </pso-drawer>
+    <sql-designer :opener="showDeisgner" :sql="curSql.value"></sql-designer>
   </div>
 </template>
 <script>
@@ -111,10 +111,11 @@ import { formOp } from "../form-designer/mixin.js";
 import { genComponentData } from "../form-designer/helper";
 import { assignList } from "../../utils/util";
 import { PLUGIN_PARAMS } from "../../const/sys";
+import SqlDesigner from "../sql-designer";
 
 export default {
   mixins: [formOp],
-  components: { formulaDesigner },
+  components: { formulaDesigner, SqlDesigner },
   props: {
     data: Array,
     node: Object,
@@ -137,6 +138,8 @@ export default {
       showDesigner: false,
       curSet: null,
       cpnts: [],
+      curSql: {},
+      showDeisgner: { show: false },
     };
   },
   async created() {
@@ -160,7 +163,6 @@ export default {
         await this.handleFormChange(d.value);
       }
     }
-    console.log(this.data);
     this.initializing = false;
   },
   methods: {
@@ -254,6 +256,14 @@ export default {
         }
       });
       item.value = list.join(",");
+    },
+    editSql(param) {
+      if (!param.value) {
+        this.$set(param, "value", []);
+      }
+      this.curSql = param;
+      console.log(this.curSql);
+      this.showDeisgner.show = true;
     },
   },
 };

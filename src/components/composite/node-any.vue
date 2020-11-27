@@ -11,7 +11,6 @@
   </div>
 </template>
 <script>
-import { TagMixin } from "../../mixin/composite";
 export default {
   props: {
     params: {
@@ -48,7 +47,7 @@ export default {
       const nodes = (await this.API.trees({ data: { rootable: true, lazy: false, ...this.treeOptions } })).data.tagtree;
 
       for (let node of nodes) {
-        await this.API.tag({ data: { tag_code } });
+        await this.API.tag({ data: { tag_code: node.node_id } });
       }
     },
   },

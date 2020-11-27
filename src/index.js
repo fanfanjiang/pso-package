@@ -103,6 +103,7 @@ import PsoWvAst from "./components/composite/wv-ast";
 import PsoWtreeFv from "./components/composite/wtree-fv";
 import PsoWtreeWv from "./components/composite/wtree-wv";
 import PsoTreeTimeline from "./components/composite/tree-timeline";
+import PsoNodeAny from "./components/composite/node-any";
 
 const components = {
     PsoEmpty,
@@ -156,6 +157,8 @@ const components = {
     PsoStatistics,
     PsoStaScript,
     PsoAvatar,
+    PsoApicfg,
+    PsoApiauth,
 
     //混合视图
     PsoFvAst,
@@ -168,8 +171,7 @@ const components = {
     PsoWtreeFv,
     PsoWtreeWv,
     PsoTreeTimeline,
-    PsoApicfg,
-    PsoApiauth
+    PsoNodeAny
 }
 
 
