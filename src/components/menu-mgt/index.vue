@@ -36,6 +36,9 @@
                 <template v-if="!params.hide">
                   <pso-title>基本参数</pso-title>
                   <el-form-item label="菜单名称">
+                    <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="节点名称">
                     <el-input size="small" v-model="curNode.node_display" autocomplete="off"></el-input>
                   </el-form-item>
                   <el-form-item label="菜单图标">
@@ -86,7 +89,7 @@
 <script>
 import PsoNodeauth from "../node-auth";
 import PluginSetter from "../plugin-setter";
-import ViewSet from "./view"; 
+import ViewSet from "./view";
 import { MENU_TYPE, OPEN_TYPE, MENU_LEAF_AUTH } from "../../const/menu";
 import PsoPickerIcon from "../picker/pso-picker-icon";
 export default {

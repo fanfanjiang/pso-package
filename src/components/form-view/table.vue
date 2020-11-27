@@ -33,7 +33,10 @@
             <div class="modifier-placeholder" :ref="scope.$index + f.field_name">
               <table-tag v-if="f.componentid === 'tag'" :store="store" :data="scope.row" :field="f"></table-tag>
               <span v-else-if="store.checkFile(f.field_name)" class="modifier-file">
-                <pso-attachment :ids="scope.row[f.field_name]" @initialized="attachInited"></pso-attachment>
+                <pso-attachment
+                  :ids="scope.row[f.field_name]"
+                  @initialized="attachInited($event, { row, index: scope.$index, f })"
+                ></pso-attachment>
               </span>
               <span v-else class="modifier-value" :style="{ 'text-align': f.align }">{{ store.formatListVal(scope.row, f) }}</span>
               <span
@@ -231,7 +234,7 @@ export default {
     nextClickHandler() {
       this.store.page += 1;
     },
-    attachInited() {
+    attachInited(evt, data) {
       this.store.deFixLayout();
     },
   },

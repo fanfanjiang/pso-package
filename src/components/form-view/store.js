@@ -65,6 +65,7 @@ export default class FormViewStore {
         this.statusesObj = {};
         this.stagesObj = {};
         this.tableHeight = 0; //table高度
+        this.attachments = {};
 
         //权限视图
         this.authViews = [];
@@ -322,6 +323,7 @@ export default class FormViewStore {
         this.$vue.$emit("data-loaded", this.instances);
 
         this.fetching = false;
+        this.attachments = {};
 
         this.fixLayout();
     }
@@ -541,7 +543,7 @@ export default class FormViewStore {
     exportCurPage() {
         if (this.$tableWrapper) {
             const et = XLSX.utils.table_to_book($(this.$tableWrapper)[0]);
-            XLSX.writeFile(et, '模板.xlsx');
+            XLSX.writeFile(et, `${this.formCfg.data_name}.xlsx`);
         }
     }
 

@@ -9,7 +9,7 @@
 <script>
 import PsoFileList from "../file-list/index.vue";
 import { makeFiles } from "../../tool/file";
- 
+
 export default {
   components: { PsoFileList },
   props: {
@@ -40,7 +40,7 @@ export default {
       this.initializing = false;
       makeFiles({ files: ret.data, urlField: "res_path", nameField: "res_name" });
       this.data = ret.data;
-      this.$emit("initialized");
+      this.$emit("initialized", this.data);
     },
   },
 };

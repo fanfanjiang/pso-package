@@ -44,7 +44,7 @@
       </el-form-item>
       <el-form-item label="值类型" required>
         <el-select size="mini" filterable v-model="successFlag.type">
-          <el-option label="boolen" value="boolen"></el-option>
+          <el-option label="boolean" value="boolean"></el-option>
           <el-option label="number" value="number"></el-option>
           <el-option label="string" value="string"></el-option>
         </el-select>
