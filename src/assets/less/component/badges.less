@@ -1,0 +1,37 @@
+.pso-badges {
+    padding: 5px 10px 10px 10px;
+
+    .pso-badges-item {
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 3px;
+        position: relative;
+
+        &+.pso-badges-item {
+            margin-top: 3px;
+        }
+
+        &.active,
+        &:hover {
+            background: #f7f7f7;
+        }
+
+        .pso-badges__title {
+            width: 80%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .pso-badges__num {
+            position: absolute;
+            padding: 1px 5px;
+            top: 10px;
+            right: 10px;
+            font-size: 10px;
+            background-color: @main-color;
+            color: #fff;
+            border-radius: 6px;
+        }
+    }
+}

@@ -1,12 +1,27 @@
 <template>
-  <div class="pso-view pso-view__expand">
+  <div class="pso-view pso-view__expand-wider pso-view__expand">
     <template>
       <div class="pso-view-extend">
         <div class="pso-badges">
-          <div class="pso-badges-item"></div>
+          <template v-if="!initializing">
+            <template v-if="tags.length">
+              <pso-search v-model="keywords"></pso-search>
+              <div :class="badgeClass(tag)" v-for="(tag, i) in filteredTags" :key="i" @click="loadCpnt(tag)">
+                <div class="pso-badges__title">{{ tag.tag_name }}</div>
+                <div class="pso-badges__num">
+                  <span>{{ tag.__num__ }}</span>
+                  <span v-if="tag.__total__">/{{ tag.__total__ }}</span>
+                </div>
+              </div>
+            </template>
+            <pso-empty v-else>暂无数据</pso-empty>
+          </template>
+          <pso-skeleton v-else :lines="10"></pso-skeleton>
         </div>
       </div>
-      <div class="pso-view-body"></div>
+      <div class="pso-view-body" style="padding: 0px" v-loading="cpntLoading">
+        <component v-if="curCpnt" v-bind:is="curCpnt" v-bind="cpntParams" :params="{ ...cpntParams, opable: params.opable }"></component>
+      </div>
     </template>
   </div>
 </template>
@@ -21,34 +36,90 @@ export default {
   data() {
     return {
       initializing: false,
-      curNode: null,
+      cpntLoading: false,
       curTag: null,
-      tpCfg: null,
+      pluginCfg: null,
+      tags: [],
       cpntParams: {}, //组件参数
+      keywords: "",
+      nodes: [],
     };
   },
   computed: {
-    treeOptions() {
-      return {
-        dimen: 5,
-        data_type: this.params.data_type,
-      };
-    },
-    currentCpnt() {
-      if (this.tpCfg && this.tpCfg.tp_component) {
-        return this.tpCfg.tp_component;
+    curCpnt() {
+      if (this.pluginCfg && this.pluginCfg.tp_component) {
+        return this.pluginCfg.tp_component;
       } else {
         return "";
       }
     },
+    filteredTags() {
+      if (this.keywords) {
+        return this.tags.filter((t) => t.tag_name.indexOf(this.keywords) !== -1);
+      }
+      return this.tags;
+    },
+  },
+  async created() {
+    this.initializing = true;
+    await this.initialize();
+    this.initializing = false;
   },
   methods: {
     async initialize() {
-      const nodes = (await this.API.trees({ data: { rootable: true, lazy: false, ...this.treeOptions } })).data.tagtree;
-
-      for (let node of nodes) {
-        await this.API.tag({ data: { tag_code: node.node_id } });
+      if (this.params.__sql__ && this.params.__sql__.length) {
+        const ret = await this.API.debugSQLScript({ script: this.params.__sql__[0] });
+        if (ret.success && ret.data) {
+          this.tags = (await this.API.tag({ data: {} })).data.filter((t) => {
+            const exist = _.find(ret.data, { tag_no: t.tag_no });
+            if (exist) {
+              this.$set(t, "__num__", exist.num);
+              this.$set(t, "__total__", exist.total);
+              return true;
+            }
+          });
+          if (this.tags.length) {
+            this.nodes = (await this.API.trees({ data: { rootable: true, lazy: false, dimen: 5 } })).data.tagtree;
+            this.loadCpnt(this.tags[0]);
+          }
+        }
       }
+    },
+    reset() {
+      this.cpntParams = {};
+    },
+    badgeClass({ tag_no }) {
+      return {
+        "pso-badges-item": true,
+        active: this.curTag.tag_no === tag_no,
+      };
+    },
+    async loadCpnt(tag) {
+      this.cpntLoading = true;
+      this.reset();
+
+      this.curTag = tag;
+
+      if (this.curTag.tag_config) {
+        const cfg = JSON.parse(this.curTag.tag_config);
+
+        if (cfg.tag_source) {
+          const node = _.find(this.nodes, { node_id: tag.node_id });
+          this.$set(this.cpntParams, "plug_code", cfg.tag_source);
+          this.$set(this.cpntParams, "viewAuth", parseInt(node.leaf_auth || 0));
+
+          const ret = await this.API.templates({ data: { tp_code: cfg.tag_source }, method: "get" });
+
+          if (ret.success && ret.data.tp) {
+            cfg.tag_set.forEach((item) => this.$set(this.cpntParams, item.field, item.value));
+            this.pluginCfg = ret.data.tp;
+          }
+          if (this.cpntParams.where) {
+            this.cpntParams.defForm = { [this.cpntParams.where]: this.curTag.tag_no };
+          }
+        }
+      }
+      this.cpntLoading = false;
     },
   },
 };

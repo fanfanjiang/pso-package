@@ -12,6 +12,13 @@
               <div ref="wfTable" class="pso-wf-executor__main-content" v-html="store.cfg.wf_body_tp"></div>
               <div class="pso-wf-executor__stamp" v-if="!store.loading" v-html="store.statusEntity.stamp" :style="stampStyle"></div>
               <div v-show="store.log.length" class="pso-wf-executor__main-content-log" field="wf_logs"></div>
+              <div v-show="store.data.messages.length" class="pso-wf-executor__main-content-msg">
+                <div v-for="(m, i) in store.data.messages" :key="i">
+                  <span>{{ m.com_time }};</span>
+                  <span><span>{{ m.user_name }}</span>发布留言: </span>
+                  <span>{{ m.com_content }}</span>
+                </div>
+              </div>
             </div>
           </div>
           <transition name="el-zoom-in-bottom">
@@ -57,6 +64,7 @@
             v-show="store.activeExtendTab === 'chat'"
             :related-id="store.data.instanceId"
             :extend="{ com_type: '0', com_code: store.cfg.wf_code }"
+            @messages-loaded="msgLoadedHandler"
           ></pso-chat>
         </template>
       </div>
@@ -150,6 +158,9 @@ export default {
     },
     doPrint() {
       this.print(this.$refs.executorPrint);
+    },
+    msgLoadedHandler(data) {
+      this.store.data.messages = data;
     },
   },
 };

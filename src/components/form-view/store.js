@@ -122,6 +122,23 @@ export default class FormViewStore {
         return this.sorts.filter(s => s.operable);
     }
 
+    get instanceEditable() {
+        return this.opAddable && (this.dataId ? this.getEditableByStatus(this.curInstance) : true);
+    }
+
+    getStatusEntity(d_status) {
+        return this.statusesObj[d_status + ''] || {};
+    }
+
+    getStageEntity(d_stage) {
+        return this.stagesObj[d_stage + ''] || {};
+    }
+
+    getEditableByStatus(instance) { 
+        const { d_stage, d_status } = instance;
+        return !this.getStatusEntity(d_status).uneditable && !this.getStageEntity(d_stage).uneditable;
+    }
+
     //初始化
     async initialize(id, usedColumn) {
         this.initializing = true;
@@ -613,7 +630,8 @@ export default class FormViewStore {
             for (let key in this.summary) {
                 const index = _.findIndex(columns, { property: key });
                 if (index !== -1) {
-                    indexs[index] = parseFloat(this.summary[key]).toFixed(2);
+                    // indexs[index] = parseFloat(this.summary[key]).toFixed(2);
+                    indexs[index] = this.summary[key];
                 }
             }
         }

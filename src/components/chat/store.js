@@ -39,6 +39,7 @@ export default class Chat {
         const msgRet = await API.message({ data: { leaf_id: this.relatedId }, method: 'get' });
         if (msgRet.success) {
             this.messages = msgRet.data;
+            this.$vue.$emit('messages-loaded', msgRet.data);
         }
 
         this.initializing = false;

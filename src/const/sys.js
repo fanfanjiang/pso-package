@@ -83,6 +83,7 @@ export const FORM_STATUS_FIELDS = {
     name: "",
     color: "",
     display: "",
+    uneditable: false,
     script: [],
     target: []
 }

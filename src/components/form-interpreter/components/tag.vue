@@ -104,8 +104,11 @@ export default {
         idName = "tag_no";
       }
       const list = [];
-      source.forEach((item) => {
-        if (tagData.indexOf(item[idName]) !== -1) list.push(item);
+      tagData.forEach((id) => {
+        const exist = _.find(source, { [idName]: id });
+        if (exist) {
+          list.push(exist);
+        }
       });
       this.handleAddSelection(list);
       this.loading = false;

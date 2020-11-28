@@ -81,7 +81,7 @@ export function formatJSONList(list, fieldObj, compare = true) {
     }
     for (let item of data) {
         for (let fKey in fieldObj) {
-            if (!item.hasOwnProperty(fKey) || (typeof item[fKey] === "object" && typeof fieldObj[fKey] !== 'object') || (typeof item[fKey] !== "object" && typeof fieldObj[fKey] === 'object')) {
+            if (!item.hasOwnProperty(fKey)) {
                 Vue.set(item, fKey, _.cloneDeep(fieldObj[fKey]));
             }
         }

@@ -56,7 +56,7 @@
               ></el-option>
             </el-select>
             <el-select
-              v-if="p.picker === 'picker-column' && !loadingFields && !loadingWf && getRelateItem(p)"
+              v-if="p.picker === 'picker-column' && !loadingFields && !loadingWf && getRelateItem(p) && formCfg[getRelateItem(p)]"
               filterable
               clearable
               size="mini"
@@ -220,16 +220,18 @@ export default {
     },
     async getFormCfg(value, field) {
       this.loadingFields = true;
-      const formStore = await this.makeFormStore(value);
-      const ret = await this.API.getFormDict({ data_code: value });
-      if (ret.data) {
-        ret.data.forEach((item) => {
-          const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
-          item.field_display = (field ? field._fieldName : "系统字段") + `(${item.field_name})`;
-        });
-        const column = formStore.display_columns ? JSON.parse(formStore.display_columns).column : [];
-        this.formCfg[field || value] = { fields: ret.data, column };
-      }
+      try {
+        const formStore = await this.makeFormStore(value);
+        const ret = await this.API.getFormDict({ data_code: value });
+        if (ret.data) {
+          ret.data.forEach((item) => {
+            const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
+            item.field_display = (field ? field._fieldName : "系统字段") + `(${item.field_name})`;
+          });
+          const column = formStore.display_columns ? JSON.parse(formStore.display_columns).column : [];
+          this.formCfg[field || value] = { fields: ret.data, column };
+        }
+      } catch (error) {}
 
       this.loadingFields = false;
     },
@@ -262,7 +264,6 @@ export default {
         this.$set(param, "value", []);
       }
       this.curSql = param;
-      console.log(this.curSql);
       this.showDeisgner.show = true;
     },
   },

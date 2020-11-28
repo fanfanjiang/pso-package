@@ -21,17 +21,10 @@ export default {
     this.$on("asstable-selected", ({ cpnt, data, store }) => {
       if (cpnt.fid === this.cpnt.data._selectedTable) {
         if (data.length) {
-          this.figure(data, store.search({ options: { fid: this.cpnt.data._selectedField } }).data._fieldValue);
-        } else {
-          this.setVal(0);
-        }
-      }
-    });
-    this.$on("table-selected", ({ cpnt, store }) => {
-      const data = cpnt.data._val.dataArr;
-      if (cpnt.fid === this.cpnt.data._selectedTable) {
-        if (data.length) {
-          this.figure(data, store.search({ options: { fid: this.cpnt.data._selectedField } }).data._fieldValue);
+          const subCpnt = store.search({ options: { fid: this.cpnt.data._selectedField } });
+          if (subCpnt) {
+            this.figure(data, subCpnt.data._fieldValue);
+          }
         } else {
           this.setVal(0);
         }

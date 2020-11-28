@@ -45,11 +45,11 @@
               <el-tab-pane label="权限" name="auth"></el-tab-pane>
             </el-tabs>
           </div>
-          <div class="pso-page-body__tabbody">
+          <div class="pso-page-body__tabbody" v-if="!loading">
             <template v-if="!!curNode.is_leaf">
-              <pso-tp-base v-if="curTab === 'base'" :node="curNode"></pso-tp-base>
+              <pso-tp-base v-if="curTab === 'base'" :node="curNode" :params="params"></pso-tp-base>
               <pso-tp-param v-if="curTab === 'param'" :data="paramData"></pso-tp-param>
-              <pso-tp-column v-if="curTab === 'column' && !loading" :data="columnData" :header="tpHeader" @save="saveTp"></pso-tp-column>
+              <pso-tp-column v-if="curTab === 'column'" :data="columnData" :header="tpHeader" @save="saveTp"></pso-tp-column>
               <pso-tp-textdef v-if="curTab === 'textdef'" :data="tpButtons"></pso-tp-textdef>
               <pso-tp-text v-if="curTab === 'text'" :data="tpText" :def-text="tpButtons"></pso-tp-text>
               <cms-designer v-if="curTab === 'cms'" :layout="columnData"></cms-designer>

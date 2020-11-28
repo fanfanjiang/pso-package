@@ -14,6 +14,11 @@
           <el-input size="mini" v-model="scope.row.name" placeholder></el-input>
         </template>
       </el-table-column>
+      <el-table-column label="禁止编辑" width="100">
+        <template slot-scope="scope">
+          <el-switch size="mini" v-model="scope.row.uneditable"></el-switch>
+        </template>
+      </el-table-column>
       <el-table-column label="显示颜色" align="center" width="100">
         <template slot-scope="scope">
           <el-color-picker size="mini" v-model="scope.row.color"></el-color-picker>

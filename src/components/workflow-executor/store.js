@@ -22,7 +22,8 @@ const BASEDADA = {
     attach: '',
     nextUser: null,
     reviews: [],
-    curUsernames: ''
+    curUsernames: '',
+    messages: []
 }
 
 export default class WfStore {
@@ -283,11 +284,13 @@ export default class WfStore {
         this.data.creator_name = "";
         this.data.ctime = "";
 
-        //状体
+        //状
         this.data.status = REVIEW_STATUS.save.value;
         this.data.reviews = [];
-
+        this.data.curUsernames = '';
+        this.data.messages = [];
         this.log = [];
+
         this.setTableLogVal(this.log);
         this.setLogsFlow(this.log);
         try {
@@ -338,7 +341,7 @@ export default class WfStore {
         //设置日志
         if (log) {
             log.forEach(l => {
-                l.op_note = l.op_note || (l.op_result === 'pass' ? '通过' : '退回');
+                l.op_note = l.op_note || this.getLogOpText(l.op_result);
             })
             this.log = log;
             this.setTableLogVal(log);
@@ -371,6 +374,31 @@ export default class WfStore {
         this.setInstanceData(instanceRet.data);
     }
 
+    getLogOpText(op_result) {
+        let text = '';
+        switch (op_result) {
+            case 'pass':
+                text = '通过'
+                break;
+            case 'distribute':
+                text = '分发'
+                break;
+            case 'transmit':
+                text = '转发'
+                break;
+            case 'back':
+                text = '退回'
+                break;
+            case 'callback':
+                text = '退回'
+                break;
+            case 'field':
+                text = '失败'
+                break;
+        }
+        return text;
+    }
+
     setLogsFlow(logs) {
         //主体审核流
         const $el = $(this.executorPrintRef).find(`[field=wf_logs]`);
@@ -378,7 +406,7 @@ export default class WfStore {
         const $wrapper = $('<div class="pso-wf-logs"></div>');
         for (let i = 0; i < logs.length; i++) {
             const log = logs[i];
-            let section = `审核人<span>${log.user_name}</span><span>${log.op_result === 'pass' ? '通过' : '退回'}</span>并发布评论`;
+            let section = `审核人<span>${log.user_name}</span><span>${this.getLogOpText(log.op_result)}</span>并发布评论`;
             if (log.step_code === 'start') {
                 section = `创建人<span>${log.user_name}${i === 0 ? '发起新的' : '重新提交'}</span>`;
             }

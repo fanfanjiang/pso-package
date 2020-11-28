@@ -31,7 +31,7 @@
         >
           <template slot-scope="scope">
             <div class="modifier-placeholder" :ref="scope.$index + f.field_name">
-              <table-tag v-if="f.componentid === 'tag'" :store="store" :data="scope.row" :field="f"></table-tag>
+              <table-tag v-if="f.componentid === 'tag' && !store.fetching" :store="store" :data="scope.row" :field="f"></table-tag>
               <span v-else-if="store.checkFile(f.field_name)" class="modifier-file">
                 <pso-attachment
                   :ids="scope.row[f.field_name]"
@@ -40,7 +40,7 @@
               </span>
               <span v-else class="modifier-value" :style="{ 'text-align': f.align }">{{ store.formatListVal(scope.row, f) }}</span>
               <span
-                v-if="modifiable && f.editable"
+                v-if="modifiable && f.editable && store.getEditableByStatus(scope.row)"
                 class="el-icon-edit modifier-trigger"
                 @click.stop="openModifier(scope.row, f, scope.$index)"
               ></span>

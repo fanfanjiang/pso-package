@@ -218,9 +218,9 @@ export default {
         dataId: this.store.dataId,
         dataInstance: this.store.instance,
         dataDefault: this.defForm,
-        editable: (this.store.dataId ? this.detailEditable : this.addable) && this.store.opAddable,
+        editable: (this.store.dataId ? this.detailEditable : this.addable) && this.store.instanceEditable,
         addable: this.addable && this.store.opAddable,
-        deletable: this.deletable && this.store.opAddable,
+        deletable: this.deletable && this.store.instanceEditable,
       };
     },
   },
