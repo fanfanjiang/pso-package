@@ -31,7 +31,13 @@
         >
           <template slot-scope="scope">
             <div class="modifier-placeholder" :ref="scope.$index + f.field_name">
-              <table-tag v-if="f.componentid === 'tag' && !store.fetching" :store="store" :data="scope.row" :field="f"></table-tag>
+              <column-tag v-if="f.componentid === 'tag' && !store.fetching" :store="store" :data="scope.row" :field="f"></column-tag>
+              <column-ast
+                v-else-if="f.componentid === 'asstable' && !store.fetching"
+                :store="store"
+                :data="scope.row"
+                :field="f"
+              ></column-ast>
               <span v-else-if="store.checkFile(f.field_name)" class="modifier-file">
                 <pso-attachment
                   :ids="scope.row[f.field_name]"
@@ -86,10 +92,11 @@
 </template>
 <script>
 import PsoAttachment from "../attachment";
-import TableTag from "./table-tag";
+import ColumnTag from "./column-tag";
+import ColumnAst from "./column-ast";
 import { FormModifierMixin } from "../../mixin/view";
 export default {
-  components: { PsoAttachment, TableTag },
+  components: { PsoAttachment, ColumnTag, ColumnAst },
   mixins: [FormModifierMixin],
   props: {
     params: {

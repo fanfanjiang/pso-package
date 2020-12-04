@@ -77,7 +77,7 @@ export default {
             "rate",
             // "timerange",
             // "credential",
-            // "cascader",
+            "cascader",
             "pscript",
             "signature",
           ],

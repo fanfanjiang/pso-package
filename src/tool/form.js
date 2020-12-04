@@ -156,6 +156,14 @@ export function getDisplayOfCpnt(cpnt, proxy) {
             }
         }
     }
+
+    if ((cpnt.componentid === "select" || cpnt.componentid === "checkbox") && cpnt.data._option) {
+        const opt = _.find(cpnt.data._option, { _optionValue: value });
+        if (opt) {
+            value = opt._optionName;
+        }
+    }
+
     return value;
 }
 

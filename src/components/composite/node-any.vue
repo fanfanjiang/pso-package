@@ -8,7 +8,7 @@
               <pso-search v-model="keywords"></pso-search>
               <div :class="badgeClass(tag)" v-for="(tag, i) in filteredTags" :key="i" @click="loadCpnt(tag)">
                 <div class="pso-badges__title">{{ tag.tag_name }}</div>
-                <div class="pso-badges__num">
+                <div class="pso-badges__num" :style="numStyle(tag.__num__)">
                   <span>{{ tag.__num__ }}</span>
                   <span v-if="tag.__total__">/{{ tag.__total__ }}</span>
                 </div>
@@ -20,7 +20,13 @@
         </div>
       </div>
       <div class="pso-view-body" style="padding: 0px" v-loading="cpntLoading">
-        <component v-if="curCpnt" v-bind:is="curCpnt" v-bind="cpntParams" :params="{ ...cpntParams, opable: params.opable }"></component>
+        <component
+          v-if="curCpnt"
+          v-bind:is="curCpnt"
+          v-bind="cpntParams"
+          :params="{ ...cpntParams, opable: params.opable }"
+          @data-changed="cpntChangeHandler"
+        ></component>
       </div>
     </template>
   </div>
@@ -120,6 +126,26 @@ export default {
         }
       }
       this.cpntLoading = false;
+    },
+    numStyle(num) {
+      num = num || 0;
+      if (parseInt(num) > 0) {
+        return {
+          "background-color": "red",
+        };
+      }
+    },
+    async cpntChangeHandler() {
+      const ret = await this.API.debugSQLScript({ script: this.params.__sql__[0] });
+      if (ret.success && ret.data) {
+        for (let d of ret.data) {
+          const exist = _.find(this.tags, { tag_no: d.tag_no });
+          if (exist) {
+            exist["__num__"] = d.num;
+            exist["__total__"] = d.total;
+          }
+        }
+      }
     },
   },
 };

@@ -1,7 +1,37 @@
 <template>
   <div class="act-select-body">
     <common-panel :cpnt="cpnt" info="用于联动选择" :needDefaultValue="false" :needPlaceholder="false">
-      <el-form-item class="tree-option" label="选项设置">
+      <el-form-item label="数据源类型" required>
+        <el-select size="mini" v-model="cpnt.data._type" placeholder="请选择">
+          <el-option label="表单" value="1"></el-option>
+          <el-option label="自定义" value="2"></el-option>
+        </el-select>
+      </el-form-item>
+      <template v-if="cpnt.data._type === '1'">
+        <picker-form
+          :data="cpnt.data"
+          form-field="_source"
+          source="3"
+          :fields="[
+            { n: 'ID字段', f: '_id' },
+            { n: '父ID字段', f: '_parentId' },
+            { n: '名称字段', f: '_name' },
+            { n: '绑定字段', f: '_bindTarget' },
+          ]"
+        ></picker-form>
+        <el-form-item label="初始父ID值">
+          <el-input size="mini" v-model="cpnt.data._initParentVal"></el-input>
+        </el-form-item>
+        <el-form-item label="保存层数">
+          <el-input-number size="mini" v-model="cpnt.data._level" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item :label="`第${i + 1}层绑定字段`" v-for="(v, k, i) in cpnt.data._bindField" :key="i">
+          <el-select size="mini" v-model="cpnt.data._bindField[k]" clearable filterable>
+            <el-option v-for="(u, i) in fieldOptions" :key="i" :label="u._fieldName" :value="u._fieldValue"></el-option>
+          </el-select>
+        </el-form-item>
+      </template>
+      <el-form-item class="tree-option" label="选项设置" v-if="cpnt.data._type === '2'">
         <el-button type="text" size="mini" icon="el-icon-plus" @click="showEditDialog(null)">添加一级选项</el-button>
         <el-tree
           :data="cpnt.data._option"
@@ -14,24 +44,9 @@
           <span class="custom-tree-node" slot-scope="{ node, data }">
             <span>{{ data._optionValue }}</span>
             <span>
-              <el-button
-                icon="el-icon-plus"
-                type="text"
-                size="medium"
-                @click="() => showEditDialog(data)"
-              ></el-button>
-              <el-button
-                icon="el-icon-edit"
-                type="text"
-                size="medium"
-                @click="() => showEditDialog(data,'editNode')"
-              ></el-button>
-              <el-button
-                icon="el-icon-close"
-                type="text"
-                size="medium"
-                @click="() => remove(node, data)"
-              ></el-button>
+              <el-button icon="el-icon-plus" type="text" size="medium" @click="() => showEditDialog(data)"></el-button>
+              <el-button icon="el-icon-edit" type="text" size="medium" @click="() => showEditDialog(data, 'editNode')"></el-button>
+              <el-button icon="el-icon-close" type="text" size="medium" @click="() => remove(node, data)"></el-button>
             </span>
           </span>
         </el-tree>
@@ -53,23 +68,38 @@
 <script>
 import commonPanel from "../common/common-panel";
 import shortid from "shortid";
+import PickerForm from "../../picker/pso-picker-form";
 
 export default {
   props: ["cpnt"],
   components: {
-    commonPanel
+    commonPanel,
+    PickerForm,
   },
   data() {
     return {
       treeProps: {
-        children: "_option"
+        children: "_option",
       },
       showTreeEdit: false,
       currentNode: null,
       currentNodeData: null,
       optionInputVal: "",
-      optionType: ""
+      optionType: "",
+      fields: [],
     };
+  },
+  computed: {
+    fieldOptions() {
+      return this.cpnt.store.search({ options: { db: true }, onlyData: true });
+    },
+  },
+  watch: {
+    "cpnt.data._level": {
+      handler() {
+        this.analyzeBindField();
+      },
+    },
   },
   methods: {
     showEditDialog(data, type) {
@@ -89,7 +119,7 @@ export default {
       }
       this.currentNodeData._option.push({
         _optionId: shortid.generate(),
-        _optionValue: this.optionInputVal
+        _optionValue: this.optionInputVal,
       });
     },
     editNode() {
@@ -98,10 +128,18 @@ export default {
     remove(node, data) {
       const parent = node.parent;
       const children = parent.data._option || parent.data;
-      const index = children.findIndex(d => d._optionId === data._optionId);
+      const index = children.findIndex((d) => d._optionId === data._optionId);
       children.splice(index, 1);
-    }
-  }
+    },
+    analyzeBindField() {
+      const num = this.cpnt.data._level;
+      const ori = _.cloneDeep(this.cpnt.data._bindField);
+      this.cpnt.data._bindField = {};
+      for (let i = num; i > 0; i--) {
+        this.$set(this.cpnt.data._bindField, i, ori[i] || "");
+      }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

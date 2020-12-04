@@ -1,5 +1,5 @@
 <template>
-  <pso-dialog :title="title" :visible="opener.showExecutor" width="60%" @close="colseHandler">
+  <pso-dialog :title="title" :visible="opener.showExecutor" width="70%" @close="colseHandler">
     <template #title>
       <div class="form-executor-header" v-loading="initializing">
         <div class="form-executor-header__l">

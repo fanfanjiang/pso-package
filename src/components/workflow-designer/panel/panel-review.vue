@@ -1,6 +1,9 @@
 <template>
   <div class="wf-panel-review">
     <el-form :label-position="'top'" label-width="90px" :model="node" size="mini">
+      <el-form-item label="步骤ID">
+        {{ node.nid }}
+      </el-form-item>
       <el-form-item label="名称">
         <el-input type="text" v-model="node.name" clearable></el-input>
       </el-form-item>

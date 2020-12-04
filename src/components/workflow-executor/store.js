@@ -46,6 +46,7 @@ export default class WfStore {
         this.shouldAddEmptyButNot = null;
 
         this.extend = {};
+        this.$vue = {};
 
         this.userOp = {
             users: '',
@@ -392,6 +393,9 @@ export default class WfStore {
             case 'callback':
                 text = '退回'
                 break;
+            case 'copy':
+                text = '抄送'
+                break;
             case 'field':
                 text = '失败'
                 break;
@@ -460,11 +464,14 @@ export default class WfStore {
         if (!$el.get(0)) return;
 
         //人员和部门
-        if (["user", "department", "tag"].includes(cpnt.componentid)) {
+        if (["user", "department", "tag", "select", "checkbox"].includes(cpnt.componentid)) {
             value = getDisplayOfCpnt(cpnt);
         }
 
         value = data.__showVal__ || filterByDecimal(cpnt.data, value);
+        if (this.$vue.__xssFilter__) {
+            value = this.$vue.PSODOMPurify.sanitize(value);
+        }
         const _unit = data._unit || '';
         $el.html((!_.isNaN(value) && !_.isNull(value)) ? `${value} ${_unit}` : '');
 
@@ -588,9 +595,9 @@ export default class WfStore {
         return await API.workflow({ data, method: "post" });
     }
 
-    async getFormData() {
+    async getFormData(required = true) {
         try {
-            const formData = await this.formImage.makeData();
+            const formData = await this.formImage.makeData(required);
             if (this.copy && formData) {
                 formData.dataArr[0].leaf_id = '';
                 formData.dataArr[0].optype = 0;

@@ -179,7 +179,7 @@ export default {
         editable: this.editable,
         deletable: this.editable && !this.cpnt.data._relate,
         mockAsstables: this.unsavedSelf,
-        parentInstanceId: this.cpnt.store.instance_id,
+        parentInstanceId: this.cpnt.store ? this.cpnt.store.instance_id : "",
       };
     },
     authCfg() {
@@ -200,7 +200,7 @@ export default {
       if (this.authCfg.status && this.authCfg.status.length) {
         params.push(`d_status#${this.authCfg.status.join(",")}#4`);
       }
-      if (this.cpnt.data._filter) {
+      if (this.cpnt.data._filter && this.cpnt.store) {
         this.cpnt.data._filter.forEach((f) => {
           if (f.value !== "" || f.sid) {
             let value = f.value;
@@ -341,7 +341,7 @@ export default {
       }
     },
     async setDataByIds(idList, options = {}) {
-      const { callback } = options;
+      const { callback, bindId = "leaf_id" } = options;
       if (idList && typeof idList === "string") {
         idList = idList.split(",");
       }
@@ -351,7 +351,7 @@ export default {
         for (let id of idList) {
           let data = id;
           if (typeof id === "string") {
-            data = await this.astStore.findById(id);
+            data = await this.astStore.findById(id, bindId);
           }
           if (data) list.push(data);
         }

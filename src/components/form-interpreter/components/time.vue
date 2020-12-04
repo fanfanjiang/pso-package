@@ -3,7 +3,7 @@
     <el-time-picker
       ref="cpnt"
       v-if="cpnt.data._type==='time'"
-      :disabled="!cpnt.store.editable||cpnt.data._read"
+      :disabled="!cpntEditable"
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
       :value-format="format"
@@ -16,7 +16,7 @@
       :value-format="format"
       :format="format"
       v-model="cpnt.data._val"
-      :disabled="!cpnt.store.editable||cpnt.data._read"
+      :disabled="!cpntEditable"
       :type="cpnt.data._type"
       :placeholder="cpnt.data._placeholder"
       :autofocus="cpnt.data._autofocus"

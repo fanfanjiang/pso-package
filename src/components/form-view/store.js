@@ -6,6 +6,7 @@ import debounce from "throttle-debounce/debounce";
 import CPNT from "../../../share/const/form";
 import Vue from "vue";
 import XLSX from "xlsx";
+import { desensitize } from "../../utils/util";
 
 export default class FormViewStore {
 
@@ -134,7 +135,7 @@ export default class FormViewStore {
         return this.stagesObj[d_stage + ''] || {};
     }
 
-    getEditableByStatus(instance) { 
+    getEditableByStatus(instance) {
         const { d_stage, d_status } = instance;
         return !this.getStatusEntity(d_status).uneditable && !this.getStageEntity(d_stage).uneditable;
     }
@@ -557,10 +558,10 @@ export default class FormViewStore {
         }
     }
 
-    exportCurPage() {
+    exportCurPage(title) {
         if (this.$tableWrapper) {
             const et = XLSX.utils.table_to_book($(this.$tableWrapper)[0]);
-            XLSX.writeFile(et, `${this.formCfg.data_name}.xlsx`);
+            XLSX.writeFile(et, `${title ? title : this.formCfg.data_name}.xlsx`);
         }
     }
 
@@ -703,6 +704,10 @@ export default class FormViewStore {
         try {
             if (_val && f.clearZero) {
                 _val = _val.replace(/(?:\.0*|(\.\d+?)0+)$/, '$1');
+            }
+            if (_val && f._encry === '1') {
+                _val = desensitize(_val);
+
             }
         } catch (error) {
 

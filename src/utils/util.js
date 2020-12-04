@@ -124,3 +124,13 @@ export function assignList({ target, source, base, tid, sid, assemble }) {
     })
 }
 
+export function desensitize(val) {
+    if (val) {
+        let value = val + '';
+        const length = Math.round(value.length / 2);
+        const start = Math.floor((value.length - length) / 2);
+        return value.replace(value.slice(start, length), new Array(length).fill('*').join(''));
+    } else {
+        return val;
+    }
+}

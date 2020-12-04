@@ -153,7 +153,18 @@ const CPNT = {
     host_db: false,
     chart: true,
     table_show: true,
-    data: [{ n: '_option', v: [] }]
+    data: [
+      { n: '_type', v: '1' },
+      { n: '_source', v: '' },
+      { n: '_id', v: '' },
+      { n: '_name', v: '' },
+      { n: '_parentId', v: '' },
+      { n: '_initParentVal', v: '' },
+      { n: '_level', v: 1 },
+      { n: '_bindTarget', v: '' },
+      { n: '_bindField', v: { 1: '' } },
+      { n: '_option', v: [] }
+    ]
   },
   time: {
     icon: "el-icon-date",

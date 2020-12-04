@@ -36,6 +36,7 @@
             :data-id="mainDataId"
             :form-entity="mainCfg"
             :data-default="mainDefForm"
+            :editable="bodyEditalbe"
             @data-loaded="astLoadedHandler"
             @cpnt-value-changed="astChangeHandler"
           ></pso-form-interpreter>

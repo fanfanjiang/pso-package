@@ -6,7 +6,7 @@
         v-for="opt in fixedOptions"
         :key="opt._optionValue"
         :label="opt._fixedVal||opt._optionValue"
-        :disabled="!cpnt.store.editable||cpnt.data._read"
+        :disabled="!cpntEditable"
       >{{opt._fixedName||opt._optionName||opt._optionValue}}</el-checkbox>
     </el-checkbox-group>
   </pso-label>

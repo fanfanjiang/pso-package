@@ -37,7 +37,8 @@ export const executor = {
             extend: this.params.extend,
             displayMode: this.params.displayMode,
             curUser: this.base.user,
-            defForm: this.params.defForm
+            defForm: this.params.defForm,
+            $vue: this
         });
 
         await this.store.init({ cfgId: this.params.node_id, instanceId: this.params.instance && this.params.instance.instanceId });
@@ -61,7 +62,7 @@ export const op = {
         async saveForm() {
             //暂存 
             try {
-                const formData = await this.store.getFormData();
+                const formData = await this.store.getFormData(false);
                 this.dispatch("PsoWfExecutorBox", "op-before-save", { optype: 0, formData });
                 formData && this.excuted(await this.store.hold(formData), 0);
             } catch (error) {

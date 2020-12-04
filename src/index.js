@@ -13,6 +13,7 @@ import 'muse-ui/lib/styles/theme.less';
 import { TextField } from 'muse-ui';
 import VCharts from 'v-charts';
 import Element from 'element-ui';
+import DOMPurify from "dompurify";
 
 import BASEAPI from './service/api';
 import createPDF from './utils/create-pdf';
@@ -55,8 +56,9 @@ import PsoFileList from "./components/file-list";
 import PsoFormView from "./components/form-view";
 
 import PsoFormDesigner from "./components/form-designer";
-import PsoFormInterpreter from "./components/form-interpreter";
 import PsoFormExecutor from "./components/form-executor";
+import PsoFormInterpreter from "./components/form-interpreter";
+import PsoCpntAst from "./components/form-interpreter/components/asstable";
 
 import PsoDataMgt from "./components/data-mgt";
 
@@ -68,7 +70,6 @@ import PsoWfExecutor from "./components/workflow-executor";
 import PsoWfMgt from "./components/workflow-mgt";
 import PsoWfView from "./components/workflow-view";
 
-import PsoElementMgt from "./components/element-mgt";
 import PsoTempleteMgt from "./components/templete-mgt";
 
 import PsoViewDesigner from "./components/view-designer";
@@ -121,7 +122,8 @@ const components = {
 
     PsoFormView,
     PsoFormExecutor,
-
+    PsoCpntAst,
+    
     PsoFormDesigner,
     PsoFormInterpreter,
     PsoTypebar,
@@ -134,7 +136,6 @@ const components = {
     PsoWfMgt,
     PsoWfView,
 
-    PsoElementMgt,
     PsoTempleteMgt,
     PsoDataMgt,
     PsoChartDesigner,
@@ -174,8 +175,7 @@ const components = {
     PsoNodeAny
 }
 
-
-const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host } = {}) {
+const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host, xssFilter = false } = {}) {
     Object.keys(components).map(key => {
         Vue.component(key, components[key]);
     })
@@ -194,6 +194,8 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.HOST = host;
 
     BASEAPI.URL_PREFIX = apiPrefix;
+    BASEAPI.xssFilter = xssFilter;
+    BASEAPI.PSODOMPurify = DOMPurify;
     if (API && API.handleAuthError) {
         BASEAPI.handleAuthError = API.handleAuthError;
     }
@@ -208,7 +210,10 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     });
 
     const parser = new UAParser();
+
+    Vue.prototype.PSODOMPurify = DOMPurify;
     Vue.prototype.__device__ = parser.getResult();
+    Vue.prototype.__xssFilter__ = xssFilter;
     Vue.prototype.__isMobile__ = Vue.prototype.__device__.device.type === 'mobile';
 };
 

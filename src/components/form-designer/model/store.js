@@ -193,13 +193,31 @@ export default class FormStore {
     //手动更新控件值
     async updateInstanceManually(data, options) {
         for (let k in data) {
-            const cpnt = this.searchByField(k);
-            if (cpnt) {
-                if (cpnt.__setDataByIds) {
-                    await cpnt.__setDataByIds(data[k], options);
-                } else {
-                    cpnt.data._val = data[k];
+            await this.updateCpntManually(k, data[k], options);
+        }
+    }
+
+    async updateCpntManually(target, data, options = {}) {
+        const { clear = false } = options;
+        let cpnt = target;
+        if (typeof target === 'string') {
+            cpnt = this.searchByField(target);
+        }
+        if (cpnt) {
+            if (cpnt.__setDataByIds) {
+                if (clear) {
+                    try {
+                        if (cpnt.data._proxy) {
+                            const list = cpnt.data._proxy.list || cpnt.data._proxy.valList;
+                            if (list && list.length) list.splice(0);
+                        }
+                    } catch (error) {
+
+                    }
                 }
+                await cpnt.__setDataByIds(data, options);
+            } else {
+                cpnt.data._val = data;
             }
         }
     }

@@ -4,7 +4,7 @@
       <el-select
         size="small"
         v-if="cpnt.data._showType === 'select'"
-        :disabled="!cpnt.store.editable || cpnt.data._read"
+        :disabled="!cpntEditable"
         v-model="cpnt.data._val"
         filterable
         clearable
@@ -20,7 +20,7 @@
       <el-radio-group size="small" v-else v-model="cpnt.data._val">
         <el-radio
           :label="opt._fixedVal || opt._optionValue"
-          :disabled="!cpnt.store.editable || cpnt.data._read"
+          :disabled="!cpntEditable"
           v-for="opt in fixedOptions"
           :key="opt._optionValue"
           >{{ opt._fixedName || opt._optionName || opt._optionValue }}</el-radio

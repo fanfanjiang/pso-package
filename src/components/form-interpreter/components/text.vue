@@ -1,9 +1,11 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required" class="cpnt-text">
+    <el-input v-if="shouldDesen" size="small" :type="textType" :disabled="!true" :value="desensitized"></el-input>
     <el-input
+      v-else
       ref="cpnt"
       size="small"
-      :type="type || cpnt.data._type || 'text'"
+      :type="textType"
       :clearable="true"
       :disabled="!cpntEditable"
       v-model="cpnt.data._val"
@@ -38,7 +40,7 @@ import debounce from "throttle-debounce/debounce";
 export default {
   mixins: [cpntMixin],
   props: {
-    type: { 
+    type: {
       type: String,
       default: "",
     },
@@ -53,6 +55,9 @@ export default {
   computed: {
     showResult() {
       return this.cpnt.data._searchable && this.focusing && this.searchRet.length;
+    },
+    textType() {
+      return this.type || this.cpnt.data._type || "text";
     },
   },
   created() {

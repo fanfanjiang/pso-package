@@ -7,8 +7,19 @@ export default class API {
 
     static URL_PREFIX = ''
 
+    static xssFilter = false
+
+    static PSODOMPurify = false
+
     static async request(url, { method = 'post', data = {}, headers = {}, showMsg = true }) {
         url = `${this.URL_PREFIX}${url}`;
+        if (this.xssFilter) {
+            for (let key in data) {
+                if (data[key] && typeof data[key] === 'string') {
+                    data[key] = this.PSODOMPurify.sanitize(data[key]);
+                }
+            }
+        }
         if (method === 'get') {
             url += `?${Qs.stringify(data)}`;
         }
@@ -410,14 +421,6 @@ export default class API {
         }
     }
 
-    static async getFlowTrash(data = {}) {
-        try {
-            return await this.request('/api/workflow/trash', { data, method: 'post' });
-        } catch (error) {
-            throw error;
-        }
-    }
-
     static async getWfTimeline(data) {
         try {
             return await this.request('/api/workflow/timeline', { data, method: 'get' });
@@ -592,7 +595,7 @@ export default class API {
 
     static async getPscriptData(data = {}) {
         try {
-            return await this.request('/api/form/script', { data, method: 'post' });
+            return await this.request('/api/form/script', { data, method: 'post', showMsg: false });
         } catch (error) {
             throw error;
         }

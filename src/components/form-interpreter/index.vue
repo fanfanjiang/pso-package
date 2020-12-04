@@ -177,7 +177,7 @@ export default {
 
       await this.getFormData();
     },
-    async makeData() {
+    async makeData(__required__ = true) {
       const cpnts = this.store.cpntsMap;
 
       //主表数据
@@ -223,7 +223,7 @@ export default {
               }
             }
 
-            if (cpntData.__eventualShow__) {
+            if (cpntData.__eventualShow__ && __required__) {
               //空值检查
               if (cpntData._required && (typeof cpntData._val === "undefined" || cpntData._val === "")) {
                 throw new Error(`${cpntData._fieldName}不能为空`);
@@ -238,7 +238,8 @@ export default {
             }
 
             //唯一性检查
-            if (cpntData._unique) {
+            //20201203：autoid在新增的时候不检查唯一性
+            if (cpntData._unique && (cpntData.componentid === "autoid" ? this.store.instance_id : true)) {
               const keys = {};
               if (cpntData.componentid === CPNT.timerange.componentid) {
                 // 时间范围组件判重

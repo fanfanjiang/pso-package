@@ -1,7 +1,9 @@
 <template>
   <pso-label :cpnt="cpnt">
     <div class="pso-number">
+      <el-input v-if="shouldDesen" size="small" :disabled="true" :value="desensitized"></el-input>
       <el-input-number
+        v-else
         ref="cpnt"
         size="small"
         v-model="cpnt.data._val"

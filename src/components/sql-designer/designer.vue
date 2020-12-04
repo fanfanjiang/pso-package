@@ -408,7 +408,7 @@ export default {
       return this.searchSub ? this.subSourceFields : this.sourceFields;
     },
     paramsSource() {
-      return this.searchSub ? this.sourceFields : this.subSourceFields;
+      return this.block.relate_type !== "2" ? this.sourceFields : this.subSourceFields;
     },
     parmsTabs() {
       return this.searchSub ? ["sys", "nosys"] : ["sub_sys", "sub_nosys"];
@@ -576,7 +576,7 @@ export default {
 
       let fields = "*";
       let where = [];
-
+      console.log(this.paramsSource);
       this.paramsSource.forEach((s) => {
         if (s.param) {
           where.push(`${s.field_name}=@${s.param}`);

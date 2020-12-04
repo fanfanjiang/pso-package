@@ -17,7 +17,7 @@
           style="width: 100%"
           height="500"
           :sort-by="['number']"
-          @row-dblclick="rowClickHandler"
+          @row-dblclick="rowClickHandler($event, col.data)"
         >
           <el-table-column type="index" :index="1" fixed="left"></el-table-column>
           <el-table-column prop="field_name" label="字段" width="100" fixed="left"></el-table-column>
@@ -53,15 +53,8 @@
         </el-table>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog
-      title="编辑列表"
-      width="40%"
-      custom-class="worksheet-dialog"
-      :append-to-body="true"
-      :center="true"
-      :visible.sync="showEditor"
-    >
-      <el-form label-position="left" label-width="120px" v-if="curRow" style="padding: 20px">
+    <pso-dialog title="编辑" :visible="opener.show" @close="opener.show = false" width="40%">
+      <el-form size="mini" label-position="left" label-width="120px" v-if="curRow" style="padding: 20px; overflow: auto; height: 100%">
         <el-form-item label="显示名称">
           <el-input size="mini" v-model="curRow.display"></el-input>
         </el-form-item>
@@ -102,8 +95,13 @@
             <el-option label="居右" value="right"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="关联显示字段">
+          <el-select size="mini" clearable v-model="curRow.relatedShowField">
+            <el-option v-for="(f, i) in curColumn" :key="i" :label="f.display || f.field_name" :value="f.field_name"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
-    </el-dialog>
+    </pso-dialog>
   </div>
 </template>
 <script>
@@ -121,8 +119,9 @@ export default {
       forms: [],
       fields: [],
       curRow: null,
-      showEditor: false,
       activeTab: "",
+      curColumn: [],
+      opener: { show: false },
     };
   },
   async created() {
@@ -141,9 +140,10 @@ export default {
       });
       this.activeTab = this.data.column.length - 1 + "";
     },
-    rowClickHandler(row) {
+    rowClickHandler(row, curColumn) {
       this.curRow = row;
-      this.showEditor = true;
+      this.curColumn = curColumn;
+      this.opener.show = true;
     },
     removeCol(index) {
       if (parseInt(index) !== 0) {

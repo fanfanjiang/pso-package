@@ -1,5 +1,6 @@
 import emitter from "../../mixin/emitter";
 import PsoLabel from "./label";
+import { desensitize } from "../../utils/util";
 
 export default {
     mixins: [emitter],
@@ -9,6 +10,11 @@ export default {
         cpnt: {
             type: Object,
             default: () => ({})
+        }
+    },
+    data() {
+        return {
+            showValue: ''
         }
     },
     computed: {
@@ -22,6 +28,14 @@ export default {
         cpntEditable() {
             if (this.cpnt.data.__forceEdit__) return true;
             return this.storeEditable && !this.cpnt.data._read;
+        },
+        shouldDesen() {
+            return this.cpnt.data._encry === '1' && !this.cpntEditable;
+        },
+        desensitized() {
+            if (this.shouldDesen) {
+                return desensitize(this.cpnt.data._val);
+            }
         }
     },
     created() {
@@ -59,6 +73,13 @@ export default {
     methods: {
         watchCpntVal() {
             this.$watch('cpnt.data._val', (value) => {
+                if (this.__xssFilter__ && typeof value === 'string') {
+                    const purified = this.PSODOMPurify.sanitize(value);
+                    if (purified !== value) {
+                        this.cpnt.data._val = purified;
+                        return;
+                    }
+                }
                 this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });
                 this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });
                 if (this.cpnt.store) this.cpnt.store.setShowByRules(this.cpnt);
@@ -87,7 +108,7 @@ export default {
                     try {
                         if (this.proxy) {
                             const list = this.proxy.list || this.proxy.valList;
-                            if (list) list.splice(0);
+                            if (list && list.length) list.splice(0);
                         }
                     } catch (error) {
 

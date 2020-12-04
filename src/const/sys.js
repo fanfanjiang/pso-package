@@ -50,6 +50,7 @@ export const FORM_COLUMN_FIELDS = {
     defSort: "", //默认排序类型
     defSortOrder: 0,//默认排序顺序
     docWidth: "",
+    relatedShowField: "",
 }
 
 export const STATIC_COLUMN_FIELDS = {

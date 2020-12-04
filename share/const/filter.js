@@ -153,10 +153,11 @@ const FILTER_TYPE = {
     select: {
         id: 'select',
         cid: 'select',
-        name: '选择',
+        name: '选择', 
         op: [
             { ...FILTER_OP.op1, match: 2, optional: true },
             { ...FILTER_OP.op7, match: 7, optional: true, arraytype: true },
+            { ...FILTER_OP.op2, match: 2 },
             { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
             { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]

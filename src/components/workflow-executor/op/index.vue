@@ -169,6 +169,9 @@ export default {
     },
     chat() {
       this.store.activeExtendTab = "chat";
+      if (this.__isMobile__) {
+        this.store.showExtend = true;
+      }
     },
   },
 };

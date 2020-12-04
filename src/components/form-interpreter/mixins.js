@@ -33,10 +33,10 @@ export const formulaMixin = {
                 datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), val);
             });
             try {
-                // console.log(datasource);
+                console.log(datasource);
                 return eval(datasource);
             } catch (error) {
-                // console.log(error);
+                console.log(error);
             }
         }
     }

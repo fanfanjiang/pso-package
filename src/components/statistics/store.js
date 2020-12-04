@@ -234,4 +234,10 @@ export default class STAVStore extends FVStore {
             }
         }
     }
+
+    exportCurPage() {
+        if (this.$tableWrapper) {
+            super.exportCurPage('数据')
+        }
+    }
 }
