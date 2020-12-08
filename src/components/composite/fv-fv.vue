@@ -4,10 +4,9 @@
       <pso-form-view
         key="main"
         v-bind="params"
-        :params="params"
+        :params="{ ...params, hideAuthTab: true, hideStatusTab: true, hideTablefun: true, hideViewTitle: true }"
         :def-limit="20"
         :table-row-click="mainRowClickHandler"
-        :title-text="params.menu_name"
         :addable="opable"
         :deletable="opable"
         :detailEditable="opable"
@@ -15,6 +14,7 @@
         :checkbox="opable"
         :changable="opable"
         :stageable="opable"
+        simple-pagination
         @initialized="handleInitialized"
         @data-loaded="mainLoadedHandler"
       >
@@ -44,9 +44,6 @@ export default {
     };
   },
   computed: {
-    displayRow() {
-      return false;
-    },
     opable() {
       return !!this.params.opable;
     },
@@ -65,7 +62,7 @@ export default {
           params[key.replace("ass__", "")] = this.params[key];
         }
       }
-      return { ...this.params, ...params, defForm };
+      return { ...this.params, ...params, defForm, useCloumn: this.params.ass_useCloumn || "" };
     },
   },
   methods: {

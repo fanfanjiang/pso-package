@@ -135,7 +135,7 @@ export default {
       return this.__isMobile__;
     },
     paginationLayout() {
-      return this.forceclick ? "prev, pager, next" : "total, sizes, prev, pager, next, jumper";
+      return this.forceclick || this.params.simplePagination ? "prev, pager, next" : "total, sizes, prev, pager, next, jumper";
     },
     tableParams() {
       const params = {

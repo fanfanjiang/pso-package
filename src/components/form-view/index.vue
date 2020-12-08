@@ -17,7 +17,7 @@
         <!-- 标题和权限视图过滤 -->
         <div ref="header">
           <div class="pso-view-header">
-            <div class="pso-view-header__l">
+            <div class="pso-view-header__l" v-if="!params.hideViewTitle">
               <div class="pso-view-title">
                 <i class="el-icon-document"></i>
                 <span>{{ pageTitle }}</span>
@@ -50,7 +50,7 @@
               {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
             </el-tag>
           </div>
-          <div class="pso-view-fun">
+          <div class="pso-view-fun" v-if="!params.hideTablefun">
             <div class="pso-view-fun-l">
               <table-fun :store="store" :files="params.downloadFiles"></table-fun>
             </div>
@@ -194,6 +194,10 @@ export default {
     modifiable: {
       type: Boolean,
       default: true,
+    },
+    simplePagination: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

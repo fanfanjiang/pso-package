@@ -56,7 +56,12 @@
               :data="staData"
               :fields="tableData"
             ></form-status>
-            <form-status v-if="curTab === 'stage'" :data="stageData" :fields="tableData"></form-status>
+            <form-status
+              v-if="curTab === 'stage' && formStore"
+              :code="formStore.data_code"
+              :data="stageData"
+              :fields="tableData"
+            ></form-status>
             <form-publish
               v-if="curTab === 'publish' && formStore"
               :data="pubCfg"

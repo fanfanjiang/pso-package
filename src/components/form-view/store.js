@@ -386,7 +386,15 @@ export default class FormViewStore {
             //默认参数
             if (defForm) {
                 for (let key in defForm) {
-                    this.defaultKeys[key] = { value: defForm[key], type: 1 };
+                    //20201205 为了查leaf_id
+                    let type = 1;
+                    if (defForm[key] && typeof defForm[key] === 'string') {
+                        if (defForm[key].split(',').length > 1) {
+                            type = 4;
+                        }
+                    }
+                    //20201205 为了查leaf_id
+                    this.defaultKeys[key] = { value: defForm[key], type };
                 }
             }
         } catch (error) {

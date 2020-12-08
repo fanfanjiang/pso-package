@@ -105,6 +105,10 @@ export default {
       this.getImages(ids);
     },
     async getImages(ids) {
+      //2020.12.04 bug修复
+      if (Array.isArray(ids)) {
+        ids = ids.length ? ids.join(",") : "";
+      }
       if (ids) {
         this.loadingFile = true;
         const ret = await this.API.file({ data: { ids }, method: "get" });
