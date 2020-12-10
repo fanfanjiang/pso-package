@@ -9,7 +9,7 @@
             size="small"
             icon="fa fa-undo"
             plain
-            @click="()=>formStore.undo()"
+            @click="() => formStore.undo()"
           ></el-button>
           <el-button
             :disabled="!formStore.canRedo"
@@ -17,18 +17,13 @@
             size="small"
             icon="fa fa-repeat"
             plain
-            @click="()=>formStore.redo()"
+            @click="() => formStore.redo()"
           ></el-button>
-          <el-button v-if="step===1" type="text" @click="step=2">添加脚本</el-button>
-          <el-button v-if="step===2" type="text" @click="step=1">上一步</el-button>
-          <el-button
-            type="primary"
-            size="small"
-            icon="fa fa-floppy-o"
-            :loading="saving"
-            :disabled="saving"
-            @click="formSaveHandler"
-          >保存</el-button>
+          <el-button v-if="step === 1" type="text" @click="step = 2">添加脚本</el-button>
+          <el-button v-if="step === 2" type="text" @click="step = 1">上一步</el-button>
+          <el-button type="primary" size="small" icon="fa fa-floppy-o" :loading="saving" :disabled="saving" @click="formSaveHandler"
+            >保存</el-button
+          >
         </template>
       </pso-header>
     </div>
@@ -37,9 +32,9 @@
         @store-ready="formReadyHandler"
         :components="formMenu"
         :data="formCfg"
-        v-if="step===1&&!initializing"
+        v-if="step === 1 && !initializing"
       ></designer-body>
-      <pso-script-designer :cpnts="cpnts" :code="code" v-if="step===2"></pso-script-designer>
+      <pso-script-designer :cpnts="cpnts" :code="code" v-if="step === 2"></pso-script-designer>
     </div>
   </div>
 </template>

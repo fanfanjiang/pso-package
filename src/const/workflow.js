@@ -67,25 +67,33 @@ export const REVIEW_OP_TYPE = {
         name: '通过',
         id: "confirm",
         type: 'next',
-        value: 2
+        value: 2,
+        scriptable: true,
+        updatable: true
     },
     end: {
         name: '结束',
         id: "end",
         type: 'finish',
-        value: 4
+        value: 4,
+        scriptable: true,
+        updatable: true
     },
     rollback: {
         name: '回退',
         id: "rollback",
         type: 'back',
-        value: 8
+        value: 8,
+        scriptable: true,
+        updatable: true
     },
     reject: {
         name: '打回',
         id: "reject",
         type: 'return',
-        value: 16
+        value: 16,
+        scriptable: true,
+        updatable: true
     },
     pickreject: {
         name: '指定',

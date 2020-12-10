@@ -1,19 +1,15 @@
 <template>
   <div class="actor-wrapper">
     <div class="actor-label">
-      <span
-        :class="{'actor-title':true,'require':cpnt.data._required === '1'}"
-      >{{cpnt.data._fieldName}}</span>
+      <span :class="{ 'actor-title': true, require: cpnt.data._required === '1' }">{{ cpnt.data._fieldName }}</span>
     </div>
     <div class="actor-body">
-      <div
-        :class="{'actor-content':true,'flex-row-center-between':true,'actor-content--border':border}"
-      >
-        <span v-if="placeholder">{{showValue}}</span>
+      <div :class="{ 'actor-content': true, 'flex-row-center-between': true, 'actor-content--border': border }">
+        <span v-if="placeholder">{{ showValue }}</span>
         <slot></slot>
       </div>
       <el-tooltip v-if="cpnt.data._fieldInfo" effect="dark" placement="top-start">
-        <div slot="content">{{cpnt.data._fieldInfo}}</div>
+        <div slot="content">{{ cpnt.data._fieldInfo }}</div>
         <i class="tip el-icon-question"></i>
       </el-tooltip>
     </div>
@@ -24,22 +20,22 @@ export default {
   name: "pso-common-actor",
   props: {
     cpnt: {
-      type: Object
+      type: Object,
     },
     border: {
       type: Boolean,
-      default: true
+      default: true,
     },
     placeholder: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     showValue() {
       return this.cpnt.data._defaultValue || this.cpnt.data._placeholder;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -47,10 +43,11 @@ export default {
 <style lang="less">
 .actor-wrapper {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   padding-bottom: 15px;
   .actor-label {
     width: 90px;
+    margin-bottom: 5px;
     .actor-title {
       color: #666;
       position: relative;
@@ -58,7 +55,8 @@ export default {
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
       overflow: hidden;
-      padding-left: 10px;
+      padding-left: 28px;
+      font-size: 13px;
       &.require::after {
         content: "*";
         position: absolute;
@@ -79,11 +77,11 @@ export default {
     }
   }
   .actor-content {
-    height: 38px;
+    height: 30px;
     padding: 0 15px;
     flex: 1 1;
     > span {
-      line-height: 38px;
+      line-height: 30px;
       color: #999;
     }
     &.actor-content--border {

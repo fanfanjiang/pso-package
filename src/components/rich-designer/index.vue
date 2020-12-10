@@ -22,21 +22,6 @@
               :value="item._fieldValue"
             ></el-option>
           </el-select>
-          <el-select
-            size="small"
-            filterable
-            v-model="perEntryVal"
-            placeholder="插入权限项"
-            @change="setPermission(commands)"
-            @focus="selectedOp = '插入权限项'"
-          >
-            <el-option
-              v-for="item in wfDesigner.permissionEntries"
-              :key="item.body_id"
-              :label="item.body_name"
-              :value="item.body_id"
-            ></el-option>
-          </el-select>
           <div class="wf-table-editor__icon">
             <editor-menu-item
               v-for="(menuItem, i) of menu"
@@ -97,7 +82,7 @@
         </div>
       </div>
     </div>
-    <div class="wf-table-editor__save" v-if="wfDesigner.wfCode">
+    <div class="wf-table-editor__save">
       <el-button type="primary" size="mini" round :loading="saving" @click="saveHandler">保存主体</el-button>
     </div>
     <div class="wf-table-editor__content">
@@ -130,10 +115,9 @@
   </div>
 </template>
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { genComponentData } from "../../form-designer/helper/index.js";
-import { WF_FIND_NODE } from "../../../store/mutation-types";
-import { REVIEW_LOG_FORMAT } from "../../../const/workflow";
+import { genComponentData } from "../form-designer/helper/index.js";
+import { WF_FIND_NODE } from "../../store/mutation-types";
+import { REVIEW_LOG_FORMAT } from "../../const/workflow";
 
 import { Editor, EditorContent, EditorFloatingMenu, EditorMenuBar } from "tiptap";
 import {
@@ -164,13 +148,27 @@ import Align from "./align";
 import PermissionEntries from "./permission-entries";
 
 import EditorMenuItem from "./menu-item";
-import FormulaDesigner from "../../form-designer/formula-designer";
-import { formOp } from "../../form-designer/mixin";
+import FormulaDesigner from "../form-designer/formula-designer";
+import { formOp } from "../form-designer/mixin";
 
 export default {
   components: { EditorMenuItem, EditorContent, EditorMenuBar, EditorFloatingMenu, FormulaDesigner },
-  componentName: "PsoWfEditorTable",
+  componentName: "RichDesigner",
   mixins: [formOp],
+  props: {
+    content: {
+      type: String,
+      default: "",
+    },
+    reviews: {
+      type: Array,
+      default: [],
+    },
+    options: {
+      type: Array,
+      default: [],
+    },
+  },
   data() {
     return {
       saving: false,
@@ -308,7 +306,6 @@ export default {
         },
       ],
       fieldValue: "",
-      perEntryVal: "",
       fieldNode: null,
       asstableNode: null,
       tableCpnt: {},
@@ -321,51 +318,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(["wfDesigner"]),
     contentStyle() {
       return {
         "margin-top": this.fieldNode ? "140px" : "0px",
       };
-    },
-    reviewList() {
-      const formStore = this.wfDesigner.formStore;
-      if (formStore && formStore.search) {
-        return this.$store.getters[WF_FIND_NODE]({ options: { tid: "review" } });
-      }
-      return [];
-    },
-    options() {
-      const formStore = this.wfDesigner.formStore;
-      let list = [];
-      if (formStore && formStore.search) {
-        const formRet = formStore.search({
-          onlyData: true,
-          onlyMain: true,
-          options: { db: true },
-          beforePush: (item) => {
-            item.data.displayName = `[${item.CPNT.name}]${item.data._fieldName}`;
-            return true;
-          },
-        });
-        list = list.concat(formRet);
-      }
-
-      //添加系统字段
-      list = list.concat([
-        genComponentData({ _fieldValue: "wf_ctime", _fieldName: "[系统]创建时间", componentid: "time" }),
-        genComponentData({ _fieldValue: "wf_creator", _fieldName: "[系统]创建人", componentid: "text" }),
-        genComponentData({ _fieldValue: "wf_fileCode", _fieldName: "[系统]流程编号", componentid: "text" }),
-        genComponentData({ _fieldValue: "wf_import", _fieldName: "[系统]重要等级", componentid: "text" }),
-        genComponentData({ _fieldValue: "wf_secret", _fieldName: "[系统]秘密等级", componentid: "text" }),
-        genComponentData({ _fieldValue: "wf_urgent", _fieldName: "[系统]加急程度", componentid: "text" }),
-        genComponentData({ _fieldValue: "wf_logs", _fieldName: "[系统]审批过程", componentid: "text" }),
-      ]);
-
-      this.reviewList.forEach(({ target }) => {
-        list.push(genComponentData({ _fieldValue: target.nid, _fieldName: `[审核意见]${target.name}`, componentid: "text" }));
-      });
-
-      return list;
     },
   },
   mounted() {
@@ -397,13 +353,13 @@ export default {
         new Align(),
         new PermissionEntries(),
       ],
-      content: this.wfDesigner.tableContent,
+      content: this.content,
     });
   },
   created() {
     this.$on("field-click", async (node) => {
       let reviewNode;
-      this.reviewList.forEach(({ target }) => {
+      this.reviews.forEach(({ target }) => {
         if (target.nid === node.attrs.field) {
           reviewNode = node;
         }
@@ -441,13 +397,6 @@ export default {
         sequence: "",
       });
       this.fieldValue = "";
-    },
-    setPermission(commands) {
-      commands.createPermission({
-        name: _.find(this.wfDesigner.permissionEntries, { body_id: this.perEntryVal }).body_name,
-        value: this.perEntryVal,
-      });
-      this.perEntryVal = "";
     },
     exportHtml() {
       return this.editor.getHTML();
@@ -503,10 +452,7 @@ export default {
       }
     },
     async saveHandler() {
-      this.saving = true;
-      const ret = await this.API.updateWfTable({ wf_code: this.wfDesigner.wfCode, wf_body_tp: this.exportHtml() });
-      this.saving = false;
-      this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
+      this.$emit("save", this.exportHtml());
     },
     confirmScript(val) {
       this.asstableNode.attrs.format = val;
@@ -521,16 +467,16 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "../../../assets/less/variable";
-@import "../../../assets/less/mixins/mixins";
+@import "../../assets/less/variable";
+@import "../../assets/less/mixins/mixins";
 
 .wf-table-editor {
   position: relative;
   height: 100%;
   .wf-table-editor__save {
     position: absolute;
-    right: 20px;
-    top: 20px;
+    left: 20px;
+    bottom: 20px;
     z-index: 2;
   }
   .wf-table-editor__menu-wrapper {

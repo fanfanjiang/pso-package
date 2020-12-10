@@ -23,7 +23,8 @@
           </div>
           <div class="pso-view-header__r">
             <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
-            <el-button size="mini" type="primary" plain @click="handleEditForm">设计表单</el-button>
+            <el-button size="mini" type="primary" plain @click="goPrinterDeisgner">打印设计</el-button>
+            <el-button size="mini" type="primary" plain @click="handleEditForm">表单设计</el-button>
           </div>
         </div>
         <div class="pso-view-viewtab">
@@ -292,6 +293,9 @@ export default {
     },
     handleEditForm() {
       this.goForm({ id: this.curNode.node_name });
+    },
+    goPrinterDeisgner() {
+      window.open(`/printer-designer/${this.curNode.node_name}`, "_blank");
     },
     goForm({ pid = "", id = "" }) {
       this.$router.push({ name: "formDesigner", params: { appid: this.appid }, query: { pid, id, appid: this.appid } });

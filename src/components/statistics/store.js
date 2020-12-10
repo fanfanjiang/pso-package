@@ -227,6 +227,8 @@ export default class STAVStore extends FVStore {
     }
 
     analyzeCellStyle({ row, column, rowIndex, columnIndex }) {
+
+        
         if (column.property) {
             const field = _.find(this.fields, { field: column.property });
             if (field && field.drillTarget) {

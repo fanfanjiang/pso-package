@@ -2,10 +2,10 @@
   <div class="form-designer">
     <div class="form-designer-body">
       <!-- 固定组件菜单和中心区域 -->
-      <div class="form-designer-body-fixer" v-bar @click="stageClickHandler">
+      <div class="form-designer-body-fixer" @click="stageClickHandler">
         <div>
           <div class="form-designer__menu">
-            <div class="form-designer__menu-bar" v-bar>
+            <div class="form-designer__menu-bar">
               <div class="form-designer__menu-body">
                 <div class="fd__menu-section" v-for="cpnList in menu" :key="cpnList.title">
                   <div class="fd__menu-section-title">{{ cpnList.title }}</div>
@@ -38,7 +38,7 @@
         </div>
       </div>
       <!-- 固定组件菜单和中心区域 -->
-      <div class="form-designer__panel" v-bar>
+      <div class="form-designer__panel">
         <designer-panel :store="store"></designer-panel>
       </div>
     </div>
@@ -201,6 +201,7 @@ export default {
     display: flex;
     .form-designer-body-fixer {
       flex: 1;
+      overflow: auto;
       > div {
         display: flex;
       }
@@ -209,8 +210,8 @@ export default {
   .form-designer__panel {
     width: 350px;
     border-left: 1px solid rgb(219, 220, 221);
+    overflow: auto;
   }
-
   .form-designer__stage {
     flex: 1;
     margin-left: 300px;
@@ -241,6 +242,7 @@ export default {
     .form-designer__menu-bar {
       width: 300px;
       background-color: #f1f2f3;
+      overflow: auto;
       .form-designer__menu-body {
         padding: 10px;
         .fd__menu-section {

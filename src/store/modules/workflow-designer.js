@@ -158,18 +158,12 @@ export default {
             // 将数据跟新需要的参数删除
             const traverse = (data) => {
                 for (let item of data) {
-                    if (item.update) {
-                        item.update.forEach(upItem => {
-                            delete upItem.store;
-                            delete upItem.cpnt;
-                        })
-                    }
                     if (item.children && item.children.length) {
                         traverse(item.children)
                     }
                 }
             }
-            traverse(node);
+            // traverse(node);
             const data = {
                 pid: state.pid,
                 node_id: state.node_id,

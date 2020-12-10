@@ -71,6 +71,7 @@ import PsoWfMgt from "./components/workflow-mgt";
 import PsoWfView from "./components/workflow-view";
 
 import PsoTempleteMgt from "./components/templete-mgt";
+import PsoPluginMgt from "./components/plugin-mgt";
 
 import PsoViewDesigner from "./components/view-designer";
 
@@ -92,6 +93,8 @@ import PsoStaScript from "./components/statistics/script";
 import PsoAvatar from "./components/avatar";
 import PsoApicfg from "./components/apicfg";
 import PsoApiauth from "./components/apicfg/api-auth";
+
+import PsoPrinterDesigner from "./components/printer-designer";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -123,7 +126,7 @@ const components = {
     PsoFormView,
     PsoFormExecutor,
     PsoCpntAst,
-    
+
     PsoFormDesigner,
     PsoFormInterpreter,
     PsoTypebar,
@@ -160,6 +163,8 @@ const components = {
     PsoAvatar,
     PsoApicfg,
     PsoApiauth,
+    PsoPluginMgt,
+    PsoPrinterDesigner,
 
     //混合视图
     PsoFvAst,

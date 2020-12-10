@@ -1,12 +1,14 @@
 <template>
   <div class="pso-common-header flex-row-center-between">
     <div class="pso-common-header__left flex-row-center">
-      <div class="pso-common-header__left__back" @click="$emit('back')">
-        <i class="el-icon-back"></i>
-        <span>返回</span>
-      </div>
-      <span class="pso-common-header__left__split">|</span>
-      <span class="pso-common-header__left__title">{{title}}</span>
+      <template v-if="backable">
+        <div class="pso-common-header__left__back" @click="$emit('back')">
+          <i class="el-icon-back"></i>
+          <span>返回</span>
+        </div>
+        <span class="pso-common-header__left__split">|</span>
+      </template>
+      <span class="pso-common-header__left__title">{{ title }}</span>
     </div>
     <slot></slot>
     <div class="pso-common-header__right flex-row-center">
@@ -19,9 +21,13 @@ export default {
   props: {
     title: {
       type: String,
-      default: ""
-    }
-  }
+      default: "",
+    },
+    backable: {
+      type: Boolean,
+      default: true,
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

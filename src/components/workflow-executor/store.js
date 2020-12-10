@@ -698,28 +698,6 @@ export default class WfStore {
                 data.users = this.userOp.users;
             }
 
-            //下一步时有修改表单的需求
-            if (this.curStep.update && this.curStep.update.length && formData) {
-                const updates = this.curStep.update;
-                const upData = formData.dataArr[0];
-
-                for (let update of updates) {
-                    if (!update.fid) continue;
-                    const cpnt = this.formStore.search({ options: { fid: update.fid } });
-                    if (cpnt && cpnt.fid) {
-
-                        if (update.type === 1) {
-                            upData[cpnt.data._fieldValue] = update.value;
-                        } else {
-                            const targetCpnt = this.formStore.search({ options: { fid: update.value } });
-                            if (targetCpnt && targetCpnt.fid) {
-                                upData[cpnt.data._fieldValue] = upData[targetCpnt.data._fieldValue];
-                            }
-                        }
-                    }
-                }
-            }
-
             if (formData) {
                 data.formData = formData;
             }

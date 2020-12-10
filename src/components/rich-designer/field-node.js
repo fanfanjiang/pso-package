@@ -1,6 +1,6 @@
 import { Node } from 'tiptap'
 import { TextSelection } from 'prosemirror-state';
-import emitter from "../../../mixin/emitter";
+import emitter from "../../mixin/emitter";
 
 export default class FieldNode extends Node {
 
@@ -77,7 +77,7 @@ export default class FieldNode extends Node {
           `,
             methods: {
                 nodeClick() {
-                    this.dispatch('PsoWfEditorTable', 'field-click', this.node);
+                    this.dispatch('RichDesigner', 'field-click', this.node);
                 }
             }
         }

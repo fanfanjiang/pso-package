@@ -5,7 +5,7 @@
         v-if="!loading && store"
         :label-width="labelWidth"
         :label-position="labelPosition"
-        size="medium"
+        size="small"
         v-loading="store.storeLoading"
       >
         <pso-form-component v-for="cpnt in store.root.childComponents" :key="cpnt.fid" :cpnt="cpnt"></pso-form-component>

@@ -38,7 +38,7 @@
         reset
       ></pso-common-review>
       <wf-formauth :node="node"></wf-formauth>
-      <pso-wf-update :node="node"></pso-wf-update>
+      <wf-update :node="node"></wf-update>
     </el-form>
   </div>
 </template>
@@ -47,11 +47,11 @@ import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 import { REVIEW_TYPE, REVIEW_OP_TYPE, REVIEW_AUTH_TYPE, WF_EMPTY_TYPE } from "../../../const/workflow";
 
 import PsoCommonReview from "../../workflow-designer/common/common-review";
-import PsoWfUpdate from "../../workflow-designer/common/update";
 import WfFormauth from "../../workflow-designer/common/form-auth";
+import WfUpdate from "../../workflow-designer/common/update";
 
 export default {
-  components: { PsoCommonReview, PsoWfUpdate, WfFormauth },
+  components: { PsoCommonReview, WfUpdate, WfFormauth },
   props: ["node"],
   data() {
     this.WF_EMPTY_TYPE = WF_EMPTY_TYPE;

@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['actor','dragable',cpnt.CPNT.class||'']"
+    :class="['actor', 'dragable', cpnt.CPNT.class || '']"
     :componentid="cpnt.componentid"
     :fid="cpnt.fid"
     @click.stop="actorClickHandler()"
@@ -11,7 +11,7 @@
     <div class="controller left">
       <i :class="cpnt.CPNT.icon"></i>
     </div>
-    <div class="controller right" v-if="cpnt.data._deletable"> 
+    <div class="controller right" v-if="cpnt.data._deletable">
       <span class="actor-delete el-icon-delete" @click.stop="removeHandler"></span>
     </div>
   </div>
@@ -19,7 +19,7 @@
 <script>
 const componentsMap = {};
 const requireComponent = require.context("./actors", true);
-requireComponent.keys().forEach(fileName => {
+requireComponent.keys().forEach((fileName) => {
   const componentConfig = requireComponent(fileName);
   const componentName = _.upperFirst(
     _.camelCase(
@@ -38,7 +38,7 @@ export default {
   computed: {
     currentEL() {
       return `pso-actor-${this.cpnt.componentid}`;
-    }
+    },
   },
   methods: {
     actorClickHandler() {
@@ -46,8 +46,8 @@ export default {
     },
     removeHandler() {
       this.cpnt.store.remove(this.cpnt);
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -75,7 +75,7 @@ export default {
   .controller {
     position: absolute;
     top: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 0px 4px rgba(0, 0, 0, 0.16);
     font-size: 14px;
     line-height: 20px;
     height: 20px;
@@ -84,12 +84,16 @@ export default {
     background-color: #fff;
   }
   .left {
-    left: 0;
     width: 20px;
     border-radius: 3px;
+    left: 20px;
+    width: 20px;
+    border-radius: 3px;
+    top: 18px;
   }
   .right {
-    right: 0;
+    top: -5px;
+    right: 5px;
     display: none;
     > span {
       width: 24px;

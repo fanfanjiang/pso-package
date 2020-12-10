@@ -155,7 +155,6 @@ export default {
   },
   methods: {
     async nodeClickHandler(nodeData) {
-      console.log(nodeData);
       this.curNode = nodeData;
 
       this.loadingInfo = true;

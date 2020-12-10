@@ -13,10 +13,11 @@ const reviewParams = {
     copyType: '', //抄送类型
     copyList: [],//抄送数据
     opaitems: [],
-    update: [],
+    update: {},
     notification: { type: 2, value: '', list: [], pattern: 'checkbox' },
     fieldsAuth: [],
     bind_field: '',
+    script: {},
 }
 
 export default {

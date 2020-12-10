@@ -634,6 +634,22 @@ export default class API {
             throw error;
         }
     }
+
+    static async getPluginGroup(data) {
+        try {
+            return await this.request('/api/templates/group', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    static async getPluginColumn(data) {
+        try {
+            return await this.request('/api/templates/column', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器
