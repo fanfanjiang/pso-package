@@ -67,9 +67,9 @@
           </el-form-item>
           <el-form-item label="保存位置" label-width="80px">
             <div class="tag-list" v-if="resource.list.length">
-              <el-tag v-for="item in resource.list" :key="item.node_id" closable @close="handleDelSelection(item)">{{
-                item.node_name
-              }}</el-tag>
+              <el-tag v-for="item in resource.list" :key="item.node_id" closable @close="handleDelSelection(item)">
+                {{item.node_name}}
+                </el-tag>
             </div>
             <pso-picker-tree
               rootable

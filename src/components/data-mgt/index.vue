@@ -74,7 +74,7 @@
             <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
             <form-submit v-if="curTab === 'submit'" :data="subCfg" :fields="tableData"></form-submit>
             <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
-            <form-iapicfg v-if="curTab === 'innerapi'" :data="inner_api" :fields="tableData"></form-iapicfg>
+            <form-iapicfg v-if="curTab === 'innerapi'" :data="inner_api" :fields="tableData" :code="formStore.data_code"></form-iapicfg>
             <form-oapicfg v-if="curTab === 'outerapi'"></form-oapicfg>
           </template>
           <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>

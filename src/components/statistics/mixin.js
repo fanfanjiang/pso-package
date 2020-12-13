@@ -52,6 +52,7 @@ export const StaMixin = {
                     this.store.analyzeAuthView(this.params.viewAuth, this.params.auth_config);
                 }
 
+                this.makeKeys();
                 await this.store.initialize(this.params.plug_code, this.$router.currentRoute.query);
                 this.$emit("initialized", { store: this.store });
                 await this.store.fetchStatus();
@@ -60,17 +61,19 @@ export const StaMixin = {
                     this.$watch("store.limit", () => {
                         this.store.deFetch();
                     }),
-
                     this.$watch("store.page", () => {
                         this.store.deFetch();
                     }),
-
                     this.$watch("store.condition", () => {
                         this.store.page = 1;
                         this.store.deFetch();
                     }),
-
                     this.$watch("store.activeView", () => {
+                        this.store.page = 1;
+                        this.store.fetchStatus();
+                    }),
+                    this.$watch("params.defKeys", () => {
+                        this.makeKeys();
                         this.store.page = 1;
                         this.store.fetchStatus();
                     })
@@ -78,6 +81,9 @@ export const StaMixin = {
             } else {
                 this.store = null;
             }
+        },
+        makeKeys() {
+            this.store.makeDefkeys({ defKeys: this.params.defKeys });
         },
     },
 };

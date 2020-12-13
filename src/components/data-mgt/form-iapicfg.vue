@@ -1,5 +1,6 @@
 <template>
   <div style="padding: 15px 15px 0 0" v-loading="initializing">
+    <el-button size="mini" type="primary" plain @click="asyncManually">同步！</el-button>
     <el-form label-position="left" label-width="110px" size="small">
       <el-form-item label="请求方式" required>
         <el-select size="mini" filterable v-model="data.inner_type">
@@ -93,7 +94,7 @@ import { checkUntransField } from "../../tool/form";
 const successFlag = {
   key: "",
   field: "",
-  type: "boolen",
+  type: "boolean",
   value: "",
 };
 const dataFlag = {
@@ -107,6 +108,7 @@ export default {
   props: {
     data: Object,
     fields: Array,
+    code: String,
   },
   data() {
     return {
@@ -196,6 +198,10 @@ export default {
     },
     getField(field_name) {
       return _.find(this.fields, { field_name });
+    },
+    async asyncManually() {
+      const ret = await this.API.asyncIApiDataManually({ data_code: this.code });
+      this.ResultNotify(ret);
     },
   },
 };

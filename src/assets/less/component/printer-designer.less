@@ -16,5 +16,49 @@
          padding-top: 50px;
          position: relative;
          z-index: 1;
+         display: flex;
+         background: #fafafa;
+
+         .printer-designer-l {
+             width: 260px;
+             height: 100%;
+             overflow: auto;
+         }
+
+         .printer-designer-c {
+             flex: 1;
+             overflow: auto;
+         }
+     }
+
+     .printer-designer-menu {
+         background-color: #fff;
+         height: 100%;
+         padding: 15px;
+     }
+ }
+
+ .printer-content {
+     width: 1000px;
+     margin: 0 auto;
+     padding: 20px;
+     height: 100%;
+
+     >div {
+         .richEditor();
+         position: relative;
+         color: #000;
+         font-size: 16px;
+         background-color: #fff;
+         padding: 20px;
+         min-height: 100%;
+
+         table {
+
+             td,
+             th {
+                 border: 1px solid #000;
+             }
+         }
      }
  }

@@ -272,7 +272,7 @@
       :visible="showInstancePicker"
     >
       <pso-form-view
-        :cfgId="scode"
+        :cfgId="source_code"
         checkbox
         :deletable="false"
         selection-type="radio"
@@ -314,8 +314,8 @@ export default {
     ];
     this.forms = [];
     return {
-      source: { data_code: this.scode },
-      querySource: { data_code: this.scode },
+      source: { data_code: "" },
+      querySource: { data_code: "" },
       querySubSource: { data_code: "" },
       activeTab: "sys",
       paramsOptions: [],
@@ -351,6 +351,9 @@ export default {
     };
   },
   computed: {
+    source_code() {
+      return this.block.scode || this.scode;
+    },
     copyTarget() {
       const asts = [];
       if (this.paramsOptions.length && this.targetFields.length) {
@@ -456,6 +459,13 @@ export default {
         this.block.child_config = this.copyProxy.filter((d) => d.checked);
       },
     },
+    "source.data_code"(val) {
+      this.block.scode = val;
+    },
+  },
+  created() {
+    this.source.data_code = this.source_code;
+    this.querySource.data_code = this.source_code;
   },
   methods: {
     getCopyTarget() {
@@ -670,7 +680,7 @@ export default {
           data = await this.$refs.formImage.makeData();
         }
         this.debuging = true;
-        const ret = await this.API.debugSQLScript({ script: this.block, scode: this.scode, paramvalue: data.dataArr[0] });
+        const ret = await this.API.debugSQLScript({ script: this.block, scode: this.source_code, paramvalue: data.dataArr[0] });
         this.debugResult += `[${dayjs().format("HH:mm:ss")}]     ${JSON.stringify(ret)}</br>`;
         this.debuging = false;
       } catch (error) {

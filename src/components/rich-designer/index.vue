@@ -82,7 +82,7 @@
         </div>
       </div>
     </div>
-    <div class="wf-table-editor__save">
+    <div class="wf-table-editor__save" v-if="saveButton">
       <el-button type="primary" size="mini" round :loading="saving" @click="saveHandler">保存主体</el-button>
     </div>
     <div class="wf-table-editor__content">
@@ -167,6 +167,10 @@ export default {
     options: {
       type: Array,
       default: [],
+    },
+    saveButton: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
@@ -514,7 +518,7 @@ export default {
   }
   .wf-table-editor__content {
     min-height: 100%;
-    width: calc(100% - 224px);
+    width: calc(100% - 244px);
     padding: 20px;
     margin-left: 240px;
     position: relative;

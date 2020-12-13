@@ -18,10 +18,10 @@
         </div>
         <div class="form-executor-header__r">
           <template v-if="!initializing">
-            <el-dropdown size="small" v-if="deletable" trigger="click">
+            <el-dropdown size="small" trigger="click" @command="moreCommandhandler">
               <span class="el-dropdown-link"> <i class="el-icon-more"></i> </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
+                <el-dropdown-item v-if="deletable">
                   <el-popconfirm
                     confirmButtonText="确定"
                     cancelButtonText="取消"
@@ -33,6 +33,7 @@
                     <span slot="reference">删除</span>
                   </el-popconfirm>
                 </el-dropdown-item>
+                <el-dropdown-item command="print" v-if="dataId">打印 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -230,6 +231,11 @@ export default {
     colseHandler() {
       this.opener.showExecutor = false;
       this.refresh();
+    },
+    moreCommandhandler(command) {
+      if (command === "print") {
+        window.open(`/printer/${this.store.data_code}/${this.dataId}`, "_blank");
+      }
     },
   },
 };

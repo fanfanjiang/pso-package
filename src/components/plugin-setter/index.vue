@@ -87,6 +87,7 @@
               @confirm="handlefileChecked($event, p)"
             ></pso-picker-resource>
             <el-button v-if="p.picker === 'picker-sql'" size="mini" type="primary" plain @click="editSql(p)"> 编辑脚本 </el-button>
+            <el-button v-if="p.picker === 'picker-stats'" size="mini" type="primary" plain @click="setStats(p)"> 设置关联统计 </el-button>
           </el-form-item>
         </div>
       </transition>
@@ -103,6 +104,7 @@
       </template>
     </pso-drawer>
     <sql-designer :opener="showDeisgner" :sql="curSql.value"></sql-designer>
+    <stats-picker :opener="statsOpener" :code="statsOpener.code" :stats="statsOpener.data"></stats-picker>
   </div>
 </template>
 <script>
@@ -112,10 +114,11 @@ import { genComponentData } from "../form-designer/helper";
 import { assignList } from "../../utils/util";
 import { PLUGIN_PARAMS } from "../../const/sys";
 import SqlDesigner from "../sql-designer";
+import StatsPicker from "./stats-picker";
 
 export default {
   mixins: [formOp],
-  components: { formulaDesigner, SqlDesigner },
+  components: { formulaDesigner, SqlDesigner, StatsPicker },
   props: {
     data: Array,
     node: Object,
@@ -140,6 +143,11 @@ export default {
       cpnts: [],
       curSql: {},
       showDeisgner: { show: false },
+      statsOpener: {
+        show: false,
+        code: "",
+        data: {},
+      },
     };
   },
   async created() {
@@ -265,6 +273,13 @@ export default {
       }
       this.curSql = param;
       this.showDeisgner.show = true;
+    },
+    setStats(data) {
+      if (data.relateParam) {
+        this.statsOpener.code = this.getRelateItem(data);
+        this.statsOpener.data = data.value;
+        this.statsOpener.show = true;
+      }
     },
   },
 };

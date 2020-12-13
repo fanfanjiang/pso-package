@@ -642,10 +642,18 @@ export default class API {
             throw error;
         }
     }
-    
+
     static async getPluginColumn(data) {
         try {
             return await this.request('/api/templates/column', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async asyncIApiDataManually(data) {
+        try {
+            return await this.request('/api/form/api-data', { data, method: 'post' });
         } catch (error) {
             throw error;
         }

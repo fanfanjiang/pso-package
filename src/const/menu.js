@@ -67,6 +67,10 @@ export const TP_CTL_TYPE = [
     {
         n: 'SQL脚本编辑器',
         v: 'picker-sql'
+    },
+    {
+        n: '统计关联器',
+        v: 'picker-stats'
     }
 ];
 

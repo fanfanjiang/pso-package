@@ -77,14 +77,21 @@ export default {
     this.dispatch("PsoformInterpreter", "cpnt-tag-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
 
     if (this.cpnt.data._filterOptions && this.cpnt.data._filterOptions.length) {
+      this.cpnt.data._filterOptions.forEach((f) => {
+        const cpnt = this.cpnt.store.searchByField(f);
+        if (cpnt) this.setFilter(cpnt);
+      });
       this.$on("cpnt-value-changed", ({ cpnt }) => {
-        if (this.cpnt.data._filterOptions.includes(cpnt.data._fieldValue)) {
-          this.$set(this.filterCache, cpnt.data._fieldValue, cpnt.data._val);
-        }
+        this.setFilter(cpnt);
       });
     }
   },
   methods: {
+    setFilter(cpnt) {
+      if (this.cpnt.data._filterOptions.includes(cpnt.data._fieldValue)) {
+        this.$set(this.filterCache, cpnt.data._fieldValue, cpnt.data._val);
+      }
+    },
     async setDataByIds(tagData) {
       if (tagData && typeof tagData === "string") {
         tagData = tagData.split(",");

@@ -78,6 +78,7 @@ export default {
         id,
         name,
         script,
+        scode: this.scode,
         script_type: "0",
         action_type: "0",
         relate_type: "0",

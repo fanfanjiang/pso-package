@@ -1,7 +1,7 @@
 <template>
   <div class="act-panel-body">
     <panel-header :icon="cpnt.CPNT.icon" :name="cpnt.CPNT.name" :info="info"></panel-header>
-    <el-form label-position="top" label-width="80px" :model="cpnt.data">
+    <el-form size="small" label-position="top" label-width="80px" :model="cpnt.data">
       <el-form-item label="名称">
         <el-input size="mini" v-model.trim="cpnt.data._fieldName" clearable></el-input>
       </el-form-item>

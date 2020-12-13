@@ -144,7 +144,7 @@ export default {
       }
       this.groupInitializing = false;
     },
-    beforeNodeUpdate() {
+    beforeNodeUpdate(data) {
       if (data.is_leaf) {
         data.tp_type = this.tpType;
         data.tp_head = "";

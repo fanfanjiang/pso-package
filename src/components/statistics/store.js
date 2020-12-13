@@ -15,7 +15,6 @@ export default class STAVStore extends FVStore {
         this.menus = [];
         this.outerParams = outerParams;
         this.params = params;
-        console.log(params);
     }
 
     get opExportable() {

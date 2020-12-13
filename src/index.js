@@ -95,6 +95,7 @@ import PsoApicfg from "./components/apicfg";
 import PsoApiauth from "./components/apicfg/api-auth";
 
 import PsoPrinterDesigner from "./components/printer-designer";
+import PsoPrinter from "./components/printer";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -108,6 +109,7 @@ import PsoWtreeFv from "./components/composite/wtree-fv";
 import PsoWtreeWv from "./components/composite/wtree-wv";
 import PsoTreeTimeline from "./components/composite/tree-timeline";
 import PsoNodeAny from "./components/composite/node-any";
+import PsoFvStats from "./components/composite/fv-stats";
 
 const components = {
     PsoEmpty,
@@ -165,6 +167,7 @@ const components = {
     PsoApiauth,
     PsoPluginMgt,
     PsoPrinterDesigner,
+    PsoPrinter,
 
     //混合视图
     PsoFvAst,
@@ -177,7 +180,8 @@ const components = {
     PsoWtreeFv,
     PsoWtreeWv,
     PsoTreeTimeline,
-    PsoNodeAny
+    PsoNodeAny,
+    PsoFvStats
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host, xssFilter = false } = {}) {

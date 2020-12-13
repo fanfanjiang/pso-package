@@ -32,8 +32,9 @@
       <el-table-column label="存储方式">
         <template slot-scope="scope">
           <el-select v-model="scope.row.saveType" size="mini" clearable @change="typeChange($event, scope.$index)">
-            <el-option label="非列表" value="1"></el-option>
-            <el-option label="列表" value="2"></el-option>
+            <el-option label="字符串" value="1"></el-option>
+            <el-option label="数组" value="2"></el-option>
+            <el-option label="对象" value="3"></el-option>
           </el-select>
         </template>
       </el-table-column>
@@ -110,8 +111,10 @@ export default {
     typeChange(type, index) {
       if (type === "1") {
         this.data[index].value = "";
-      } else {
+      } else if (type === "2") {
         this.data[index].value = [];
+      } else if (type === "3") {
+        this.data[index].value = {};
       }
     },
     addFormParam() {

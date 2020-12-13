@@ -1,8 +1,113 @@
 <template>
-  <div class="pso-printer">
-    <div class="pso-printer-header"></div>
+  <div class="printer-designer" v-loading="initializing">
+    <template v-if="!initializing">
+      <div class="printer-designer-header">
+        <pso-header title="表单打印" :backable="false">
+          <template v-slot:btn>
+            <el-button v-if="curTemplate" type="primary" size="mini" icon="fa fa-floppy-o" @click="print"> 打印 </el-button>
+          </template>
+        </pso-header>
+      </div>
+      <div class="printer-designer-body">
+        <div class="printer-designer-l">
+          <div class="printer-designer-menu">
+            <el-form size="small" label-position="top">
+              <el-form-item label="选择模板">
+                <el-select size="mini" v-model="curTemplateId">
+                  <el-option v-for="(t, i) in templates" :key="i" :label="t.name" :value="t.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
+        </div>
+        <div class="printer-designer-c">
+          <div class="printer-content">
+            <div ref="printer" v-html="curTemplate.content"></div>
+          </div>
+        </div>
+      </div>
+      <pso-form-interpreter
+        v-show="false"
+        @value-change="formChangeHandler"
+        @shownval-done="formChangeHandler"
+        @data-loaded="formLoadedHandler"
+        ref="formImage"
+        :form-id="code"
+        :data-id="instanceId"
+        :editable="false"
+      ></pso-form-interpreter>
+    </template>
   </div>
 </template>
 <script>
-export default {};
+import PsoHeader from "../header";
+import { formOp } from "../form-designer/mixin";
+import { Printer } from "../../mixin/form";
+
+export default {
+  mixins: [formOp, Printer],
+  props: ["params"],
+  components: { PsoHeader },
+  data() {
+    return {
+      initializing: true,
+      saving: false,
+      templates: [],
+      curTemplateId: "",
+    };
+  },
+  computed: {
+    code() {
+      return this.params.code;
+    },
+    instanceId() {
+      return this.params.id;
+    },
+    curTemplate() {
+      return this.curTemplateId ? _.find(this.templates, { id: this.curTemplateId }) : null;
+    },
+  },
+  async created() {
+    await this.makeFormStore(this.code);
+    if (this.formStore) {
+      await this.loadTemplate();
+    }
+    this.initializing = false;
+  },
+  methods: {
+    async loadTemplate() {
+      const ret = await this.API.getTreeNode({ code: this.code });
+      if (ret.success) {
+        const { printer_config } = ret.data.data;
+        if (printer_config) {
+          this.templates = JSON.parse(printer_config);
+          this.setCurTemplate();
+        }
+      }
+    },
+    setCurTemplate() {
+      if (this.templates.length) {
+        this.curTemplateId = this.templates[this.templates.length - 1].id;
+      } else {
+        this.curTemplateId = "";
+      }
+    },
+    async formSaveHandler() {},
+    print() {
+      this.createPDF(this.$refs.printer, this.formStore.data_name, true);
+    },
+    formChangeHandler(data) {
+      this.setPrinterValue(data);
+    },
+    async formLoadedHandler(store) {
+      this.printRef = this.$refs.printer;
+      const maps = store.cpntsMap;
+      for (let key in maps) {
+        if (maps[key].data._fieldValue) {
+          await this.formChangeHandler({ cpnt: maps[key], value: maps[key].data._val });
+        }
+      }
+    },
+  },
+};
 </script>
