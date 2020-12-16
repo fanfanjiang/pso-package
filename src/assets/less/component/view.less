@@ -94,8 +94,6 @@
             justify-content: space-between;
             align-items: center;
 
-
-
             .pso-view-header__l {}
 
             .pso-view-header__r {}
@@ -241,8 +239,6 @@
         }
     }
 
-
-
     >.pso-view-body {
         padding: 10px 0 0 10px;
 
@@ -260,7 +256,16 @@
             }
         }
     }
+}
 
+.pso-view-user {
+    >.pso-view-body {
+        >.pso-view-table {
+            height: calc(100% - 34px);
+            overflow: auto;
+            padding: 0 10px 0 0;
+        }
+    }
 }
 
 .pso-switch-panel {

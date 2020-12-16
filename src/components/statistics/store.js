@@ -15,6 +15,7 @@ export default class STAVStore extends FVStore {
         this.menus = [];
         this.outerParams = outerParams;
         this.params = params;
+        this.extendData = {};
     }
 
     get opExportable() {
@@ -129,6 +130,7 @@ export default class STAVStore extends FVStore {
             start: 0,
             tp_code: this.staCfg.tp_code,
             leaf_auth: this.activeView,
+            paramvalue: this.extendData,
             search_type: "init"
         });
 
@@ -157,6 +159,7 @@ export default class STAVStore extends FVStore {
             start: this.page - 1,
             tp_code: this.staCfg.tp_code,
             leaf_auth: this.activeView,
+            paramvalue: this.extendData,
             keys: JSON.stringify({ ...this.defaultKeys })
         };
 
@@ -226,13 +229,21 @@ export default class STAVStore extends FVStore {
     }
 
     analyzeCellStyle({ row, column, rowIndex, columnIndex }) {
-
-        
         if (column.property) {
             const field = _.find(this.fields, { field: column.property });
             if (field && field.drillTarget) {
                 return { color: "#F67E19", cursor: "pointer" };
             }
+        }
+    }
+
+    makeDefkeys(options) {
+        super.makeDefkeys(options);
+        const { extendData } = options;
+        if (extendData) {
+            this.extendData = extendData
+        } else {
+            this.extendData = {};
         }
     }
 

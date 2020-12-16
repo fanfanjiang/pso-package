@@ -5,7 +5,7 @@
     </el-form-item>
     <el-form-item label="插件类型">
       <el-select size="small" v-model="node.tp_type">
-        <el-option v-for="item in TP_TYPES" :key="item.value" :label="item.name" :value="item.value"></el-option>
+        <el-option v-for="item in TP_NEW_TYPES" :key="item.value" :label="item.name" :value="item.value"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="插件地址">
@@ -17,12 +17,12 @@
   </el-form>
 </template>
 <script>
-import { TP_TYPES } from "../../const/sys";
+import { TP_NEW_TYPES } from "../../const/sys";
 
 export default {
   props: ["node", "params"],
   data() {
-    this.TP_TYPES = TP_TYPES;
+    this.TP_NEW_TYPES = TP_NEW_TYPES;
     return {};
   },
 };

@@ -28,7 +28,7 @@
         <el-table key="params" :data="stats.relation" style="width: 100%" height="300">
           <el-table-column label="表单字段">
             <template slot-scope="scope">
-              <el-select clearable filterable size="mini" v-model="scope.row.s">
+              <el-select clearable filterable multiple size="mini" v-model="scope.row.s">
                 <el-option v-for="(s, i) in sourceFields" :key="i" :label="s.fieldDisplay" :value="s._fieldValue"></el-option>
               </el-select>
             </template>
@@ -37,6 +37,13 @@
             <template slot-scope="scope">
               <el-select clearable filterable size="mini" v-model="scope.row.t">
                 <el-option v-for="(s, i) in statsFields" :key="i" :label="s.name" :value="s.field"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="查询类型">
+            <template slot-scope="scope">
+              <el-select clearable filterable size="mini" v-model="scope.row.type">
+                <el-option v-for="(t, i) in KEYS_TYPE" :key="i" :label="t.name" :value="t.value"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -53,6 +60,8 @@
 </template>
 <script>
 import PickerForm from "../picker/pso-picker-form";
+import { KEYS_TYPE } from "../../const/sys";
+
 export default {
   components: { PickerForm },
   props: {
@@ -61,6 +70,7 @@ export default {
     code: String,
   },
   data() {
+    this.KEYS_TYPE = KEYS_TYPE;
     return {
       initializing: true,
       statsLoading: false,
@@ -101,6 +111,16 @@ export default {
         if (typeof this.stats.relation === "undefined") {
           this.$set(this.stats, "relation", []);
         }
+        if (this.stats.relation.length) {
+          this.stats.relation.forEach((r) => {
+            if (typeof r.s === "string") {
+              this.$set(r, "s", []);
+            }
+            if (typeof r.type === "undefined") {
+              this.$set(r, "type", "");
+            }
+          });
+        }
       }
     },
     formLoaded({ fields }) {
@@ -119,7 +139,7 @@ export default {
       }
     },
     addRelation() {
-      this.stats.relation.push({ s: "", t: "" });
+      this.stats.relation.push({ s: [], t: "", type: "" });
     },
     delRelation(index) {
       this.stats.relation.splice(index, 1);

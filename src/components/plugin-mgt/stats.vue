@@ -21,7 +21,7 @@
   </div>
 </template>
 <script>
-import { TP_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
+import { TP_NEW_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
 import SqlDesigner from "../sql-designer";
 import StatsColumn from "./column";
 import StatsHeader from "./header";
@@ -40,7 +40,7 @@ export default {
     },
   },
   data() {
-    this.TP_TYPES = TP_TYPES;
+    this.TP_NEW_TYPES = TP_NEW_TYPES;
     return {
       showDeisgner: { show: false },
       sql: [],
@@ -48,7 +48,7 @@ export default {
     };
   },
   created() {
-    if (this.node.tp_type === TP_TYPES[1].value) {
+    if (this.node.tp_type === TP_NEW_TYPES[1].value) {
       if (this.node.data_list) {
         try {
           this.sql = JSON.parse(this.node.data_list);

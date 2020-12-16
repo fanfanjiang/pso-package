@@ -31,7 +31,7 @@ const defalutCpntData = [
 
 export function transferCpnt(target, componentid) {
     for (let key in target) {
-        if (!_.find(defalutCpntData, { n: key })) {
+        if (!['fid', '_fieldValue', '_deletable', '_fieldName'].includes(key)) {
             Vue.delete(target, key);
             delete target[key];
         }

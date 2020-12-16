@@ -83,7 +83,7 @@ export const StaMixin = {
             }
         },
         makeKeys() {
-            this.store.makeDefkeys({ defKeys: this.params.defKeys });
+            this.store.makeDefkeys({ defKeys: this.params.defKeys, extendData: this.params.extendData });
         },
     },
 };

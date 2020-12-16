@@ -22,13 +22,14 @@
     </div>
     <div class="lay-vv__b" :style="bottomStyle" v-loading="initializing || initializingAst">
       <template v-if="mainCurRow">
-        <pso-statistics :params="statsParams"></pso-statistics>
+        <pso-statistics :params="statsParams" ref="stats"></pso-statistics>
       </template>
     </div>
   </div>
-</template>
+</template> 
 <script>
 import { FormAsMainMixin } from "../../mixin/composite";
+import { KEYS_TYPE } from "../../const/sys";
 export default {
   mixins: [FormAsMainMixin],
   props: {
@@ -63,13 +64,27 @@ export default {
     statsParams() {
       let defKeys = "";
       const list = [];
-      this.relation.forEach(({ s, t }) => {
+      this.relation.forEach(({ s, t, type = 1 }) => {
         if (s && t) {
-          list.push(`${t}#${this.mainCurRow[s]}#1`);
+          if (typeof s === "string") {
+            return this.$message.error("配置错误，请重新配置统计插件");
+          }
+          let value = s.map((field) => this.mainCurRow[field]);
+          const keysType = _.find(KEYS_TYPE, { value: type });
+          if (!keysType || !keysType.array) {
+            value = value.join(",");
+          }
+          list.push(`${t}#${value}#${type}`);
         }
       });
       defKeys = list.join(";");
-      return { plug_code: this.statsCode, pluginParams: this.pluginParams, viewAuth: this.params.viewAuth, defKeys };
+      return {
+        plug_code: this.statsCode,
+        pluginParams: this.pluginParams,
+        viewAuth: this.params.viewAuth,
+        defKeys,
+        extendData: this.mainCurRow,
+      };
     },
   },
   methods: {
@@ -84,6 +99,15 @@ export default {
         });
       }
       this.initializing = false;
+    },
+    onMainRowClick() {
+      if (!this.relation.length && this.$refs.stats) {
+        this.$nextTick(() => {
+          this.$refs.stats.makeKeys();
+          this.$refs.stats.store.page = 1;
+          this.$refs.stats.store.fetchStatus();
+        });
+      }
     },
   },
 };

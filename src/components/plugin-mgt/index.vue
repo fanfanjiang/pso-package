@@ -17,7 +17,7 @@
             <div v-if="nodeData.node.is_leaf">
               <el-form-item label="插件类型">
                 <el-select size="small" v-model="tpType">
-                  <el-option v-for="(t, i) in TP_TYPES" :key="i" :label="t.name" :value="t.value"></el-option>
+                  <el-option v-for="(t, i) in TP_NEW_TYPES" :key="i" :label="t.name" :value="t.value"></el-option>
                 </el-select>
               </el-form-item>
             </div>
@@ -41,6 +41,7 @@
             <el-tabs v-model="curTab" type="card">
               <template v-if="!!curNode.is_leaf">
                 <el-tab-pane v-if="curNode.tp_type === 1" label="脚本" name="stats"></el-tab-pane>
+                <el-tab-pane v-if="curNode.tp_type === 2" label="设计" name="grid"></el-tab-pane>
                 <el-tab-pane label="参数" name="param"></el-tab-pane>
                 <el-tab-pane label="属性" name="base"></el-tab-pane>
                 <el-tab-pane label="文本" name="text"></el-tab-pane>
@@ -51,6 +52,7 @@
           <div class="pso-view-table" v-loading="saving">
             <template v-if="!!curNode.is_leaf">
               <plugin-param v-if="curTab === 'param'" :data="param"></plugin-param>
+              <grid-designer v-if="curTab === 'grid'" :code="curNode.node_name"></grid-designer>
               <plugin-stats
                 v-if="curTab === 'stats'"
                 :column="column"
@@ -76,7 +78,8 @@ import PluginStats from "./stats";
 import PluginParam from "./param";
 import PluginText from "./text";
 import PluginBase from "./base";
-import { TP_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
+import { TP_NEW_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
+import GridDesigner from "../grid-designer";
 
 const _DATA = {
   column: [],
@@ -92,7 +95,7 @@ const _DATA = {
 
 export default {
   mixins: [MgtMixin],
-  components: { PluginStats, PluginParam, PluginText, PluginBase, PsoNodeauth },
+  components: { PluginStats, PluginParam, PluginText, PluginBase, PsoNodeauth, GridDesigner },
   props: {
     params: {
       type: Object,
@@ -102,7 +105,7 @@ export default {
     },
   },
   data() {
-    this.TP_TYPES = TP_TYPES;
+    this.TP_NEW_TYPES = TP_NEW_TYPES;
     return {
       groupInitializing: false,
       initializing: false,
@@ -148,7 +151,7 @@ export default {
       if (data.is_leaf) {
         data.tp_type = this.tpType;
         data.tp_head = "";
-        data.tp_route = TP_TYPES[this.tpType].router || "";
+        data.tp_route = TP_NEW_TYPES[this.tpType].router || "";
       }
     },
     async nodeClickHandler(node) {

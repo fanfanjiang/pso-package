@@ -151,6 +151,9 @@ export const PagingMixin = {
         },
         nextClickHandler() {
             this.fetchParams.start += 1;
+        },
+        refreshPaging() {
+            this.fetchParams.start = 1;
         }
     }
 }

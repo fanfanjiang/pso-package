@@ -40,7 +40,6 @@
                 <el-tab-pane label="初始文本" name="textdef"></el-tab-pane>
                 <el-tab-pane label="文本" name="text"></el-tab-pane>
                 <el-tab-pane v-if="curNode.tp_type === 1" label="列表" name="column"></el-tab-pane>
-                <el-tab-pane v-if="curNode.tp_type === 5" label="设计" name="cms"></el-tab-pane>
               </template>
               <el-tab-pane label="权限" name="auth"></el-tab-pane>
             </el-tabs>
@@ -52,7 +51,6 @@
               <pso-tp-column v-if="curTab === 'column'" :data="columnData" :header="tpHeader" @save="saveTp"></pso-tp-column>
               <pso-tp-textdef v-if="curTab === 'textdef'" :data="tpButtons"></pso-tp-textdef>
               <pso-tp-text v-if="curTab === 'text'" :data="tpText" :def-text="tpButtons"></pso-tp-text>
-              <cms-designer v-if="curTab === 'cms'" :layout="columnData"></cms-designer>
             </template>
             <pso-nodeauth v-if="curTab === 'auth'" :node="curNode"></pso-nodeauth>
           </div>
@@ -70,7 +68,6 @@ import PsoTpText from "./text";
 import PsoTpTextdef from "./text-def";
 import { TP_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList } from "../../utils/util";
-import CmsDesigner from "../cms-designer";
 
 const _DATA = {
   columnData: [],
@@ -81,7 +78,7 @@ const _DATA = {
 };
 
 export default {
-  components: { PsoNodeauth, PsoTpBase, PsoTpParam, PsoTpColumn, PsoTpText, PsoTpTextdef, CmsDesigner },
+  components: { PsoNodeauth, PsoTpBase, PsoTpParam, PsoTpColumn, PsoTpText, PsoTpTextdef },
   props: {
     params: {
       type: Object,

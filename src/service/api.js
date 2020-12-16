@@ -453,6 +453,22 @@ export default class API {
         }
     }
 
+    static async updateCommonAuth(data = {}) {
+        try {
+            return await this.request('/api/tree/common-auth', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getCommonAuth(data = {}) {
+        try {
+            return await this.request('/api/tree/common-auth', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async getBar(data = {}) {
         try {
             return await this.request('/api/common/bar', { data, method: 'post' });
@@ -654,6 +670,30 @@ export default class API {
     static async asyncIApiDataManually(data) {
         try {
             return await this.request('/api/form/api-data', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getSignConfig(data) {
+        try {
+            return await this.request('/sign/config', { data, method: 'get', showMsg: false });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getSites(data) {
+        try {
+            return await this.request('/api/sys/site', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateSite(data) {
+        try {
+            return await this.request('/api/sys/site', { data, method: 'post' });
         } catch (error) {
             throw error;
         }

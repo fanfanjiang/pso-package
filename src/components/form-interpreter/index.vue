@@ -237,6 +237,13 @@ export default {
               }
             }
 
+            //字段长度检查
+            if (cpntData._val && typeof cpntData._fieldLen !== "undefined") {
+              if (cpntData._fieldLen < (cpntData._val + "").length) {
+                throw new Error(`${cpntData._fieldName}长度过长，请联系管理员修改配置后再提交数据`);
+              }
+            }
+
             //唯一性检查
             //20201203：autoid在新增的时候不检查唯一性
             if (cpntData._unique && (cpntData.componentid === "autoid" ? this.store.instance_id : true)) {

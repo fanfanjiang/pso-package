@@ -347,13 +347,14 @@ export default {
       }
       if (this.astStore && this.astStore.findById && !this.initializing) {
         this.loading = true;
-        const list = [];
-        for (let id of idList) {
-          let data = id;
-          if (typeof id === "string") {
-            data = await this.astStore.findById(id, bindId);
+        let list = [];
+        console.log(idList);
+        if (idList.length) {
+          if (typeof idList[0] === "string") {
+            list = list.concat(await this.astStore.findById(idList.join(","), bindId));
+          } else {
+            list = list.concat(idList);
           }
-          if (data) list.push(data);
         }
         if (callback) {
           await callback(list, this);
@@ -392,7 +393,10 @@ export default {
         if (isTemporary) {
           data = formData.dataArr[0];
         } else {
-          data = await this.astStore.findById(this.dataId || leaf_id);
+          const ret = await this.astStore.findById(this.dataId || leaf_id);
+          if (ret && ret.length) {
+            data = ret[0];
+          }
         }
 
         if (this.dataId && data) {

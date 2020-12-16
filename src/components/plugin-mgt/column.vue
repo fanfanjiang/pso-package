@@ -38,6 +38,13 @@
           <el-switch v-model="scope.row.searchable" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
+      <el-table-column label="字段类型" width="120">
+        <template slot-scope="scope">
+          <el-select filterable size="mini" v-model="scope.row.searchType">
+            <el-option v-for="f in FILTER_TYPE_ARY" :key="f.id" :label="f.name" :value="f.id"></el-option>
+          </el-select>
+        </template>
+      </el-table-column>
       <el-table-column label="对齐方式" width="120">
         <template slot-scope="scope">
           <el-select size="mini" v-model="scope.row.align">

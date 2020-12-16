@@ -97,6 +97,13 @@ import PsoApiauth from "./components/apicfg/api-auth";
 import PsoPrinterDesigner from "./components/printer-designer";
 import PsoPrinter from "./components/printer";
 
+//用户
+import PsoUserComposite from "./components/user/composite";
+import PsoUserMgt from "./components/user";
+import PsoOrgMgt from "./components/user/organization";
+
+import PsoSiteMgt from "./components/site-mgt";
+
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
 import PsoFvWv from "./components/composite/fv-wv";
@@ -169,6 +176,12 @@ const components = {
     PsoPrinterDesigner,
     PsoPrinter,
 
+    PsoUserComposite,
+    PsoUserMgt,
+    PsoOrgMgt,
+
+    PsoSiteMgt,
+    
     //混合视图
     PsoFvAst,
     PsoFvWv,

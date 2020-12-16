@@ -7,7 +7,11 @@ export default class ASTStore extends FVStore {
     }
 
     async findById(value, bindId = 'leaf_id') {
-        const ret = await API.formSearch({ form_code: this.store.data_code, leaf_auth: 4, keys: { [bindId]: { type: 1, value, } } });
-        return ret.data[0];
+        const ret = await API.formSearch({ form_code: this.store.data_code, leaf_auth: 4, keys: { [bindId]: { type: 4, value, } } });
+        if (ret.success) {
+            return ret.data;
+        } else {
+            return [];
+        }
     }
 }

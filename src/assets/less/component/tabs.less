@@ -1,0 +1,131 @@
+.pso-tabs {
+    height: 100%;
+
+    .pso-tabs-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 5px 15px 10px;
+
+        .pso-tabs-title {
+            display: flex;
+            align-items: center;
+            background: #f2fbff;
+            color: @main-color;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+
+            i {
+                font-size: 18px;
+            }
+
+            span {
+                margin-left: 5px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                display: inline-block;
+            }
+        }
+    }
+
+    .pso-tabs-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &:hover {
+            i {
+                display: block;
+            }
+        }
+
+        i {
+            font-size: 16px;
+            font-weight: bold;
+            display: none;
+            margin-left: 5px;
+        }
+
+        .pso-tabs-item__ctrl {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .el-tabs__active-bar {
+        width: 4px !important;
+    }
+
+    .el-tabs {
+        width: 100%;
+
+        .el-tabs__header {
+            width: 100%;
+            padding-right: 4px;
+        }
+
+        .el-tabs__nav {
+            >div {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .el-tabs__nav-wrap {
+            &::after {
+                width: 0;
+            }
+        }
+
+        .el-tabs__item {
+            &.is-left {
+                text-align: left;
+            }
+        }
+
+        .is-active {
+            background-color: #F5F5F7;
+        }
+    }
+}
+
+.pso-btntabs {
+    display: flex;
+    align-items: center;
+
+    .pso-btntabs-item {
+        display: flex;
+        align-items: center;
+        background: #F7F7F7;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+        color: #989898;
+        cursor: pointer;
+        font-weight: bold;
+
+        i {
+            font-size: 18px;
+        }
+
+        span {
+            margin-left: 5px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+
+        &+.pso-btntabs-item {
+            margin-left: 10px;
+        }
+    }
+
+    .pso-btntabs-item__active {
+        color: @main-color;
+        background: #f2fbff;
+    }
+}

@@ -53,3 +53,10 @@ export default {
   },
 };
 </script>
+<style lang="less">
+.pso-search {
+  & + .pso-search {
+    margin-left: 8px;
+  }
+}
+</style>

@@ -90,6 +90,7 @@ export const FormAsMainMixin = {
         mainRowClickHandler(row) {
             this.initializingAst = true;
             this.mainCurRow = row;
+            this.onMainRowClick && this.onMainRowClick();
             this.$nextTick(() => (this.initializingAst = false));
             return true;
         },
