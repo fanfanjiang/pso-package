@@ -196,7 +196,12 @@ export default {
       },
     },
     show(val) {
-      if (val) this.fetch();
+      if (val) {
+        this.options.keys.user_name.value = "";
+        this.fetch();
+      } else {
+        this.$emit("cancel");
+      }
     },
     "options.start"() {
       this.fetch();

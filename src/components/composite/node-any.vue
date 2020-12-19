@@ -26,6 +26,8 @@
           v-bind="cpntParams"
           :params="{ ...cpntParams, opable: params.opable }"
           @data-changed="cpntChangeHandler"
+          @status-changed="cpntChangeHandler"
+          @stage-changed="cpntChangeHandler"
         ></component>
       </div>
     </template>
@@ -146,7 +148,7 @@ export default {
           }
         }
       }
-    },
+    }
   },
 };
 </script>

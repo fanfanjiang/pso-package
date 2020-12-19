@@ -63,6 +63,7 @@ export default {
       loading: false,
       store: null,
       watchFun: [],
+      checkedFormError: false,
     };
   },
   watch: {
@@ -239,8 +240,11 @@ export default {
 
             //字段长度检查
             if (cpntData._val && typeof cpntData._fieldLen !== "undefined") {
-              if (cpntData._fieldLen < (cpntData._val + "").length) {
-                throw new Error(`${cpntData._fieldName}长度过长，请联系管理员修改配置后再提交数据`);
+              if (!this.checkedFormError && cpntData._fieldLen < (cpntData._val + "").length) {
+                this.checkedFormError = true;
+                throw new Error(
+                  `${cpntData._fieldName}输入长度超出预期限制，请先保持此界面并联系管理员修改配置，确认修改后再次点击提交或暂存按钮`
+                );
               }
             }
 
@@ -280,7 +284,7 @@ export default {
           }
         }
       } catch (error) {
-        this.$message({ message: error.message, type: "warning" });
+        this.$message({ message: error.message, type: "warning", duration: 30000, showClose: true });
         throw error;
       }
       return data;

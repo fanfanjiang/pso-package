@@ -132,7 +132,7 @@ export const PagingMixin = {
                 this.$watch("fetchParams.limit", () => {
                     this.$emit('load');
                 }),
-                this.$watch("fetchParams.page", () => {
+                this.$watch("fetchParams.start", () => {
                     this.$emit('load');
                 }),
                 this.$watch("fetchParams.keywords", () => {
@@ -162,13 +162,14 @@ export const MgtMixin = {
     data() {
         return {
             showFilter: true,
+            expandWider: true
         }
     },
     computed: {
         viewClass() {
             return {
                 "pso-view__expand": this.showFilter,
-                "pso-view__expand-wider": true,
+                "pso-view__expand-wider": this.expandWider,
                 "pso-view-mgt": true,
                 "pso-view": true,
             };

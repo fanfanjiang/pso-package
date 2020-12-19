@@ -4,10 +4,11 @@
     :show="show"
     :requestOptions="requestOptions"
     :btn-text="text"
-    @confirm="$emit('confirm',$event)"
+    @confirm="$emit('confirm', $event)"
+    @cancel="$emit('cancel', $event)" 
   >
     <slot>
-      <el-button icon="el-icon-plus" plain size="mini">{{text}}</el-button>
+      <el-button icon="el-icon-plus" plain size="mini">{{ text }}</el-button>
     </slot>
   </pso-picker-tree>
 </template>

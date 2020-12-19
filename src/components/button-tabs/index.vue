@@ -1,8 +1,11 @@
 <template>
   <div class="pso-btntabs">
     <div :class="tabsClass(i)" v-for="(d, i) in data" :key="i" @click="clickHandler(i)">
-      <i :class="d.icon" v-if="d.icon"></i>
-      <span>{{ d.label }}</span>
+      <div class="pso-btntabs-label">
+        <i :class="d.icon" v-if="d.icon"></i>
+        <span>{{ d.label }}</span>
+      </div>
+      <span class="pso-btntabs-split" v-if="i !== data.length - 1">/</span>
     </div>
   </div>
 </template>

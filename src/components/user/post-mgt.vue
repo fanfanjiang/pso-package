@@ -26,9 +26,16 @@
         </el-tabs>
       </div>
     </div>
-    <div class="pso-view-body" style="padding: 0 0 0 10px;" v-loading="initializing">
+    <div class="pso-view-body" style="padding: 0 0 0 10px" v-loading="initializing">
       <div v-if="curNode">
-        <users user-rel="2" :post-id="curNode" :node-id="nodeId"></users>
+        <users user-rel="2" ref="users" :post-id="curNode" :node-id="nodeId" @adduser="bindHandler">
+          <template slot="fun" slot-scope="{ selected }">
+            <pso-picker-user pattern="checkbox" @confirm="bindHandler">
+              <el-button size="mini" type="primary" plain>绑定岗位</el-button>
+            </pso-picker-user>
+            <el-button size="mini" type="warning" :disabled="!selected.length" @click="unbindHandler(selected)">解绑岗位</el-button>
+          </template>
+        </users>
       </div>
     </div>
     <el-dialog title="岗位编辑" append-to-body :visible.sync="showEditor" :width="'400px'">
@@ -51,7 +58,7 @@
 import { MgtMixin } from "../../mixin/view";
 import ButtonTabs from "../button-tabs";
 import Users from "./users";
-import NodeAuth from "./auth";
+import NodeAuth from "../common-auth";
 
 export default {
   components: { ButtonTabs, Users, NodeAuth },
@@ -115,6 +122,28 @@ export default {
       await this.initialize();
       this.showEditor = false;
       this.operating = false;
+    },
+    async bindHandler(data) {
+      if (!this.curNode || !data.length) return;
+      this.operating = true;
+      const ret = await this.API.bindUser({
+        user_rel: "2",
+        post_id: this.curNode,
+        node_id: this.nodeId,
+        users: data.map((d) => d.user_id).join(","),
+      });
+      this.ResultNotify(ret);
+      this.operating = false;
+      this.$refs.users.fetch();
+    },
+    async unbindHandler(data) {
+      this.operating = true;
+      const ret = await this.API.unbindUser({
+        rel_no: data.map((d) => d.rel_no).join(","),
+      });
+      this.ResultNotify(ret);
+      this.operating = false;
+      this.$refs.users.fetch();
     },
   },
 };

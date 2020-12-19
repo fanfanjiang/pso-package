@@ -38,7 +38,7 @@
             </div>
           </div>
           <div class="pso-view-viewtab">
-            <el-tabs v-model="curTab" type="card">
+            <el-tabs v-model="curTab">
               <template v-if="!!curNode.is_leaf">
                 <el-tab-pane v-if="curNode.tp_type === 1" label="脚本" name="stats"></el-tab-pane>
                 <el-tab-pane v-if="curNode.tp_type === 2" label="设计" name="grid"></el-tab-pane>
@@ -115,6 +115,7 @@ export default {
       curNode: null,
       curTab: "base",
       tpType: "",
+      expandWider: false,
       ..._DATA,
     };
   },

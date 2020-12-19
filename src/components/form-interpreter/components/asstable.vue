@@ -348,7 +348,6 @@ export default {
       if (this.astStore && this.astStore.findById && !this.initializing) {
         this.loading = true;
         let list = [];
-        console.log(idList);
         if (idList.length) {
           if (typeof idList[0] === "string") {
             list = list.concat(await this.astStore.findById(idList.join(","), bindId));

@@ -39,6 +39,7 @@ import PsoPickerResource from "./components/picker/pso-picker-resource";
 import PsoPickerTree from "./components/picker/pso-picker-tree";
 import PsoPickerUser from "./components/picker/pso-picker-user";
 import PsoPickerIcon from "./components/picker/pso-picker-icon";
+import PsoPickerRole from "./components/picker/pso-picker-role";
 
 import PsoTreeCommon from "./components/tree";
 import PsoTypebar from "./components/type-bar";
@@ -130,6 +131,7 @@ const components = {
     PsoPickerTree,
     PsoPickerUser,
     PsoPickerIcon,
+    PsoPickerRole,
     PsoTreeCommon,
 
     PsoFormView,
@@ -181,7 +183,7 @@ const components = {
     PsoOrgMgt,
 
     PsoSiteMgt,
-    
+
     //混合视图
     PsoFvAst,
     PsoFvWv,

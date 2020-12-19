@@ -99,33 +99,44 @@
     .pso-btntabs-item {
         display: flex;
         align-items: center;
-        background: #F7F7F7;
-        padding: 5px 10px;
-        border-radius: 5px;
         font-size: 14px;
-        color: #989898;
         cursor: pointer;
-        font-weight: bold;
 
-        i {
-            font-size: 18px;
+        .pso-btntabs-label {
+            display: flex;
+            align-items: center;
+            color: rgba(0, 0, 0, .45);
+
+            &:hover {
+                color: @main-color;
+                transition: all 0.2s ease;
+            }
+
+            i {
+                font-size: 14px;
+                margin-right: 3px;
+                margin-top: 2px;
+            }
+
+            span {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                display: inline-block;
+            }
         }
 
-        span {
-            margin-left: 5px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            display: inline-block;
-        }
-
-        &+.pso-btntabs-item {
-            margin-left: 10px;
+        .pso-btntabs-split {
+            margin: 0 10px;
+            color: #999;
+            font-size: 12px;
         }
     }
 
     .pso-btntabs-item__active {
-        color: @main-color;
-        background: #f2fbff;
+        .pso-btntabs-label {
+            color: @main-color;
+            transition: all 0.2s ease;
+        }
     }
 }

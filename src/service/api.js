@@ -698,6 +698,30 @@ export default class API {
             throw error;
         }
     }
+
+    static async getPluginModules(data) {
+        try {
+            return await this.request('/api/templates/module', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async addOrUpdatePluginModule(data) {
+        try {
+            return await this.request('/api/templates/module', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getPluginModuleColumn(data) {
+        try {
+            return await this.request('/api/templates/module/column', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

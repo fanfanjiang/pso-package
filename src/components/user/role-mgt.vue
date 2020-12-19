@@ -35,6 +35,13 @@
           <users v-if="curTab === 0" user-rel="3" :type-id="curNode"></users>
           <node-auth v-if="curTab === 1" key="form" type="form" :bind-id="curNode" bind-type="3"></node-auth>
           <node-auth v-if="curTab === 2" key="wf" type="wf" :bind-id="curNode" bind-type="3"></node-auth>
+          <div style="margin-top: 15px" v-if="curTab === 3 || curTab === 4">
+            <el-button size="mini" type="primary" @click="setHandler">保存配置</el-button>
+            <el-checkbox-group v-if="curTab === 3" v-model="setting.entrance">
+              <el-checkbox v-for="(d, i) in entrance" :key="i" :label="d.auto_no">{{ d.map_key0 }}</el-checkbox>
+            </el-checkbox-group>
+            <desk-editor v-if="curTab === 4" :layout="setting.desk" :desks="desks"></desk-editor>
+          </div>
         </div>
       </template>
     </div>
@@ -55,12 +62,13 @@
 import { MgtMixin } from "../../mixin/view";
 import ButtonTabs from "../button-tabs";
 import Users from "./users";
-import NodeAuth from "./auth";
+import NodeAuth from "../common-auth";
+import DeskEditor from "./desk-editor";
 
 const TABS = [{ label: "用户" }, { label: "表单权限" }, { label: "流程权限" }, { label: "工作台" }, { label: "快捷入口" }];
 
 export default {
-  components: { ButtonTabs, Users, NodeAuth },
+  components: { ButtonTabs, Users, NodeAuth, DeskEditor },
   mixins: [MgtMixin],
   data() {
     this.TABS = TABS;
@@ -75,9 +83,24 @@ export default {
         type_name: "",
         user_type: "",
       },
+      entrance: [],
+      setting: {
+        entrance: [],
+        desk: [],
+      },
+      desks: [],
     };
   },
-  computed: {},
+  computed: {
+    curRole() {
+      return _.find(this.nodes, { user_type: this.curNode });
+    },
+  },
+  watch: {
+    curNode() {
+      this.makeSetting();
+    },
+  },
   created() {
     this.initialize();
   },
@@ -89,7 +112,20 @@ export default {
       if (this.nodes.length) {
         this.curNode = this.nodes[0].user_type;
       }
+      this.entrance = (await this.API.getSysConfig({ keys: JSON.stringify({ config_type: { type: 1, value: 12 } }) })).data;
+      this.desks = (await this.API.getSysConfig({ keys: JSON.stringify({ config_type: { type: 1, value: 3 } }) })).data;
       this.initializing = false;
+    },
+    async makeSetting() {
+      if (this.curRole) {
+        this.setting.entrance = this.curRole.setting_block ? this.curRole.setting_block.split(",") : [];
+        if (this.curRole.user_main_page) {
+          try {
+            const page = JSON.parse(this.curRole.user_main_page);
+            this.setting.desk = Array.isArray(page) ? page : [];
+          } catch (error) {}
+        }
+      }
     },
     editRole(node) {
       this.data = Object.assign(this.data, node);
@@ -119,6 +155,14 @@ export default {
       await this.initialize();
       this.showEditor = false;
       this.operating = false;
+    },
+    setHandler() {
+      this.saveRole({
+        ...this.curRole,
+        setting_block: this.setting.entrance.join(","),
+        user_main_page: JSON.stringify(this.setting.desk),
+        optype: "1",
+      });
     },
   },
 };

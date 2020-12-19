@@ -74,6 +74,13 @@ export default {
       return this.pattern === "checkbox";
     },
   },
+  watch: {
+    show(val) {
+      if (!val) {
+        this.$emit("cancel");
+      }
+    },
+  },
   methods: {
     nodeClickHandler(data) {
       this.checkNodes([data]);

@@ -5,7 +5,7 @@
         <div class="pso-tabs-header">
           <div class="pso-tabs-title">
             <i class="el-icon-s-custom"></i>
-            <span>角色</span>
+            <span>职位</span>
           </div>
           <div class="pso-tabs-r">
             <el-button size="mini" icon="el-icon-plus" circle @click="addRole"></el-button>
@@ -31,8 +31,15 @@
         <div class="pso-view-mgt-tabs">
           <button-tabs v-model="curTab" :data="TABS"></button-tabs>
         </div>
-        <div class="pso-view-table">
-          <users v-if="curTab === 0" user-rel="1" :duty-id="curNode"></users>
+        <div class="pso-view-table"> 
+          <users v-if="curTab === 0" ref="users" user-rel="1" :duty-id="curNode" @adduser="bindHandler">
+            <template slot="fun" slot-scope="{ selected }">
+              <pso-picker-user pattern="checkbox" @confirm="bindHandler">
+                <el-button size="mini" type="primary" plain>绑定职位</el-button>
+              </pso-picker-user>
+              <el-button size="mini" type="warning" :disabled="!selected.length" @click="unbindHandler(selected)">解绑职位</el-button>
+            </template>
+          </users>
           <node-auth v-if="curTab === 1" key="form" type="form" :bind-id="curNode" bind-type="2"></node-auth>
           <node-auth v-if="curTab === 2" key="wf" type="wf" :bind-id="curNode" bind-type="2"></node-auth>
         </div>
@@ -58,7 +65,7 @@
 import { MgtMixin } from "../../mixin/view";
 import ButtonTabs from "../button-tabs";
 import Users from "./users";
-import NodeAuth from "./auth";
+import NodeAuth from "../common-auth";
 
 const TABS = [{ label: "用户" }, { label: "表单权限" }, { label: "流程权限" }];
 
@@ -124,6 +131,25 @@ export default {
       await this.initialize();
       this.showEditor = false;
       this.operating = false;
+    },
+    async bindHandler(data) {
+      if (!this.curNode || !data.length) return;
+      const ret = await this.API.bindUser({
+        user_rel: "1",
+        duty_id: this.curNode,
+        users: data.map((d) => d.user_id).join(","),
+      });
+      this.ResultNotify(ret);
+      this.$refs.users.fetch();
+    },
+    async unbindHandler(data) {
+      this.operating = true;
+      const ret = await this.API.unbindUser({
+        rel_no: data.map((d) => d.rel_no).join(","),
+      });
+      this.ResultNotify(ret);
+      this.operating = false;
+      this.$refs.users.fetch();
     },
   },
 };

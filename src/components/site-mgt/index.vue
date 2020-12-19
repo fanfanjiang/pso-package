@@ -48,7 +48,7 @@
             :page-sizes="[15, 30, 50, 100, 200, 500]"
             :total="dataTotal"
             :page-size="fetchParams.limit"
-            :current-page="fetchParams.page"
+            :current-page="fetchParams.start"
             @size-change="sizeChangeHandler"
             @current-change="currentChangeHandler"
             @prev-click="prevClickHandler"

@@ -13,7 +13,7 @@ module.exports = {
             html2canvas: 'html2canvas'
         },
         plugins: [
-            new BundleAnalyzerPlugin()
+            // new BundleAnalyzerPlugin()
         ],
     },
     productionSourceMap: false,

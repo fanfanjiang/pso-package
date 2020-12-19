@@ -1,10 +1,10 @@
 <template>
-  <div class="pso-page has-header" v-loading="loadingBar">
-    <div class="pso-page-header" v-if="!loadingBar">
+  <div class="pso-view-withtop" v-loading="loadingBar">
+    <div class="pso-view-top" v-if="!loadingBar">
       <pso-typebar :defBar="defBar" v-model="typeVal"></pso-typebar>
     </div>
-    <div class="pso-page-body" v-if="typeVal.feildvalue">
-      <div class="pso-page__tree">
+    <div :class="viewClass" v-if="typeVal.feildvalue">
+      <div class="pso-view-extend">
         <pso-tree-common
           ref="tree"
           :request-options="treeOptions"
@@ -13,23 +13,28 @@
           @node-click="nodeClickHandler"
         ></pso-tree-common>
       </div>
-      <div class="pso-page-body__content">
-        <div class="pso-page-body__wrapper" v-if="curNode && !loadingInfo">
-          <div class="pso-page-body__header">
-            <pso-title :size="16">菜单：{{ curNode.node_display }}</pso-title>
-            <div class="pso-page-body__btns">
+      <div class="pso-view-body">
+        <template v-if="curNode && !loadingInfo">
+          <div class="pso-view-header">
+            <div class="pso-view-header__l">
+              <div class="pso-view-title">
+                <i class="el-icon-document"></i>
+                <span>菜单：{{ curNode.node_display }}</span>
+              </div>
+            </div>
+            <div class="pso-view-header__r">
               <el-button size="mini" type="primary" plain @click="updateNode">保存设置</el-button>
             </div>
           </div>
-          <div class="pso-page-body__tab">
-            <el-tabs v-model="curTab">
+          <div class="pso-view-viewtab">
+            <el-tabs v-model="curTab" type="card">
               <el-tab-pane label="属性" name="param"></el-tab-pane>
               <el-tab-pane v-if="!params.hide" label="权限" name="auth"></el-tab-pane>
               <el-tab-pane v-if="!params.hide" label="权限参数" name="view"></el-tab-pane>
             </el-tabs>
           </div>
-          <div class="pso-page-body__body">
-            <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+          <div class="pso-view-table">
+            <menu-auth v-if="curTab === 'auth'" :node="curNode"></menu-auth>
             <view-set v-if="curTab === 'view'" :data="viewData"></view-set>
             <div class="pso-menu-param" v-if="curTab === 'param'" v-loading="saving || loadingInfo">
               <el-form label-position="left" label-width="180px">
@@ -78,7 +83,7 @@
               </el-form>
             </div>
           </div>
-        </div>
+        </template>
       </div>
     </div>
     <el-dialog title="选择图标" append-to-body :visible.sync="showIconBox" width="80%">
@@ -87,13 +92,16 @@
   </div>
 </template>
 <script>
-import PsoNodeauth from "../node-auth";
+import MenuAuth from "./auth";
 import PluginSetter from "../plugin-setter";
 import ViewSet from "./view";
 import { MENU_TYPE, OPEN_TYPE, MENU_LEAF_AUTH } from "../../const/menu";
 import PsoPickerIcon from "../picker/pso-picker-icon";
+import { MgtMixin } from "../../mixin/view";
+
 export default {
-  components: { PsoNodeauth, PluginSetter, ViewSet, PsoPickerIcon },
+  mixins: [MgtMixin],
+  components: { MenuAuth, PluginSetter, ViewSet, PsoPickerIcon },
   props: {
     params: {
       type: Object,
