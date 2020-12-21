@@ -29,7 +29,7 @@ import { transCMapToCondition } from "../../tool/form";
 import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
 import debounce from "throttle-debounce/debounce";
-import { makeFormByScript } from "../../tool/form";
+import { makeFormByScript, makeFormByPluginModule } from "../../tool/form";
 
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
@@ -41,7 +41,10 @@ dayjs.extend(advancedFormat);
 
 export default {
   components: { VeTable, VeCard },
-  props: ["chartId"],
+  props: {
+    chartId: String,
+    chartConfig: Object,
+  },
   data() {
     return {
       loaded: false,
@@ -135,6 +138,10 @@ export default {
   created() {
     this.deGetForm = debounce(500, this.getFormCfg);
     // this.colors = _.shuffle(["#f47983", "#8DC1A9", "#E69D87", "#DD6B66", "#759AA0"]);
+    if (this.chartConfig) {
+      this.chartCfg = Object.assign(this.chartCfg, this.chartConfig);
+      this.getFormCfg();
+    }
   },
   mounted() {
     this.setHeight();
@@ -176,9 +183,12 @@ export default {
           beforePush: (item) => !item.parent.CPNT.host_db,
         });
         this.formCfg = { data_config, data_code: ret.data.data_code };
-      } else {
+      } else if (this.chartCfg.sourceType === "2") {
         const { data_config, tp_code } = await makeFormByScript({ code: this.chartCfg.formId });
         this.formCfg = { data_config, code: tp_code };
+      } else {
+        const { data_config } = await makeFormByPluginModule({ code: this.chartCfg.formId });
+        this.formCfg = { data_config };
       }
 
       this.chartData.columns = _.map(this.formCfg.data_config, "_fieldValue");
@@ -209,9 +219,12 @@ export default {
           }
           if (ret.total < page * limit || !ret.data.length) break;
         }
-      } else {
+      } else if (this.chartCfg.sourceType === "2") {
         const navRet = await this.API.getStatisticData({ tp_code: this.formCfg.code, search_type: "init" });
         data = navRet.data.DATA;
+      } else if (this.chartCfg.sourceType === "3") {
+        const ret = await this.API.getPluginModuleData({ child_id: this.chartCfg.formId });
+        data = ret.data.DATA;
       }
       return data;
     },

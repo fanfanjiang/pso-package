@@ -722,6 +722,14 @@ export default class API {
             throw error;
         }
     }
+
+    static async getPluginModuleData(data) {
+        try {
+            return await this.request('/api/templates/module/data', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

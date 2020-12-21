@@ -51,6 +51,7 @@ export default {
       cpntParams: {}, //组件参数
       keywords: "",
       nodes: [],
+      allTags: [],
     };
   },
   computed: {
@@ -78,20 +79,24 @@ export default {
       if (this.params.__sql__ && this.params.__sql__.length) {
         const ret = await this.API.debugSQLScript({ script: this.params.__sql__[0] });
         if (ret.success && ret.data) {
-          this.tags = (await this.API.tag({ data: {} })).data.filter((t) => {
-            const exist = _.find(ret.data, { tag_no: t.tag_no });
-            if (exist) {
-              this.$set(t, "__num__", exist.num);
-              this.$set(t, "__total__", exist.total);
-              return true;
-            }
-          });
+          this.allTags = (await this.API.tag({ data: {} })).data;
+          this.makeTag(ret.data);
           if (this.tags.length) {
             this.nodes = (await this.API.trees({ data: { rootable: true, lazy: false, dimen: 5 } })).data.tagtree;
             this.loadCpnt(this.tags[0]);
           }
         }
       }
+    },
+    makeTag(sqlData) {
+      this.tags = this.allTags.filter((t) => {
+        const exist = _.find(sqlData, { tag_no: t.tag_no });
+        if (exist) {
+          this.$set(t, "__num__", exist.num);
+          this.$set(t, "__total__", exist.total);
+          return true;
+        }
+      });
     },
     reset() {
       this.cpntParams = {};
@@ -140,15 +145,9 @@ export default {
     async cpntChangeHandler() {
       const ret = await this.API.debugSQLScript({ script: this.params.__sql__[0] });
       if (ret.success && ret.data) {
-        for (let d of ret.data) {
-          const exist = _.find(this.tags, { tag_no: d.tag_no });
-          if (exist) {
-            exist["__num__"] = d.num;
-            exist["__total__"] = d.total;
-          }
-        }
+        this.makeTag(ret.data);
       }
-    }
+    },
   },
 };
 </script>

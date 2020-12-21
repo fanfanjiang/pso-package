@@ -3,7 +3,7 @@ export const DEFAULT = {
     child_name: "",
     child_cate: "",
     child_cate: "",
-    child_status: 0,
+    child_status: 1,
     child_content: "",
     child_data: "",
     child_design: "",

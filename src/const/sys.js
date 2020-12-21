@@ -40,7 +40,12 @@ export const TP_NEW_TYPES = [
     {
         name: "组合插件",
         value: 2,
-        router: ''
+        router: '/grid-interpreter/:menu_code'
+    },
+    {
+        name: "试卷插件",
+        value: 3,
+        router: '/paper/:menu_code'
     }
 ]
 

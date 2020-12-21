@@ -2,7 +2,7 @@ import MUT_TYPES from '../mutation-types';
 import API from "../../service/api.js";
 import { FIGER_DEFALUT_OP, SORT } from "../../const/chart";
 import FormStore from "../../components/form-designer/model/store.js";
-import { makeFormByScript } from '../../tool/form'
+import { makeFormByScript, makeFormByPluginModule } from '../../tool/form'
 import Vue from 'vue';
 
 const STATE = {
@@ -96,9 +96,8 @@ export default {
         }
     },
     actions: {
-        async  [MUT_TYPES.CD_SOURCE_GET]({ state, getters, commit, dispatch }, reset = false) {
+        async  [MUT_TYPES.CD_SOURCE_GET]({ state, getters, commit, dispatch }, { reset = false, options }) {
             state.initializing = true;
-            console.log(reset);
 
             if (reset) {
                 commit(MUT_TYPES.CD_INIT, { ..._.cloneDeep(STATE), formId: state.formId, sourceType: state.sourceType });
@@ -108,14 +107,22 @@ export default {
             if (state.sourceType === '1') {
                 const ret = await API.formsCfg({ data: { id: state.formId }, method: "get" });
                 cfg = ret.data;
-            } else {
-                const ret = await makeFormByScript({ code: state.formId });
-                if (ret.data_config) {
+            } else if (state.sourceType === '2' || state.sourceType === '3') {
+                let data_config;
+                if (state.sourceType === '2') {
+                    const ret = await makeFormByScript({ code: state.formId });
+                    data_config = ret.data_config;
+                } else if (state.sourceType === '3') {
+                    const ret = await makeFormByPluginModule({ code: state.formId, options });
+                    data_config = ret.data_config;
+                }
+
+                if (data_config) {
                     cfg = {
                         data_name: "0",
                         data_code: "0",
                         data_id: "0",
-                        data_config: ret.data_config,
+                        data_config,
                         forceInsertSys: false,
                     }
                 }

@@ -1,5 +1,31 @@
 .grid-designer {
-    padding: 20px 0;
+    padding: 15px 0;
+
+    height: 100%;
+
+    &.paper-designer {
+
+        .grid-designer__stage {
+
+            .grid-designer__stage-body {
+                display: flex;
+
+                .grid-designer__stage-body-l {
+                    background-color: #fff;
+                    width: 200px;
+                    padding: 5px 10px 10px 10px;
+
+                    .el-form-item {
+                        margin-bottom: 0px;
+                    }
+                }
+
+                .grid-designer__stage-body-r {
+                    flex: 1;
+                }
+            }
+        }
+    }
 
     .grid-designer__header {
         display: flex;
@@ -19,8 +45,8 @@
     }
 
     .grid-designer__body {
-        min-height: 600px;
         display: flex;
+        height: 100%;
 
         .grid-designer-item {
             display: flex;
@@ -73,7 +99,8 @@
         }
 
         .grid-designer__panel {
-            width: 300px;
+            width: 340px;
+            height: 100%;
             margin-left: 20px;
         }
     }
@@ -81,19 +108,63 @@
     .grid-designer__panel {
         border: 1px solid #ebedf0;
         border-radius: 2px;
-        padding: 0 10px 10px 10px;
     }
 
     .grid-panel {
+        height: 100%;
+
         .grid-panel-tabs {
             display: flex;
             align-items: center;
             border-bottom: 1px solid #ebedf0;
             justify-content: space-between;
+            padding: 0 10px;
         }
 
         .grid-panel-body {
             padding-top: 10px;
+            height: calc(100% - 41px);
+            overflow: auto;
+        }
+    }
+
+    .designer-nav {
+        .designer-nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            &.designer-nav-item-active {
+                color: @main-color;
+            }
+
+            &+.designer-nav-item {
+                margin-top: 5px;
+            }
+
+            .designer-nav-item__body {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+
+                i {
+                    width: 20px;
+                }
+
+                span {
+                    width: 110px;
+                    .show-a-line();
+                }
+            }
+
+            .designer-nav-drag {
+                cursor: grab;
+                margin-left: 5px;
+            }
+
+            .designer-nav-del {
+                cursor: pointer;
+            }
         }
     }
 }

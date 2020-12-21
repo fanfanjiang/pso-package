@@ -18,7 +18,7 @@ export default {
     return {
       showVal: "",
     };
-  }, 
+  },
   created() {
     this.$on("asstable-selected", ({ cpnt, data }) => {
       if (cpnt.fid === this.cpnt.data._selectedTable) {

@@ -63,20 +63,35 @@ export function transCMapToCondition(map) {
 export async function makeFormByScript({ code, onEach }) {
     const ret = await API.getTreeNode({ code });
     if (ret.data.data.tp_content) {
-        const data_config = [];
-        JSON.parse(ret.data.data.tp_content).forEach((f) => {
-            const fType = FILTER_TYPE[f.searchType || 'string'];
-            const sItem = { componentid: fType.cid, fid: f.field, _fieldValue: f.field, _fieldName: f.name, displayName: f.name, _val: "" };
-            if (f.searchList && f.searchList.length) {
-                sItem._option = f.searchList.map((i) => {
-                    return { _optionName: i.n, _optionValue: i.v };
-                });
-            }
-            onEach && onEach(sItem);
-            data_config.push(genComponentData(sItem));
-        });
-        return { ...ret.data.data, data_config };
+        return { ...ret.data.data, data_config: makeFormByOther(JSON.parse(ret.data.data.tp_content), onEach) };
     }
+}
+
+export async function makeFormByPluginModule({ code, options, onEach }) {
+    if (options) {
+        return { data_config: makeFormByOther(options, onEach) };
+    } else { 
+        const ret = await API.getPluginModules({ keys: JSON.stringify({ child_id: { type: 1, value: code } }) });
+        if (ret.success && ret.data.length) {
+            return { ...ret.data.data, data_config: makeFormByOther(JSON.parse(ret.data[0].child_content), onEach) };
+        }
+    }
+}
+
+export function makeFormByOther(data, onEach) {
+    const config = [];
+    data.forEach((f) => {
+        const fType = FILTER_TYPE[f.searchType || 'string'];
+        const sItem = { componentid: fType.cid, fid: f.field, _fieldValue: f.field, _fieldName: f.name, displayName: f.name, _val: "" };
+        if (f.searchList && f.searchList.length) {
+            sItem._option = f.searchList.map((i) => {
+                return { _optionName: i.n, _optionValue: i.v };
+            });
+        }
+        onEach && onEach(sItem);
+        config.push(genComponentData(sItem));
+    });
+    return config;
 }
 
 /**

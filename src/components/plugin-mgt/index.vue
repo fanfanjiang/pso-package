@@ -42,6 +42,7 @@
               <template v-if="!!curNode.is_leaf">
                 <el-tab-pane v-if="curNode.tp_type === 1" label="脚本" name="stats"></el-tab-pane>
                 <el-tab-pane v-if="curNode.tp_type === 2" label="设计" name="grid"></el-tab-pane>
+                <el-tab-pane v-if="curNode.tp_type === 3" label="设计" name="paper"></el-tab-pane>
                 <el-tab-pane label="参数" name="param"></el-tab-pane>
                 <el-tab-pane label="属性" name="base"></el-tab-pane>
                 <el-tab-pane label="文本" name="text"></el-tab-pane>
@@ -53,6 +54,7 @@
             <template v-if="!!curNode.is_leaf">
               <plugin-param v-if="curTab === 'param'" :data="param"></plugin-param>
               <grid-designer v-if="curTab === 'grid'" :code="curNode.node_name"></grid-designer>
+              <paper-designer v-if="curTab === 'paper'" :code="curNode.node_name"></paper-designer>
               <plugin-stats
                 v-if="curTab === 'stats'"
                 :column="column"
@@ -80,6 +82,8 @@ import PluginText from "./text";
 import PluginBase from "./base";
 import { TP_NEW_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
 import GridDesigner from "../grid-designer";
+import PaperDesigner from "../paper-designer";
+import { formatJSONList } from "../../utils/util";
 
 const _DATA = {
   column: [],
@@ -95,7 +99,7 @@ const _DATA = {
 
 export default {
   mixins: [MgtMixin],
-  components: { PluginStats, PluginParam, PluginText, PluginBase, PsoNodeauth, GridDesigner },
+  components: { PluginStats, PluginParam, PluginText, PluginBase, PsoNodeauth, GridDesigner, PaperDesigner },
   props: {
     params: {
       type: Object,

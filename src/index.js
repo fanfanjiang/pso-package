@@ -82,6 +82,7 @@ import PsoUpload from "./components/upload";
 
 import PsoChartDesigner from "./components/chart-designer";
 import PsoChartInterpreter from "./components/chart-interpreter";
+import PsoGridInterpreter from "./components/grid-interpreter";
 
 import PsoTagEditor from "./components/tag-editor";
 
@@ -183,6 +184,7 @@ const components = {
     PsoOrgMgt,
 
     PsoSiteMgt,
+    PsoGridInterpreter,
 
     //混合视图
     PsoFvAst,
