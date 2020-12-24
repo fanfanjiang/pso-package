@@ -36,9 +36,6 @@ export default {
       inputValue: ""
     };
   },
-  created() {
-    console.log(this.data);
-  },
   methods: {
     handleClose(tag) {
       this.data.splice(this.data.indexOf(tag), 1);

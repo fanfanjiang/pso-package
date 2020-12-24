@@ -6,22 +6,37 @@
     &.paper-designer {
 
         .grid-designer__stage {
+            height: 100%;
 
             .grid-designer__stage-body {
                 display: flex;
+                height: calc(100% - 41px);
 
                 .grid-designer__stage-body-l {
                     background-color: #fff;
-                    width: 200px;
+                    width: 240px;
                     padding: 5px 10px 10px 10px;
+                    height: 100%;
+                    overflow: auto;
 
                     .el-form-item {
                         margin-bottom: 0px;
+                    }
+
+                    .el-collapse {
+                        border: none;
                     }
                 }
 
                 .grid-designer__stage-body-r {
                     flex: 1;
+                    height: 100%;
+                    overflow: auto;
+
+                    .paper-designer-interpreter {
+                        padding: 10px;
+                        height: 100%;
+                    }
                 }
             }
         }
@@ -133,13 +148,15 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            transition: color .2s linear;
 
             &.designer-nav-item-active {
                 color: @main-color;
+                transition: color .2s linear;
             }
 
             &+.designer-nav-item {
-                margin-top: 5px;
+                margin-top: 10px;
             }
 
             .designer-nav-item__body {

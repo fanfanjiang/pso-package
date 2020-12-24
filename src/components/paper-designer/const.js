@@ -19,6 +19,8 @@ export const CPNT = {
             option: '',
             answer: '',
             score: 0,
+            start: 0,
+            num: 10
         }
     },
     multichoice: {
@@ -30,16 +32,20 @@ export const CPNT = {
             option: '',
             answer: '',
             score: 0,
+            start: 0,
+            num: 10
         }
     },
     essay: {
-        id: "essay",
+        id: "essay", 
         name: "问答题",
         icon: 'el-icon-edit-outline',
         data: {
             stem: '',
             answer: '',
             score: 0,
+            start: 0,
+            num: 10
         }
     }
 }

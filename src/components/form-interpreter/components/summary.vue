@@ -1,12 +1,13 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-input size="small" readonly :value="cpnt.data._val" :placeholder="cpnt.data._placeholder"></el-input>
+    <el-input size="small" readonly :value="showVal" :placeholder="cpnt.data._placeholder"></el-input>
   </el-form-item>
 </template>
 <script>
 import cpntMixin from "../mixin";
 import { SUMMARY_OP_TYPE } from "../../../const/form";
 import Big from "big.js/big.mjs";
+import { filterByDecimal } from "../../../tool/form";
 
 export default {
   mixins: [cpntMixin],
@@ -14,6 +15,15 @@ export default {
     return {
       emitSilent: true,
     };
+  },
+  computed: {
+    showVal() {
+      try {
+        return filterByDecimal(this.cpnt.data, this.cpnt.data._val);
+      } catch (error) {
+        return this.cpnt.data._val;
+      }
+    },
   },
   created() {
     this.setVal(this.cpnt.data._val);

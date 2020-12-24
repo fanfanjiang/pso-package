@@ -586,7 +586,6 @@ export default {
 
       let fields = "*";
       let where = [];
-      console.log(this.paramsSource);
       this.paramsSource.forEach((s) => {
         if (s.param) {
           where.push(`${s.field_name}=@${s.param}`);

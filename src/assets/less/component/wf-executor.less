@@ -41,6 +41,25 @@
             transition: width 0.3s ease-in-out;
             overflow: hidden;
         }
+
+        .pso-wf-executor__main-content-wrapper {
+            font-size: 18px !important;
+
+            th,
+            td {
+                font-size: 18px;
+                padding: 9px 5px !important;
+            }
+
+            .pso-wf-executor__main-content-log {
+
+                .pso-wf-logs__item {
+                    div {
+                        font-size: 16px !important;
+                    }
+                }
+            }
+        }
     }
 
     &.pso-wf-executor__m {
@@ -56,6 +75,7 @@
 
         .pso-wf-executor__main-content-wrapper {
             font-size: 11px !important;
+            max-width: 100% !important;
         }
 
         .el-card__body {
@@ -137,6 +157,8 @@
                 .richEditor();
                 color: #000;
                 font-size: 16px;
+                max-width: 1300px;
+                margin: 0 auto;
 
                 table {
 

@@ -199,7 +199,6 @@ export default {
     },
     record(data) {
       //填充表单
-
       if (this.cpnt.data._copyType !== "2") {
         let fields = [];
         if (this.table.length) {

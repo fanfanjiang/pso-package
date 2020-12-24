@@ -69,6 +69,9 @@
             <el-option v-for="(f, i) in types" :key="i" :label="f.map_key0" :value="f.auto_no"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="是否默认">
+          <el-checkbox v-model="data.is_default" true-label="1" false-label="0"></el-checkbox>
+        </el-form-item>
         <div v-for="(f, i) in FIELDS" :key="i">
           <el-form-item v-if="f.type === 'input'" :label="f.name">
             <el-input size="mini" v-model="data[f.field]" autocomplete="off"></el-input>
@@ -92,6 +95,7 @@ const FIELDS = [
   { name: "站点APP", field: "site_app", type: "input" },
   { name: "站点链接", field: "site_link", type: "input" },
   { name: "站点备注", field: "site_note", type: "input" },
+  { name: "默认登录", field: "is_default" },
 ];
 
 export default {
@@ -127,7 +131,7 @@ export default {
     this.initializing = false;
   },
   methods: {
-    getParentName(auto_no) { 
+    getParentName(auto_no) {
       return _.find(this.pTypes, { auto_no }).map_key0;
     },
     getSubName(auto_no) {

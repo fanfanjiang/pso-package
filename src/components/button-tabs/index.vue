@@ -13,6 +13,7 @@
 export default {
   props: {
     data: Array,
+    value: Number,
   },
   model: {
     prop: "value",
@@ -27,6 +28,9 @@ export default {
     activeIndex(val) {
       this.$emit("change", val);
     },
+  },
+  created() {
+    this.activeIndex = this.value;
   },
   methods: {
     tabsClass(index) {

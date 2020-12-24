@@ -23,15 +23,49 @@
                 <el-button slot="reference" type="text" :loading="store.creating">添加题目</el-button>
               </el-popover>
               <el-button style="margin-left: 10px" type="text" @click="importModule">导入题目</el-button>
+              <el-tooltip :visible-arrow="false" effect="dark" content="刷新" placement="top-start">
+                <el-button size="mini" icon="el-icon-refresh" circle @click="refresh"></el-button>
+              </el-tooltip>
+              <el-tooltip :visible-arrow="false" effect="dark" content="保存" placement="top-start">
+                <el-button
+                  circle
+                  size="mini"
+                  icon="el-icon-upload2"
+                  :loading="savingPaper"
+                  :disabled="savingPaper"
+                  @click="savePaper"
+                ></el-button>
+              </el-tooltip>
             </div>
           </div>
           <div class="grid-designer__stage-body">
             <div class="grid-designer__stage-body-l">
-              <paper-base :store="store"></paper-base>
-              <paper-nav :store="store" @edit="editCpnt" @del="delCpnt"></paper-nav>
+              <el-collapse v-model="activeNames">
+                <el-collapse-item title="考试设置" name="1">
+                  <paper-base :store="store"></paper-base>
+                </el-collapse-item>
+                <el-collapse-item title="题目" name="2">
+                  <paper-nav :store="store" @edit="editCpnt" @del="delCpnt"></paper-nav>
+                </el-collapse-item>
+                <el-collapse-item title="预览" name="3">
+                  <div v-if="interStore">
+                    <div v-for="(s, k, i) in interStore.score" :key="i">
+                      <span>{{ s.name }}： </span>
+                      <span>{{ s.score }}</span>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
             </div>
             <div class="grid-designer__stage-body-r">
-
+              <div class="paper-designer-interpreter">
+                <pso-paper-interpreter
+                  v-if="!refreshing"
+                  ref="interpreter"
+                  :params="paperParams"
+                  @initialized="initedHandler"
+                ></pso-paper-interpreter>
+              </div>
             </div>
           </div>
         </div>
@@ -80,6 +114,10 @@ export default {
       showMenu: false,
       store: null,
       selectedCpnt: "",
+      refreshing: false,
+      savingPaper: false,
+      activeNames: ["1", "2", "3"],
+      interStore: null,
     };
   },
   computed: {
@@ -88,6 +126,13 @@ export default {
         return `Paper-panel-${this.store.curCpnt.__cpnt__.id}`;
       }
       return "";
+    },
+    paperParams() {
+      return {
+        plug_code: this.store.code,
+        mode: "preview",
+        size: "mini",
+      };
     },
   },
   async created() {
@@ -101,6 +146,9 @@ export default {
       if (this.code) {
         await this.store.initialize();
       }
+    },
+    initedHandler(interStore) {
+      this.interStore = interStore;
     },
     menuChange() {
       if (this.$refs.popover) {
@@ -121,11 +169,24 @@ export default {
     },
     editCpnt(data) {
       this.store.setCurCpnt(data);
+      this.$refs.interpreter.scroll(data.urine.child_id);
     },
     delCpnt(i) {
       this.store.delCpnt(i);
     },
     importModule() {},
+    refresh() {
+      this.refreshing = true;
+      this.$nextTick(() => {
+        this.refreshing = false;
+      });
+    },
+    async savePaper() {
+      this.savingPaper = true;
+      await this.store.savePaperConfig();
+      this.refresh();
+      this.savingPaper = false;
+    },
   },
 };
 </script>

@@ -20,6 +20,7 @@ export default class Module {
         this.$vue = {};
         this.cpntsMap = {};
         this.curCpnt = null;
+        this.pluginCfg = {};
 
         for (let option in options) {
             if (options.hasOwnProperty(option)) {
@@ -30,14 +31,32 @@ export default class Module {
 
     async initialize() {
         this.initializing = true;
+
+        if (this.beforeInitialize) {
+            const stopInit = await this.beforeInitialize();
+            if (stopInit) return;
+        }
+
+        const cfgRet = await API.getTreeNode({ code: this.code });
+        this.pluginCfg = cfgRet.data.data;
+
         const ret = await API.getPluginModules({ keys: JSON.stringify({ tp_code: { type: 1, value: this.code } }) });
         if (ret.success) {
-            ret.data.forEach(d => {
+            ret.data.forEach((d, i) => {
                 const data = d.child_design;
                 delete d.child_design;
-                this.addCpnt(data ? JSON.parse(data) : {}, d);
+                const entity = this.addCpnt(data ? JSON.parse(data) : {}, d);
+                if (entity && i === 0) {
+                    this.setCurCpnt(entity);
+                }
             })
         }
+
+        if (this.onInitialized) {
+            const stopInit = await this.onInitialized();
+            if (stopInit) return;
+        }
+
         this.initializing = false;
     }
 
@@ -79,7 +98,7 @@ export default class Module {
         this.creating = false;
     }
 
-    addCpnt(cpnt = {}, urine = {}) {
+    addCpnt(cpnt = {}, urine = {}, beforeAdd) {
         let { id = 'chart', i } = cpnt;
 
         const __cpnt__ = this.constructor.CPNT[id];
@@ -105,8 +124,8 @@ export default class Module {
 
         const entity = { store: this, __cpnt__, i, data: { ..._.cloneDeep(__cpnt__.data), i, n: __cpnt__.name, ...cpnt, id }, urine };
 
+        beforeAdd && beforeAdd(entity);
         this.register(entity);
-        this.setCurCpnt(entity);
         return entity;
     }
 
@@ -125,6 +144,16 @@ export default class Module {
         if (index !== -1) {
             this.data.splice(index, 1);
             return index;
+        }
+    }
+
+    async fetchScriptData(cpnt, params) {
+        const { child_id } = cpnt.urine;
+        const ret = await API.getPluginModuleData({ child_id, limit: 9999, start: 0, ...params });
+        if (ret.success && ret.data.DATA) {
+            return ret.data.DATA;
+        } else {
+            return [];
         }
     }
 }

@@ -48,9 +48,9 @@ export default class API {
         return await this.request(url, { method, data });
     }
 
-    static async login(data) {
+    static async login(data, showMsg = true) {
         try {
-            return await this.request('/login', { data });
+            return await this.request('/login', { data, showMsg });
         } catch (error) {
             throw error;
         }
@@ -726,6 +726,14 @@ export default class API {
     static async getPluginModuleData(data) {
         try {
             return await this.request('/api/templates/module/data', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async addOrUpdatePaper(data) {
+        try {
+            return await this.request('/api/paper', { data, method: 'post' });
         } catch (error) {
             throw error;
         }

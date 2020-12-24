@@ -135,7 +135,6 @@ export default {
       } else {
         await this.fetch();
       }
-      console.log(this.viewAuths);
       this.initializing = false;
     },
     async fetch() {

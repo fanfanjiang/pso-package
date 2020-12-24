@@ -13,12 +13,13 @@ export default class Grid extends Module {
     }
 
     addCpnt(cpnt = {}, urine = {}) {
-        const entity = super.addCpnt(cpnt, urine);
-        const { x, y } = entity.data;
-        if (typeof x === 'undefined' || typeof y === 'undefined') {
-            Object.assign(entity.data, this.getLocation(entity.data))
-        }
-        return entity;
+        const obj = super.addCpnt(cpnt, urine, (entity) => {
+            const { x, y } = entity.data;
+            if (typeof x === 'undefined' || typeof y === 'undefined') {
+                Object.assign(entity.data, this.getLocation(entity.data))
+            }
+        });
+        return obj;
     }
 
     getLocation(from) {

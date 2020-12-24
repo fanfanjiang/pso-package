@@ -11,7 +11,13 @@ export const BaseMixin = {
             TABS: [{ label: '数据源', icon: 'el-icon-cpu' }, { label: '设置', icon: 'el-icon-setting' }]
         }
     },
-    computed: {
+    watch: {
+        curTab(value) {
+            this.cpnt.store.activePanelTab = value;
+        }
+    },
+    created() {
+        this.curTab = this.cpnt.store.activePanelTab;
     },
     methods: {
         async saveCpnt() {

@@ -25,7 +25,7 @@
               <el-button style="margin-left: 10px" type="text" @click="importModule">导入模块</el-button>
             </div>
           </div>
-          <div class="grid-designer__stage-body">
+          <div class="grid-designer__stage-body" style="overflow: auto">
             <grid-layout
               :layout="store.layout"
               :col-num="24"

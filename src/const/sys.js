@@ -45,7 +45,7 @@ export const TP_NEW_TYPES = [
     {
         name: "试卷插件",
         value: 3,
-        router: '/paper/:menu_code'
+        router: '/paper-interpreter/:menu_code'
     }
 ]
 

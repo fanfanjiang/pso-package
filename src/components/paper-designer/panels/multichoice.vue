@@ -13,7 +13,7 @@
       ></data-source>
       <common-panel v-if="curTab === 1" :cpnt="cpnt">
         <el-form-item label="选项">
-          <el-select size="mini" clearable v-model="cpnt.data.option">
+          <el-select size="mini" clearable filterable v-model="cpnt.data.option">
             <el-option v-for="(f, i) in cpnt.urine.child_content" :key="i" :label="f.name || f.field" :value="f.field"></el-option>
           </el-select>
         </el-form-item>

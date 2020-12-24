@@ -18,21 +18,19 @@
         </div>
         <div class="form-executor-header__r">
           <template v-if="!initializing">
+            <el-popconfirm
+              confirmButtonText="确定"
+              cancelButtonText="取消"
+              icon="el-icon-info"
+              iconColor="red"
+              title="你确定要删除这条数据吗？"
+              @confirm="remove"
+            >
+              <el-button slot="reference" v-if="deletable" size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+            </el-popconfirm>
             <el-dropdown size="small" trigger="click" @command="moreCommandhandler">
               <span class="el-dropdown-link"> <i class="el-icon-more"></i> </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="deletable">
-                  <el-popconfirm
-                    confirmButtonText="确定"
-                    cancelButtonText="取消"
-                    icon="el-icon-info"
-                    iconColor="red"
-                    title="你确定要删除吗"
-                    @confirm="remove"
-                  >
-                    <span slot="reference">删除</span>
-                  </el-popconfirm>
-                </el-dropdown-item>
                 <el-dropdown-item command="print" v-if="dataId">打印 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>

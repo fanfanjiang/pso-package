@@ -7,9 +7,11 @@
           <span>{{ d.urine.child_name }}</span>
         </div>
         <div class="designer-nav-item__ctrl">
-          <i class="el-icon-close designer-nav-del" @click="$emit('del', d.data.i)"></i>
+          <el-popconfirm title="你确定要删除吗？？？" @confirm="$emit('del', d.data.i)">
+            <i slot="reference" class="el-icon-close designer-nav-del"></i>
+          </el-popconfirm>
           <i class="el-icon-sort designer-nav-drag"></i>
-        </div>
+        </div> 
       </div>
     </draggable>
   </div>

@@ -185,18 +185,23 @@ export default {
 
       if (ret.success) {
         const cfg = ret.data.data;
-        const setting = JSON.parse(cfg.route_setting);
-        assignList({
-          target: this.data,
-          source: setting,
-          tid: "field",
-          sid: "field",
-          base: PLUGIN_PARAMS,
-        });
+
+        if (cfg.route_setting) {
+          const setting = JSON.parse(cfg.route_setting);
+          assignList({
+            target: this.data,
+            source: setting,
+            tid: "field",
+            sid: "field",
+            base: PLUGIN_PARAMS,
+          });
+        }
 
         if (cfg.tp_content) {
           this.fields = JSON.parse(cfg.tp_content);
-          this.makeCpnts(this.fields);
+          if (Array.isArray(this.fields)) {
+            this.makeCpnts(this.fields);
+          }
         }
 
         //加载文本组
