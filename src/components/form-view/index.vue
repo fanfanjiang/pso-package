@@ -64,7 +64,7 @@
                 :copyable="addable && !params.hideCopyBtn"
                 :moreable="!params.hideMoreBtn"
                 :exportable="!params.hideExport"
-                @new="store.newInstance.call(store)"
+                @new="newInstance"
                 @select="$emit('selection-confirm', store.selectedList)"
               >
                 <template v-slot:op="scope">
@@ -88,7 +88,9 @@
         :title="store.formCfg.data_name"
         :opener="store"
         :instanceids="store.instanceids"
-        :auto-submit="autoSubmit"
+        :auto-submit="formAutoSubmit"
+        :switchable="store.switchable"
+        :keepable="store.keepable"
         @data-changed="dataChangeHandler"
         @prev="store.showPrev.call(store, $event)"
         @next="store.showNext.call(store, $event)"
@@ -224,8 +226,12 @@ export default {
         dataDefault: this.defForm,
         editable: (this.store.dataId ? this.detailEditable : this.addable) && this.store.instanceEditable,
         addable: this.addable && this.store.opAddable,
-        deletable: this.deletable && this.store.instanceEditable,
+        deletable: this.deletable && this.store.instanceEditable && !this.store.actioning,
+        extendAuth: this.store.fieldsRule,
       };
+    },
+    formAutoSubmit() {
+      return this.autoSubmit && this.store.autoSubmit;
     },
   },
   watch: {
@@ -311,12 +317,16 @@ export default {
     makeKeys() {
       this.store.makeDefkeys({ where: this.where, defKeys: this.defKeys, defForm: this.defForm });
     },
-    dataChangeHandler(data) {
-      this.store.fetchStatus();
+    async dataChangeHandler(data) {
+      await this.store.checkDataChange(data);
+      await this.store.fetchStatus();
       this.$emit("data-changed", data);
     },
     getFixedTarget() {
       return this.$refs.viewBody;
+    },
+    async newInstance() {
+      await this.store.newInstance(true);
     },
   },
 };

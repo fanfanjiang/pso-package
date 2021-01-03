@@ -134,3 +134,21 @@ export function desensitize(val) {
         return val;
     }
 }
+
+export function makeDimension(group, source, dim) {
+    //按维度分组
+    if (_.isEmpty(group)) {
+        //第一次
+        return _.groupBy(source, dim);
+    }
+    (function recursion(data) {
+        for (let key of Object.keys(data)) {
+            if (Array.isArray(data[key])) {
+                data[key] = _.groupBy(data[key], dim);
+            } else {
+                recursion(data[key]);
+            }
+        }
+    })(group);
+    return group;
+}

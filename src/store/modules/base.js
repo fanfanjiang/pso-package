@@ -14,7 +14,12 @@ import { md5 } from "../../utils/md5";
 export default {
     state: {
         user: null,
-        showedWFChartTip: false
+        showedWFChartTip: false,
+        appConfig: {
+            appid: '',
+            appName: '',
+            platform: ''
+        }
     },
     mutations: {
         [APP_SET_USER](state, user) {
@@ -33,6 +38,14 @@ export default {
         [APP_SIGNIN](state, { token, user }) {
             Auth.setToken(token);
             this.commit(APP_SET_USER, user)
+        },
+        ['APP_SET_APPCONFIG'](state, data) {
+            Storge.set('appconfig', data);
+            state.appConfig = Object.assign(state.appConfig, data);
+        },
+        ['APP_GET_APPCONFIG'](state) {
+            const data = Storge.get('appconfig');
+            state.appConfig = data ? JSON.parse(data) : null;
         },
     },
     actions: {

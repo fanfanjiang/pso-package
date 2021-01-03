@@ -48,7 +48,7 @@
 </template>
 <script>
 import cpnt from "./cpnt";
-// 动态筛选组件
+// 动态筛选组件,这个只能用于keys中，需要请求接口
 export default {
   components: { cpnt },
   props: {

@@ -301,7 +301,8 @@ export default {
 
       this.astStore = new ASTStore({ $vue: this, limit: 10 });
       this.cpnt.astStore = this.astStore;
-      this.astStore.analyzeFormCfg(ret.data, this.cpnt.data._showFields);
+
+      this.astStore.analyzeFormCfg(ret.data, this.cpnt.store.ignoreAstColumn ? "" : this.cpnt.data._showFields);
       this.store = this.astStore.store;
       this.fields = this.astStore.fields;
 

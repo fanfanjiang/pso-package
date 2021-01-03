@@ -184,6 +184,13 @@
         }
 
         .view-data-fun {
+            display: flex;
+            align-items: center;
+
+            .view-data-fun__actions {
+                margin: 0 10px;
+            }
+
             .el-dropdown {
 
                 &+.el-dropdown,
@@ -297,13 +304,7 @@
     }
 }
 
-.modifier-placeholder-wrapper {
-    &:hover {
-        .modifier-trigger {
-            display: block;
-        }
-    }
-}
+.modifier-placeholder-wrapper {}
 
 .modifier-placeholder {
     display: flex;
@@ -333,7 +334,6 @@
     .modifier-trigger {
         cursor: pointer;
         font-size: 16px;
-        display: none;
 
         &:hover {
             color: @main-color
@@ -346,6 +346,40 @@
     background-color: #fff;
     z-index: 999;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+
+    .modifier-confirm {
+        position: absolute;
+        top: -13px;
+        right: -13px;
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 100%;
+        box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 4px 2px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        background: #67C23A;
+
+        &:hover {
+            transition: all 0.3s ease-in-out;
+            background: #fff;
+
+            i {
+                transition: all 0.3s ease-in-out;
+                color: #67C23A;
+                font-size: 20px;
+            }
+        }
+
+        i {
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            color: #fff;
+        }
+    }
 
     .el-input__inner,
     .el-textarea__inner {
@@ -369,6 +403,10 @@
 
     .pso-number {
         width: 100%;
+    }
+
+    .el-form-item__content {
+        min-height: 40px;
     }
 
     input,

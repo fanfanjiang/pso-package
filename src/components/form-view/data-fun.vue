@@ -3,6 +3,20 @@
     <el-button v-if="opAddable" type="primary" size="mini" @click="$emit('new')">{{ store.cpntText.add }}</el-button>
     <el-button v-if="selectable" type="primary" size="mini" @click="$emit('select')">选择</el-button>
     <slot name="op" v-bind:data="store"></slot>
+    <div class="view-data-fun__actions" v-for="(a, i) in store.actions" :key="i">
+      <el-popconfirm
+        v-if="a.mode === '2'"
+        confirmButtonText="确定"
+        cancelButtonText="取消"
+        icon="el-icon-info"
+        iconColor="red"
+        title="你确认要执行吗？"
+        @confirm="checkAction(a)"
+      >
+        <action-btn slot="reference" :action="a" :store="store"></action-btn>
+      </el-popconfirm>
+      <action-btn v-else :action="a" :store="store"></action-btn>
+    </div>
     <dropdown
       v-if="opChangable"
       :text="store.cpntText.change"
@@ -34,6 +48,7 @@
         <el-dropdown-item command="exportCurPage" v-if="opExportable">导出EXCEL</el-dropdown-item>
         <el-dropdown-item v-if="opExportable">全部导出</el-dropdown-item>
         <el-dropdown-item command="saveColumn">保存列宽</el-dropdown-item>
+        <el-dropdown-item command="saveFiles">下载文件</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -42,9 +57,10 @@
 import Dropdown from "./dropdown";
 import PsoFormAttach from "../form-interpreter/components/attachment";
 import { genComponentData } from "../form-designer/helper";
+import ActionBtn from "./action-btn";
 
 export default {
-  components: { Dropdown, PsoFormAttach },
+  components: { Dropdown, PsoFormAttach, ActionBtn },
   props: {
     store: Object,
     addable: {
@@ -106,6 +122,9 @@ export default {
   methods: {
     operateMore(fun) {
       this.store[fun] && this.store[fun]();
+    },
+    checkAction(action) {
+      this.store.checkAction(action);
     },
   },
 };

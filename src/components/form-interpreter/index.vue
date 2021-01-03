@@ -57,6 +57,10 @@ export default {
       type: String,
       default: "",
     },
+    ignoreAstColumn: {
+      type: Boolean, //忽略关联表在表单设计中设置的列表
+      default: false,
+    },
   },
   data() {
     return {
@@ -154,8 +158,9 @@ export default {
         extendAuth: this.extendAuth,
         editable: this.editable,
         parentInstanceId: this.parentInstanceId,
+        ignoreAstColumn:this.ignoreAstColumn 
       };
-
+ 
       if (this.formEntity) {
         this.store = new FormStore({ ...this.formEntity, ...baseEntity });
       } else if (this.formId) {

@@ -29,15 +29,18 @@
                 </el-form-item>
               </el-form>
             </div>
-            <div class="paper-interpreter-item" v-for="(d, i) in store.data" :key="i" :ref="'q' + d.urine.child_id">
-              <div class="paper-interpreter-item__header">
-                <span>{{ d.urine.child_name }}</span>
-                <span>
-                  (共{{ d.questions && d.questions.length }}题，合计{{ ((d.questions && d.questions.length) || 0) * d.data.score }}分)
-                </span>
+            <template v-if="store.data.length">
+              <div class="paper-interpreter-item" v-for="(d, i) in store.data" :key="i" :ref="'q' + d.urine.child_id">
+                <div class="paper-interpreter-item__header">
+                  <span>{{ d.urine.child_name }}</span>
+                  <span>
+                    (共{{ d.questions && d.questions.length }}题，合计{{ ((d.questions && d.questions.length) || 0) * d.data.score }}分)
+                  </span>
+                </div>
+                <component v-bind:is="getCpntEl(d.data.id)" :cpnt="d"></component>
               </div>
-              <component v-bind:is="getCpntEl(d.data.id)" :cpnt="d"></component>
-            </div>
+            </template>
+            <pso-empty text="暂无试题"></pso-empty>
           </div>
         </div>
       </transition>
@@ -110,7 +113,9 @@ export default {
       return `paper-cpnt-${id}`;
     },
     scroll(id) {
-      aniscrollTo(this.$refs[`wrapper`], $(this.$refs[`q${id}`]).get(0));
+      if (this.$refs[`wrapper`] && $(this.$refs[`q${id}`]).get(0)) {
+        aniscrollTo(this.$refs[`wrapper`], $(this.$refs[`q${id}`]).get(0));
+      }
     },
     startTest() {
       this.store.startTest();

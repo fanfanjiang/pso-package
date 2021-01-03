@@ -49,6 +49,7 @@ export default {
   data() {
     return {
       activeTab: "",
+      curBlock: null,
     };
   },
   watch: {
@@ -57,10 +58,8 @@ export default {
         this.resetActiveTab();
       }
     },
-  },
-  computed: {
-    curBlock() {
-      return _.find(this.sql, { id: this.activeTab });
+    activeTab() {
+      this.setCurBlock();
     },
   },
   methods: {
@@ -104,6 +103,16 @@ export default {
     resetActiveTab() {
       if (this.sql.length) {
         this.activeTab = this.sql[0].id;
+      }
+    },
+    setCurBlock() {
+      if (this.activeTab) {
+        this.curBlock = null;
+        this.$nextTick(() => {
+          this.curBlock = _.find(this.sql, { id: this.activeTab });
+        });
+      } else {
+        this.curBlock = null;
       }
     },
   },

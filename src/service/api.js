@@ -707,9 +707,9 @@ export default class API {
         }
     }
 
-    static async addOrUpdatePluginModule(data) {
+    static async addOrUpdatePluginModule(data, showMsg = true) {
         try {
-            return await this.request('/api/templates/module', { data, method: 'post' });
+            return await this.request('/api/templates/module', { data, method: 'post', showMsg });
         } catch (error) {
             throw error;
         }
@@ -734,6 +734,46 @@ export default class API {
     static async addOrUpdatePaper(data) {
         try {
             return await this.request('/api/paper', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async addOrUpdatePaper(data) {
+        try {
+            return await this.request('/api/paper', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async doActionScript(data) {
+        try {
+            return await this.request('/api/form/action/script', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async downloadZipFiles(data) {
+        try {
+            return await this.request('/api/file/zip-files', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getSysConfigNoauth(data) {
+        try {
+            return await this.request('/sys/config', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFielsNoauth(data) {
+        try {
+            return await this.request('/files', { data, method: 'get' });
         } catch (error) {
             throw error;
         }

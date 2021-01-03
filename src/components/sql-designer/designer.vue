@@ -83,14 +83,14 @@
               ></picker-form>
             </div>
             <div v-if="copyProxy.length">
-              <el-divider content-position="left">子表配置</el-divider>
+              <!-- <el-divider content-position="left">子表配置</el-divider>
               <div class="sql-designer-copyitem" v-for="(d, i) in copyProxy" :key="i">
                 <el-checkbox v-model="d.checked">{{ d.name }}</el-checkbox>
                 <div>
                   <el-radio v-model="d.f_type" label="1">复制</el-radio>
                   <el-radio v-model="d.f_type" label="2">链式</el-radio>
                 </div>
-              </div>
+              </div> -->
             </div>
           </el-form>
         </el-collapse-item>
@@ -690,8 +690,8 @@ export default {
     indexAddHandler(n) {
       const sql = _.find(this.INDEX, { n });
       let text = sql.v;
-      text = text.replace("@main@", this.wrapTable());
-      text = text.replace("@sub@", `DATA_EXT_${this.querySubSource.data_code || ""}`);
+      text = text.replace("@main@", this.querySource.data_code);
+      text = text.replace("@sub@", `${this.querySubSource.data_code || ""}`);
       this.block.index_script += text;
     },
   },

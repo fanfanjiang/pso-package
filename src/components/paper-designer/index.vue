@@ -165,14 +165,17 @@ export default {
       this.$refs.cascader.calculateCheckedNodePaths();
       this.selectedCpnt = [];
       this.showMenu = false;
-      await this.store.createCpnt({ id });
+      const entity = await this.store.createCpnt({ id });
+      this.editCpnt(entity);
+      this.refresh();
     },
     editCpnt(data) {
       this.store.setCurCpnt(data);
       this.$refs.interpreter.scroll(data.urine.child_id);
     },
-    delCpnt(i) {
-      this.store.delCpnt(i);
+    async delCpnt(i) {
+      await this.store.delCpnt(i);
+      this.refresh();
     },
     importModule() {},
     refresh() {

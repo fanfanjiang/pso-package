@@ -88,14 +88,15 @@ export default class Module {
         const __cpnt__ = this.constructor.CPNT[id];
         if (!__cpnt__) {
             return;
-        }
+        } 
         const urine = { ...this.constructor.DEFAULT, tp_code: this.code, child_name: __cpnt__.name, child_design: JSON.stringify({ id }) }
-        const ret = await API.addOrUpdatePluginModule({ optype: 0, ...urine });
+        const ret = await API.addOrUpdatePluginModule({ optype: 0, ...urine }, false);
+        this.creating = false;
         if (ret.success && ret.message) {
             urine.child_id = ret.message;
-            this.addCpnt(cpnt, urine);
+            const entity = this.addCpnt(cpnt, urine);
+            return entity
         }
-        this.creating = false;
     }
 
     addCpnt(cpnt = {}, urine = {}, beforeAdd) {

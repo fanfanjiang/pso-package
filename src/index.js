@@ -107,6 +107,16 @@ import PsoOrgMgt from "./components/user/organization";
 
 import PsoSiteMgt from "./components/site-mgt";
 
+//passport
+import PsoSignIn from "./components/passport/sign-in.vue";
+import PsoSignUp from "./components/passport/sign-up.vue";
+import PsoSignSocial from "./components/passport/sign-social.vue";
+import PsoAccess from "./components/passport/access.vue";
+import PsoAppswitch from "./components/passport/appswitch.vue";
+import PsoPassport from "./components/passport/passport-wrapper.vue";
+
+import PsoSqlDesigner from "./components/sql-designer";
+
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
 import PsoFvWv from "./components/composite/fv-wv";
@@ -120,6 +130,7 @@ import PsoWtreeWv from "./components/composite/wtree-wv";
 import PsoTreeTimeline from "./components/composite/tree-timeline";
 import PsoNodeAny from "./components/composite/node-any";
 import PsoFvStats from "./components/composite/fv-stats";
+import PsoFormEntry from "./components/composite/form";
 
 const components = {
     PsoEmpty,
@@ -187,6 +198,15 @@ const components = {
     PsoSiteMgt,
     PsoGridInterpreter,
     PsoPaperInterpreter,
+
+    PsoSignIn,
+    PsoSignUp,
+    PsoSignSocial,
+    PsoAccess,
+    PsoAppswitch,
+    PsoPassport,
+
+    PsoSqlDesigner,
     
     //混合视图
     PsoFvAst,
@@ -200,7 +220,8 @@ const components = {
     PsoWtreeWv,
     PsoTreeTimeline,
     PsoNodeAny,
-    PsoFvStats
+    PsoFvStats,
+    PsoFormEntry
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host, xssFilter = false } = {}) {
@@ -255,8 +276,13 @@ Object.keys(formulajs).forEach(key => {
 });
 
 const CONST = require('../share/const');
+import FormMixin from './mixin/form';
 
-export { BASEAPI, store, WfStore, FormStore, genComponentData, CONST }
+const Mixin = {
+    FormMixin
+};
+
+export { BASEAPI, store, WfStore, FormStore, genComponentData, CONST, Mixin }
 
 export default {
     install

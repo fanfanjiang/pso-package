@@ -46,6 +46,9 @@ export const FormModifierMixin = {
             this.modStore = store;
             this.handleSaved = fun;
         },
+        confirmModify() {
+            this.showModifier = false;
+        },
         async saveModified() {
             if (this.modInstance) {
                 try {
@@ -55,7 +58,10 @@ export const FormModifierMixin = {
                         data.__temporary__ = this.modInstance.__temporary__;
                         data.__dump__ = this.modInstance.__dump__;
                     }
-                    if (data.leaf_id === this.modInstance.leaf_id && data[this.modifiedField] != this.modInstance[this.modifiedField]) {
+                    const sv = this.modInstance[this.modifiedField];
+                    const tv = data[this.modifiedField];
+ 
+                    if (data.leaf_id === this.modInstance.leaf_id && tv != sv && !(tv === '' && typeof sv === 'undefined')) {
                         this.handleSaved && this.handleSaved({ leaf_id: this.dataId, formData });
                     }
                 } catch (error) {

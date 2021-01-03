@@ -35,12 +35,20 @@ export default class Component {
             if (exist && exist.value) {
                 if ((1 & exist.value) === 1) {
                     this.data._hideOnNew = this.data._hideForever = false;
+                    this.data._read = true;
                 }
                 if ((2 & exist.value) === 2) {
-                    Vue.set(this.data, '__forceEdit__', true)
+                    Vue.set(this.data, '__forceEdit__', true);
+                    this.data._read = false;
+                    this.data._required = false;
                 }
                 if ((4 & exist.value) === 4) {
+                    Vue.set(this.data, '__forceEdit__', true);
+                    this.data._read = false;
                     this.data._required = true;
+                }
+                if (exist.value === 0.1) {
+                    this.data._hideOnNew = this.data._hideForever = true;
                 }
             }
         }

@@ -37,6 +37,7 @@
             :form-entity="mainCfg"
             :data-default="mainDefForm"
             :editable="bodyEditalbe"
+            ignore-ast-column
             @data-loaded="astLoadedHandler"
             @cpnt-value-changed="astChangeHandler"
           ></pso-form-interpreter>

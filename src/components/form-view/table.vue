@@ -86,6 +86,9 @@
           :data-instance="modInstance"
           @data-loaded="modLoadHandler"
         ></pso-form-interpreter>
+        <div class="modifier-confirm" @click="confirmModify">
+          <i class="el-icon-check"></i>
+        </div>
       </div>
     </transition>
   </div>

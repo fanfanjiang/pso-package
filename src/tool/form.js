@@ -70,7 +70,7 @@ export async function makeFormByScript({ code, onEach }) {
 export async function makeFormByPluginModule({ code, options, onEach }) {
     if (options) {
         return { data_config: makeFormByOther(options, onEach) };
-    } else { 
+    } else {
         const ret = await API.getPluginModules({ keys: JSON.stringify({ child_id: { type: 1, value: code } }) });
         if (ret.success && ret.data.length) {
             return { ...ret.data.data, data_config: makeFormByOther(JSON.parse(ret.data[0].child_content), onEach) };
@@ -100,11 +100,17 @@ export function makeFormByOther(data, onEach) {
  * @export
  * @returns
  */
-export function makeSysFormFields() {
-    const sysFields = ['leaf_id', 'd_status', 'd_audit', 'd_stage', 'creator'];
+export function makeSysFormFields({ allString = true } = {}) {
+    const sysFields = [
+        { _fieldValue: 'leaf_id', _fieldName: 'LEAF_ID(系统)', componentid: 'text' },
+        { _fieldValue: 'd_status', _fieldName: '表单状态(系统)', componentid: 'text' },
+        { _fieldValue: 'd_audit', _fieldName: '审核状态(系统)', componentid: 'text' },
+        { _fieldValue: 'd_stage', _fieldName: '阶段(系统)', componentid: 'text' },
+        { _fieldValue: 'creator', _fieldName: '表单创建人(系统)', componentid: 'text' },
+    ];
     const fields = [];
     sysFields.forEach(f => {
-        fields.push(genComponentData({ componentid: 'text', _fieldValue: f, _fieldName: f }))
+        fields.push(genComponentData(f))
     })
     return fields;
 }

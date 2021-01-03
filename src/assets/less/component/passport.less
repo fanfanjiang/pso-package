@@ -1,0 +1,218 @@
+.passport {
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    @media (max-width: @screen-sm-min) {
+        .passport-box {
+            width: 100%;
+        }
+
+        .passport-body {
+            padding: 20px 0 !important;
+        }
+
+        .passport-footer {
+            display: none;
+        }
+
+        .passport-header {
+            padding: 10px !important;
+        }
+
+        .passport-appinfo-title {
+            display: none;
+        }
+
+        .passport-appinfo-logo {
+            height: 30px !important;
+        }
+    }
+
+    .passport-header {
+        padding: 15px 0;
+        background: @main-color;
+
+        .pso-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+
+    .passport-appswitch {
+        position: relative;
+        z-index: 9;
+
+        .passport-appswitch-body {
+            display: flex;
+            align-items: center;
+            color: #fff;
+        }
+
+        .passport-appswitch-trigger {
+            font-size: 18px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    }
+
+    .passport-appinfo {
+        display: flex;
+        align-items: center;
+
+        .passport-appinfo-logo {
+            display: block;
+            height: 40px;
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .passport-appinfo-title {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+    }
+
+    .passport-body {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 100px 0;
+    }
+
+    .passport-footer {}
+
+    .passport-social {}
+}
+
+.passport-box {
+    width: 380px;
+    margin: 0 auto;
+    background-color: #fff;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, .15);
+    padding: 20px 30px 30px 30px;
+
+    .passport-box-header {
+        margin-bottom: 20px;
+
+        .passport-box-title {
+            color: #666;
+            font-size: 24px;
+        }
+    }
+
+    .passport-form {}
+
+    .wider {
+        width: 100%;
+    }
+
+    .tabs {
+        .el-tabs__nav-wrap {
+            &:after {
+                background-color: transparent;
+            }
+        }
+    }
+
+    .el-form-item__content {
+        >.el-select {
+            width: 100%;
+
+            .el-input {
+                width: 100%;
+            }
+        }
+    }
+
+    .count-down {
+        cursor: pointer;
+    }
+
+    .el-select .el-input {
+        width: 80px;
+    }
+
+    .captcha {
+        .el-input-group__append {
+            cursor: pointer;
+            font-size: 0;
+            padding: 0;
+
+            img {
+                height: 36px !important;
+            }
+        }
+    }
+
+    .passport-box-social {
+        margin-top: 30px;
+    }
+
+    .passport-box-user {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+
+        p {
+            margin-left: 20px;
+        }
+    }
+}
+
+.appswitch {
+    background: #fff;
+    position: absolute;
+    right: 0;
+    top: 50px;
+    min-width: 280px;
+    height: 600px;
+    overflow: auto;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+
+    .appswitch-body {
+        position: relative;
+        overflow: auto;
+        height: 100%;
+    }
+
+    .is-disabled {
+        color: #666 !important;
+        font-weight: normal !important;
+    }
+}
+
+.sign-social {
+    display: flex;
+    align-items: center;
+
+    .sign-social-item {
+        a {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            font-size: 12px;
+
+            span {
+                margin-top: 3px;
+                color: #999;
+            }
+        }
+
+        img {
+            height: 30px;
+            width: auto;
+        }
+
+        &+.sign-social-item {
+            margin-left: 20px;
+        }
+    }
+}

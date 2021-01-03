@@ -23,7 +23,7 @@ export default class STAVStore extends FVStore {
     }
 
     get pageSize() {
-        return this.paging ? [this.limit, 30, 50, 300, 500, 1000] : [this.dataTotal];
+        return this.paging ? [this.limit, 30, 50, 300, 500, 1000, 99999] : [this.dataTotal];
     }
 
     async initialize(id, query) {

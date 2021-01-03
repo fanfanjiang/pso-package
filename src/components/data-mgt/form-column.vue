@@ -5,9 +5,14 @@
     </div>
     <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeCol">
       <el-tab-pane :label="col.name" :name="index + ''" v-for="(col, index) in data.column" :key="index">
-        <el-form label-position="left" label-width="120px">
+        <el-form label-position="left" label-width="80px" :inline="true">
           <el-form-item label="列表名称">
             <el-input size="mini" v-model="col.name"></el-input>
+          </el-form-item>
+          <el-form-item label="动作">
+            <el-select size="mini" multiple clearable v-model="col.actions">
+              <el-option v-for="(a, i) in actions" :key="i" :label="a.name" :value="a.id"></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <el-table
@@ -113,7 +118,7 @@ import { formatJSONList } from "../../utils/util";
 
 export default {
   mixins: [formOp],
-  props: ["data", "defCol"],
+  props: ["data", "defCol", "actions"],
   data() {
     return {
       forms: [],
@@ -129,6 +134,11 @@ export default {
     if (!this.data.column.length) {
       this.addCol(formatJSONList(_.cloneDeep(this.defCol), FORM_COLUMN_FIELDS));
     } else {
+      this.data.column.forEach((col) => {
+        if (!col.actions) {
+          this.$set(col, "actions", []);
+        }
+      });
       this.activeTab = "0";
     }
   },
@@ -136,6 +146,7 @@ export default {
     addCol(data) {
       this.data.column.push({
         name: shortid.generate(),
+        actions: [],
         data: data || (this.data.column.length ? _.cloneDeep(this.data.column[0].data) : _.cloneDeep(this.defCol)),
       });
       this.activeTab = this.data.column.length - 1 + "";

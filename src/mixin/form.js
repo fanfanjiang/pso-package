@@ -130,3 +130,7 @@ export const Printer = {
         }
     }
 };
+
+export default {
+    Attach
+}

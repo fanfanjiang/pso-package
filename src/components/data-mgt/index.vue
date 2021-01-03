@@ -31,8 +31,9 @@
           <el-tabs v-model="curTab" type="card">
             <template v-if="!!curNode.is_leaf">
               <el-tab-pane label="数据" name="preview"></el-tab-pane>
-              <el-tab-pane label="字段" name="field"></el-tab-pane>
               <el-tab-pane label="列表" name="list"></el-tab-pane>
+              <el-tab-pane label="动作" name="action"></el-tab-pane>
+              <el-tab-pane label="字段" name="field"></el-tab-pane>
               <el-tab-pane label="状态" name="status"></el-tab-pane>
               <el-tab-pane label="发布" name="publish"></el-tab-pane>
               <el-tab-pane label="上传" name="upload"></el-tab-pane>
@@ -50,7 +51,8 @@
           <template v-if="!!curNode.is_leaf">
             <pso-form-view v-show="curTab === 'preview'" :key="curNode.node_id" :cfg-id="curNode.node_name" :view-auth="4"></pso-form-view>
             <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
-            <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData"></form-column>
+            <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData" :actions="actions"></form-column>
+            <form-action v-if="curTab === 'action' && formStore" :actions="actions" :store="formStore"></form-action>
             <form-status
               v-if="curTab === 'status' && formStore"
               :code="formStore.data_code"
@@ -99,6 +101,7 @@ import FormAsstable from "./form-asstable";
 import FormUpload from "./form-upload";
 import FormIapicfg from "./form-iapicfg";
 import FormOapicfg from "./form-oapicfg";
+import FormAction from "./action";
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList } from "../../utils/util";
 import { MgtMixin } from "../../mixin/view";
@@ -110,6 +113,7 @@ const _DATA = {
     def: "",
     column: [],
   },
+  actions: [],
   staData: [],
   pubCfg: {
     isPublic: false,
@@ -160,6 +164,7 @@ export default {
     FormUpload,
     FormIapicfg,
     FormOapicfg,
+    FormAction,
   },
   props: {
     params: {
@@ -283,6 +288,10 @@ export default {
         if (cfg.inner_api) {
           Object.assign(this.inner_api, JSON.parse(cfg.inner_api));
         }
+
+        if (cfg.data_button) {
+          this.actions = JSON.parse(cfg.data_button);
+        }
       }
     },
     nodeClickHandler(data) {
@@ -372,6 +381,7 @@ export default {
       this.subCfg.forEach((item) => {
         subCfgData.push({ ...item, params: item.param.join(",") });
       });
+
       const ret = await this.API.updateFormTree({
         data_code: this.curNode.node_name,
         display_columns: JSON.stringify(this.colCfg),
@@ -383,6 +393,7 @@ export default {
         sub_config: JSON.stringify(this.asstable),
         export_config: JSON.stringify(this.upload),
         inner_api: JSON.stringify(this.inner_api),
+        data_button: JSON.stringify(this.actions),
       });
 
       this.saving = false;

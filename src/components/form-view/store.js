@@ -81,6 +81,16 @@ export default class FormViewStore {
             stage: "更改阶段",
         };
 
+        //动作
+        this.addAction = null;
+        this.actions = [];
+        this.usedActionIds = [];
+        this.actioning = null;
+        this.fieldsRule = [];
+        this.switchable = true;
+        this.autoSubmit = true;
+        this.keepable = true;
+
         //列表原始配置
         this.usedFormCol = '';
         this.oriColData = null;
@@ -242,6 +252,15 @@ export default class FormViewStore {
         this.dataId = row.leaf_id;
         this.instance = null;
         this.showExecutor = true;
+        this.setActionEmpty();
+    }
+
+    setActionEmpty() {
+        this.fieldsRule = [];
+        this.actioning = null;
+        this.switchable = true;
+        this.autoSubmit = true;
+        this.keepable = true;
     }
 
     showPrev(id) {
@@ -264,11 +283,19 @@ export default class FormViewStore {
         }
     }
 
-    newInstance() {
+    async newInstance(checkScript) {
+        if (this.addAction && this.addAction.beforeScriptable && checkScript) {
+            const ret = await API.doActionScript({ btn_id: 'add', btn_type: '0', data_code: this.store.data_code, data: [] });
+            if (!ret.success) {
+                return;
+            }
+        }
+
         this.dataId = "";
         this.instance = null;
         this.curInstance = null;
         this.showExecutor = true;
+        this.setActionEmpty();
     }
 
     async fetchCuzFastSwtich(source, key, data, vField = 'value') {
@@ -421,9 +448,9 @@ export default class FormViewStore {
     analyzeFormCfg(data, usedColumn) {
         this.formCfg = data;
 
-        const { opAuth, display_columns, stage_config, status_config } = this.formCfg;
+        const { opAuth, display_columns, stage_config, status_config, data_button } = this.formCfg;
 
-        this.store = new FormStore({ ...data, designMode: false });
+        this.store = new FormStore({ ...data, designMode: false, withSys: true });
 
         if (opAuth) {
             this.opAuth = opAuth.leaf_auth;
@@ -446,6 +473,19 @@ export default class FormViewStore {
         //首先确定列表
         if (display_columns) {
             this.analyzeColumn(display_columns, usedColumn);
+        }
+
+        if (data_button && this.usedActionIds && this.usedActionIds.length) {
+            const actions = JSON.parse(data_button);
+            const index = _.findIndex(actions, { id: 'add' });
+            if (index !== -1) {
+                this.addAction = actions[index];
+                actions.splice(index, 1);
+            }
+            this.actions = actions.filter(act => {
+                this.$vue.$set(act, 'doing', false);
+                return this.usedActionIds.indexOf(act.id) !== -1;
+            })
         }
 
         const fields = this.store.search({
@@ -521,11 +561,13 @@ export default class FormViewStore {
                 const exist = _.find(cfg.column, { name: defKey });
                 if (exist) {
                     this.usedFormCol = defKey;
+                    this.usedActionIds = exist.actions;
                     return exist.data;
                 }
             }
 
             this.usedFormCol = cfg.column[0].name;
+            this.usedActionIds = cfg.column[0].actions;
             return cfg.column[0].data;
         } else {
             return null
@@ -579,7 +621,7 @@ export default class FormViewStore {
         if (display_columns && this.usedFormCol && this.oriColData) {
             const config = JSON.parse(display_columns);
             const index = _.findIndex(config.column, { name: this.usedFormCol });
-            config.column.splice(index, 1, { data: this.oriColData, name: this.usedFormCol })
+            config.column.splice(index, 1, { data: this.oriColData, actions: this.usedActionIds, name: this.usedFormCol })
             const ret = await API.updateFormTree({ data_code, display_columns: JSON.stringify(config) });
             this.$vue.ResultNotify(ret);
         }
@@ -759,6 +801,189 @@ export default class FormViewStore {
         })
     }
 
+    async checkDataChange({ op, formData }) {
+        if (this.actioning) {
+            if (op === 2 || op === 1) {
+                let data = formData.dataArr;
+                if (this.actioning.batchable === '2') {
+                    delete data[0]['optype'];
+                    this.fieldsRule.forEach(f => {
+                        if ((2 & f.value) !== 2) {
+                            delete data[0][f.id];
+                        }
+                    });
+                    await this.batchAddOrUpdate(data[0], _.map(this.selectedList, 'leaf_id'), false);
+                    data = this.selectedList.map((d) => ({ ...d, ...data[0], leaf_id: d.leaf_id }));
+
+                }
+                const scriptRet = await this.checkActionScript(this.actioning, data);
+                this.checkActionLink(this.actioning);
+                this.setActionEmpty();
+                this.showExecutor = false;
+            }
+        }
+    }
+
+    checkActionalbe(action) {
+        const { method, batchable, rule } = action;
+        const data = this.selectedList;
+        if (batchable === '1' && data.length !== 1) {
+            return false;
+        }
+        if (batchable === '2' && !data.length) {
+            return false;
+        }
+        if (method === '2' && rule.length) {
+            return this.checkActionalbeByRule(action);
+        }
+        return true;
+    }
+
+    checkActionalbeByRule(action) {
+        const { rule, ruleType } = action;
+
+
+        for (let data of this.selectedList) {
+            const result = [];
+            for (let r of rule) {
+                const cpnt = this.store.search({ options: { fid: r.field } });
+                let condition = false;
+                if (cpnt) {
+                    let tv = r.data;
+                    let sv = data[cpnt.data._fieldValue];
+                    if (r.type === '2') {
+                        tv = data[r.data];
+                    }
+
+                    try {
+                        if (['op1', 'op2', 'op3', 'op4', 'op5', 'op6'].includes(r.op)) {
+                            if (cpnt.CPNT.figure || ['d_status', 'd_audit', 'd_stage'].includes(cpnt.data._fieldValue)) {
+                                sv = parseFloat(sv)
+                                tv = parseFloat(tv)
+                            }
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+
+                    if (r.op === 'op1') {
+                        condition = sv == tv;
+                    } else if (r.op === 'op2') {
+                        condition = sv != tv;
+                    } else if (r.op === 'op3') {
+                        condition = sv > tv;
+                    } else if (r.op === 'op4') {
+                        condition = sv >= tv;
+                    } else if (r.op === 'op5') {
+                        condition = sv < tv;
+                    } else if (r.op === 'op6') {
+                        condition = sv <= tv;
+                    } else if (r.op === 'op7') {
+                        if (sv && tv && typeof tv === 'string') {
+                            const tList = tv.split(',');
+                            sv = sv + '';
+                            let tempRet = true;
+                            for (let v in sv.split(',')) {
+                                if (tList.indexOf(v) == -1) {
+                                    tempRet = false;
+                                    break;
+                                }
+                            }
+                            condition = tempRet;
+                        }
+                    } else if (r.op === 'op8') {
+                        condition = true;
+                        if (tv && typeof tv === 'string') {
+                            const tList = tv.split(',');
+                            sv = sv + '';
+                            let tempRet = true;
+                            for (let v in sv.split(',')) {
+                                if (tList.indexOf(v) == -1) {
+                                    tempRet = false;
+                                    break;
+                                }
+                            }
+                            condition = tempRet;
+                        }
+                    } else if (r.op === 'op9') {
+                        if (sv && tv && typeof sv === 'string' && typeof tv === 'string') {
+                            condition = sv.search(tv) !== -1;
+                        }
+                    } else if (r.op === 'op90') {
+                        condition = (sv === '' || _.isNull(sv));
+                    } else if (r.op === 'op91') {
+                        condition = !(sv === '' || _.isNull(sv));
+                    }
+                }
+                result.push(condition)
+            }
+            if (!result[ruleType === '1' ? 'every' : "some"](i => i)) {
+                return false;
+            };
+        }
+        return true;
+    }
+
+    async checkActionScript(action, data) {
+        const { scriptable } = action;
+        if (!scriptable) return true;
+        const ret = await API.doActionScript({ btn_id: action.id, btn_type: '1', data_code: this.store.data_code, data });
+        this.$vue.ResultNotify(ret);
+    }
+
+    checkActionLink(action) {
+        const { linkable, openLink, bindPlugin } = action;
+        if (linkable && openLink) {
+            let link = openLink;
+            if (bindPlugin) {
+                link = link.replace(':code', bindPlugin);
+            }
+            window.open(link);
+        }
+    }
+
+    async checkAction(action) {
+        const { mode, fields = {}, beforeScriptable, batchable } = action;
+        const data = this.selectedList;
+        action.doing = true;
+        this.setActionEmpty();
+
+        //查看是否满足使用条件
+        if (!this.checkActionalbeByRule(action)) {
+            return this.$vue.$message({ message: '不满足执行条件', type: 'warning' });
+        }
+
+        //查看脚本
+        if (beforeScriptable) {
+            const ret = await API.doActionScript({ btn_id: action.id, btn_type: '0', data_code: this.store.data_code, data });
+            if (ret.success) {
+                return this.$vue.$message({ message: ret.message || '不能执行', type: 'warning' });
+            }
+        }
+
+        if (mode === '3') {
+            if (batchable === '1') {
+                this.showInstance(data[0]);
+            } else {
+                this.newInstance();
+                this.autoSubmit = false;
+                this.keepable = false;
+            }
+            this.store._forEach(cpnt => {
+                if (cpnt.data._fieldValue) {
+                    this.fieldsRule.push({ id: cpnt.data._fieldValue, value: fields[cpnt.data._fieldValue] || 0.1 });
+                }
+            });
+            this.actioning = action;
+            this.switchable = false;
+        } else {
+            const scriptRet = await this.checkActionScript(action, data);
+            this.checkActionLink(action);
+            await this.fetchStatus();
+        }
+        action.doing = false;
+    }
+
     async addOrUpdate({ leaf_id = "", formData }, refresh = true, emit = true) {
         if (formData) {
             const dataId = leaf_id || shortid.generate();
@@ -784,6 +1009,35 @@ export default class FormViewStore {
         }
         if (refresh) {
             this.fetchStatus();
+        }
+    }
+
+    async saveFiles() {
+        if (!this.selectedList.length) {
+            return this.$message({ message: '请选择数据', type: 'warning' });
+        }
+        const files = [];
+        const fileCpnts = this.store.search({ options: { componentid: 'attachment' }, onlyData: true });
+        fileCpnts.forEach(cpnt => {
+            for (let d of this.selectedList) {
+                if (d[cpnt._fieldValue]) {
+                    files.push(...d[cpnt._fieldValue].split(','))
+                }
+            }
+        })
+        if (files.length) {
+            const ret = await API.downloadZipFiles({ res_id: files.join(',') });
+            if (ret.success) {
+                const { zip = '', remark = '' } = ret.data;
+                if (zip) {
+                    window.open(zip);
+                }
+                if (remark) {
+                    setTimeout(() => {
+                        window.open(remark);
+                    }, 1000)
+                }
+            }
         }
     }
 }

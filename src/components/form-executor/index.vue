@@ -1,5 +1,5 @@
 <template>
-  <pso-dialog :title="title" :visible="opener.showExecutor" width="70%" @close="colseHandler">
+  <pso-dialog :title="title" :visible="opener.showExecutor" :width="boxWidth" @close="colseHandler">
     <template #title>
       <div class="form-executor-header" v-loading="initializing">
         <div class="form-executor-header__l">
@@ -15,6 +15,15 @@
               <el-button :disabled="!showNext" @click="$emit('next')" size="medium" type="text" icon="el-icon-arrow-down"></el-button>
             </el-tooltip>
           </div>
+          <el-tooltip content="全屏" placement="top-start" :visible-arrow="false" :open-delay="500" :hide-after="2000">
+            <el-button
+              style="margin-left: 20px"
+              @click="fullScreen = !fullScreen"
+              size="medium"
+              type="text"
+              icon="el-icon-full-screen"
+            ></el-button>
+          </el-tooltip>
         </div>
         <div class="form-executor-header__r">
           <template v-if="!initializing">
@@ -85,6 +94,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    switchable: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -94,6 +107,7 @@ export default {
       removing: false,
       showpreter: true,
       store: null,
+      fullScreen: false,
       data: {},
     };
   },
@@ -114,7 +128,7 @@ export default {
       return (this.params.deletable !== undefined ? this.params.deletable : this.editable) && this.dataId;
     },
     showSwitch() {
-      return this.dataId && this.instanceids && this.instanceids.length > 1;
+      return this.switchable && this.dataId && this.instanceids && this.instanceids.length > 1;
     },
     showPrev() {
       return this.showSwitch && this.dataId !== this.instanceids[0];
@@ -125,6 +139,9 @@ export default {
     isTemporary() {
       //暂存的数据，还没有真实提交
       return this.formParams.dataInstance && this.formParams.dataInstance.__temporary__;
+    },
+    boxWidth() {
+      return this.fullScreen ? "100%" : "70%";
     },
   },
   watch: {

@@ -1,0 +1,67 @@
+ .dynamic-rule {
+     width: 500px;
+
+     .dynamic-rule-item {
+         position: relative;
+
+         .dynamic-rule-item-body {}
+
+         .dynamic-rule-type {
+             padding: 10px 0;
+             width: 70px;
+         }
+     }
+
+     .dynamic-rule-add {
+         margin-top: 10px;
+     }
+
+     .dynamic-rule-filter {
+         background: #ecf5ff;
+         padding: 10px 15px 15px 15px;
+
+         .dynamic-rule-filter__header {
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+             margin-bottom: 10px;
+
+             .dynamic-rule-filter__name {
+                 input {
+                     background: #ecf5ff !important;
+                     padding: 0;
+                 }
+             }
+
+             .dynamic-rule-filter__op {
+                 width: 140px;
+             }
+
+             .dynamic-rule-filter__del {
+                 font-size: 22px;
+                 color: #F56C6C;
+                 cursor: pointer;
+             }
+         }
+
+         .dynamic-rule-filter__body {
+             .dynamic-rule-filter__value {
+                 display: flex;
+                 align-items: center;
+                 justify-content: space-between;
+
+                 .dynamic-rule-filter__value-l {
+                     flex: 1
+                 }
+
+                 .dynamic-rule-filter__value-r {
+                     margin-left: 10px;
+
+                     i {
+                         font-size: 20px;
+                     }
+                 }
+             }
+         }
+     }
+ }

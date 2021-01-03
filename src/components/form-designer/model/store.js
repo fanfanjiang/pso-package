@@ -3,6 +3,7 @@ import { setSelectedActor } from "../helper/dom.js";
 import { CPNT } from "../../../const/form";
 import Vue from 'vue';
 import shortid from 'shortid';
+import { makeSysFormFields } from "../../../tool/form";
 
 export default class FormStore {
     constructor(options) {
@@ -50,6 +51,10 @@ export default class FormStore {
 
         this.sub_config; //关联表配置
 
+        this.withSys = false;
+
+        this.ignoreAstColumn = false;
+ 
         for (let option in options) {
             if (options.hasOwnProperty(option)) {
                 this[option] = options[option];
@@ -60,6 +65,10 @@ export default class FormStore {
 
         if (this.data_config && typeof this.data_config === 'string') {
             this.data_config = JSON.parse(this.data_config);
+        }
+
+        if (this.withSys) {
+            this.data_config = this.data_config.concat(makeSysFormFields())
         }
 
         if (this.rule_config && typeof this.rule_config === 'string') {
@@ -139,7 +148,11 @@ export default class FormStore {
     }
 
     _forEach(fun) {
-        for (let key in this.cpntsMap) fun && fun(this.cpntsMap[key]);
+        for (let key in this.cpntsMap) {
+            if (!this.cpntsMap[key].CPNT.layout) {
+                fun && fun(this.cpntsMap[key]);
+            }
+        }
     }
 
     //获取所有表单字段值，系统和非系统的
