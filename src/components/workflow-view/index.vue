@@ -239,6 +239,7 @@ export default {
         this.store = new WFVStore({
           $vue: this,
           defSearchType: this.params.searchType,
+          insttogo: this.params.insttogo,
         });
 
         if (this.params.viewAuth) {

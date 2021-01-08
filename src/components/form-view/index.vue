@@ -264,6 +264,7 @@ export default {
           limit: this.defLimit,
           defSearchType: this.params.searchType,
           autoChange: this.autoChange,
+          insttogo: this.params.insttogo,
         });
 
         if (this.viewAuth) {

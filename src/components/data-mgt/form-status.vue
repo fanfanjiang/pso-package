@@ -68,6 +68,13 @@ export default {
   },
   created() {
     formatJSONList(this.data, FORM_STATUS_FIELDS);
+    this.data.forEach((d) => {
+      if (typeof d.script === "string") {
+        this.$delete(d, "script");
+        delete d.script;
+        this.$set(d, "script", []);
+      }
+    });
   },
   methods: {
     goDesigner(index) {

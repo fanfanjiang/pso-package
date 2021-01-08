@@ -1,6 +1,6 @@
 <template>
   <div class="custom-column" v-loading="initializing">
-    <el-table key="list" :data="column" style="width: 100%">
+    <el-table size="mini" key="list" :data="column" style="width: 100%">
       <el-table-column type="index" :index="1" width="40"></el-table-column>
       <el-table-column label="字段" width="140" prop="field">
         <template slot-scope="scope">
@@ -52,6 +52,24 @@
             <el-option label="居左" value="left"></el-option>
             <el-option label="居右" value="right"></el-option>
           </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column prop="sortable" label="手动排序" width="100" sortable>
+        <template slot-scope="scope">
+          <el-switch size="mini" v-model="scope.row.sortable" active-value="1" inactive-value="0"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column prop="defSort" label="默认排序类型" width="120">
+        <template slot-scope="scope">
+          <el-select size="mini" clearable v-model="scope.row.defSort">
+            <el-option label="降序" value="desc"></el-option>
+            <el-option label="升序" value="asc"></el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column prop="defSortOrder" label="默认排序顺序" width="140">
+        <template slot-scope="scope">
+          <el-input-number size="mini" v-model="scope.row.defSortOrder" controls-position="right" :min="0"></el-input-number>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="160">
@@ -216,12 +234,6 @@ export default {
     this.initializing = false;
   },
   methods: {
-    handleAdd() {
-      this.column.push({
-        ...STATIC_COLUMN_FIELDS,
-        ...this.extend,
-      });
-    },
     handleDel(index) {
       this.column.splice(index, 1);
     },

@@ -111,6 +111,9 @@ export default class WFVStore extends FVStore {
             this.instances = ret.data.data;
             this.dataTotal = ret.data.page;
             this.summary = ret.data.sum || null;
+
+            this.checkInstToGO();
+
             this.$vue.$emit("data-loaded", this.instances);
         }
 

@@ -95,6 +95,9 @@ export default class FormViewStore {
         this.usedFormCol = '';
         this.oriColData = null;
 
+        //加载后立即打开的实例
+        this.insttogo = '';
+
         //操作控制
         this.autoChange = true; //是否自动修改数据状态
 
@@ -111,6 +114,14 @@ export default class FormViewStore {
         this.deFixLayout = debounce(1000, (params) => {
             this.fixLayout(params);
         });
+    }
+
+    get __FIELDID__() {
+        return 'field_name';
+    }
+
+    get __FIELDNAME__() {
+        return 'display';
     }
 
     get opAddable() {
@@ -205,6 +216,7 @@ export default class FormViewStore {
                 ...extend,
                 [field]: value,
                 [ids]: _.map(this.selectedList, 'leaf_id').join(','),
+                data: { dataArr: this.selectedList }
             });
 
             this.$vue.ResultNotify(ret);
@@ -323,7 +335,7 @@ export default class FormViewStore {
         const params = {
             limit: this.limit,
             page: this.page - 1,
-            leaf_auth: this.activeView,
+            leaf_auth: this.insttogo ? '4' : this.activeView,
             orderby: order ? `order by ${order}` : "",
             keys: { ...this.keys, ...this.defaultKeys },
             dict_type: this.usedFormCol,
@@ -336,6 +348,10 @@ export default class FormViewStore {
 
         if (this.keywords !== "" && !params.keys.d_name) {
             params.keys.d_name = { value: this.keywords, type: 2 };
+        }
+
+        if (this.insttogo) {
+            params.keys.leaf_id = { value: this.insttogo, type: 1 };
         }
 
         console.log(params.keys);
@@ -363,14 +379,24 @@ export default class FormViewStore {
             this.instances = ret.data;
             this.dataTotal = ret.total;
             this.summary = ret.sum || null;
+
+            this.checkInstToGO();
         }
 
         this.$vue.$emit("data-loaded", this.instances);
+
 
         this.fetching = false;
         this.attachments = {};
 
         this.fixLayout();
+    }
+
+    checkInstToGO() {
+        if (this.insttogo && this.instances.length && this.insttogo === this.instances[0].leaf_id) {
+            this.showInstance(this.instances[0]);
+        }
+        this.insttogo = '';
     }
 
     fixLayout() {
@@ -710,7 +736,7 @@ export default class FormViewStore {
         if (sortIndex !== -1) {
             this.sorts[sortIndex].order = order;
         } else {
-            this.sorts.push({ prop, order, name: display || _.find(this.fields, { field_name: prop }).display, operable });
+            this.sorts.push({ prop, order, name: display || _.find(this.fields, { [this.__FIELDID__]: prop })[this.__FIELDNAME__], operable });
         }
 
         if (fetch) {
@@ -842,7 +868,6 @@ export default class FormViewStore {
     checkActionalbeByRule(action) {
         const { rule, ruleType } = action;
 
-
         for (let data of this.selectedList) {
             const result = [];
             for (let r of rule) {
@@ -917,6 +942,7 @@ export default class FormViewStore {
                 }
                 result.push(condition)
             }
+            console.log(result, ruleType);
             if (!result[ruleType === '1' ? 'every' : "some"](i => i)) {
                 return false;
             };

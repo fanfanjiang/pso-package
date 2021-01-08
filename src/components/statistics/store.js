@@ -18,6 +18,14 @@ export default class STAVStore extends FVStore {
         this.extendData = {};
     }
 
+    get __FIELDID__() {
+        return 'field';
+    }
+
+    get __FIELDNAME__() {
+        return 'name';
+    }
+
     get opExportable() {
         return true;
     }
@@ -44,8 +52,12 @@ export default class STAVStore extends FVStore {
 
             const conditionItems = [];
 
+            //默认排序配置
+            const defSorts = [];
+
             this.fields.forEach((f) => {
                 Vue.set(f, 'display', f.name);
+
                 if (f.searchable === "1" && f.formulable !== "1") {
                     let data = "";
                     const fType = FILTER_TYPE[f.searchType];
@@ -65,11 +77,21 @@ export default class STAVStore extends FVStore {
                     this.conditionOptions.push(genComponentData(sItem));
                     conditionItems.push({ cpnt: sItem, field: sItem.fid, op: f.searchOp, data, match: "" });
                 }
+
+                if (f.defSort) {
+                    defSorts.push(f)
+                }
             });
 
             if (conditionItems.length) {
                 this.defCondition.push(conditionItems);
                 this.showFilter = true;
+            }
+
+            if (defSorts.length) {
+                _.orderBy(defSorts, ["defSortOrder"], ["asc"]).forEach(f => {
+                    this.makeSort({ prop: f.field, order: f.defSort, display: f.name, operable: f.sortable === '1', fetch: false });
+                })
             }
 
             //解析默认keys
@@ -153,6 +175,8 @@ export default class STAVStore extends FVStore {
 
         this.fetching = true;
 
+        const order = this.sorts.map((item) => `${item.prop} ${item.order}`).join(",");
+
         const params = {
             ...this.params,
             limit: this.limit,
@@ -160,6 +184,7 @@ export default class STAVStore extends FVStore {
             tp_code: this.staCfg.tp_code,
             leaf_auth: this.activeView,
             paramvalue: this.extendData,
+            orderby: order ? `order by ${order}` : "",
             keys: JSON.stringify({ ...this.defaultKeys })
         };
 

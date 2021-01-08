@@ -129,6 +129,7 @@ export default {
         });
       }
 
+      fields = _.orderBy(fields, ["is_sys"], ["asc"]);
       this.$set(this.cache, this.curCode, fields);
       this.$emit("loaded", { fields, store, config: this.formConfig, forms: this.options });
 

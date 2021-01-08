@@ -7,7 +7,7 @@
       <el-tabs class="tabs" v-model="activeTab">
         <el-tab-pane v-for="(t, i) in modes" :label="t.n" :name="t.v" :key="i"></el-tab-pane>
       </el-tabs>
-      <el-form ref="form" :rules="rules" :model="passport" label-width="0">
+      <el-form v-if="activeTab" ref="form" :rules="rules" :model="passport" label-width="0">
         <template v-if="activeTab === 'def'">
           <el-form-item prop="username">
             <el-input placeholder="手机号/邮箱/用户名" v-model="passport.username"></el-input>
@@ -36,9 +36,10 @@
             <img :src="captchaUrl" alt="图片验证码" @click="reloadCaptcha" slot="append" />
           </el-input>
         </el-form-item>
-      </el-form>
-      <div>
         <el-button class="wider" type="primary" @click="submit" :loading="submiting" :disabled="submiting">登录</el-button>
+      </el-form>
+      <div class="passport-box-redirect" v-if="base && base.map_key3">
+        <a :href="`/reg?appid=${appid}`">注册 <i class="el-icon-arrow-right"></i></a>
       </div>
       <div class="passport-box-social">
         <social :appid="appid"></social>
@@ -55,6 +56,7 @@ export default {
   components: { Social },
   mixins: [CaptchaMixin, SignInMixin],
   props: {
+    base: Object,
     orgs: Array,
     users: Array,
     defSignIn: {
@@ -102,7 +104,7 @@ export default {
     if (this.defSignIn) {
       this.modes.push({ n: "登录", v: "def" });
     }
-    if (this.orgs) {
+    if (this.orgs && this.orgs.length) {
       this.modes.push({ n: "组织登录", v: "org" });
     }
     if (this.modes.length) {

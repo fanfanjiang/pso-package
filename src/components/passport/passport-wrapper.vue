@@ -40,21 +40,27 @@ export default {
       type: Boolean,
       default: true,
     },
-    defAppid: String,
+    outerAppid: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
+      defAppid: "",
       showSwitch: false,
     };
   },
   created() {
-    this.initializeCfg();
+    this.defAppid = this.outerAppid;
+    this.initializeCfg(false);
   },
   methods: {
     appChangeHandler(site) {
       if (this.appswitch) {
         this.selectSite(site);
         this.showSwitch = false;
+        this.defAppid = "";
       }
       this.$emit("change", site);
     },

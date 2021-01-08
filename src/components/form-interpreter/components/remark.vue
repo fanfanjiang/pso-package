@@ -1,5 +1,8 @@
 <template>
-  <div class="pso-form-remark">{{ cpnt.data._val || cpnt.data._defaultValue }}</div>
+  <div class="pso-form-remark">
+    <i class="el-icon-warning"></i>
+    <span>{{ cpnt.data._val || cpnt.data._defaultValue }}</span>
+  </div>
 </template>
 <script>
 export default {
@@ -13,7 +16,18 @@ export default {
 </script>
 <style lang="less" scoped>
 .pso-form-remark {
-  padding: 20px 0px;
-  color: #000;
+  i {
+    font-size: 16px;
+    margin-right: 5px;
+  }
+  color: #f56c6c;
+  font-weight: bold;
+  background: #fff;
+  letter-spacing: 1.2px;
+  padding: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
 }
 </style>

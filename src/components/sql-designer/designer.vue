@@ -73,6 +73,7 @@
             </div>
             <div class="form-wrapper" v-if="extendable">
               <picker-form
+                v-if="block.is_msg !== '1'"
                 from-text="目标表"
                 form-field="data_code"
                 source="3"
@@ -81,22 +82,101 @@
                 required
                 @loaded="targetFormCheck"
               ></picker-form>
+              <el-form-item v-else label="目标表" required>
+                <span>消息表</span>
+              </el-form-item>
             </div>
-            <div v-if="copyProxy.length">
-              <!-- <el-divider content-position="left">子表配置</el-divider>
-              <div class="sql-designer-copyitem" v-for="(d, i) in copyProxy" :key="i">
-                <el-checkbox v-model="d.checked">{{ d.name }}</el-checkbox>
-                <div>
-                  <el-radio v-model="d.f_type" label="1">复制</el-radio>
-                  <el-radio v-model="d.f_type" label="2">链式</el-radio>
-                </div>
-              </div> -->
+          </el-form>
+        </el-collapse-item>
+        <el-collapse-item v-if="block.is_msg === '1'" title="消息设置" name="message">
+          <el-form class="sql-designer-base" size="mini" label-position="left">
+            <div class="sql-designer__search">
+              <span></span>
+              <el-button size="mini" type="success" @click="genColumn">发布列表</el-button>
+            </div>
+            <div class="form-wrapper">
+              <el-form-item label="标题" required>
+                <option-input :data="block.msgData" id-field="msg_title" t-field="title_is_field" :options="columns"></option-input>
+              </el-form-item>
+              <el-form-item label="提醒方式" required>
+                <el-select size="mini" v-model="block.msgData.msg_notice" filterable clearable>
+                  <el-option v-for="(o, i) in NOTICE_WAY" :key="i" :label="o.n" :value="o.v"></el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+            <div class="form-wrapper">
+              <el-form-item label="分类" required>
+                <el-select size="mini" v-model="block.msgData.msg_type" filterable clearable>
+                  <el-option v-for="(o, i) in msgMains" :key="i" :label="o.map_key2" :value="o.map_key0"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="子类" required>
+                <el-select size="mini" v-model="block.msgData.msg_sub_type" filterable clearable>
+                  <el-option v-for="(o, i) in msgSubs" :key="i" :label="o.map_key2" :value="o.map_key0"></el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+            <div class="form-wrapper">
+              <el-form-item label="主体" required>
+                <option-input :data="block.msgData" id-field="msg_body" t-field="body_is_field" :options="columns"></option-input>
+              </el-form-item>
+              <el-form-item label="数据ID" required>
+                <option-input :data="block.msgData" id-field="data_id" t-field="data_is_field" :options="columns"></option-input>
+              </el-form-item>
+            </div>
+            <div class="form-wrapper">
+              <el-form-item label="URL" required>
+                <el-tag style="margin-right: 10px" v-if="msgUrlProxy" size="medium" closable @close="delMsgUrl"
+                  >{{ msgUrlProxy.node_display || msgUrlProxy.menu_name }}
+                </el-tag>
+                <pso-picker-tree :request-options="{ dimen: '1' }" pattern="radio" rootable @confirm="confirmMsgUrl">
+                  <el-button size="mini" type="primary" plain>选择菜单</el-button>
+                </pso-picker-tree>
+              </el-form-item>
+            </div>
+            <div class="form-wrapper">
+              <el-form-item label="发送主体" required>
+                <el-select size="mini" v-model="block.msgData.msg_sender" filterable clearable>
+                  <el-option v-for="(o, i) in MSG_SENDER" :key="i" :label="o.n" :value="o.v"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="消息目标" required>
+                <el-select size="mini" v-model="block.msgData.msg_goal" filterable clearable>
+                  <el-option v-for="(o, i) in MSG_TARGET" :key="i" :label="o.n" :value="o.v"></el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+            <div class="form-wrapper">
+              <el-form-item label="收件人类型" required>
+                <el-select size="mini" v-model="block.msgData.receiver_type" filterable clearable>
+                  <el-option v-for="(o, i) in MSG_RECEIVER" :key="i" :label="o.n" :value="o.v"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="到期处理方式" required>
+                <el-select size="mini" v-model="block.msgData.msg_act" filterable clearable>
+                  <el-option v-for="(o, i) in MSG_EXPIRE_HANDLER" :key="i" :label="o.n" :value="o.v"></el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+            <div class="form-wrapper" v-if="block.msgData.receiver_type !== '4'">
+              <msg-receiver :block="block" :columns="columns"></msg-receiver>
+            </div>
+            <div class="form-wrapper">
+              <el-form-item label="到期日期" required>
+                <el-date-picker v-model="block.msgData.msg_expire" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"> </el-date-picker>
+              </el-form-item>
+              <el-form-item label="提醒日期" required>
+                <el-date-picker v-model="block.msgData.msg_call" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"> </el-date-picker>
+              </el-form-item>
             </div>
           </el-form>
         </el-collapse-item>
         <el-collapse-item title="脚本生成" name="generate">
           <div class="sql-designer-gen" v-show="trueSource.length">
-            <div class="sql-designer__op">
+            <div class="sql-designer__search">
+              <div class="">
+                <pso-search text="查询字段" v-model="sourcekyd"></pso-search>
+              </div>
               <el-button size="mini" type="success" @click="genSql">生成脚本</el-button>
             </div>
             <el-tabs key="sourceTab" v-model="activeTab" type="card">
@@ -186,6 +266,7 @@
         <div class="sql-designer-debug__header">
           <el-tabs key="debugTab" v-model="activeDebugTab" @tab-click="showDebugPanel = true">
             <el-tab-pane label="参数设置" name="params"></el-tab-pane>
+            <el-tab-pane label="列表" name="column"></el-tab-pane>
             <el-tab-pane label="输出" name="result"></el-tab-pane>
           </el-tabs>
           <div v-if="showDebugPanel" class="sql-designer-ctl__btn" @click="showDebugPanel = false">
@@ -208,6 +289,13 @@
           <div class="sql-designer-debug__result" v-show="activeDebugTab === 'result'">
             <div v-html="debugResult"></div>
             <pso-skeleton v-show="debuging" :lines="1"></pso-skeleton>
+          </div>
+          <div class="sql-designer-debug__column" v-show="activeDebugTab === 'column'">
+            <el-table size="mini" style="width: 100%" :data="columns">
+              <el-table-column type="index" :index="1" width="40"></el-table-column>
+              <el-table-column prop="field" label="字段" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="name" label="名称" show-overflow-tooltip> </el-table-column>
+            </el-table>
           </div>
         </div>
       </div>
@@ -242,7 +330,8 @@
         </div>
       </template>
       <div class="sql-designer-gen">
-        <div class="sql-designer__op">
+        <div class="sql-designer__search">
+          <pso-search text="查询字段" v-model="targetkyd"></pso-search>
           <el-button size="mini" type="success" :disabled="!selectedTargetSrc.length" @click="genTarget">生成目标字段</el-button>
         </div>
         <el-tabs key="targetTab" v-model="activeTargetTab" type="card">
@@ -292,8 +381,13 @@ import SQLCONST from "./const";
 import PickerForm from "../picker/pso-picker-form";
 import dayjs from "dayjs";
 import { makeSysFormFields } from "../../tool/form";
+import { formatJSONList } from "../../utils/util";
+import { SQL_FEILDS } from "../../const/sys";
+import OptionInput from "./option-input";
+import MsgReceiver from "./msg-receiver";
+
 export default {
-  components: { PickerForm },
+  components: { PickerForm, OptionInput, MsgReceiver },
   props: {
     block: {
       type: Object,
@@ -303,21 +397,21 @@ export default {
       default: "",
     },
     names: Array,
+    msgMains: Array,
+    msgSubs: Array,
   },
   data() {
     Object.assign(this, SQLCONST);
     this.TABS = [
-      { n: "主表系统字段", v: "sys", o: 1 },
-      { n: "主表业务字段", v: "nosys", o: 1 },
-      { n: "子表系统字段", v: "sub_sys", o: 2 },
-      { n: "子表业务字段", v: "sub_nosys", o: 2 },
+      { n: "主表字段", v: "main", o: 1 },
+      { n: "子表字段", v: "sub", o: 2 },
     ];
     this.forms = [];
     return {
       source: { data_code: "" },
       querySource: { data_code: "" },
       querySubSource: { data_code: "" },
-      activeTab: "sys",
+      activeTab: "main",
       paramsOptions: [],
       sourceFields: [],
       subSourceFields: [],
@@ -326,7 +420,7 @@ export default {
       selectedTargetSrc: [],
       selectedTarget: [],
       textMarks: [],
-      activeMenu: ["base", "generate", "field"],
+      activeMenu: ["base", "generate", "field", "message"],
       sqlOptions: {
         tabSize: 4,
         styleActiveLine: true,
@@ -347,26 +441,17 @@ export default {
       store: null,
       showInstancePicker: false,
       instance: null,
-      copyProxy: [],
+      sourcekyd: "",
+      targetkyd: "",
+      initializing: true,
+      columning: false,
+      columns: [],
+      msgUrlProxy: null,
     };
   },
   computed: {
     source_code() {
       return this.block.scode || this.scode;
-    },
-    copyTarget() {
-      const asts = [];
-      if (this.paramsOptions.length && this.targetFields.length) {
-        this.paramsOptions.forEach((d) => {
-          if (d.componentid === "asstable") {
-            const exist = _.find(this.targetFields, { _option: d._option });
-            if (exist) {
-              asts.push(exist);
-            }
-          }
-        });
-      }
-      return asts;
     },
     extendable() {
       return this.block.script_type === "1" && this.block.action_type && this.block.action_type !== "0";
@@ -386,6 +471,9 @@ export default {
         case "2":
           fix = "psoleaf";
           break;
+        case "3":
+          fix = "psoall";
+          break;
       }
       return fix;
     },
@@ -402,7 +490,11 @@ export default {
       );
     },
     decidedTarget() {
-      return this.targetFields.filter((d) => (this.activeTargetTab === "sys" ? d.is_sys === "1" : d.is_sys !== "1"));
+      return this.targetFields.filter(
+        (d) =>
+          (this.activeTargetTab === "sys" ? d.is_sys === "1" : d.is_sys !== "1") &&
+          (this.targetkyd ? d.fieldDisplay.search(this.targetkyd) !== -1 : true)
+      );
     },
     searchSub() {
       return this.block.relate_type === "2";
@@ -411,19 +503,18 @@ export default {
       return this.searchSub ? this.subSourceFields : this.sourceFields;
     },
     paramsSource() {
-      return this.block.relate_type !== "2" ? this.sourceFields : this.subSourceFields;
+      return this.block.relate_type === "1" ? this.subSourceFields : this.sourceFields;
     },
     parmsTabs() {
-      return this.searchSub ? ["sys", "nosys"] : ["sub_sys", "sub_nosys"];
+      return this.searchSub ? ["main"] : ["sub"];
     },
     decidedSource() {
-      const source = ["sys", "nosys"].includes(this.activeTab) ? this.sourceFields : this.subSourceFields;
-      const isSysTab = ["sys", "sub_sys"].includes(this.activeTab);
-      return source.filter((d) => (isSysTab ? d.is_sys === "1" : d.is_sys !== "1"));
+      const data = ["main"].includes(this.activeTab) ? this.sourceFields : this.subSourceFields;
+      return data.filter((d) => (this.sourcekyd ? d.fieldDisplay.search(this.sourcekyd) !== -1 : true));
     },
     sourceTabs() {
       return _.orderBy(
-        this.TABS.filter((t) => (!this.showSubSource ? !["sub_sys", "sub_nosys"].includes(t.v) : true)),
+        this.TABS.filter((t) => (!this.showSubSource ? !["sub"].includes(t.v) : true)),
         ["o"],
         [this.searchSub ? "desc" : "asc"]
       );
@@ -445,46 +536,37 @@ export default {
     },
     "block.relate_type"() {
       this.$refs.sourceTable.clearSelection();
-    },
-    copyTarget: {
-      deep: true,
-      handler() {
-        if (this.block.data_code && !this.targetFields.length) return;
-        this.getCopyTarget();
-      },
-    },
-    copyProxy: {
-      deep: true,
-      handler() {
-        this.block.child_config = this.copyProxy.filter((d) => d.checked);
-      },
+      this.clearSourceParam();
     },
     "source.data_code"(val) {
       this.block.scode = val;
     },
+    "querySource.data_code"(val) {
+      this.block.query_code = val;
+    },
+    "querySubSource.data_code"(val) {
+      this.block.query_sub_code = val;
+    },
   },
-  created() {
+  async created() {
     this.source.data_code = this.source_code;
-    this.querySource.data_code = this.source_code;
+    this.querySource.data_code = this.block.query_code || this.source_code || "";
+    this.querySubSource.data_code = this.block.query_sub_code || "";
+
+    if (this.block.is_msg === "1") {
+      this.targetFields = _.cloneDeep(this.MSG_FIELDS);
+
+      formatJSONList([this.block.msgData], SQL_FEILDS.msgData);
+
+      if (this.block.msgData.msg_url) {
+        const ret = await this.API.getTreeNode({ code: this.block.msgData.msg_url });
+        if (ret.success && ret.data && ret.data.data) {
+          this.confirmMsgUrl([ret.data.data]);
+        }
+      }
+    }
   },
   methods: {
-    getCopyTarget() {
-      const list = [];
-      this.copyTarget.forEach((d) => {
-        const item = { name: this.getForm(d._option).node_display, efield: d._option };
-        const exist = _.find(this.block.child_config, { efield: d._option });
-        let checked = false;
-        let f_type = "1";
-        if (exist) {
-          checked = exist.checked;
-          f_type = exist.f_type;
-        }
-        this.$set(item, "checked", checked);
-        this.$set(item, "f_type", f_type);
-        list.push(item);
-      });
-      this.copyProxy = list;
-    },
     getForm(node_name) {
       return _.find(this.forms, { node_name }) || {};
     },
@@ -532,14 +614,28 @@ export default {
         this.$set(d, "condition", "1");
       });
     },
+    clearSourceParam() {
+      this.prepareSource(this.sourceFields);
+      this.prepareSource(this.subSourceFields);
+    },
     sourceFormCheck({ fields }) {
       this.prepareSource(fields);
       this.sourceFields = fields;
-      this.subSourceFields = [];
+      //避免初始化的时候把子表置为空
+      if (!this.initializing) {
+        this.subSourceFields = [];
+      }
+      this.initializing = false;
+      if (!this.searchSub) {
+        this.genColumn();
+      }
     },
     sourceSubFormCheck({ fields }) {
       this.prepareSource(fields);
       this.subSourceFields = fields;
+      if (this.searchSub) {
+        this.genColumn();
+      }
     },
     targetFormCheck({ fields }) {
       fields.forEach((d) => {
@@ -613,26 +709,28 @@ export default {
       const matches = [];
       codeRef.eachLine((line) => {
         const fMaps = {};
-        this.tableFields.forEach((f) => {
-          const { field_name: regText } = f;
-          if (!fMaps.hasOwnProperty(regText)) {
-            fMaps[regText] = regText;
-            const reg = new RegExp(regText, "g");
+        if (line.text) {
+          this.tableFields.forEach((f) => {
+            const { field_name: regText } = f;
+            if (!fMaps.hasOwnProperty(regText)) {
+              fMaps[regText] = regText;
+              const reg = new RegExp(regText, "g");
+              while (true) {
+                const match = reg.exec(line.text);
+                if (!match) break;
+                matches.push({ n, match, field: f });
+              }
+            }
+          });
+          this.forms.forEach((f) => {
+            const reg = new RegExp(f.node_name, "g");
             while (true) {
               const match = reg.exec(line.text);
               if (!match) break;
-              matches.push({ n, match, field: f });
+              matches.push({ n, match, field: { fieldDisplay: f.node_display } });
             }
-          }
-        });
-        this.forms.forEach((f) => {
-          const reg = new RegExp(f.node_name, "g");
-          while (true) {
-            const match = reg.exec(line.text);
-            if (!match) break;
-            matches.push({ n, match, field: { fieldDisplay: f.node_display } });
-          }
-        });
+          });
+        }
         n++;
       });
       for (let { n, match, field } of matches) {
@@ -651,8 +749,8 @@ export default {
     },
     makeTarget(field, efield = "") {
       this.block.field_config.push({
-        field_format: field._field_format,
-        output_format: field._output_format,
+        field_format: field._field_format || "",
+        output_format: field._output_format || "",
         is_sys: field.is_sys,
         display: field.fieldDisplay,
         sfield: field._fieldValue,
@@ -674,12 +772,9 @@ export default {
       this.activeDebugTab = "result";
 
       try {
-        let data = { dataArr: [{}] };
-        if (this.$refs.formImage) {
-          data = await this.$refs.formImage.makeData();
-        }
+        const paramvalue = await this.getDebugParams();
         this.debuging = true;
-        const ret = await this.API.debugSQLScript({ script: this.block, scode: this.source_code, paramvalue: data.dataArr[0] });
+        const ret = await this.API.debugSQLScript({ script: this.block, paramvalue });
         this.debugResult += `[${dayjs().format("HH:mm:ss")}]     ${JSON.stringify(ret)}</br>`;
         this.debuging = false;
       } catch (error) {
@@ -693,6 +788,43 @@ export default {
       text = text.replace("@main@", this.querySource.data_code);
       text = text.replace("@sub@", `${this.querySubSource.data_code || ""}`);
       this.block.index_script += text;
+    },
+    async getDebugParams() {
+      try {
+        if (this.$refs.formImage) {
+          return (await this.$refs.formImage.makeData()).dataArr[0];
+        }
+      } catch (error) {}
+      return {};
+    },
+    async genColumn() {
+      if (!this.block.script) return;
+      this.showDebugPanel = true;
+      this.activeDebugTab = "column";
+
+      this.columning = true;
+      const paramvalue = await this.getDebugParams();
+      const ret = await this.API.getColumnBySql({ script: this.block, paramvalue });
+      if (ret.success && ret.data) {
+        this.columns = JSON.parse(ret.data.data).map((d) => {
+          const exist = _.find(this.trueSource, { _fieldValue: d.field });
+          if (exist) {
+            d.name = exist.fieldDisplay;
+          }
+          return d;
+        });
+      }
+      this.columning = false;
+    },
+    confirmMsgUrl(data) {
+      if (data.length) {
+        this.msgUrlProxy = data[0];
+        this.block.msgData.msg_url = this.msgUrlProxy.node_name || this.msgUrlProxy.menu_code;
+      }
+    },
+    delMsgUrl() {
+      this.msgUrlProxy = null;
+      this.block.msgData.msg_url = "";
     },
   },
 };

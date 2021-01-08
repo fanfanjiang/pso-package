@@ -81,7 +81,7 @@
             </div>
           </div>
           <div class="dynamic-rule-filter__value-r">
-            <el-dropdown trigger="click" @command="commandHandler($event)">
+            <el-dropdown size="mini" trigger="click" @command="commandHandler($event)">
               <span class="el-dropdown-link">
                 <i class="el-icon-plus el-icon--right"></i>
               </span>

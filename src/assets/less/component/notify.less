@@ -1,0 +1,37 @@
+.pso-notify-panel {}
+
+.pso-notify-trigger {
+    cursor: pointer;
+    margin: 0 30px;
+    font-size: 0;
+
+    i {
+        font-size: 28px;
+        color: @nav-text-color;
+        .hover();
+
+        &:hover {
+            color: @nav-text-color-hover;
+        }
+    }
+}
+
+.pso-notify-view {
+    .pso-notify-view__body {}
+
+    .pso-notify-item {
+        .pso-notify-item__body {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pso-notify-item__content {
+            flex: 1;
+        }
+
+        .pso-notify-item__tail{
+            
+        }
+    }
+}

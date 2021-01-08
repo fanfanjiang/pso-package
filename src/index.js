@@ -107,6 +107,8 @@ import PsoOrgMgt from "./components/user/organization";
 
 import PsoSiteMgt from "./components/site-mgt";
 
+import PsoUserProfile from "./components/user-profile";
+
 //passport
 import PsoSignIn from "./components/passport/sign-in.vue";
 import PsoSignUp from "./components/passport/sign-up.vue";
@@ -116,6 +118,11 @@ import PsoAppswitch from "./components/passport/appswitch.vue";
 import PsoPassport from "./components/passport/passport-wrapper.vue";
 
 import PsoSqlDesigner from "./components/sql-designer";
+
+//通知
+import PsoNotify from "./components/notify";
+import PsoNotifyPopover from "./components/notify/popover";
+
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -207,7 +214,11 @@ const components = {
     PsoPassport,
 
     PsoSqlDesigner,
-    
+    PsoUserProfile,
+
+    PsoNotify,
+    PsoNotifyPopover,
+
     //混合视图
     PsoFvAst,
     PsoFvWv,

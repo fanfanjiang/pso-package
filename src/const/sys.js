@@ -91,7 +91,10 @@ export const STATIC_COLUMN_FIELDS = {
     searchOp: '',
     defaultVal: '',
     drillTarget: '',
-    drillParams: []
+    drillParams: [],
+    sortable: "0",
+    defSort: "", //默认排序类型
+    defSortOrder: 0,//默认排序顺序
 }
 
 export const FORM_UPLOAD_FIELDS = {
@@ -177,3 +180,45 @@ export const KEYS_TYPE = [
 export const ATUH_FOLDER = [{ n: "无", v: 0 }, { n: "查看", v: 1 }, { n: "完全控制", v: 2 }];
 export const ATUH_LEAF_FORM = [{ n: "新增", v: 1 }, { n: "更改", v: 2 }, { n: "导出", v: 4 }, { n: "更改阶段", v: 8 }];
 export const ATUH_LEAF_WF = [{ n: "新增", v: 1 }, { n: "编辑", v: 2 }, { n: "删除", v: 4 }, { n: "发布", v: 8 }, { n: "审核", v: 16 }];
+
+export const SQL_FEILDS = {
+    id: "",
+    name: "",
+    script: "",
+    scode: "",
+    script_type: "0",
+    action_type: "0",
+    relate_type: "0",
+    params: [],
+    data_code: "",
+    field_config: [],
+    optype: "0",
+    is_split: "0",
+    split_field: "",
+    is_index: "0",
+    index_script: "",
+    child_config: [],
+    query_code: "",
+    query_sub_code: "",
+    is_msg: '0',
+    msgData: {
+        msg_title: '',
+        title_is_field: '0',
+        msg_type: '',
+        msg_sub_type: '',
+        msg_body: '',
+        body_is_field: '1',
+        msg_notice: '',
+        msg_url: '',
+        msg_sender: '',
+        msg_goal: '',
+        msg_receiver: '',
+        receiver_is_field: '0',
+        receiver_type: '',
+        msg_expire: "",
+        msg_act: "",
+        data_id: "",
+        data_is_field: "0",
+        msg_call: "",
+    }
+}

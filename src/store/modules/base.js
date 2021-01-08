@@ -18,8 +18,9 @@ export default {
         appConfig: {
             appid: '',
             appName: '',
-            platform: ''
-        }
+            platform: '',
+            theme: '1B9AEE'
+        },
     },
     mutations: {
         [APP_SET_USER](state, user) {
@@ -39,14 +40,16 @@ export default {
             Auth.setToken(token);
             this.commit(APP_SET_USER, user)
         },
-        ['APP_SET_APPCONFIG'](state, data) {
+        ['APP_SET_APPCONFIG'](state, data = {}) {
             Storge.set('appconfig', data);
-            state.appConfig = Object.assign(state.appConfig, data);
+            state.appConfig = { ...state.appConfig, ...data };
         },
         ['APP_GET_APPCONFIG'](state) {
             const data = Storge.get('appconfig');
-            state.appConfig = data ? JSON.parse(data) : null;
-        },
+            if (data) {
+                try { state.appConfig = { ...state.appConfig, ...JSON.parse(data) }; } catch (error) { }
+            }
+        }
     },
     actions: {
         async [APP_MOCKSIGNIN]({ state, getters, commit }, params = {}) {

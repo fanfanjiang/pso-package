@@ -184,6 +184,14 @@ export default class API {
         }
     }
 
+    static async notification(params) {
+        try {
+            return await this.RESTful('/api/notification', Object.assign({ idField: 'msg_id' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async updateWfStatus(data) {
         try {
             return await this.request('/api/workflow/status', { data, method: 'post' });
@@ -774,6 +782,22 @@ export default class API {
     static async getFielsNoauth(data) {
         try {
             return await this.request('/files', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getColumnBySql(data) {
+        try {
+            return await this.request('/api/sql/column', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getAppMsg(data) {
+        try {
+            return await this.request('/api/app/message', { data, method: 'get' });
         } catch (error) {
             throw error;
         }

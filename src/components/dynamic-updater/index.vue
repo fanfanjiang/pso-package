@@ -15,7 +15,7 @@
             <cpnt v-if="showCpnt" :data="getCpnt(d.source)" v-model="d.target"></cpnt>
           </div>
           <div class="dynamic-updater-item__target-custom-r">
-            <el-dropdown trigger="click" @command="commandHandler($event, d)">
+            <el-dropdown size="mini" trigger="click" @command="commandHandler($event, d)">
               <span class="el-dropdown-link">
                 <i class="el-icon-plus el-icon--right"></i>
               </span>

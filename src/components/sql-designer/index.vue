@@ -16,6 +16,7 @@
         <div class="form-executor-header__r">
           <div class="sql-designer__add">
             <el-button size="mini" type="success" icon="el-icon-plus" @click="addSqlBlock()">新增脚本</el-button>
+            <el-checkbox v-model="message">消息</el-checkbox>
           </div>
         </div>
       </div>
@@ -23,7 +24,7 @@
     <div class="sql-designer-wrapper">
       <template v-if="sql && sql.length">
         <transition name="el-fade-in">
-          <designer v-if="curBlock" :scode="scode" :block="curBlock" :names="names"></designer>
+          <designer v-if="curBlock" :scode="scode" :block="curBlock" :names="names" :msg-mains="msgMains" :msg-subs="msgSubs"></designer>
         </transition>
       </template>
       <pso-empty v-else text="暂无脚本"></pso-empty>
@@ -33,6 +34,9 @@
 <script>
 import shortid from "shortid";
 import Designer from "./designer";
+import { formatJSONList } from "../../utils/util";
+import { SQL_FEILDS } from "../../const/sys";
+
 export default {
   components: { Designer },
   props: {
@@ -50,21 +54,42 @@ export default {
     return {
       activeTab: "",
       curBlock: null,
+      message: false,
+      msgMains: [],
+      msgSubs: [],
     };
   },
   watch: {
     "opener.show"(show) {
       if (show) {
-        this.resetActiveTab();
+        this.initialize();
       }
     },
     activeTab() {
       this.setCurBlock();
     },
+    message() {
+      this.checkMessage();
+    },
   },
   methods: {
+    async initialize() {
+      formatJSONList(this.sql, SQL_FEILDS);
+      this.resetActiveTab();
+      this.message = !!this.getMsgBlock();
+      
+      const data = (await this.API.getSysConfig({ keys: JSON.stringify({ config_type: { value: "9,10", type: 4 } }) })).data;
+      const grouped = _.groupBy(data, "config_type");
+      if (grouped["9"]) {
+        this.msgMains = grouped["9"];
+      }
+      if (grouped["10"]) {
+        this.msgSubs = grouped["10"];
+      }
+    },
     addSqlBlock(option = {}) {
-      let { script = "", name } = option;
+      let { name } = option;
+
       if (!name) {
         if (this.names) {
           name = this.names[0];
@@ -72,30 +97,29 @@ export default {
           name = "脚本";
         }
       }
+
       const id = shortid.generate();
-      this.sql.push({
+      const data = {
+        ..._.cloneDeep(SQL_FEILDS),
+        ...option,
         id,
         name,
-        script,
         scode: this.scode,
-        script_type: "0",
-        action_type: "0",
-        relate_type: "0",
-        params: [],
-        data_code: "",
-        field_config: [],
-        optype: "0",
-        is_split: "0",
-        split_field: "",
-        is_index: "0",
-        index_script: "",
-        child_config: [],
-      });
+      };
+
+      const msgIndex = _.findIndex(this.sql, { is_msg: "1" });
+      if (msgIndex !== -1) {
+        this.sql.splice(msgIndex, 0, data);
+      } else {
+        this.sql.push(data);
+      }
+
       this.activeTab = id;
     },
     removeSqlBlock(id) {
       const index = _.findIndex(this.sql, { id });
       if (index !== -1) {
+        if (this.sql[index].is_msg === "1") this.message = false;
         this.sql.splice(index, 1);
       }
       this.resetActiveTab();
@@ -113,6 +137,17 @@ export default {
         });
       } else {
         this.curBlock = null;
+      }
+    },
+    getMsgBlock() {
+      return _.find(this.sql, { is_msg: "1" });
+    },
+    checkMessage() {
+      const msg = _.find(this.sql, { is_msg: "1" });
+      if (this.message) {
+        !msg && this.addSqlBlock({ is_msg: "1", name: "消息", script_type: "1", action_type: "1" });
+      } else {
+        msg && this.removeSqlBlock(msg.id);
       }
     },
   },

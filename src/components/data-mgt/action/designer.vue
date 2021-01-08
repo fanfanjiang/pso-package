@@ -15,7 +15,7 @@
           <div>设置按钮条件</div>
           <div>只有数据满足条件时，才可以使用按钮</div>
         </div>
-        <dynamic-rule :rules="action.rule" :type="action.ruleType" :options="options" sysable></dynamic-rule>
+        <dynamic-rule :rules="action.rule" :type="action.ruleType" :options="options" sysable @typechange="rtChangeHandler"></dynamic-rule>
       </div>
       <el-form-item label="点击前执行脚本">
         <el-switch v-model="action.beforeScriptable"> </el-switch>
@@ -208,6 +208,9 @@ export default {
       } else {
         this.action.batchable = "1";
       }
+    },
+    rtChangeHandler(type) {
+      this.action.ruleType = type;
     },
   },
 };

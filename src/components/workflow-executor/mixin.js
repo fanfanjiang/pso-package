@@ -71,11 +71,9 @@ export const op = {
         },
         async nextStep(optype, isAppendForm = true, shouldCheckEmpty = true) {
             try {
-                let formData = null;
-                if (optype === REVIEW_OP_TYPE.confirm.type) {
-                    formData = await this.store.getFormData();
-                    if (!formData) return;
-                }
+                const formData = await this.store.getFormData();
+                if (!formData) return;
+
                 this.dispatch("PsoWfExecutorBox", "op-before-next", { optype, formData });
                 const ret = await this.store.doNextStep({ optype, formData, isAppendForm, shouldCheckEmpty });
                 if (ret.data && ret.data.instance) {

@@ -59,7 +59,7 @@
               </div>
             </div>
             <div class="rule-set__filter-add">
-              <el-dropdown v-if="curRule.controlIds.length" trigger="click" @command="handleFilterAdd">
+              <el-dropdown size="mini" v-if="curRule.controlIds.length" trigger="click" @command="handleFilterAdd">
                 <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus">添加筛选条件</el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-for="(f, index) in avlFilter" :key="index" :command="index">{{ f._fieldName }}</el-dropdown-item>

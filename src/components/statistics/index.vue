@@ -35,6 +35,12 @@
           <div class="pso-view-viewtab" v-if="!params.hideStatusTab">
             <fast-switch :store="store" key="statuses" switch="statuses" model="curStatus" skey="d_status"></fast-switch>
           </div>
+          <!-- 排序标签 -->
+          <div class="pso-view-sorttag" v-if="store.operableSotrs.length">
+            <el-tag size="small" v-for="(sort, i) in store.operableSotrs" :key="i" closable @close="store.removeSort(i)">
+              {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
+            </el-tag>
+          </div>
           <div class="pso-view-fun">
             <div class="pso-view-fun-l">
               <table-fun :store="store" :files="params.downloadFiles"></table-fun>
@@ -91,7 +97,7 @@
                     :align="f.align"
                     :sortable="f.sortable === '1' ? 'custom' : false"
                   >
-                    <template slot-scope="scope">{{ scope.row[f.field] }}</template>
+                    <template slot-scope="scope">{{ scope.row[`${f.field}_x`] || scope.row[f.field] }}</template>
                   </el-table-column>
                 </template>
               </template>

@@ -1,6 +1,6 @@
 import XLSX from 'xlsx';
-import x2js from 'x2js';
 import Vue from 'vue';
+import dayjs from "dayjs";
 
 export function listToTree({ list, pid = "pid", children = "children", id = "id", each, afterPush, beforePush }) {
     let map = {};
@@ -61,12 +61,6 @@ export async function parseXlsx(file) {
         result[name] = rows;
     });
     return result;
-}
-
-export async function parseXML(file) {
-    let input = await readFile(file);
-    let xjs = new x2js({ attributePrefix: '' });
-    return xjs.xml2js(input);
 }
 
 export async function checkUniq(data, field) {
@@ -151,4 +145,16 @@ export function makeDimension(group, source, dim) {
         }
     })(group);
     return group;
+}
+
+export function makeTimeAgo(time) {
+    const _time = dayjs(time);
+    const pattens = [{ v: 'years', t: '年' }, { v: 'month', t: '月' }, { v: 'day', t: '天' }, { v: 'hour', t: '小时' }, { v: 'minute', t: '分钟' }, { v: 'second', t: '秒' }];
+    for (let { v, t } of pattens) {
+        const _diff = _time.diff(dayjs(), v);
+        if (_diff > 0) {
+            return `${_diff}年前`;
+        }
+    }
+    return time;
 }

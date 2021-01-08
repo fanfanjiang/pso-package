@@ -114,10 +114,16 @@ export const REVIEW_OP_TYPE = {
         value: 128
     },
     countersign: {
-        name: '加签',
+        name: '转交',
         id: "countersign",
         type: 'append',
         value: 256
+    },
+    sign: {
+        name: '加签',
+        id: "sign",
+        type: 'sign',
+        value: 514
     }
 }
 

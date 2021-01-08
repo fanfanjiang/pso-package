@@ -11,7 +11,7 @@
       <custom-column v-for="(item, i) in col.children" :key="i" :col="item"></custom-column>
     </template>
     <template v-else>
-      <template slot-scope="scope">{{ getVal(scope.row[col.field]) }}</template>
+      <template slot-scope="scope">{{ getVal(scope.row[`${col.field}_x`] || scope.row[col.field]) }}</template>
     </template>
   </el-table-column>
 </template>

@@ -39,19 +39,23 @@ export const SignInMixin = {
     }
 }
 
+const CONFIG = {
+    logo: "/static/app/img/logo.png",
+    base: {},
+    name: "",
+    link: [],
+    sites: [],
+    sitesTree: [],
+    users: [],
+    orgs: []
+}
+
 export const ConfigMixin = {
     data() {
         return {
             curApp: null,
-            appConfig: {
-                logo: "/static/app/img/logo.png",
-                name: "",
-                links: [],
-                sites: [],
-                sitesTree: [],
-                regByPhone: false,
-                regByEmail: false
-            }
+            initedCurApp: false,
+            appConfig: _.cloneDeep(CONFIG)
         }
     },
     computed: {
@@ -66,46 +70,77 @@ export const ConfigMixin = {
         }
     },
     methods: {
-        async initializeCfg() {
+        reset() {
+            this.appConfig = _.cloneDeep(CONFIG);
+            this.initedCurApp = false;
+        },
+        async initializeCfg(reset = true) {
             try {
-                const ret = await this.API.getSignConfig();
-                const { data, logo, link } = ret.data;
+                const ret = await this.API.getSignConfig({ appid: this.appid || this.defAppid });
 
+                reset && this.reset();
+
+                const { data, base, link, users, orgs } = ret.data;
+
+                if (users) {
+                    this.appConfig.users = users;
+                }
+                if (orgs) {
+                    this.appConfig.orgs = orgs;
+                }
+
+                //处理站点数据，设置默认站点数据
                 if (data && data.length) {
                     this.appConfig.sites = data;
-
                     let group = {};
                     ["cate_name", "sec_name"].forEach((dim) => {
                         group = makeDimension(group, data, dim);
                     });
-
-
                     for (let key in group) {
                         const first = { site_name: key, site_app: 1, children: [] };
                         for (let subKey in group[key]) {
-                            group[key][subKey].forEach((d) => {
-                                if (d.is_default === "1" && this.defAppid ? this.defAppid === d.site_app : true) {
-                                    this.selectSite(d);
-                                }
-                            });
+
                             first.children.push({ site_name: subKey, site_app: 1, children: group[key][subKey] });
+
+                            if (!this.initedCurApp) {
+                                for (let subSite of group[key][subKey]) {
+                                    if (this.defAppid && this.defAppid === subSite.site_app) {
+                                        this.initedCurApp = true;
+                                        this.selectSite(subSite);
+                                        break;
+                                    } else if (this.appid && this.appid === subSite.site_app) {
+                                        this.initedCurApp = true;
+                                        this.selectSite(subSite);
+                                        break;
+                                    } else if (subSite.is_default === "1") {
+                                        this.initedCurApp = true;
+                                        this.selectSite(subSite);
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         this.appConfig.sitesTree.push(first);
                     }
                 }
 
-                if (logo && logo.length) {
-                    this.appConfig.name = logo[0].map_key0 || "";
-                    this.appConfig.logo = logo[0].map_key1 || "";
-                    this.appConfig.regByPhone = logo[0].map_key6 === '1';
-                    this.appConfig.regByEmail = logo[0].map_key7 === '1';
+                //基本配置数据
+                if (base) {
+                    this.appConfig.base = base;
+                    this.appConfig.name = base.map_key0 || "";
+                    if (this.appid && base.map_key1) {
+                        const logoRet = await this.API.getFielsNoauth({ ids: base.map_key1, appid: this.appid });
+                        if (logoRet.data && logoRet.data.length) {
+                            this.appConfig.logo = logoRet.data[0].res_path;
+                        }
+                    }
                 }
 
                 if (link && link.length) {
-                    this.appConfig.links = link;
+                    this.appConfig.link = link;
                 }
 
-                this.$emit('initialized', { ...ret.data, ...this.appConfig });
+                this.$emit('initialized', this.appConfig);
             } catch (error) {
                 console.log(error);
             }

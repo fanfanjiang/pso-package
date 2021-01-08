@@ -1,13 +1,13 @@
 <template>
-  <div class="sign-social">
-    <template v-if="!initializing">
+  <div>
+    <div class="sign-social" v-if="!initializing && options.length">
       <div class="sign-social-item" v-for="(o, i) in options" :key="i">
         <a :href="`${APIURL}${o.map_key6}?state=${appid}`" @click="goSocial(o.map_key6)" v-if="o.map_key6">
           <img :src="o.map_key7" alt="icon" />
           <span>{{ o.map_key1 }}</span>
         </a>
       </div>
-    </template>
+    </div>
     <pso-skeleton v-if="initializing" :lines="1"></pso-skeleton>
   </div>
 </template>
