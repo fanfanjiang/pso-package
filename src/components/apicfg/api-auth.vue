@@ -105,7 +105,7 @@ const DATA = {
   expire_time: "",
   auth_method: "",
   auth_ip: "",
-  auth_note: ""
+  auth_note: "",
 };
 
 export default {

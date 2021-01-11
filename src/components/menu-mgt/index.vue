@@ -74,7 +74,7 @@
                     </template>
                   </plugin-setter>
                   <el-form-item v-else label="菜单链接">
-                    <el-input v-model="curNode.menu_link" autocomplete="off"></el-input>
+                    <el-input size="small" v-model="curNode.menu_link" autocomplete="off"></el-input>
                   </el-form-item>
                 </div>
                 <div class="pso-menu-param__controller" v-if="!params.hide">

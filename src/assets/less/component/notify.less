@@ -1,4 +1,32 @@
-.pso-notify-panel {}
+.pso-notify-panel {
+    height: 300px;
+
+    .pso-notify-panel__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 44px;
+        padding: 0 15px;
+        box-shadow: 0 0 2px 0 rgba(0, 0, 0, .2);
+        color: #000;
+
+        .pso-notify-panel__header-l {
+            i {
+                font-size: 16px;
+                color: #999;
+                margin-right: 3px;
+            }
+        }
+    }
+
+    .pso-notify-view {
+        height: calc(100% - 44px);
+    }
+}
+
+.pso-popover-notify {
+    padding: 0;
+}
 
 .pso-notify-trigger {
     cursor: pointer;
@@ -17,21 +45,177 @@
 }
 
 .pso-notify-view {
-    .pso-notify-view__body {}
+    position: relative;
+    height: 100%;
+
+    .el-avatar {
+        font-size: 10px;
+    }
+
+    .pso-notify-view__body {
+        position: relative;
+        overflow: auto;
+        height: 100%;
+        padding-bottom: 40px;
+    }
+
+    .pso-notify-view__footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+    }
+
+    .pso-notify-item__dot {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 6px;
+        height: 6px;
+        border-radius: 100%;
+        background-color: #F03737;
+    }
 
     .pso-notify-item {
+        transition: all 0.2s linear;
+        padding: 0 10px;
+
+        &:hover {
+            background-color: #FAF8F8;
+            transition: all 0.2s linear;
+
+            .pso-notify-item__r {
+                border-bottom: 1px solid #FAF8F8;
+            }
+        }
+
+        .pso-notify-item__r,
         .pso-notify-item__body {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .pso-notify-item__content {
+        .pso-notify-item__r {
             flex: 1;
+            margin-left: 10px;
+            padding: 15px 0;
+            border-bottom: 1px solid #EEEEEE;
         }
 
-        .pso-notify-item__tail{
-            
+        .pso-notify-item__content {
+            flex: 1;
+            min-height: 22px;
         }
+
+        .pso-notify-item__tail {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+            width: 50px;
+            justify-content: flex-end;
+
+            >div {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+    }
+}
+
+.pso-notify-item__btn {
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    line-height: 22px;
+    cursor: pointer;
+    border-radius: 3px;
+
+    &:hover {
+        background-color: #E7E7E7;
+    }
+
+    &+.pso-notify-item__btn {
+        margin-left: 10px;
+    }
+
+    i {
+        font-size: 16px;
+        font-weight: bold;
+    }
+}
+
+.pso-notify-index {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    padding: 20px 0;
+
+    .pso-notify-index__aside {
+        width: 260px;
+        padding: 10px 20px;
+
+        .pso-notify-index__aside-header {
+            font-size: 18px;
+            padding-left: 10px;
+            color: #666;
+        }
+
+        .pso-notify__aside-item {
+            padding: 20px 0;
+
+            &+.pso-notify__aside-item {
+                border-top: 1px solid #D5D5D5;
+
+            }
+
+            .pso-notify__aside-item-title {
+                font-size: 16px;
+                color: #999;
+                display: block;
+                margin-bottom: 10px;
+                padding: 0 10px;
+            }
+
+            .pso-notify__aside-item-sub {
+
+                .pso-notify__aside-item-subitem {
+                    padding: 10px;
+                    border-radius: 3px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: #EFEDED;
+                    }
+
+                    &.active {
+                        color: #2DB55D;
+                        background: #EFEDED;
+
+                        i {
+                            color: #2DB55D;
+                        }
+                    }
+
+                    i {
+                        font-size: 16px;
+                        margin-right: 5px;
+                        color: #999;
+                        margin-top: 2px;
+                    }
+                }
+            }
+        }
+    }
+
+    .pso-notify-index__body {
+        flex: 1;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, .1);
+        height: 100%;
+        background: #fff; 
     }
 }

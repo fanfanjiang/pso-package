@@ -89,7 +89,7 @@ export default {
       }, 200);
     },
     async getFormData(value) {
-      return await this.API.formSearch({
+      return await this.API.searchForm({
         form_code: this.cpnt.data._searchForm,
         limit: 10,
         start: 0,

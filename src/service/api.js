@@ -136,9 +136,9 @@ export default class API {
         }
     }
 
-    static async formSearch(data) {
+    static async searchForm(data) {
         try {
-            return await this.request('/api/form-search', { data, method: 'post' });
+            return await this.request('/api/form/data/data', { data, method: 'post' });
         } catch (error) {
             throw error;
         }
@@ -352,14 +352,6 @@ export default class API {
         }
     }
 
-    static async getFormNumber(data) {
-        try {
-            return await this.request('/api/form/number', { data, method: 'post' });
-        } catch (error) {
-            throw error;
-        }
-    }
-
     static async getTagAttribute(data, options = {}) {
         try {
             return await this.request('/api/tag/attribute', { data, method: 'get', ...options });
@@ -439,7 +431,7 @@ export default class API {
 
     static async getFormDict(data = {}) {
         try {
-            return await this.request('/api/form/dict', { data, method: 'get' });
+            return await this.request('/api/form/data/dict', { data, method: 'get' });
         } catch (error) {
             throw error;
         }
@@ -575,7 +567,7 @@ export default class API {
 
     static async getFormStatus(data = {}) {
         try {
-            return await this.request('/api/form/status', { data, method: 'get' });
+            return await this.request('/api/form/data/status', { data, method: 'get' });
         } catch (error) {
             throw error;
         }
@@ -584,7 +576,7 @@ export default class API {
 
     static async updateFormStatus(data = {}) {
         try {
-            return await this.request('/api/form/status', { data, method: 'put' });
+            return await this.request('/api/form/data/status', { data, method: 'put' });
         } catch (error) {
             throw error;
         }
@@ -593,7 +585,7 @@ export default class API {
     //获取字段权限
     static async getFieldAuth(data = {}) {
         try {
-            return await this.request('/api/form/auth', { data, method: 'get' });
+            return await this.request('/api/form/field/auth', { data, method: 'get' });
         } catch (error) {
             throw error;
         }
@@ -602,7 +594,7 @@ export default class API {
     //设置字段权限
     static async updateFieldAuth(data = {}) {
         try {
-            return await this.request('/api/form/auth', { data, method: 'put' });
+            return await this.request('/api/form/field/auth', { data, method: 'put' });
         } catch (error) {
             throw error;
         }
@@ -611,7 +603,7 @@ export default class API {
     //设置字段权限
     static async updateFormStage(data = {}) {
         try {
-            return await this.request('/api/form/stage', { data, method: 'put' });
+            return await this.request('/api/form/data/stage', { data, method: 'put' });
         } catch (error) {
             throw error;
         }
@@ -619,7 +611,7 @@ export default class API {
 
     static async getPscriptData(data = {}) {
         try {
-            return await this.request('/api/form/script', { data, method: 'post', showMsg: false });
+            return await this.request('/api/form/cpnt/script', { data, method: 'post', showMsg: false });
         } catch (error) {
             throw error;
         }
@@ -677,7 +669,7 @@ export default class API {
 
     static async asyncIApiDataManually(data) {
         try {
-            return await this.request('/api/form/api-data', { data, method: 'post' });
+            return await this.request('/api/form/data/api-data', { data, method: 'post' });
         } catch (error) {
             throw error;
         }
@@ -795,9 +787,33 @@ export default class API {
         }
     }
 
-    static async getAppMsg(data) {
+    static async getDataRelation(data) {
         try {
-            return await this.request('/api/app/message', { data, method: 'get' });
+            return await this.request('/api/form/data/relation', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getSysConfig(data) {
+        try {
+            return await this.request('/api/sys/config', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getNtfyCategory(data) {
+        try {
+            return await this.request('/api/notification/category', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFTR(data) {
+        try {
+            return await this.request('/api/ftr/data', { data, method: 'get' });
         } catch (error) {
             throw error;
         }

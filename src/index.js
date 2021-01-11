@@ -70,6 +70,7 @@ import PsoWfStage from "./components/workflow-designer/stage";
 import PsoWfExecutor from "./components/workflow-executor";
 import PsoWfMgt from "./components/workflow-mgt";
 import PsoWfView from "./components/workflow-view";
+import PsoWfTodo from "./components/workflow-todo";
 
 import PsoTempleteMgt from "./components/templete-mgt";
 import PsoPluginMgt from "./components/plugin-mgt";
@@ -123,6 +124,8 @@ import PsoSqlDesigner from "./components/sql-designer";
 import PsoNotify from "./components/notify";
 import PsoNotifyPopover from "./components/notify/popover";
 
+//全文检索
+import PsoFtr from "./components/full-text-retrieval";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -169,6 +172,7 @@ const components = {
     PsoWfExecutor,
     PsoWfMgt,
     PsoWfView,
+    PsoWfTodo,
 
     PsoTempleteMgt,
     PsoDataMgt,
@@ -218,6 +222,8 @@ const components = {
 
     PsoNotify,
     PsoNotifyPopover,
+
+    PsoFtr,
 
     //混合视图
     PsoFvAst,

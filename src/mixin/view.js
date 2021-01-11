@@ -60,7 +60,7 @@ export const FormModifierMixin = {
                     }
                     const sv = this.modInstance[this.modifiedField];
                     const tv = data[this.modifiedField];
- 
+
                     if (data.leaf_id === this.modInstance.leaf_id && tv != sv && !(tv === '' && typeof sv === 'undefined')) {
                         this.handleSaved && this.handleSaved({ leaf_id: this.dataId, formData });
                     }
@@ -128,7 +128,7 @@ export const PagingMixin = {
         getFetchParams(field) {
             const { start, limit, keywords } = this.fetchParams
             const params = { limit, start: start - 1 };
-            if (keywords) {
+            if (keywords && field) {
                 params.keys = JSON.stringify({ [field]: { value: keywords, type: 2 } });
             }
             return params;

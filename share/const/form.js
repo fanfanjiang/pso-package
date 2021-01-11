@@ -296,6 +296,7 @@ const CPNT = {
       { n: '_relate', v: true },
       { n: '_radioField', v: '' },
       { n: '_filter', v: [] },
+      { n: '_displayType', v: '' },
     ]
   },
   assfield: {

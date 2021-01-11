@@ -151,9 +151,9 @@ export function makeTimeAgo(time) {
     const _time = dayjs(time);
     const pattens = [{ v: 'years', t: '年' }, { v: 'month', t: '月' }, { v: 'day', t: '天' }, { v: 'hour', t: '小时' }, { v: 'minute', t: '分钟' }, { v: 'second', t: '秒' }];
     for (let { v, t } of pattens) {
-        const _diff = _time.diff(dayjs(), v);
+        const _diff = dayjs().diff(_time, v);
         if (_diff > 0) {
-            return `${_diff}年前`;
+            return `${_diff}${t}前`;
         }
     }
     return time;

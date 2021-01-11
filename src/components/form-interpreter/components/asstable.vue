@@ -22,14 +22,14 @@
       </div>
       <div class="pso-form-asstable-table">
         <el-tag
-          v-if="justShowOne && instances.length"
+          v-if="justShowOne && !displayTable && instances.length"
           :closable="cpntEditable"
           @click="astStore.showInstance.call(astStore, instances[0])"
           @close="handleDelList(instances)"
           >{{ firstInstanceDisplay }}
         </el-tag>
         <view-table
-          v-if="!justShowOne && instances.length"
+          v-if="(!justShowOne || displayTable) && instances.length"
           :store="astStore"
           :params="tableParams"
           :dragable="false"
@@ -133,6 +133,9 @@ export default {
     },
     justShowOne() {
       return this.selectionType === "radio";
+    },
+    displayTable() {
+      return this.cpnt.data._displayType === "2";
     },
     showAddBtn() {
       return this.cpnt.data._new && (!this.cpnt.data._relate && this.justShowOne ? !this.instances.length : true);

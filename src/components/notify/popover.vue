@@ -1,10 +1,27 @@
 <template>
-  <el-popover placement="bottom-end" transition="el-zoom-in-top" width="440" popper-class="pso-popover-notify" trigger="click">
+  <el-popover
+    v-model="show"
+    placement="bottom-end"
+    transition="el-zoom-in-top"
+    width="440"
+    popper-class="pso-popover-notify"
+    trigger="click"
+  >
     <div class="pso-notify-panel">
+      <div class="pso-notify-panel__header">
+        <div class="pso-notify-panel__header-l">
+          <span>消息</span>
+        </div>
+        <div class="pso-notify-panel__header-r">
+          <el-tooltip content="查看更多" placement="top-end" :visible-arrow="false" :open-delay="200">
+            <div class="pso-notify-item__btn" @click="checkMore"><i class="el-icon-more"></i></div>
+          </el-tooltip>
+        </div>
+      </div>
       <notify-view v-if="store" :store="store"></notify-view>
     </div>
     <div class="pso-notify-trigger" slot="reference">
-      <el-badge v-if="store" :value="store.instances.length" :hidden="!store.instances.length">
+      <el-badge v-if="store" :value="store.unread" :hidden="!store.unread">
         <i class="el-icon-bell"></i>
       </el-badge>
     </div>
@@ -20,6 +37,7 @@ export default {
   data() {
     return {
       store: null,
+      show: false,
     };
   },
   created() {
@@ -28,7 +46,10 @@ export default {
   methods: {
     initialize() {
       this.store = new Store({ $vue: this });
-      this.store.fetch();
+    },
+    checkMore() {
+      this.$router.push({ name: "notify" });
+      this.show = false;
     },
   },
 };

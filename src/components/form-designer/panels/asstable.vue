@@ -2,31 +2,24 @@
   <div>
     <common-panel :cpnt="cpnt" info="关联相关工作表，可以从中引用或创建记录，如：订单关联商品" :needDefaultValue="false">
       <el-form-item label="选择工作表" v-loading="loading">
-        <el-select
-          size="mini"
-          v-model="cpnt.data._option"
-          filterable
-          placeholder="请选择"
-          @change="formChangeHandler"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.node_name"
-            :label="item.node_display"
-            :value="item.node_name"
-          ></el-option>
+        <el-select size="mini" v-model="cpnt.data._option" filterable placeholder="请选择" @change="formChangeHandler">
+          <el-option v-for="item in options" :key="item.node_name" :label="item.node_display" :value="item.node_name"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="关联方式">
         <el-radio v-model="cpnt.data._type" :label="1">单条</el-radio>
         <el-radio v-model="cpnt.data._type" :label="2">多条</el-radio>
       </el-form-item>
+      <el-form-item label="展示方式">
+        <el-radio v-model="cpnt.data._displayType" label="1" :disabled="cpnt.data._type === 2">标签</el-radio>
+        <el-radio v-model="cpnt.data._displayType" label="2">列表</el-radio>
+      </el-form-item>
       <el-form-item label="选择显示列表" v-loading="loading">
         <el-select clearable size="mini" v-model="cpnt.data._showFields" placeholder="请选择">
           <el-option v-for="item in column" :key="item.name" :label="item.name" :value="item.name"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="cpnt.data._type===1" label="选择单选显示字段" v-loading="loading">
+      <el-form-item v-if="cpnt.data._type === 1" label="选择单选显示字段" v-loading="loading">
         <el-select size="mini" v-model="cpnt.data._radioField" placeholder="请选择">
           <el-option
             v-for="item in cpnt.cache.fieldOptions"
@@ -52,22 +45,12 @@
           </el-tooltip>
         </div>
       </el-form-item>
-      <el-button
-        v-if="cpnt.data._relate"
-        icon="el-icon-plus"
-        plain 
-        size="mini"
-        @click="showDialog=true"
-      >筛选</el-button>
+      <el-button v-if="cpnt.data._relate" icon="el-icon-plus" plain size="mini" @click="showDialog = true">筛选</el-button>
     </common-panel>
     <el-dialog title="设置筛选条件" append-to-body :visible.sync="showDialog" width="40%">
-      <dynamic-filter
-        :targets="filterFields"
-        :sources="selfCpnts"
-        v-model="cpnt.data._filter"
-      ></dynamic-filter>
+      <dynamic-filter :targets="filterFields" :sources="selfCpnts" v-model="cpnt.data._filter"></dynamic-filter>
     </el-dialog>
-  </div> 
+  </div>
 </template>
 <script>
 import commonPanel from "../common/common-panel";

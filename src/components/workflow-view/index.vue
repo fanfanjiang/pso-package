@@ -252,7 +252,7 @@ export default {
 
         this.makeKeys();
         await this.store.initialize(this.params.wfId, this.params.useCloumn);
-        this.$emit("initialized", { store: this.store.store, cfg: this.store.formCfg });
+        this.$emit("initialized", { store: this.store.store, cfg: this.store.formCfg, wvStore: this.store });
         await this.store.fetchStatus();
 
         this.watchFun.push(
