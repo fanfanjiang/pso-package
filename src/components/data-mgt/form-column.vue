@@ -1,15 +1,15 @@
 <template>
-  <div class="pso-data-mgt__column" style="padding: 0 0 30px 0">
+  <div class="pso-data-mgt__column" style="padding: 20px 0 30px 0">
     <div class="pso-table-controller">
-      <el-button size="mini" @click="addCol(null)">添加列表</el-button>
+      <el-button size="mini" type="primary" @click="addCol(null)">添加列表</el-button>
     </div>
     <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeCol">
       <el-tab-pane :label="col.name" :name="index + ''" v-for="(col, index) in data.column" :key="index">
         <el-form label-position="left" label-width="80px" :inline="true">
-          <el-form-item label="列表名称">
+          <el-form-item label="列表名称" style="margin-bottom: 10px">
             <el-input size="mini" v-model="col.name"></el-input>
           </el-form-item>
-          <el-form-item label="动作">
+          <el-form-item label="动作" style="margin-bottom: 10px">
             <el-select size="mini" multiple clearable v-model="col.actions">
               <el-option v-for="(a, i) in actions" :key="i" :label="a.name" :value="a.id"></el-option>
             </el-select>
@@ -24,9 +24,9 @@
           :sort-by="['number']"
           @row-dblclick="rowClickHandler($event, col.data)"
         >
-          <el-table-column type="index" :index="1" fixed="left"></el-table-column>
-          <el-table-column prop="field_name" label="字段" width="100" fixed="left"></el-table-column>
-          <el-table-column prop="display" label="显示名称" fixed="left"></el-table-column>
+          <el-table-column type="index" :index="1" fixed="left" width="50"></el-table-column>
+          <el-table-column prop="field_name" label="字段" width="120" fixed="left"></el-table-column>
+          <el-table-column prop="display" label="显示名称" width="120" fixed="left"></el-table-column>
           <el-table-column prop="number" label="顺序" width="160" sortable>
             <template slot-scope="scope">
               <el-input-number size="mini" v-model="scope.row.number" controls-position="right" :min="0"></el-input-number>
@@ -164,3 +164,14 @@ export default {
   },
 };
 </script>
+<style lang="less">
+.pso-data-mgt__column {
+  position: relative;
+  .pso-table-controller {
+    position: absolute;
+    top: 24px;
+    right: 0px;
+    z-index: 2;
+  }
+}
+</style>

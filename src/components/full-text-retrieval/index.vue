@@ -5,8 +5,15 @@
         <div class="pso-view-header">
           <div class="pso-view-header__l">
             <div class="pso-view-title">
-              <i class="el-icon-s-help"></i>
+              <i class="el-icon-s-order"></i>
               <span>全文检索</span>
+            </div>
+          </div>
+          <div class="pso-view-header__r">
+            <div class="pso-view-authtab" v-show="authViews.length > 1 && !params.hideAuthTab">
+              <el-tabs v-model="activeView">
+                <el-tab-pane v-for="(ah, i) in authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
+              </el-tabs>
             </div>
           </div>
         </div>
@@ -51,7 +58,8 @@
   </div>
 </template>
 <script>
-import { PagingMixin } from "../../mixin/view";
+import { PagingMixin, AuthViewMixin } from "../../mixin/view";
+import debounce from "throttle-debounce/debounce";
 
 const FIELDS = [
   { field: "pro_name", name: "项目", width: "240" },
@@ -71,7 +79,13 @@ const FIELDS = [
 ];
 
 export default {
-  mixins: [PagingMixin],
+  mixins: [PagingMixin, AuthViewMixin],
+  props: {
+    params: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     this.FIELDS = FIELDS;
     return {
@@ -81,18 +95,38 @@ export default {
     };
   },
   async created() {
+    this.deFetch = debounce(200, (params) => {
+      this.fetch(params);
+    });
     this.startWatch();
     this.$on("load", () => {
-      this.fetch();
+      this.deFetch();
     });
+    this.$watch("activeView", () => {
+      this.fetchParams.start = 1;
+      this.deFetch();
+    });
+    if (this.params.viewAuth) {
+      this.analyzeAuthView(this.params.viewAuth, this.params.auth_config);
+    }
   },
   methods: {
+    async refresh() {
+      this.fetch();
+    },
     async fetch() {
-      this.fetching = true;
-      const params = this.getFetchParams();
-      const ret = await this.API.getFTR({ ...params, dq: this.fetchParams.keywords });
-      this.instances = ret.data.data;
-      this.fetching = false;
+      const dq = this.fetchParams.keywords;
+      if (dq) {
+        this.fetching = true;
+        const params = this.getFetchParams();
+        const ret = await this.API.getFTR({ ...params, dq, leaf_auth: this.activeView });
+        this.instances = ret.data.data;
+        this.dataTotal = ret.data.total;
+        this.fetching = false;
+      } else {
+        this.instances = [];
+        this.dataTotal = 0;
+      }
     },
     getFiltered(text) {
       if (text) {

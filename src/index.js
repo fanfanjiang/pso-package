@@ -127,6 +127,10 @@ import PsoNotifyPopover from "./components/notify/popover";
 //全文检索
 import PsoFtr from "./components/full-text-retrieval";
 
+//数据表管理及同步
+import PsoDbasyncMgt from "./components/dbasync-mgt";
+import PsoDbtableMgt from "./components/dbtable-mgt";
+
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
 import PsoFvWv from "./components/composite/fv-wv";
@@ -224,6 +228,9 @@ const components = {
     PsoNotifyPopover,
 
     PsoFtr,
+
+    PsoDbasyncMgt,
+    PsoDbtableMgt,
 
     //混合视图
     PsoFvAst,

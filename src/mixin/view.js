@@ -1,5 +1,6 @@
 import { closest } from "../components/form-designer/drag-drop/utils";
 import addEventListener from "../utils/dom/addEventListener";
+import { MENU_LEAF_AUTH } from "../const/menu";
 
 //表单列表字段修改,需要相应的页面组件支持
 export const FormModifierMixin = {
@@ -182,5 +183,31 @@ export const MgtMixin = {
         },
     },
     methods: {
+    }
+}
+
+export const AuthViewMixin = {
+    data() {
+        return {
+            authViews: [],
+            activeView: ''
+        }
+    },
+    methods: {
+        analyzeAuthView(curAuth, cfg) {
+            MENU_LEAF_AUTH.forEach((a) => {
+                if ((a.v & curAuth) === a.v) {
+                    const viewCfg = _.find(cfg, { v: a.v });
+                    const viewItem = { ...a };
+                    if (viewCfg) {
+                        if (viewCfg.text) viewItem.n = viewCfg.text;
+                        viewItem.field = viewCfg.field;
+                    }
+                    this.authViews.push(viewItem);
+                }
+            });
+            this.authViews = _.orderBy(this.authViews, ["v"], ["desc"]);
+            this.activeView = this.authViews[0].v + "";
+        }
     }
 }

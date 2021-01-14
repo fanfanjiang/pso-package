@@ -53,7 +53,7 @@ export default {
       if (this.acting) return;
       this.acting = true;
       if (this.data.msg_status === 0) {
-        this.store.update(this.data);
+        await this.store.update(this.data);
       }
       await this.store.checkAction(this.data);
       this.acting = false;

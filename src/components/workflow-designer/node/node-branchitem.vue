@@ -39,7 +39,6 @@ export default {
   },
   methods: {
     getOpName(opid) {
-      console.log(opid);
       return FILTER.FILTER_OP[opid].name;
     },
     getData(data) {

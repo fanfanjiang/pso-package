@@ -67,6 +67,7 @@ export default class FormViewStore {
         this.stagesObj = {};
         this.tableHeight = 0; //table高度
         this.attachments = {};
+        this.defComplexity = '';
 
         //权限视图
         this.authViews = [];
@@ -100,6 +101,15 @@ export default class FormViewStore {
 
         //操作控制
         this.autoChange = true; //是否自动修改数据状态
+
+        //清除数据
+        this.wipeallable = false;
+        this.wipeProxy = {
+            visible: false,
+            check: '',
+            tip: '',
+            doing: false
+        };
 
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
@@ -318,6 +328,7 @@ export default class FormViewStore {
             this.$vue.$delete(this.keys, key);
             delete this.keys[key];
         }
+        this.page = 1;
         await this.fetch();
     }
 
@@ -346,6 +357,10 @@ export default class FormViewStore {
             params.condition = this.condition;
         }
 
+        if (this.defComplexity) {
+            params.where = this.defComplexity;
+        }
+
         if (this.keywords !== "" && !params.keys.d_name) {
             params.keys.d_name = { value: this.keywords, type: 2 };
         }
@@ -361,6 +376,11 @@ export default class FormViewStore {
         this.appendSearchType(params);
 
         return params;
+    }
+
+    async refetch() {
+        this.page = 1;
+        this.deFetch();
     }
 
     async fetch() {
@@ -415,13 +435,17 @@ export default class FormViewStore {
         }
     }
 
-    makeDefkeys({ where, defKeys, defForm }) {
+    makeDefkeys({ where, defKeys, defForm, defComplexity }) {
         //外部传入的请求参数
         try {
             if (where) {
                 for (let key in where) {
                     this.defaultKeys[key] = { value: this.where[key], type: 1 };
                 }
+            }
+
+            if (defComplexity) {
+                this.defComplexity = defComplexity;
             }
 
             if (defKeys) {
@@ -955,6 +979,7 @@ export default class FormViewStore {
         if (!scriptable) return true;
         const ret = await API.doActionScript({ btn_id: action.id, btn_type: '1', data_code: this.store.data_code, data });
         this.$vue.ResultNotify(ret);
+        this.$vue.$emit('actioned', ret)
     }
 
     checkActionLink(action) {
@@ -1033,6 +1058,31 @@ export default class FormViewStore {
         for (let leaf_id of list) {
             await this.addOrUpdate({ leaf_id, formData: { data_name, node_id, data_code, dataArr: [{ leaf_id, optype: 1, ...data }] } }, false);
         }
+        if (refresh) {
+            this.fetchStatus();
+        }
+    }
+
+    async showWiper() {
+        if (!this.selectedList.length && !this.wipeallable) return this.$vue.$message({ message: '请选择要删除的数据', type: 'warning' });
+        this.wipeProxy.tip = this.selectedList.length ? "所选" : '全部'
+        this.wipeProxy.check = '';
+        this.wipeProxy.visible = true;
+    }
+
+    async wipe(idList, refresh = true) {
+        if (this.wipeProxy.doing || this.wipeProxy.check !== 'DELETE') return;
+        const list = idList || this.selectedList.map(d => d.leaf_id);
+        if (!list.length && !this.wipeallable) return this.$vue.$message({ message: '请选择要删除的数据', type: 'warning' });
+        const params = { data_code: this.store.data_code };
+        if (list.length) {
+            params.leaf_id = list.join(',')
+        }
+        this.wipeProxy.doing = true;
+        const ret = await API.wipeData(params);
+        this.$vue.ResultNotify(ret);
+        this.wipeProxy.doing = false;
+        this.wipeProxy.visible = false;
         if (refresh) {
             this.fetchStatus();
         }

@@ -261,6 +261,7 @@ export default {
           }),
 
           this.$watch("store.page", () => {
+            if (this.store.fetching) return;
             this.store.deFetch();
           }),
 

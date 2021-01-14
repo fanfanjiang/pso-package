@@ -5,7 +5,7 @@
         <el-input :size="size" v-model="data[idField]"></el-input>
       </slot>
       <el-select v-else :size="size" filterable clearable v-model="data[idField]" @clear="clearHandler">
-        <el-option v-for="(o, i) in options" :key="i" :label="o[oName]" :value="o[oField]"></el-option>
+        <el-option v-for="(o, i) in options" :key="i" :label="o[oName] || o[oField]" :value="o[oField]"></el-option>
       </el-select>
     </div>
     <div class="pso-option-input__r" v-if="doInput">
@@ -14,7 +14,7 @@
           <i class="el-icon-arrow-down"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item :command="o[oField]" v-for="(o, i) in options" :key="i">{{ o[oName] }}</el-dropdown-item>
+          <el-dropdown-item :command="o[oField]" v-for="(o, i) in options" :key="i">{{ o[oName] || o[oField] }}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>

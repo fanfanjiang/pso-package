@@ -22,7 +22,7 @@
             </div>
           </div>
           <div class="pso-view-header__r">
-            <el-button size="mini" type="primary" plain @click="saveConfig">保存设置</el-button>
+            <el-button size="mini" type="primary" @click="saveConfig">保存设置</el-button>
             <el-button size="mini" type="primary" plain @click="goPrinterDeisgner">打印设计</el-button>
             <el-button size="mini" type="primary" plain @click="handleEditForm">表单设计</el-button>
           </div>
@@ -49,7 +49,15 @@
         </div>
         <div class="pso-view-table" v-loading="saving">
           <template v-if="!!curNode.is_leaf">
-            <pso-form-view v-show="curTab === 'preview'" :key="curNode.node_id" :cfg-id="curNode.node_name" :view-auth="4"></pso-form-view>
+            <pso-form-view
+              v-show="curTab === 'preview'"
+              :key="curNode.node_id"
+              :cfg-id="curNode.node_name"
+              :view-auth="4"
+              wipeable
+              wipeallable
+            >
+            </pso-form-view>
             <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
             <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData" :actions="actions"></form-column>
             <form-action v-if="curTab === 'action' && formStore" :actions="actions" :store="formStore"></form-action>
@@ -102,51 +110,11 @@ import FormUpload from "./form-upload";
 import FormIapicfg from "./form-iapicfg";
 import FormOapicfg from "./form-oapicfg";
 import FormAction from "./action";
+
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList } from "../../utils/util";
 import { MgtMixin } from "../../mixin/view";
-
-const _DATA = {
-  tableData: [],
-  colData: [],
-  colCfg: {
-    def: "",
-    column: [],
-  },
-  actions: [],
-  staData: [],
-  pubCfg: {
-    isPublic: false,
-    attach: "",
-    name: "",
-    subBtnText: "",
-    doneText: "",
-    qrList: [],
-    rules: [],
-    submitable: true,
-    formLabelPosition: "top",
-    formLabelWith: "",
-  },
-  upload: [],
-  rules: [],
-  subCfg: [],
-  stageData: [],
-  asstable: [],
-  inner_api: {
-    inner_type: "",
-    async_type: "",
-    async_stime: "",
-    async_etime: "",
-    inner_return: [],
-    inner_params: {},
-    field_config: {},
-    api_tag: "",
-    return_tag: "",
-    incre_type: "",
-    incre_field: "",
-  },
-  outer_api: {},
-};
+import { _DATA } from "./const";
 
 export default {
   mixins: [formOp, MgtMixin],
@@ -196,7 +164,7 @@ export default {
         { n: "导出", v: 4 },
         { n: "更改阶段", v: 8 },
       ],
-      ..._DATA,
+      ..._.cloneDeep(_DATA),
     };
   },
   methods: {

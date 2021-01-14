@@ -35,6 +35,9 @@
         ></pso-picker-post>
       </div>
     </el-form-item>
+    <template v-if="node[field] === REVIEW_AUTH_TYPE.anyJob.value || node[field] === REVIEW_AUTH_TYPE.job.value">
+      <post-setter :node="node"></post-setter>
+    </template>
     <el-form-item label="主体权限项">
       <el-select :multiple="true" v-model="node.bodyitemsList" placeholder="请选择" size="mini">
         <el-option
@@ -51,8 +54,11 @@
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 import { REVIEW_AUTH_TYPE } from "../../../const/workflow";
 import { pickerMixin } from "../../../mixin/picker";
+import PostSetter from "./post-setter";
 
 export default {
+  mixins: [pickerMixin({ baseObjName: "node", dataListName: "opaitems", typeName: "_type" })],
+  components: { PostSetter },
   props: {
     node: {
       type: Object,
@@ -81,7 +87,6 @@ export default {
       default: false,
     },
   },
-  mixins: [pickerMixin({ baseObjName: "node", dataListName: "opaitems", typeName: "_type" })],
   data() {
     return {
       showSelector: false,

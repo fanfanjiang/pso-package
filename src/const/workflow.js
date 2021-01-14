@@ -129,7 +129,7 @@ export const REVIEW_OP_TYPE = {
 
 export const REVIEW_OP_APPEND = 'append';
 
-export const REVIEW_OP_USER = [REVIEW_OP_TYPE.copy.type, REVIEW_OP_TYPE.distribute.type, REVIEW_OP_TYPE.countersign.type];
+export const REVIEW_OP_USER = [REVIEW_OP_TYPE.copy.type, REVIEW_OP_TYPE.distribute.type, REVIEW_OP_TYPE.countersign.type, REVIEW_OP_TYPE.sign.type];
 
 export const REVIEW_AUTH_TYPE = {
     anybody: {

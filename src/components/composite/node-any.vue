@@ -28,6 +28,7 @@
           @data-changed="cpntChangeHandler"
           @status-changed="cpntChangeHandler"
           @stage-changed="cpntChangeHandler"
+          @actioned="cpntChangeHandler"
         ></component>
       </div>
     </template>

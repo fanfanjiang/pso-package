@@ -27,13 +27,13 @@
       v-model="store.keywords"
       @blur="onKeywordsBlur"
       @clear="showKeywords = false"
-      @change="store.deFetch"
+      @change="doRefresh"
     ></el-input>
     <el-button v-show="!showKeywords" type="text" icon="el-icon-search" @click="onClickSearch">
       <template v-if="!__isMobile__">搜索</template>
     </el-button>
     <el-divider direction="vertical"></el-divider>
-    <el-button type="text" icon="el-icon-refresh" @click="store.deFetch"><template v-if="!__isMobile__">刷新</template></el-button>
+    <el-button type="text" icon="el-icon-refresh" @click="doRefresh"><template v-if="!__isMobile__">刷新</template></el-button>
     <template v-if="fileList.length">
       <el-divider direction="vertical"></el-divider>
       <el-popover placement="bottom-start" width="300" trigger="click">
@@ -73,6 +73,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.keywords.focus();
       });
+    },
+    doRefresh() {
+      this.store.refetch();
     },
   },
 };

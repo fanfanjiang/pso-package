@@ -1,24 +1,43 @@
 export const ICONPREFIX = '/static/app/img/file-icon/';
 
-export const SHEET = {
-    form: {
-        id: 'form',
-        name: '动态表单',
-        icon: [`${ICONPREFIX}/form.png`, `${ICONPREFIX}/form_expand.png`],
+export const _DATA = {
+    tableData: [],
+    colData: [],
+    colCfg: {
+        def: "",
+        column: [],
     },
-    excel: {
-        id: 'excel',
-        name: 'EXCEL表单',
-        icon: [`${ICONPREFIX}/excel.png`, `${ICONPREFIX}/excel_expand.png`],
+    actions: [],
+    staData: [],
+    pubCfg: {
+        isPublic: false,
+        attach: "",
+        name: "",
+        subBtnText: "",
+        doneText: "",
+        qrList: [],
+        rules: [],
+        submitable: true,
+        formLabelPosition: "top",
+        formLabelWith: "",
     },
-    xml: {
-        id: 'xml',
-        name: 'XML表单',
-        icon: [`${ICONPREFIX}/xml.png`, `${ICONPREFIX}/xml_expand.png`],
+    upload: [],
+    rules: [],
+    subCfg: [],
+    stageData: [],
+    asstable: [],
+    inner_api: {
+        inner_type: "",
+        async_type: "",
+        async_stime: "",
+        async_etime: "",
+        inner_return: [],
+        inner_params: {},
+        field_config: {},
+        api_tag: "",
+        return_tag: "",
+        incre_type: "",
+        incre_field: "",
     },
-    sql: {
-        id: 'sql',
-        name: 'SQL视图',
-        icon: [`${ICONPREFIX}/sql.png`, `${ICONPREFIX}/sql_expand.png`],
-    }
-}
+    outer_api: {},
+};

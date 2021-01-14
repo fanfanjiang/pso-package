@@ -48,9 +48,9 @@
       <el-dropdown-menu slot="dropdown">
         <template v-if="superable && store.curStep">
           <el-dropdown-item command="copy">抄送</el-dropdown-item>
-          <el-dropdown-item command="distribute">分发</el-dropdown-item>
+          <!-- <el-dropdown-item command="distribute">分发</el-dropdown-item> -->
           <el-dropdown-item command="countersign">转交</el-dropdown-item>
-          <el-dropdown-item command="sign">加签</el-dropdown-item>
+          <!-- <el-dropdown-item command="sign">加签</el-dropdown-item> -->
         </template>
         <el-dropdown-item command="print">打印</el-dropdown-item>
         <el-dropdown-item command="chat">讨论</el-dropdown-item>

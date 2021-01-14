@@ -248,7 +248,7 @@ export default {
               if (!this.checkedFormError && cpntData._fieldLen < (cpntData._val + "").length) {
                 this.checkedFormError = true;
                 throw new Error(
-                  `${cpntData._fieldName}输入长度超出预期限制，请先保持此界面并联系管理员修改配置，确认修改后再次点击提交或暂存按钮`
+                  `”${cpntData._fieldName}“输入长度超出预期限制，请先保持当前填写界面（不要关闭或点击保存按钮）并联系管理员修改配置，确认修改后再点击提交或暂存按钮`
                 );
               }
             }

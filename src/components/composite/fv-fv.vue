@@ -62,7 +62,7 @@ export default {
           params[key.replace("ass__", "")] = this.params[key];
         }
       }
-      return { ...this.params, ...params, defForm, useCloumn: this.params.ass_useCloumn || "" };
+      return { ...this.params, ...params, defComplexity: "", defForm, useCloumn: this.params.ass_useCloumn || "" };
     },
   },
   methods: {

@@ -64,8 +64,10 @@
                 :copyable="addable && !params.hideCopyBtn"
                 :moreable="!params.hideMoreBtn"
                 :exportable="!params.hideExport"
+                :wipeable="wipeable"
                 @new="newInstance"
                 @select="$emit('selection-confirm', store.selectedList)"
+                @wipe="wipeHandler"
               >
                 <template v-slot:op="scope">
                   <slot name="op" v-bind:data="scope.store"></slot>
@@ -95,6 +97,7 @@
         @prev="store.showPrev.call(store, $event)"
         @next="store.showNext.call(store, $event)"
       ></pso-form-executor>
+      <wipe-dialog :store="store"></wipe-dialog>
     </template>
   </div>
 </template>
@@ -105,9 +108,10 @@ import TableFun from "./table-fun";
 import DataFun from "./data-fun";
 import ViewTable from "./table";
 import Icon from "./icon";
+import WipeDialog from "./wipe-dialog";
 
 export default {
-  components: { FastSwitch, TableFun, DataFun, ViewTable, Icon },
+  components: { FastSwitch, TableFun, DataFun, ViewTable, Icon, WipeDialog },
   props: {
     params: {
       type: Object,
@@ -201,6 +205,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    wipeable: {
+      type: Boolean,
+      default: false,
+    },
+    wipeallable: {
+      type: Boolean,
+      default: false,
+    },
+    defComplexity: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -265,6 +281,7 @@ export default {
           defSearchType: this.params.searchType,
           autoChange: this.autoChange,
           insttogo: this.params.insttogo,
+          wipeallable: this.wipeallable,
         });
 
         if (this.viewAuth) {
@@ -288,6 +305,7 @@ export default {
           }),
 
           this.$watch("store.page", () => {
+            if (this.store.fetching) return;
             this.store.deFetch();
           }),
 
@@ -316,7 +334,7 @@ export default {
       }
     },
     makeKeys() {
-      this.store.makeDefkeys({ where: this.where, defKeys: this.defKeys, defForm: this.defForm });
+      this.store.makeDefkeys({ where: this.where, defKeys: this.defKeys, defForm: this.defForm, defComplexity: this.defComplexity });
     },
     async dataChangeHandler(data) {
       await this.store.checkDataChange(data);
@@ -328,6 +346,9 @@ export default {
     },
     async newInstance() {
       await this.store.newInstance(true);
+    },
+    wipeHandler() {
+      this.store.showWiper();
     },
   },
 };

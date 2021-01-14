@@ -70,6 +70,7 @@ const FORM = [
   { field: "hideStage", value: "", picker: "picker-yes", name: "隐藏阶段按钮", saveType: "1", relateParam: "" },
   { field: "hideCopyBtn", value: "", picker: "picker-yes", name: "隐藏复制按钮", saveType: "1", relateParam: "" },
   { field: "hideMoreBtn", value: "", picker: "picker-yes", name: "隐藏更多按钮", saveType: "1", relateParam: "" },
+  { field: "defComplexity", value: "", picker: "input", name: "复杂条件", saveType: "1", relateParam: "" },
 ];
 
 const WORKFLOW = [

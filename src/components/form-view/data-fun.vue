@@ -2,6 +2,7 @@
   <div class="view-data-fun">
     <el-button v-if="opAddable" type="primary" size="mini" @click="$emit('new')">{{ store.cpntText.add }}</el-button>
     <el-button v-if="selectable" type="primary" size="mini" @click="$emit('select')">选择</el-button>
+    <el-button v-if="wipeable" type="danger" size="mini" @click="$emit('wipe')">清除数据</el-button>
     <slot name="op" v-bind:data="store"></slot>
     <div class="view-data-fun__actions" v-for="(a, i) in store.actions" :key="i">
       <el-popconfirm
@@ -91,6 +92,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    wipeable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     this.uploadAPI = "/api/upload/data";
@@ -125,7 +130,7 @@ export default {
     },
     checkAction(action) {
       this.store.checkAction(action);
-    },
+    }
   },
 };
 </script>

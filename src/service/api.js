@@ -264,6 +264,14 @@ export default class API {
         }
     }
 
+    static async dbtable(params) {
+        try {
+            return await this.RESTful('/api/dbtable', Object.assign({ idField: 'auto_no' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async searchUsers(data) {
         try {
             return await this.request('/api/users/search', { data });
@@ -814,6 +822,14 @@ export default class API {
     static async getFTR(data) {
         try {
             return await this.request('/api/ftr/data', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async wipeData(data) {
+        try {
+            return await this.request('/api/form/data/data', { data, method: 'delete' });
         } catch (error) {
             throw error;
         }
