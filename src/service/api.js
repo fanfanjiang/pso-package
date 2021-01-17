@@ -643,6 +643,14 @@ export default class API {
         }
     }
 
+    static async makeTempPdf(data) {
+        try {
+            return await this.request('/api/pdf/new', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async getStatisticData(data) {
         try {
             return await this.request('/api/templates/statistics', { data, method: 'post' });
@@ -830,6 +838,38 @@ export default class API {
     static async wipeData(data) {
         try {
             return await this.request('/api/form/data/data', { data, method: 'delete' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async wipeDataAll(data) {
+        try {
+            return await this.request('/api/form/data/all', { data, method: 'delete' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async asyncDBTable(data) {
+        try {
+            return await this.request('/api/dbtable/data/sync', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    static async addOrUpdatePaper(data) {
+        try {
+            return await this.request('/api/feature/paper', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getPapers(data) {
+        try {
+            return await this.request('/api/feature/paper', { data, method: 'get' });
         } catch (error) {
             throw error;
         }

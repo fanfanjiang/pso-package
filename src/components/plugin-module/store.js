@@ -88,7 +88,7 @@ export default class Module {
         const __cpnt__ = this.constructor.CPNT[id];
         if (!__cpnt__) {
             return;
-        } 
+        }
         const urine = { ...this.constructor.DEFAULT, tp_code: this.code, child_name: __cpnt__.name, child_design: JSON.stringify({ id }) }
         const ret = await API.addOrUpdatePluginModule({ optype: 0, ...urine }, false);
         this.creating = false;

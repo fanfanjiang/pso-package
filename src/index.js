@@ -128,7 +128,6 @@ import PsoNotifyPopover from "./components/notify/popover";
 import PsoFtr from "./components/full-text-retrieval";
 
 //数据表管理及同步
-import PsoDbasyncMgt from "./components/dbasync-mgt";
 import PsoDbtableMgt from "./components/dbtable-mgt";
 
 //混合视图
@@ -229,7 +228,6 @@ const components = {
 
     PsoFtr,
 
-    PsoDbasyncMgt,
     PsoDbtableMgt,
 
     //混合视图

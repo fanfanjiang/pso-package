@@ -49,7 +49,7 @@
                 </el-collapse-item>
                 <el-collapse-item title="预览" name="3">
                   <div v-if="interStore">
-                    <div v-for="(s, k, i) in interStore.score" :key="i">
+                    <div v-for="(s, k, i) in interStore.previewScore" :key="i">
                       <span>{{ s.name }}： </span>
                       <span>{{ s.score }}</span>
                     </div>
@@ -63,6 +63,7 @@
                   v-if="!refreshing"
                   ref="interpreter"
                   :params="paperParams"
+                  mode="preview"
                   @initialized="initedHandler"
                 ></pso-paper-interpreter>
               </div>
@@ -166,8 +167,10 @@ export default {
       this.selectedCpnt = [];
       this.showMenu = false;
       const entity = await this.store.createCpnt({ id });
-      this.editCpnt(entity);
-      this.refresh();
+      if (entity) {
+        this.editCpnt(entity);
+        this.refresh();
+      }
     },
     editCpnt(data) {
       this.store.setCurCpnt(data);

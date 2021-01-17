@@ -20,22 +20,23 @@
             </el-form>
           </div>
         </div>
-        <div class="printer-designer-c">
+        <div class="printer-designer-c" v-if="curTemplate">
           <div class="printer-content">
-            <div ref="printer" v-html="curTemplate.content"></div>
+            <div v-if="curTemplate.type === '1'" ref="printer" v-html="curTemplate.content"></div>
+            <list-printer v-if="curTemplate.type === '2'" ref="printer" :config="curTemplate.config"></list-printer>
           </div>
+          <pso-form-interpreter
+            ref="formImage"
+            v-show="false"
+            :form-id="code"
+            :data-id="instanceId"
+            :editable="false"
+            @value-change="formChangeHandler"
+            @shownval-done="formChangeHandler"
+            @data-loaded="formLoadedHandler"
+          ></pso-form-interpreter>
         </div>
       </div>
-      <pso-form-interpreter
-        v-show="false"
-        @value-change="formChangeHandler"
-        @shownval-done="formChangeHandler"
-        @data-loaded="formLoadedHandler"
-        ref="formImage"
-        :form-id="code"
-        :data-id="instanceId"
-        :editable="false"
-      ></pso-form-interpreter>
     </template>
   </div>
 </template>
@@ -43,17 +44,19 @@
 import PsoHeader from "../header";
 import { formOp } from "../form-designer/mixin";
 import { Printer } from "../../mixin/form";
+import ListPrinter from "./list";
 
 export default {
   mixins: [formOp, Printer],
   props: ["params"],
-  components: { PsoHeader },
+  components: { PsoHeader, ListPrinter },
   data() {
     return {
       initializing: true,
       saving: false,
       templates: [],
       curTemplateId: "",
+      curTemplate: null,
     };
   },
   computed: {
@@ -63,8 +66,10 @@ export default {
     instanceId() {
       return this.params.id;
     },
-    curTemplate() {
-      return this.curTemplateId ? _.find(this.templates, { id: this.curTemplateId }) : null;
+  },
+  watch: {
+    curTemplateId() {
+      this.setCurTemplate();
     },
   },
   async created() {
@@ -81,30 +86,45 @@ export default {
         const { printer_config } = ret.data.data;
         if (printer_config) {
           this.templates = JSON.parse(printer_config);
-          this.setCurTemplate();
+          this.setCurTemplateId();
         }
       }
     },
-    setCurTemplate() {
+    setCurTemplateId() {
       if (this.templates.length) {
         this.curTemplateId = this.templates[this.templates.length - 1].id;
       } else {
         this.curTemplateId = "";
       }
     },
-    async formSaveHandler() {},
+    setCurTemplate() {
+      this.curTemplate = null;
+      this.$nextTick(() => {
+        this.curTemplate = this.curTemplateId ? _.find(this.templates, { id: this.curTemplateId }) : null;
+      });
+    },
     print() {
-      this.createPDF(this.$refs.printer, this.formStore.data_name, true);
+      if (this.curTemplate.type === "1") {
+        this.createPDF(this.$refs.printer, this.formStore.data_name, true);
+      } else if (this.curTemplate.type === "2") {
+        this.$refs.printer.print();
+      }
     },
     formChangeHandler(data) {
-      this.setPrinterValue(data);
+      if (this.curTemplate.type === "1") {
+        this.setPrinterValue(data);
+      } else if (this.curTemplate.type === "2") {
+        this.$refs.printer.analyze(data);
+      }
     },
     async formLoadedHandler(store) {
       this.printRef = this.$refs.printer;
-      const maps = store.cpntsMap;
-      for (let key in maps) {
-        if (maps[key].data._fieldValue) {
-          await this.formChangeHandler({ cpnt: maps[key], value: maps[key].data._val });
+      $(this.printRef).children("div table").addClass("bald");
+      for (let key in store.instance) {
+        if (store.cpntsMap[key]) {
+          await this.formChangeHandler({ cpnt: store.cpntsMap[key], value: store.cpntsMap[key].data._val });
+        } else {
+          await this.formChangeHandler({ cpnt: { data: { _fieldValue: key } }, value: store.instance[key] });
         }
       }
     },

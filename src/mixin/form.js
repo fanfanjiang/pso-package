@@ -31,7 +31,7 @@ export const Printer = {
                 }
             }
         },
-        setPrinterValue({ cpnt, value, proxy, fields, store }) {
+        setPrinterValue({ cpnt, value, proxy, fields, store, printFields }) {
             const { data } = cpnt;
             if (!data._fieldValue) return;
             const $el = $(this.printRef).find(`[field=${data._fieldValue}]`);
@@ -84,7 +84,7 @@ export const Printer = {
                     } else {
                         if (proxy.valList.length) {
                             $el.css({ display: 'block', overflow: 'auto' });
-                            $el.append(this.makeStaticTable(fields, proxy.valList, sequence === '1', store));
+                            $el.append(this.makeStaticTable(printFields || fields, proxy.valList, sequence === '1', store, cpnt.data._printCount));
                             const parentTd = $('.pso-static-table').parentsUntil('td');
                             if (parentTd.get(0)) {
                                 $('.pso-static-table').addClass('outer-border-none');
@@ -95,8 +95,8 @@ export const Printer = {
                 }
             }
         },
-        makeStaticTable(allFields, data, showIndex = false, store) {
-            const fields = allFields.filter((f) => f.show === "1" && f.using === '1');
+        makeStaticTable(allFields, data, showIndex = false, store, count) {
+            const fields = allFields.filter((f) => f.using === "1" && f.show === "1");
             const $wrapper = $(`<table class="pso-static-table"><colgroup></colgroup><thead><tr></tr></thead><tbody></tbody></table>`);
             const $colgroup = $wrapper.find('colgroup');
             const $ftr = $wrapper.find('thead>tr');
@@ -110,6 +110,9 @@ export const Printer = {
                 $ftr.append(`<th>${f.display}</th>`);
             }
             for (let i = 0; i < data.length; i++) {
+                if (typeof count !== 'undefined' && (count <= i)) {
+                    break;
+                }
                 const $tr = $('<tr></tr>');
                 if (showIndex) {
                     $tr.append(`<td>${i + 1}</td>`)

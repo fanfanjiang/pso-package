@@ -1,9 +1,8 @@
 <template>
-  <el-dialog width="300px" title="确认删除数据" :visible.sync="store.wipeProxy.visible" append-to-body>
+  <el-dialog width="400px" title="确认删除数据" :visible.sync="store.wipeProxy.visible" append-to-body>
     <div style="margin-bottom: 20px">请输入“DELETE”确认删除{{ store.wipeProxy.tip }}数据</div>
-
     <el-input size="small" v-model="store.wipeProxy.check" autocomplete="off"></el-input>
-
+    <slot></slot>
     <div slot="footer">
       <el-button size="mini" @click="store.wipeProxy.visible = false">取 消</el-button>
       <el-button size="mini" :loading="store.wipeProxy.doing" :disabled="store.wipeProxy.doing" type="primary" @click="goWipe">
@@ -19,7 +18,11 @@ export default {
   },
   methods: {
     goWipe() {
-      this.store.wipe();
+      if (this.store.wipe) {
+        this.store.wipe();
+      } else {
+        this.$emit("wipe");
+      }
     },
   },
 };

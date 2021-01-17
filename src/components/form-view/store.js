@@ -7,6 +7,7 @@ import CPNT from "../../../share/const/form";
 import Vue from "vue";
 import XLSX from "xlsx";
 import { desensitize } from "../../utils/util";
+import Qs from 'qs';
 
 export default class FormViewStore {
 
@@ -671,10 +672,19 @@ export default class FormViewStore {
         if (display_columns && this.usedFormCol && this.oriColData) {
             const config = JSON.parse(display_columns);
             const index = _.findIndex(config.column, { name: this.usedFormCol });
+
             config.column.splice(index, 1, { data: this.oriColData, actions: this.usedActionIds, name: this.usedFormCol })
             const ret = await API.updateFormTree({ data_code, display_columns: JSON.stringify(config) });
             this.$vue.ResultNotify(ret);
         }
+    }
+
+    getColumnByName(name, withIndex = false) {
+        const { display_columns } = this.formCfg;
+        const config = JSON.parse(display_columns);
+        const index = _.findIndex(config.column, { name });
+        const column = index !== -1 ? config.column[index].data : null;
+        return withIndex ? { column, index } : column;
     }
 
     analyzeRowClass() {
@@ -867,7 +877,7 @@ export default class FormViewStore {
 
                 }
                 const scriptRet = await this.checkActionScript(this.actioning, data);
-                this.checkActionLink(this.actioning);
+                this.checkActionLink(this.actioning, this.selectedList);
                 this.setActionEmpty();
                 this.showExecutor = false;
             }
@@ -982,14 +992,26 @@ export default class FormViewStore {
         this.$vue.$emit('actioned', ret)
     }
 
-    checkActionLink(action) {
-        const { linkable, openLink, bindPlugin } = action;
+    checkActionLink(action, data) {
+        const { linkable, openLink, bindPlugin, linkParams } = action;
         if (linkable && openLink) {
             let link = openLink;
             if (bindPlugin) {
-                link = link.replace(':code', bindPlugin);
+                link = link.replace(':plug_code', bindPlugin);
             }
-            window.open(link);
+            if (linkParams && linkParams.length) {
+                for (let d of data) {
+                    let itemLink = link;
+                    const params = {};
+                    for (let field of linkParams) {
+                        itemLink = itemLink.replace(`:${field}`, d[field]);
+                        params[field] = d[field];
+                    }
+                    window.open(`${itemLink}?${Qs.stringify(params)}`);
+                }
+            } else {
+                window.open(link);
+            }
         }
     }
 
@@ -1029,7 +1051,7 @@ export default class FormViewStore {
             this.switchable = false;
         } else {
             const scriptRet = await this.checkActionScript(action, data);
-            this.checkActionLink(action);
+            this.checkActionLink(action, data);
             await this.fetchStatus();
         }
         action.doing = false;

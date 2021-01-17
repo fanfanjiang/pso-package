@@ -31,7 +31,7 @@ export default {
   computed: {
     answers() {
       return this.data.answer.split(this.splitSymbol);
-    }
+    },
   },
   methods: {
     initialize() {
@@ -45,7 +45,7 @@ export default {
     },
     choiceChangeHandler(value) {
       const { score } = this.cpnt.data;
-      if (value.length && !_.difference(value, this.answers).length) {
+      if (value.length && value.length === this.answers.length && !_.difference(value, this.answers).length) {
         this.data.score = score;
       } else {
         this.data.score = 0;

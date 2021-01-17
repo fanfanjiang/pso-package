@@ -286,6 +286,7 @@ export default {
       value: this.cpnt.data._val,
       proxy: this.proxy,
       fields: this.astStore.fields,
+      printFields: this.cpnt.data._printFields && this.astStore.getColumnByName(this.cpnt.data._printFields),
       store: this.store,
     });
 

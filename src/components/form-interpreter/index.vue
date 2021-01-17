@@ -158,9 +158,9 @@ export default {
         extendAuth: this.extendAuth,
         editable: this.editable,
         parentInstanceId: this.parentInstanceId,
-        ignoreAstColumn:this.ignoreAstColumn 
+        ignoreAstColumn: this.ignoreAstColumn,
       };
- 
+
       if (this.formEntity) {
         this.store = new FormStore({ ...this.formEntity, ...baseEntity });
       } else if (this.formId) {
@@ -244,12 +244,15 @@ export default {
             }
 
             //字段长度检查
-            if (cpntData._val && typeof cpntData._fieldLen !== "undefined") {
-              if (!this.checkedFormError && cpntData._fieldLen < (cpntData._val + "").length) {
-                this.checkedFormError = true;
-                throw new Error(
-                  `”${cpntData._fieldName}“输入长度超出预期限制，请先保持当前填写界面（不要关闭或点击保存按钮）并联系管理员修改配置，确认修改后再点击提交或暂存按钮`
-                );
+            if (cpntData._val && typeof cpntData._fieldLen !== "undefined" && cpntData._fieldType !== "Text") {
+              if (!this.checkedFormError) {
+                const checkLength = (cpntData._val + "").length;
+                if (cpntData._fieldLen < checkLength) {
+                  this.checkedFormError = true;
+                  throw new Error(
+                    `"${cpntData._fieldName}"输入长度(${checkLength})超出预期限制，请先保持当前填写界面（不要关闭或点击保存按钮）并联系管理员修改配置，确认修改后再点击提交或暂存按钮`
+                  );
+                }
               }
             }
 

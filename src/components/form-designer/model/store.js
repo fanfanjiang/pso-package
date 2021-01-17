@@ -54,7 +54,7 @@ export default class FormStore {
         this.withSys = false;
 
         this.ignoreAstColumn = false;
- 
+
         for (let option in options) {
             if (options.hasOwnProperty(option)) {
                 this[option] = options[option];

@@ -16,8 +16,16 @@
       </el-form-item>
       <el-form-item label="选择显示列表" v-loading="loading">
         <el-select clearable size="mini" v-model="cpnt.data._showFields" placeholder="请选择">
-          <el-option v-for="item in column" :key="item.name" :label="item.name" :value="item.name"></el-option>
+          <el-option v-for="(c, i) in column" :key="i" :label="c.name" :value="c.name"></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="选择打印列表" v-loading="loading">
+        <el-select clearable size="mini" v-model="cpnt.data._printFields" placeholder="请选择">
+          <el-option v-for="(c, i) in column" :key="i" :label="c.name" :value="c.name"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="打印数量">
+        <el-input-number size="mini" v-model="cpnt.data._printCount" controls-position="right" :min="0"></el-input-number>
       </el-form-item>
       <el-form-item v-if="cpnt.data._type === 1" label="选择单选显示字段" v-loading="loading">
         <el-select size="mini" v-model="cpnt.data._radioField" placeholder="请选择">

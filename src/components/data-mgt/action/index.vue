@@ -26,7 +26,14 @@
       </div>
     </div>
     <div class="pso-view-body">
-      <designer v-if="curAction" :action="curAction" :options="options" :code="store.data_code" :plugins="plugins"></designer>
+      <designer
+        v-if="curAction"
+        :action="curAction"
+        :options="options"
+        :code="store.data_code"
+        :plugins="plugins"
+        :options-withsys="optionsWithsys"
+      ></designer>
     </div>
   </div>
 </template>
@@ -35,6 +42,7 @@ import { MgtMixin } from "../../../mixin/view";
 import shortid from "shortid";
 import Designer from "./designer";
 import { formatJSONList } from "../../../utils/util";
+import { makeSysFormFields } from "../../../tool/form";
 
 const FIELDS = {
   name: "按钮",
@@ -59,6 +67,7 @@ const FIELDS = {
   linkable: false,
   openLink: "",
   bindPlugin: "",
+  linkParams: [],
 };
 
 const DEFAULT = [{ id: "add", name: "新增", deleteable: false }];
@@ -94,6 +103,7 @@ export default {
       this.curTab = this.actions[0].id;
     }
     this.options = this.store.search({ onlyData: true, options: { db: true } });
+    this.optionsWithsys = this.options.concat(makeSysFormFields());
     this.plugins = (await this.API.trees({ data: { dimen: 4 } })).data.tagtree.filter((t) => t.is_leaf);
   },
   methods: {

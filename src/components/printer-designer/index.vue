@@ -6,7 +6,7 @@
           <template v-slot:btn>
             <el-button type="primary" size="mini" @click="newTemplate"> 新建模板 </el-button>
             <el-button v-if="curTemplate" type="danger" size="mini" @click="delTemplate"> 删除模板 </el-button>
-            <el-button size="mini" icon="fa fa-floppy-o" :loading="saving" :disabled="saving" @click="richSaveHandler"> 保存 </el-button>
+            <el-button size="mini" icon="fa fa-floppy-o" :loading="saving" :disabled="saving" @click="saveHandler"> 保存 </el-button>
           </template>
         </pso-header>
       </div>
@@ -26,7 +26,7 @@
                 <el-form-item label="模板类型">
                   <el-select size="mini" v-model="curTemplate.type">
                     <el-option label="富文本" value="1"></el-option>
-                    <el-option label="自定义" value="2"></el-option>
+                    <el-option label="列表" value="2"></el-option>
                   </el-select>
                 </el-form-item>
               </template>
@@ -34,7 +34,14 @@
           </div>
         </div>
         <div class="printer-designer-c">
-          <rich-designer ref="rich" :options="options" :content="curTemplate.content" :saveButton="false"></rich-designer>
+          <rich-designer
+            v-if="curTemplate.type === '1'"
+            ref="rich"
+            :options="options"
+            :content="curTemplate.content"
+            :saveButton="false"
+          ></rich-designer>
+          <list-designer v-if="curTemplate.type === '2'" :config="curTemplate.config" :fields="options"></list-designer>
         </div>
       </div>
     </template>
@@ -45,7 +52,9 @@ import PsoHeader from "../header";
 import RichDesigner from "../rich-designer";
 import { formOp } from "../form-designer/mixin";
 import { makeSysFormFields } from "../../tool/form";
+import { formatJSONList } from "../../utils/util";
 import shortid from "shortid";
+import ListDesigner from "./list";
 
 const PRINTER_FIELDS = {
   id: "",
@@ -55,12 +64,13 @@ const PRINTER_FIELDS = {
   name: "",
   content: "",
   img: "",
+  config: {},
 };
 
 export default {
   mixins: [formOp],
   props: ["params"],
-  components: { PsoHeader, RichDesigner },
+  components: { PsoHeader, RichDesigner, ListDesigner },
   data() {
     return {
       initializing: true,
@@ -68,14 +78,20 @@ export default {
       options: [],
       templates: [],
       curTemplateId: "",
+      curTemplate: null,
     };
   },
   computed: {
     code() {
       return this.params.code;
     },
-    curTemplate() {
-      return this.curTemplateId ? _.find(this.templates, { id: this.curTemplateId }) : null;
+    asstables() {
+      return this.options.filter((d) => d.componentid === "asstable");
+    },
+  },
+  watch: {
+    curTemplateId() {
+      this.setCurTemplate();
     },
   },
   async created() {
@@ -92,34 +108,42 @@ export default {
       if (ret.success) {
         const { printer_config } = ret.data.data;
         if (printer_config) {
-          this.templates = JSON.parse(printer_config);
-          this.setCurTemplate();
+          this.templates = formatJSONList(printer_config, PRINTER_FIELDS);
+          this.setCurTemplateId();
         } else {
           this.newTemplate();
         }
       }
     },
     newTemplate() {
-      this.templates.push({ ...PRINTER_FIELDS, code: this.code, name: "新建模板", id: shortid.generate() });
-      this.setCurTemplate();
+      this.templates.push({ ..._.cloneDeep(PRINTER_FIELDS), code: this.code, name: "新建模板", id: shortid.generate() });
+      this.setCurTemplateId();
     },
     delTemplate() {
       const index = this.templates.indexOf(this.curTemplate);
       if (index !== -1) {
         this.templates.splice(index, 1);
       }
-      this.setCurTemplate();
+      this.setCurTemplateId();
     },
-    setCurTemplate() {
+    setCurTemplateId() {
       if (this.templates.length) {
         this.curTemplateId = this.templates[this.templates.length - 1].id;
       } else {
         this.curTemplateId = "";
       }
     },
-    async richSaveHandler() {
+    setCurTemplate() {
+      this.curTemplate = null;
+      this.$nextTick(() => {
+        this.curTemplate = this.curTemplateId ? _.find(this.templates, { id: this.curTemplateId }) : null;
+      });
+    },
+    async saveHandler() {
       this.saving = true;
-      this.curTemplate.content = this.$refs.rich.exportHtml();
+      if (this.curTemplate.type === "1") {
+        this.curTemplate.content = this.$refs.rich.exportHtml();
+      }
       const ret = await this.API.updateFormTree({
         data_code: this.code,
         printer_config: JSON.stringify(this.templates),

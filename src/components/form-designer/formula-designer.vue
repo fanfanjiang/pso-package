@@ -282,7 +282,7 @@ export default {
       right: 0;
     }
     .formula-designer__menu-body {
-      padding: 0 0 0 10px;
+      padding: 0 0 60px 10px;
       margin-top: 40px;
       overflow-y: scroll;
       height: 100%;

@@ -73,6 +73,8 @@ export const FORM_COLUMN_FIELDS = {
     defSortOrder: 0,//默认排序顺序
     docWidth: "",
     relatedShowField: "",
+    widthAuto: true, //自动
+    fillRemain: false, //不换行
 }
 
 export const STATIC_COLUMN_FIELDS = {

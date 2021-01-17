@@ -27,6 +27,7 @@
 
          .printer-designer-c {
              flex: 1;
+             height: 100%;
              overflow: auto;
          }
      }
@@ -54,11 +55,21 @@
          min-height: 100%;
 
          table {
+             &.bald {
+                 >tbody {
+                     >tr {
+                         >td {
+                             border: none;
+                         }
+                     }
+                 }
+             }
 
              td,
              th {
                  border: 1px solid #000;
              }
          }
+
      }
  }

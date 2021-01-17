@@ -66,7 +66,13 @@
         <el-form-item label="列宽">
           <el-input-number size="mini" v-model="curRow.width" controls-position="right" :min="0"></el-input-number>
         </el-form-item>
-        <el-form-item label="签单列宽">
+        <el-form-item label="自适应宽度">
+          <el-switch size="mini" v-model="curRow.widthAuto"></el-switch>
+        </el-form-item>
+        <el-form-item label="占满剩余宽度">
+          <el-switch size="mini" v-model="curRow.fillRemain"></el-switch>
+        </el-form-item>
+        <el-form-item label="打印列宽">
           <el-input-number size="mini" v-model="curRow.docWidth" controls-position="right" :min="0"></el-input-number>
         </el-form-item>
         <el-form-item label="筛选">

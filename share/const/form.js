@@ -297,6 +297,8 @@ const CPNT = {
       { n: '_radioField', v: '' },
       { n: '_filter', v: [] },
       { n: '_displayType', v: '' },
+      { n: '_printCount', v: 99999 },
+      { n: '_printFields', v: '' },
     ]
   },
   assfield: {

@@ -1,11 +1,15 @@
 <template>
   <div :class="customClass" v-loading="store && store.initializing">
     <template v-if="store && !store.initializing">
-      <div v-if="!store.start" class="paper-interpreter-starter">
+      <div v-if="!store.start && !store.completed" class="paper-interpreter-starter">
         <div class="paper-interpreter-starter__title">{{ store.pluginCfg.tp_name }}</div>
         <div>
           <el-button :size="store.size" type="primary" round @click="startTest">开始答题</el-button>
         </div>
+      </div>
+      <div v-if="store.completed" class="paper-interpreter-starter completed">
+        <div class="paper-interpreter-starter__title">你已完成答题</div>
+        <i class="el-icon-trophy"></i>
       </div>
       <transition name="el-fade-in">
         <div class="paper-interpreter-body" v-show="store.start" ref="wrapper">
@@ -40,14 +44,16 @@
                 <component v-bind:is="getCpntEl(d.data.id)" :cpnt="d"></component>
               </div>
             </template>
-            <pso-empty text="暂无试题"></pso-empty>
+            <pso-empty v-else text="暂无试题"></pso-empty>
           </div>
         </div>
       </transition>
       <transition name="el-fade-in">
-        <div class="paper-interpreter-ctrl" v-if="store.mode !== 'preview' && store.start">
-          <el-popconfirm title="你确定要提交吗？" @confirm="completeTest">
-            <el-button slot="reference" :size="store.size" type="primary" round>提交</el-button>
+        <div class="paper-interpreter-ctrl" v-if="store.mode !== 'preview' && store.start && !store.completed">
+          <el-popconfirm title="你确定要提交吗？" @confirm="completePaper">
+            <el-button slot="reference" type="primary" round :size="store.size" :loading="store.completing" :disabled="store.completing">
+              提交
+            </el-button>
           </el-popconfirm>
           <el-backtop target=".paper-interpreter-body" :visibility-height="500"></el-backtop>
         </div>
@@ -78,6 +84,10 @@ export default {
   components: { ...componentsMap },
   props: {
     params: Object,
+    mode: {
+      type: String,
+      default: "edit",
+    },
   },
   data() {
     return {
@@ -104,8 +114,8 @@ export default {
   },
   methods: {
     async initialize() {
-      const { plug_code: code, size = "medium", mode = "edit", appid } = this.params;
-      this.store = new Store({ $vue: this, code, size, mode, appid });
+      const { plug_code: code, size = "medium", appid } = this.params;
+      this.store = new Store({ $vue: this, code, size, mode: this.mode, appid });
       await this.store.initialize();
       this.$emit("initialized", this.store);
     },
@@ -120,7 +130,9 @@ export default {
     startTest() {
       this.store.startTest();
     },
-    completeTest() {},
+    completePaper() {
+      this.store.completePaper();
+    },
   },
 };
 </script>

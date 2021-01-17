@@ -93,7 +93,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="链接地址">
-          <el-input size="small" v-model="action.openLink"></el-input>
+          <el-input size="mini" v-model="action.openLink"></el-input>
+        </el-form-item>
+        <el-form-item label="参数">
+          <el-select size="mini" multiple clearable filterable v-model="action.linkParams">
+            <el-option v-for="(o, i) in optionsWithsys" :key="i" :label="o._fieldName" :value="o._fieldValue"></el-option>
+          </el-select>
         </el-form-item>
       </div>
       <el-form-item label="按钮颜色">
@@ -132,7 +137,6 @@ import SqlDesigner from "../../sql-designer";
 import PsoPickerIcon from "../../picker/pso-picker-icon";
 import DynamicRule from "../../dynamic-rule";
 import FieldCheck from "./field-check";
-import { setRect } from "../../form-designer/drag-drop/utils";
 
 const COLORS = ["#409EFF", "#67C23A", "#E6A23C", "#F56C6C", "#9C27B0"];
 
@@ -143,6 +147,7 @@ export default {
     options: Array,
     code: String,
     plugins: Array,
+    optionsWithsys: Array,
   },
   data() {
     this.COLORS = COLORS;
