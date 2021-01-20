@@ -12,15 +12,18 @@ export const BaseMixin = {
         this.initializing = true;
         const { start = 0, num = 0 } = this.cpnt.data;
         const data = await this.cpnt.store.fetchScriptData(this.cpnt, { limit: num, start });
-        data.forEach(d => {
+
+        const result = this.cpnt.store.instResult.filter(({ child_id }) => child_id === this.cpnt.urine.child_id);
+
+        data.forEach((d, index) => {
             const entity = {};
 
             this.$set(entity, 'source', d); //数据源
             this.$set(entity, 'stem', '');
             this.$set(entity, 'option', []);
             this.$set(entity, 'answer', '');
-            this.$set(entity, 'result', '');
-            this.$set(entity, 'score', 0);
+            this.$set(entity, 'result', result[index] ? result[index].result : '');
+            this.$set(entity, 'score', result[index] ? result[index].score : 0);
 
             this.cpnt.questions.push(entity)
         })

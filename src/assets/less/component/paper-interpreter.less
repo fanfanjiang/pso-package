@@ -12,6 +12,7 @@
 
     &.paper-interpreter-medium {
         .paper-interpreter-content {
+            min-width: 720px;
             width: 60%;
             margin: 0 auto;
             box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);
@@ -50,6 +51,69 @@
         }
     }
 
+    .paper-interpreter-board {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        bottom: 20px;
+        background: #fff;
+        width: 200px;
+        overflow: auto;
+        z-index: 2;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, .05);
+    }
+
+    .paper-board {
+        padding: 15px;
+
+        .paper-board-header {
+            font-size: 16px;
+            color: #999;
+            margin-bottom: 10px;
+
+            span {
+                margin-left: 5px;
+            }
+        }
+
+        .paper-board-total {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .paper-board-body {
+            .paper-board-item {
+                padding-bottom: 10px;
+                border-bottom: 1px solid #E7E7E7;
+
+                &+.paper-board-item {
+                    margin-top: 10px;
+                }
+
+                .paper-board-item__header {
+                    margin-bottom: 10px;
+                }
+            }
+
+            .paper-board-question {}
+
+            .paper-board-question-item {
+                &+.paper-board-question-item {
+                    margin-top: 5px;
+                }
+
+                span {
+                    &:first-child {
+                        font-weight: bold;
+                        color: @main-color;
+                        font-style: italic;
+                    }
+                }
+            }
+        }
+    }
+
     .paper-interpreter-body {
         position: relative;
         height: 100%;
@@ -80,6 +144,12 @@
                 background: #F7F8FA;
                 font-size: 16px;
                 padding: 15px;
+
+                span {
+                    span {
+                        color: #F56C6C;
+                    }
+                }
             }
 
             .paper-interpreter-cpnt {

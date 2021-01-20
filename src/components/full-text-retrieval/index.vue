@@ -19,7 +19,9 @@
         </div>
         <div class="pso-view-fun">
           <div class="pso-view-fun-l">
-            <pso-search text="搜索关键字" v-model="fetchParams.keywords"></pso-search>
+            <div class="view-table-fun">
+              <pso-search text="搜索关键字" v-model="fetchParams.keywords"></pso-search>
+            </div>
           </div>
         </div>
       </div>

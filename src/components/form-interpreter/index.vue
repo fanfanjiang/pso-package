@@ -89,28 +89,36 @@ export default {
   },
   created() {
     this.isInterpreter = true;
+
     this.$on("asstable-selected", (val) => {
       this.broadcast("PsoformItem", "asstable-selected", val);
+      this.$emit("value-change", val);
     });
-    this.$on("table-selected", (val) => {
-      this.broadcast("PsoformItem", "table-selected", val);
-    });
+
     this.$on("cpnt-value-changed", (val) => {
       this.broadcast("PsoformItem", "cpnt-value-changed", val);
       this.$emit("value-change", val);
     });
-    this.$on("cpnt-user-changed", (val) => {
+
+    this.$on("cpnt-user-initialized", (val) => {
+      this.broadcast("PsoformItem", "cpnt-initialized", val);
       this.$emit("value-change", val);
     });
-    this.$on("cpnt-dept-changed", (val) => {
+
+    this.$on("cpnt-dept-initialized", (val) => {
+      this.broadcast("PsoformItem", "cpnt-initialized", val);
       this.$emit("value-change", val);
     });
-    this.$on("cpnt-tag-changed", (val) => {
+
+    this.$on("cpnt-tag-initialized", (val) => {
+      this.broadcast("PsoformItem", "cpnt-initialized", val);
       this.$emit("value-change", val);
     });
-    this.$on("asstable-initialized", (val) => {
+
+    this.$on("cpnt-asstable-initialized", (val) => {
+      this.broadcast("PsoformItem", "cpnt-initialized", val);
+      this.broadcast("PsoformItem", "asstable-selected", val);
       this.$emit("value-change", val);
-      this.broadcast("PsoformItem", "asstable-initialized", val);
     });
 
     //专门用在签单中类似用户或者部门的值

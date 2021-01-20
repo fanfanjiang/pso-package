@@ -56,7 +56,7 @@ export default {
   async created() {
     this.loading = true;
 
-    if (this.cpnt.data._bindUser && !this.cpnt.data._val) {
+    if (this.cpnt.data._bindUser) {
       this.$on("cpnt-value-changed", ({ cpnt, proxy }) => {
         if (cpnt.data._fieldValue === this.cpnt.data._bindUser && proxy) {
           if (proxy.list.length) {
@@ -78,7 +78,7 @@ export default {
       this.proxy.valList = [];
     }
     this.loading = false;
-    this.dispatch("PsoformInterpreter", "cpnt-dept-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
+    this.dispatch("PsoformInterpreter", "cpnt-dept-initialized", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
     this.handleCached();
   },
   methods: {

@@ -1,5 +1,5 @@
 <template>
-  <el-form size="mini" label-position="left" label-width="50px" style="padding: 10px">
+  <el-form size="mini" :label-position="position" :label-width="labelWidth" style="padding: 10px">
     <el-form-item label="名称">
       <el-input size="mini" v-model.trim="cpnt.urine.child_name" clearable></el-input>
     </el-form-item>
@@ -13,6 +13,14 @@
 export default {
   props: {
     cpnt: Object,
+    position: {
+      type: String,
+      default: "left",
+    },
+    labelWidth: {
+      type: String,
+      default: "50px",
+    },
   },
 };
 </script>

@@ -94,7 +94,7 @@ export default {
 
     this.loading = false;
     //初始化时
-    this.dispatch("PsoformInterpreter", "cpnt-user-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
+    this.dispatch("PsoformInterpreter", "cpnt-user-initialized", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
   },
   methods: {
     async getFormSource() {

@@ -122,6 +122,7 @@ export default {
       subAsstables: [],
       addDataCallback: null,
       cachedIds: [],
+      watchFun: [],
     };
   },
   computed: {
@@ -231,19 +232,6 @@ export default {
     },
   },
   watch: {
-    "proxy.valList"(data) {
-      if (this.astStore) {
-        this.astStore.instances = data;
-        if (this.astStore.$table) {
-          this.astStore.$table.clearSelection();
-        }
-      }
-      this.cpnt.data._val = _.map(
-        data.filter((d) => !d.__dump__),
-        "leaf_id"
-      ).join(",");
-      this.dispatch("PsoformInterpreter", "asstable-selected", { cpnt: this.cpnt, data, store: this.store });
-    },
     "cpnt.data._type": {
       handler(val) {
         this.proxy._type = val;
@@ -256,6 +244,7 @@ export default {
     },
   },
   async created() {
+    this.clearWatch();
     await this.initialize();
 
     //初始赋值
@@ -280,15 +269,18 @@ export default {
     const defaultTip = "操作提示：双击或单击数据可查看详情或编辑，在弹出的窗口右上角可删除数据，删除时请谨慎操作。";
     this.cpnt.data._fieldInfo = tip + (tip ? `<br><br>${defaultTip}` : defaultTip);
 
-    this.dispatch("PsoformInterpreter", "asstable-initialized", {
-      cpnt: this.cpnt,
-      data: this.cpnt.data._val,
-      value: this.cpnt.data._val,
-      proxy: this.proxy,
-      fields: this.astStore.fields,
-      printFields: this.cpnt.data._printFields && this.astStore.getColumnByName(this.cpnt.data._printFields),
-      store: this.store,
-    });
+    this.prepareByProxy(this.proxy.valList);
+    this.dispatch("PsoformInterpreter", "cpnt-asstable-initialized", this.getChangeEntity());
+
+    this.watchFun.push(
+      this.$watch("proxy.valList", {
+        deep: true,
+        handler(data) {
+          this.prepareByProxy(data);
+          this.dispatch("PsoformInterpreter", "asstable-selected", this.getChangeEntity());
+        },
+      })
+    );
 
     this.$on("data-changed", async (evt) => {
       this.astStore.dataId = evt.leaf_id;
@@ -297,6 +289,32 @@ export default {
     });
   },
   methods: {
+    clearWatch() {
+      //清除监听器
+      if (this.watchFun.length) {
+        this.watchFun.forEach((f) => f());
+        this.watchFun = [];
+      }
+    },
+    prepareByProxy(data) {
+      this.astStore.instances = data;
+      if (this.astStore.$table) {
+        this.astStore.$table.clearSelection();
+      }
+      const shouldSavedIdList = data.filter((d) => !d.__dump__);
+      this.cpnt.data._val = _.map(shouldSavedIdList, "leaf_id").join(",");
+    },
+    getChangeEntity() {
+      return {
+        data: this.proxy.valList,
+        value: this.cpnt.data._val,
+        cpnt: this.cpnt,
+        proxy: this.proxy,
+        fields: this.astStore ? this.astStore.fields : [],
+        printFields: this.astStore && this.cpnt.data._printFields ? this.astStore.getColumnByName(this.cpnt.data._printFields) : [],
+        store: this.store,
+      };
+    },
     async initialize() {
       this.initializing = true;
       if (!this.cpnt.data._option) return;
@@ -340,6 +358,7 @@ export default {
     },
     setMockData() {
       if (this.cpnt.store && this.cpnt.store.mockAsstables && this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]) {
+        console.log(55555, this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]);
         this.handleAddSelection([this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]]);
       } else {
         this.proxy.valList = [];

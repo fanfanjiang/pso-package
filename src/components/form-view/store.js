@@ -822,8 +822,7 @@ export default class FormViewStore {
         } catch (error) {
 
         }
-
-        return this.filterBadVal(_val);
+        return this.filterBadVal(_val) + (f._unit ? f._unit : '');
     }
 
     getColorTagEl(flagColor) {

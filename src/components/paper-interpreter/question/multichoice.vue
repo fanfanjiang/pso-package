@@ -8,7 +8,7 @@
       </div>
       <div class="paper-interpreter-question__body">
         <div class="paper-interpreter-radio">
-          <el-checkbox-group v-model="data.result" @change="choiceChangeHandler">
+          <el-checkbox-group :disabled="!cpnt.store.paperEditable" v-model="data.result" @change="choiceChangeHandler">
             <el-checkbox :size="cpnt.store.size" :label="o" v-for="(o, i) in data.option" :key="i">
               <span :class="getRightClass(o)">{{ String.fromCharCode(65 + i) }}. {{ o }}</span>
             </el-checkbox>
@@ -40,7 +40,7 @@ export default {
     },
     getRightClass(option) {
       return {
-        "question-choice-right": this.cpnt.store.mode === "preview" && this.answers.includes(option),
+        "question-choice-right": this.cpnt.store.showAnswer && this.answers.includes(option),
       };
     },
     choiceChangeHandler(value) {

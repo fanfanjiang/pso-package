@@ -19,3 +19,17 @@ export const BaseMixin = {
         }
     }
 } 
+
+export const CpntMixin = {
+    props: {
+        cpnt: Object
+    },
+    data() {
+        return {
+        }
+    },
+    computed: {
+    },
+    methods: {
+    }
+} 

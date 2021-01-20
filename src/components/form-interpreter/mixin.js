@@ -61,7 +61,7 @@ export default {
 
         if (this.cpnt.data._association) {
             if (!this.cpnt.data._val) {
-                this.$on('asstable-initialized', (params) => {
+                this.$on('cpnt-initialized', (params) => {
                     this.changedynamically(params);
                 })
             }

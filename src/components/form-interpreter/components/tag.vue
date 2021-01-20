@@ -74,7 +74,7 @@ export default {
       this.proxy.valList = [];
     }
 
-    this.dispatch("PsoformInterpreter", "cpnt-tag-changed", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
+    this.dispatch("PsoformInterpreter", "cpnt-tag-initialized", { cpnt: this.cpnt, value: this.cpnt.data._val, proxy: this.proxy });
 
     if (this.cpnt.data._filterOptions && this.cpnt.data._filterOptions.length) {
       this.cpnt.data._filterOptions.forEach((f) => {

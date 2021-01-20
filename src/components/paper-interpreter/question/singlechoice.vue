@@ -8,7 +8,7 @@
       </div>
       <div class="paper-interpreter-question__body">
         <div class="paper-interpreter-radio">
-          <el-radio-group v-model="data.result" @change="choiceChangeHandler">
+          <el-radio-group :disabled="!cpnt.store.paperEditable" v-model="data.result" @change="choiceChangeHandler">
             <el-radio :size="cpnt.store.size" :label="o" v-for="(o, i) in data.option" :key="i">
               <span :class="getRightClass(o)">{{ String.fromCharCode(65 + i) }}. {{ o }}</span>
             </el-radio>
@@ -32,7 +32,7 @@ export default {
     },
     getRightClass(option) {
       return {
-        "question-choice-right": this.cpnt.store.mode === "preview" && option == this.data.answer,
+        "question-choice-right": this.cpnt.store.showAnswer && option == this.data.answer,
       };
     },
     choiceChangeHandler(value) {

@@ -477,8 +477,9 @@ export default class WfStore {
         if (this.$vue.__xssFilter__) {
             value = this.$vue.PSODOMPurify.sanitize(value);
         }
+
         const _unit = data._unit || '';
-        $el.html((!_.isNaN(value) && !_.isNull(value)) ? `${value} ${_unit}` : '');
+        $el.html((!_.isNaN(value) && !_.isNull(value) && value !== 'null' && typeof value !== 'undefined') ? `${value} ${_unit}` : '');
 
         //关联表
         if (cpnt.componentid === "asstable" && proxy && fields) {

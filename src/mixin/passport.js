@@ -54,7 +54,6 @@ export const ConfigMixin = {
     data() {
         return {
             curApp: null,
-            initedCurApp: false,
             appConfig: _.cloneDeep(CONFIG)
         }
     },
@@ -72,7 +71,6 @@ export const ConfigMixin = {
     methods: {
         reset() {
             this.appConfig = _.cloneDeep(CONFIG);
-            this.initedCurApp = false;
         },
         async initializeCfg(reset = true) {
             try {
@@ -80,7 +78,9 @@ export const ConfigMixin = {
 
                 reset && this.reset();
 
-                const { data, base, link, users, orgs } = ret.data;
+                let { data, base, link, users, orgs } = ret.data;
+
+                data = _.orderBy(data, ['cate_order'], ['asc']);
 
                 if (users) {
                     this.appConfig.users = users;
@@ -91,36 +91,40 @@ export const ConfigMixin = {
 
                 //处理站点数据，设置默认站点数据
                 if (data && data.length) {
+
                     this.appConfig.sites = data;
+
                     let group = {};
                     ["cate_name", "sec_name"].forEach((dim) => {
                         group = makeDimension(group, data, dim);
                     });
+
+                    let defTargt;
+                    let curTargt;
+                    let lockedTarget;
+
                     for (let key in group) {
                         const first = { site_name: key, site_app: 1, children: [] };
                         for (let subKey in group[key]) {
-
                             first.children.push({ site_name: subKey, site_app: 1, children: group[key][subKey] });
 
-                            if (!this.initedCurApp) {
-                                for (let subSite of group[key][subKey]) {
-                                    if (this.defAppid && this.defAppid === subSite.site_app) {
-                                        this.initedCurApp = true;
-                                        this.selectSite(subSite);
-                                        break;
-                                    } else if (this.appid && this.appid === subSite.site_app) {
-                                        this.initedCurApp = true;
-                                        this.selectSite(subSite);
-                                        break;
-                                    } else if (subSite.is_default === "1") {
-                                        this.initedCurApp = true;
-                                        this.selectSite(subSite);
-                                        break;
-                                    }
+                            for (let subSite of group[key][subKey]) {
+                                first.site_type = subSite.site_type;
+                                if (this.defAppid && this.defAppid === subSite.site_app) {
+                                    lockedTarget = subSite;
+                                } else if (this.appid && this.appid === subSite.site_app) {
+                                    curTargt = subSite;
+                                } else if (subSite.is_default === "1") {
+                                    defTargt = subSite;
                                 }
                             }
                         }
                         this.appConfig.sitesTree.push(first);
+                    }
+
+                    let __target__ = lockedTarget || curTargt || defTargt;
+                    if (__target__) {
+                        this.selectSite(__target__);
                     }
                 }
 

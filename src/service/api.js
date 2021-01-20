@@ -272,6 +272,14 @@ export default class API {
         }
     }
 
+    static async schedule(params) {
+        try {
+            return await this.RESTful('/api/schedule', Object.assign({ idField: 'job_id' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async searchUsers(data) {
         try {
             return await this.request('/api/users/search', { data });
@@ -858,7 +866,7 @@ export default class API {
             throw error;
         }
     }
-    
+
     static async addOrUpdatePaper(data) {
         try {
             return await this.request('/api/feature/paper', { data, method: 'post' });
@@ -870,6 +878,23 @@ export default class API {
     static async getPapers(data) {
         try {
             return await this.request('/api/feature/paper', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+    static async getScheduleTriggers(data) {
+        try {
+            return await this.request('/api/schedule-trigger', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async addOrUpdateScheduleTrigger(data) {
+        try {
+            return await this.request('/api/schedule-trigger', { data, method: 'post' });
         } catch (error) {
             throw error;
         }

@@ -1,22 +1,10 @@
 <template>
-  <div class="grid-panel">
-    <div class="grid-panel-tabs">
-      <button-tabs v-model="curTab" :data="TABS"></button-tabs>
-      <el-button type="text" @click="saveCpnt" :loading="cpnt.store.saving">保存模块</el-button>
-    </div>
-    <div class="grid-panel-body">
-      <data-source
-        v-if="curTab === 0"
-        :source="cpnt.urine.child_data"
-        :column="cpnt.urine.child_content"
-        :id="cpnt.urine.child_id"
-      ></data-source>
-      <common-panel v-if="curTab === 1" :cpnt="cpnt">
-        <el-form-item label="图表">
-          <el-button size="mini" type="primary" @click="showDesigner = true">设计</el-button>
-        </el-form-item>
-      </common-panel>
-    </div>
+  <panel-wrapper :cpnt="cpnt">
+    <common-panel :cpnt="cpnt">
+      <el-form-item label="图表">
+        <el-button size="mini" type="primary" @click="showDesigner = true">设计</el-button>
+      </el-form-item>
+    </common-panel>
     <pso-dialog :visible="showDesigner" width="100%" @close="showDesigner = false">
       <template #title>
         <div class="form-executor-header">
@@ -33,16 +21,16 @@
       </template>
       <pso-chart-designer ref="designer" :params="chartParams"></pso-chart-designer>
     </pso-dialog>
-  </div>
+  </panel-wrapper>
 </template> 
 <script>
-import DataSource from "../../plugin-module/data-source";
+import PanelWrapper from "../panel";
 import CommonPanel from "../common-panel";
 
-import { BaseMixin } from "../mixin";
+import { CpntMixin } from "../mixin";
 export default {
-  components: { DataSource, CommonPanel },
-  mixins: [BaseMixin],
+  components: { PanelWrapper, CommonPanel },
+  mixins: [CpntMixin],
   data() {
     return {
       showDesigner: false,

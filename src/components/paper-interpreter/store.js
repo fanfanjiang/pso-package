@@ -17,13 +17,17 @@ export default class Interpreter extends Designer {
         this.size = options.size;
         this.mode = options.mode;
         this.appid = options.appid || '';
-        this.start = this.mode === 'preview';
-        this.paperid = options.paperid;
+        this.start = this.mode !== 'edit';
+        this.paperId = options.paperId;
+
+        this.instResult = [];
+        this.instStatus = '0';
 
         this.splitSymbol = '|$|';
 
         this.completing = false;
         this.completed = false;
+        this.grading = false;
     }
 
     get previewMode() {
@@ -36,6 +40,22 @@ export default class Interpreter extends Designer {
 
     get gradeMode() {
         return this.mode === 'grade';
+    }
+
+    get readMode() {
+        return this.mode === 'read';
+    }
+
+    get showAnswer() {
+        return this.previewMode || this.gradeMode || this.readMode;
+    }
+
+    get paperEditable() {
+        return this.previewMode || this.editMode;
+    }
+
+    get showScoreboard() {
+        return this.gradeMode || this.readMode;
     }
 
     get previewScore() {
@@ -63,7 +83,7 @@ export default class Interpreter extends Designer {
     }
 
     async beforeInitialize() {
-        if (!this.checkAuth()) {
+        if (this.editMode && !this.checkAuth()) {
             //如果未登录先登录临时用户，苦笑
             const success = await this.$vue.$store.dispatch('APP_MOCKSIGNIN', { appid: this.appid });
             this.mockSignin = true;
@@ -76,19 +96,42 @@ export default class Interpreter extends Designer {
 
     async onInitialized() {
         super.onInitialized();
-        const { authRequired } = this.paperConfig;
-        if (authRequired && this.mockSignin) {
-            this.$vue.$router.replace({
-                name: 'login',
-                query: { redirect: this.$vue.$router.currentRoute.fullPath }
-            })
+
+        if (this.editMode) {
+            const { authRequired } = this.paperConfig;
+            if (authRequired && this.mockSignin) {
+                this.$vue.$router.replace({
+                    name: 'login',
+                    query: { redirect: this.$vue.$router.currentRoute.fullPath }
+                })
+            }
+
+            if (authRequired) {
+                const ret = await API.getPapers({ keys: JSON.stringify({ exam_user: { value: this.base.userid, type: 1 }, exam_id: { value: this.code, type: 1 } }) });
+                if (ret.success && ret.data.length) {
+                    this.completed = true;
+                }
+            }
         }
 
-        if (authRequired && this.editMode) {
-            const ret = await API.getPapers({ keys: JSON.stringify({ exam_user: { value: this.base.userid, type: 1 }, exam_id: { value: this.code, type: 1 } }) });
-            if (ret.success && ret.data.length) {
-                this.completed = true;
+        if (this.paperId) {
+            await this.fetchPaperRet();
+        }
+    }
+
+    async fetchPaperRet() {
+        const ret = await API.getPapers({ keys: JSON.stringify({ result_id: { value: this.paperId, type: 1 }, exam_id: { value: this.code, type: 1 } }) });
+        if (ret.success && ret.data.length) {
+            const { exam_content, exam_user, exam_name, exam_status, exam_submit } = ret.data[0];
+
+            if (exam_submit) {
+                Object.assign(this.base, JSON.parse(exam_submit))
             }
+            this.base.userid = exam_user;
+            this.base.name = exam_name;
+
+            this.instStatus = exam_status;
+            this.instResult = JSON.parse(exam_content);
         }
     }
 
@@ -129,6 +172,7 @@ export default class Interpreter extends Designer {
     }
 
     async completePaper() {
+        if (this.completing) return;
         this.completing = true;
         try {
             if (this.completed) {
@@ -153,5 +197,21 @@ export default class Interpreter extends Designer {
             this.$vue.$message({ type: 'warning', message: error.message })
             this.completing = false;
         }
+    }
+
+    async gradePaper() {
+        if (this.grading) return;
+        this.grading = true;
+        const ret = await API.addOrUpdatePaper({
+            exam_id: this.code,
+            result_id: this.paperId,
+            result_score: this.score,
+            exam_status: PAPER_STATUS.graded.v,
+            exam_content: JSON.stringify(this.paperResult),
+            optype: 1
+        });
+        this.$vue.ResultNotify(ret);
+        this.$vue.$emit('graded')
+        this.grading = false;
     }
 }

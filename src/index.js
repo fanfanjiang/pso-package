@@ -55,6 +55,7 @@ import PsoFileList from "./components/file-list";
 
 //表单组件
 import PsoFormView from "./components/form-view";
+import PsoSuperView from "./components/super-view";
 
 import PsoFormDesigner from "./components/form-designer";
 import PsoFormExecutor from "./components/form-executor";
@@ -84,7 +85,9 @@ import PsoUpload from "./components/upload";
 import PsoChartDesigner from "./components/chart-designer";
 import PsoChartInterpreter from "./components/chart-interpreter";
 import PsoGridInterpreter from "./components/grid-interpreter";
+
 import PsoPaperInterpreter from "./components/paper-interpreter";
+import PsoPaperView from "./components/paper-view";
 
 import PsoTagEditor from "./components/tag-editor";
 
@@ -129,6 +132,11 @@ import PsoFtr from "./components/full-text-retrieval";
 
 //数据表管理及同步
 import PsoDbtableMgt from "./components/dbtable-mgt";
+
+//定时任务
+import PsoScheduleMgt from "./components/schedule-mgt";
+import PsoScheduleTrigger from "./components/schedule-trigger";
+
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -212,6 +220,7 @@ const components = {
     PsoSiteMgt,
     PsoGridInterpreter,
     PsoPaperInterpreter,
+    PsoPaperView,
 
     PsoSignIn,
     PsoSignUp,
@@ -229,6 +238,11 @@ const components = {
     PsoFtr,
 
     PsoDbtableMgt,
+
+    PsoScheduleMgt,
+    PsoScheduleTrigger,
+
+    PsoSuperView,
 
     //混合视图
     PsoFvAst,
