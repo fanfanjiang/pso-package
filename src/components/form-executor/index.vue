@@ -109,6 +109,7 @@ export default {
       store: null,
       fullScreen: false,
       data: {},
+      originData: null,
     };
   },
   computed: {
@@ -140,13 +141,24 @@ export default {
       //暂存的数据，还没有真实提交
       return this.formParams.dataInstance && this.formParams.dataInstance.__temporary__;
     },
+    isDump() {
+      //暂存的数据，还没有真实提交
+      return this.formParams.dataInstance && this.formParams.dataInstance.__dump__;
+    },
     boxWidth() {
       return this.fullScreen ? "100%" : "70%";
     },
   },
   watch: {
-    "params.dataId"() {
+    "params.dataId"(value) {
       this.initializing = true;
+
+      //保存原始数据
+      if (this.params.dataInstance) {
+        this.originData = _.cloneDeep(this.params.dataInstance);
+      } else {
+        this.originData = null;
+      }
     },
   },
   methods: {
@@ -192,6 +204,24 @@ export default {
         const afterChange = (trueId = "") => {
           if (this.isTemporary) {
             formData.dataArr[0]["__temporary__"] = true;
+            formData.dataArr[0]["__dump__"] = this.isDump;
+
+            try {
+              //判断数据是否有改变
+              if (this.originData) {
+                for (let key in formData.dataArr[0]) {
+                  const sv = this.originData[key];
+                  const tv = formData.dataArr[0][key];
+                  if (key !== "optype" && tv != sv && !(tv === "" && typeof sv === "undefined")) {
+                    formData.dataArr[0]["__dump__"] = false;
+                    break;
+                  }
+                }
+              }
+            } catch (error) {
+              console.log(error)
+            }
+
             imitateFormData(formData.dataArr[0], this.store);
           }
           this.$emit("data-changed", { leaf_id: this.dataId || trueId, formData, op });

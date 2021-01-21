@@ -541,7 +541,7 @@ const CPNT = {
     data: [
       { n: '_script', v: [] },
       { n: '_type', v: '1' },
-      { n: '_saveOnce', v: true },
+      { n: '_saveOnce', v: false },
       { n: '_option', v: [] },
       { n: '_column', v: [] },
       { n: '_saveField', v: '' },
@@ -550,6 +550,7 @@ const CPNT = {
       { n: '_copySource', v: '' },
       { n: '_copyTargetAutoLimit', v: [] },
       { n: '_selectType', v: 'radio' },
+      { n: '_copyNotDump', v: false },
     ]
   }
 }

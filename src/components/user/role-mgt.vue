@@ -40,7 +40,11 @@
             <el-checkbox-group v-if="curTab === 3" v-model="setting.entrance">
               <el-checkbox v-for="(d, i) in entrance" :key="i" :label="d.auto_no">{{ d.map_key0 }}</el-checkbox>
             </el-checkbox-group>
-            <desk-editor v-if="curTab === 4" :layout="setting.desk" :desks="desks"></desk-editor>
+            <div v-if="curTab === 4">
+              <el-select filterable clearable size="mini" v-model="setting.desk">
+                <el-option v-for="(a, i) in templetes" :key="i" :label="a.node_display" :value="a.node_name"></el-option>
+              </el-select>
+            </div>
           </div>
         </div>
       </template>
@@ -63,12 +67,11 @@ import { MgtMixin } from "../../mixin/view";
 import ButtonTabs from "../button-tabs";
 import Users from "./users";
 import NodeAuth from "../common-auth";
-import DeskEditor from "./desk-editor";
 
-const TABS = [{ label: "用户" }, { label: "表单权限" }, { label: "流程权限" }, { label: "工作台" }, { label: "快捷入口" }];
+const TABS = [{ label: "用户" }, { label: "表单权限" }, { label: "流程权限" }, { label: "快捷入口" }, { label: "工作台" }];
 
 export default {
-  components: { ButtonTabs, Users, NodeAuth, DeskEditor },
+  components: { ButtonTabs, Users, NodeAuth },
   mixins: [MgtMixin],
   data() {
     this.TABS = TABS;
@@ -86,9 +89,9 @@ export default {
       entrance: [],
       setting: {
         entrance: [],
-        desk: [],
+        desk: "",
       },
-      desks: [],
+      templetes: [],
     };
   },
   computed: {
@@ -113,18 +116,13 @@ export default {
         this.curNode = this.nodes[0].user_type;
       }
       this.entrance = (await this.API.getSysConfig({ keys: JSON.stringify({ config_type: { type: 1, value: 12 } }) })).data;
-      this.desks = (await this.API.getSysConfig({ keys: JSON.stringify({ config_type: { type: 1, value: 3 } }) })).data;
+      this.templetes = await this.API.getTempleteTree([2]);
       this.initializing = false;
     },
     async makeSetting() {
       if (this.curRole) {
         this.setting.entrance = this.curRole.setting_block ? this.curRole.setting_block.split(",") : [];
-        if (this.curRole.user_main_page) {
-          try {
-            const page = JSON.parse(this.curRole.user_main_page);
-            this.setting.desk = Array.isArray(page) ? page : [];
-          } catch (error) {}
-        }
+        this.setting.desk = this.curRole.user_main_page;
       }
     },
     editRole(node) {
@@ -160,7 +158,7 @@ export default {
       this.saveRole({
         ...this.curRole,
         setting_block: this.setting.entrance.join(","),
-        user_main_page: JSON.stringify(this.setting.desk),
+        user_main_page: this.setting.desk,
         optype: "1",
       });
     },

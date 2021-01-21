@@ -112,11 +112,15 @@ export default class FormViewStore {
             doing: false
         };
 
+        this.fetchMode = '1';//加载模式 1为分页加载，2为滚动加载
+
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
                 this[op] = options[op];
             }
         }
+
+        this.fetchFinished = this.fetchMode === '1';
 
         this.deFetch = debounce(300, (params) => {
             this.fetch(params);
@@ -306,6 +310,10 @@ export default class FormViewStore {
         }
     }
 
+    getField(field_name) {
+        return _.find(this.fields, { field_name });
+    }
+
     async newInstance(checkScript) {
         if (this.addAction && this.addAction.beforeScriptable && checkScript) {
             const ret = await API.doActionScript({ btn_id: 'add', btn_type: '0', data_code: this.store.data_code, data: [] });
@@ -397,7 +405,14 @@ export default class FormViewStore {
         }
 
         if (ret.success) {
-            this.instances = ret.data;
+            if (this.fetchMode === '1') {
+                this.instances = ret.data;
+            } else {
+                this.instances = this.instances.concat(ret.data);
+                if (!ret.data.length) {
+                    this.fetchFinished = true;
+                }
+            }
             this.dataTotal = ret.total;
             this.summary = ret.sum || null;
 

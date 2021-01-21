@@ -229,7 +229,7 @@ export default {
           }
         }
       } else {
-        const { _copyTarget, _copySource, _copyTargetAutoGen, _copyTargetAutoLimit } = this.cpnt.data;
+        const { _copyTarget, _copySource, _copyTargetAutoGen, _copyTargetAutoLimit, _copyNotDump } = this.cpnt.data;
         if (_copyTarget) {
           let total = 0;
           const autoGen = _copySource && _copyTargetAutoGen;
@@ -259,7 +259,7 @@ export default {
               }
               total = total - minus;
             } else {
-              d.__dump__ = true;
+              d.__dump__ = !_copyNotDump;
             }
           });
 

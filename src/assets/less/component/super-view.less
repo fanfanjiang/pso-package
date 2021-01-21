@@ -1,0 +1,85 @@
+.pso-super-view {
+    height: 100%;
+    background-color: #fff;
+
+    .pso-super-view__body {
+        height: 100%;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+
+        .pso-super-view__calendar {}
+
+        .pso-super-view__view {
+            height: 100%;
+            flex: 1;
+        }
+    }
+
+    .pso-super-view__add {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        box-shadow: 0 0 4px 0 rgba(0, 0, 0, .1);
+        border-radius: 100%;
+    }
+}
+
+.pso-sv-view {
+    height: 100%;
+    overflow: auto;
+
+    .pso-sv-view-item {
+        padding: 0 15px;
+
+        &+.pso-sv-view-item {
+            .pso-sv-view-item-body {
+                border-top: 1px solid #E7E7E7;
+            }
+        }
+
+        .pso-sv-view-item-body {
+            padding: 15px 0;
+        }
+    }
+
+    .pso-sv-view-item__t {
+        margin-bottom: 6px;
+    }
+
+    .pso-sv-view-item__c {
+        display: flex;
+
+        .pso-sv-view-item__c-l {
+            flex: 1;
+            width: 100%;
+        }
+    }
+
+    .pso-sv-view-item__b {
+        display: flex;
+        margin-top: 10px;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .pso-sv-view-title {
+        letter-spacing: 1px;
+        color: #000;
+    }
+
+    .pso-sv-view-info {
+        color: #666;
+
+        .view-field {
+            &+.view-field {
+                margin-top: 3px;
+            }
+        }
+    }
+
+    .pso-sv-view-time {
+        font-size: 13px;
+        color: #666;
+    }
+}

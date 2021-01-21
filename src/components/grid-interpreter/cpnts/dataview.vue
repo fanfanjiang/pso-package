@@ -1,12 +1,11 @@
 <template>
-  <pso-super-view :params="cpnt.data"></pso-super-view>
+  <pso-grid-wrapper :cpnt="cpnt">
+    <pso-super-view :params="cpnt.data" :urine="cpnt.urine"></pso-super-view>
+  </pso-grid-wrapper>
 </template>
 <script>
+import { BaseMixin } from "../mixin";
 export default {
-  props: {
-    cpnt: {
-      type: Object,
-    },
-  },
+  mixins: [BaseMixin]
 };
 </script>

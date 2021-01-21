@@ -1,11 +1,8 @@
 <template>
-  <div class="pso-desk-box">
-    <div class="pso-desk-box__header">
-      <span>待办事项</span>
-    </div>
-    <div class="pso-desk-box__body">
-      <div class="pso-desk-todo" v-if="!initializing">
-        <div class="pso-desk-todo__item" v-for="item in todo" :key="item.status_name" @click="handleClick(item)">
+  <pso-grid-wrapper :cpnt="cpnt">
+    <div class="pso-grid-todo">
+      <div class="pso-grid-todo__body" v-if="!initializing">
+        <div class="pso-grid-todo__item" v-for="item in todo" :key="item.status_name" @click="handleClick(item)">
           <el-badge :value="item.total" class="item" :hidden="item.total === 0">
             <img :src="getImg(item.status_name)" alt />
           </el-badge>
@@ -13,7 +10,7 @@
         </div>
       </div>
       <pso-skeleton v-if="initializing" :lines="3" :s-style="{ padding: '10px' }"></pso-skeleton>
-      <div class="pso-desk-latest">
+      <div class="pso-grid-latest">
         <span>最新待审</span>
         <el-button size="mini" v-if="curInstance.instance_id" @click="doWf">{{ curInstance.instance_name }}</el-button>
         <div v-else>无</div>
@@ -32,10 +29,12 @@
       </template>
       <pso-wf-executor ref="executor" :params="executorParams" @excuted="handleExcuted"></pso-wf-executor>
     </pso-dialog>
-  </div>
+  </pso-grid-wrapper>
 </template>
 <script>
+import { BaseMixin } from "../mixin";
 export default {
+  mixins: [BaseMixin],
   data() {
     return {
       initializing: true,

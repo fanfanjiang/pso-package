@@ -9,7 +9,19 @@ export const DEFAULT = {
     child_design: "",
 }
 
+export const MORETYPES = [
+    { n: "手动录入", v: "0" },
+    { n: "选择菜单", v: "1" },
+];
+
+export const COMMONFIELDS = {
+    moreable: false, //显示更多
+    moreType: '0',
+    moreTarget: ''
+}
+
 export const DATAFIELDS = {
+    ...COMMONFIELDS,
     sourceType: '0', //数据源类型
     source: '', //数据源标记
     useCloumn: '',//列表
@@ -20,7 +32,6 @@ export const DATAFIELDS = {
     fieldPic: '',
     fieldTime: '',
     timeAgo: true,
-    moreable: false, //显示更多
     paging: false, //显示分页
     viewAuth: '4', //权限
 }
@@ -39,16 +50,8 @@ export const CPNT = {
         id: "text",
         name: "文本",
         data: {
-            w: 8,
-            h: 4
-        }
-    },
-    todo: {
-        id: "todo",
-        name: "我的待办",
-        data: {
-            w: 8,
-            h: 4
+            w: 7,
+            h: 12
         }
     },
     dataview: {
@@ -74,6 +77,104 @@ export const CPNT = {
             fieldContent: [],
             actions: [],
         }
+    },
+
+    //系统模块
+    todo: {
+        id: "todo",
+        name: "我的待办",
+        data: {
+            w: 10,
+            h: 8
+        }
+    },
+    app: {
+        id: "app",
+        name: "其它应用入口",
+        data: {
+            w: 7,
+            h: 8,
+        }
+    },
+    entrance: {
+        id: "entrance",
+        name: "快捷入口",
+        data: {
+            w: 7,
+            h: 12,
+        }
+    },
+    knowledge: {
+        id: "knowledge",
+        name: "知识库",
+        data: {
+            w: 7,
+            h: 8,
+        }
+    },
+    meeting: {
+        id: "meeting",
+        name: "近期会议",
+        data: {
+            w: 7,
+            h: 12,
+        }
+    },
+    news: {
+        id: "news",
+        name: "企业动态",
+        data: {
+            w: 7,
+            h: 12,
+        }
+    },
+
+
+    //项目管理
+    proindex: {
+        id: "proindex",
+        name: "项目信息一览",
+        data: {
+            ...COMMONFIELDS,
+            w: 10,
+            h: 18,
+        }
+    },
+    prosale: {
+        id: "prosale",
+        name: "销售项目情况",
+        data: {
+            ...COMMONFIELDS,
+            w: 10,
+            h: 18,
+        }
+    },
+    prosalestatus: {
+        id: "prosalestatus",
+        name: "销售项目状态情况",
+        data: {
+            ...COMMONFIELDS,
+            w: 7,
+            h: 8,
+        }
+    },
+    propersonnel: {
+        id: "propersonnel",
+        name: "人事概况",
+        data: {
+            ...COMMONFIELDS,
+            w: 7,
+            h: 8,
+        }
+    },
+    prorecruitment: {
+        id: "prorecruitment",
+        name: "今日招聘",
+        data: {
+            ...COMMONFIELDS,
+            w: 7,
+            h: 8,
+        }
     }
 }
 
@@ -83,11 +184,11 @@ export const MENU = [
         children: [CPNT.dataview, CPNT.chart, CPNT.carousel, CPNT.text]
     },
     {
-        name: '流程相关',
-        children: [CPNT.todo]
+        name: '系统功能',
+        children: [CPNT.todo, CPNT.app, CPNT.entrance, CPNT.knowledge, CPNT.meeting, CPNT.news]
     },
     {
         name: '项目管理',
-        children: []
+        children: [CPNT.proindex, CPNT.prosale, CPNT.prosalestatus, CPNT.propersonnel, CPNT.prorecruitment]
     }
 ]

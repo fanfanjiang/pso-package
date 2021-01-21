@@ -23,6 +23,9 @@
         </el-select>
       </el-form-item>
       <template v-if="cpnt.data._copyType === '2'">
+        <el-form-item label="在数据未改变时保存数据（选择是则无论数据是否改变都会保存）" required>
+          <el-switch v-model="cpnt.data._copyNotDump" size="mini"></el-switch>
+        </el-form-item>
         <el-form-item label="赋值目标字段">
           <el-select v-model="cpnt.data._copyTarget" size="mini" placeholder="请选择" clearable>
             <el-option v-for="f in fieldOptions" :key="f.fid" :label="f._fieldName" :value="f._fieldValue"></el-option>

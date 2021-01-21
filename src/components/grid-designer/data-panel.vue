@@ -23,9 +23,6 @@
         </el-select>
       </el-form-item>
     </template>
-    <el-form-item label="查看更多">
-      <el-switch size="mini" v-model="cpnt.data.moreable"></el-switch>
-    </el-form-item>
     <el-form-item label="数据权限">
       <el-select filterable clearable size="mini" v-model="cpnt.data.viewAuth">
         <el-option v-for="(a, i) in AUTHS" :key="i" :label="a.n" :value="a.v"></el-option>

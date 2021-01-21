@@ -3,7 +3,7 @@
     class="action-btn"
     size="mini"
     :style="{ 'background-color': action.color, 'border-color': action.color, color: '#fff' }"
-    :disabled="!checkActionalbe(action) || action.doing"
+    :disabled="(checkable && !checkActionalbe(action)) || action.doing"
     :loading="action.doing"
     @click="checkAction(action)"
   >
@@ -19,11 +19,15 @@ export default {
   props: {
     action: Object,
     store: Object,
+    checkable: {
+      type: Boolean,
+      default: true,
+    },
   },
   methods: {
     checkAction(action) {
       if (action.mode === "2") return;
-      this.store.checkAction(action);
+      this.$emit("click", action);
     },
     checkActionalbe(action) {
       return this.store.checkActionalbe(action);

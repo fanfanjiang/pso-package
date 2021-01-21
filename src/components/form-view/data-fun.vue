@@ -16,7 +16,7 @@
       >
         <action-btn slot="reference" :action="a" :store="store"></action-btn>
       </el-popconfirm>
-      <action-btn v-else :action="a" :store="store"></action-btn>
+      <action-btn v-else :action="a" :store="store" @click="checkAction(a)"></action-btn>
     </div>
     <dropdown
       v-if="opChangable"
@@ -130,7 +130,7 @@ export default {
     },
     checkAction(action) {
       this.store.checkAction(action);
-    }
+    },
   },
 };
 </script>

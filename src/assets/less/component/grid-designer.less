@@ -189,3 +189,42 @@
 .grid-designer-menu {
     padding: 0;
 }
+
+.grid-interpreter {
+    height: 100%;
+
+    .pso-grid-cpnt-wrapper {
+        background-color: #fff;
+        height: 100%;
+        position: relative;
+
+        .pso-grid-cpnt-wrapper-header {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            position: relative;
+
+            span {
+                font-size: 16px;
+                letter-spacing: 1px;
+            }
+
+            i {
+                font-size: 20px;
+                color: #666;
+                cursor: pointer;
+
+                &:hover {
+                    color: @main-color;
+                }
+            }
+        }
+
+        .pso-grid-cpnt-wrapper-body {
+            height: calc(100% - 50px);
+            position: relative;
+        }
+    }
+}

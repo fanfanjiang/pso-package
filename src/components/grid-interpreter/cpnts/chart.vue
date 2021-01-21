@@ -1,12 +1,11 @@
 <template>
-  <pso-chart-interpreter :chart-config="cpnt.data.design"></pso-chart-interpreter>
+  <pso-grid-wrapper :cpnt="cpnt">
+    <pso-chart-interpreter :chart-config="cpnt.data.design"></pso-chart-interpreter>
+  </pso-grid-wrapper>
 </template>
 <script>
+import { BaseMixin } from "../mixin";
 export default {
-  props: {
-    cpnt: {
-      type: Object,
-    },
-  },
+  mixins: [BaseMixin],
 };
 </script>

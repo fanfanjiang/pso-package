@@ -44,6 +44,8 @@
                   class="grid-designer-item"
                   @click.stop="editCpnt(d)"
                 >
+                  {{ d.data.w }}
+                  {{ d.data.h }}
                   <span>{{ d.data.n }}</span>
                   <i class="delete el-icon-delete-solid" @click.stop="delCpnt(d.i)"></i>
                 </div>
