@@ -184,7 +184,7 @@ export default {
   async created() {
     this.initing = true;
 
-    const success = await this.$vue.$store.dispatch("APP_MOCKSIGNIN", { appid: this.params.appid || "" });
+    const success = await this.$store.dispatch("APP_MOCKSIGNIN", { appid: this.params.appid || "" });
 
     const cfgRet = await this.API.getTreeNode({ code: this.params.code });
     this.cfg = cfgRet.data.data;

@@ -87,7 +87,6 @@ export const MSG_FIELDS = [
     { fieldDisplay: "第三方平台", field_name: "第三方平台", _fieldValue: "msg_notice_other", is_sys: "1", efield: '' },
     { fieldDisplay: "发送主体", field_name: "发送主体", _fieldValue: "msg_sender", is_sys: "1", efield: '' },
     { fieldDisplay: "收件编号", field_name: "收件编号", _fieldValue: "msg_rec_id", is_sys: "1", efield: '' },
-    { fieldDisplay: "消息体", field_name: "消息体", _fieldValue: "msg_id", is_sys: "1", efield: '' },
     { fieldDisplay: "收件人", field_name: "收件人", _fieldValue: "msg_receiver", is_sys: "1", efield: '' },
     { fieldDisplay: "消息状态", field_name: "消息状态", _fieldValue: "msg_status", is_sys: "1", efield: '' },
     { fieldDisplay: "到期时间", field_name: "到期时间", _fieldValue: "msg_expire", is_sys: "1", efield: '' },

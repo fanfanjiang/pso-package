@@ -8,6 +8,7 @@
         <el-radio-group v-model="action.method" @change="checkMethod">
           <el-radio label="1">一直</el-radio>
           <el-radio label="2">满足条件</el-radio>
+          <el-radio label="3">全局（不需要选择数据）</el-radio>
         </el-radio-group>
       </el-form-item>
       <div class="form-action-panel" v-if="action.method === '2'">

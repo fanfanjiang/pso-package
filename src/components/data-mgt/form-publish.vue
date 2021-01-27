@@ -142,6 +142,7 @@ export default {
       this.data.attach = value;
     },
     async genQR(params = {}) {
+      params.appid = this.$store.state.base.user.appid; 
       return await QRCode.toDataURL(`${this.host}/form/${this.node.node_name}?${Qs.stringify(params)}`);
     },
     handleFilterAdd(index) {

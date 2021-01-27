@@ -10,14 +10,8 @@
         <transition name="el-fade-in-linear" mode="out-in">
           <span v-if="data.msg_time && !hovered">{{ formatTime(data.msg_time) }}</span>
           <div v-if="hovered">
-            <el-tooltip content="设置已读" placement="top-end" :visible-arrow="false" :open-delay="200">
-              <div v-if="data.msg_status === 0" class="pso-notify-item__btn" @click="updateNoti"><i class="el-icon-check"></i></div>
-            </el-tooltip>
-            <el-tooltip content="执行" placement="top-end" :visible-arrow="false" :open-delay="200">
-              <div v-if="data.data_id || data.msg_url" class="pso-notify-item__btn" @click="checkAction">
-                <i class="el-icon-d-arrow-right"></i>
-              </div>
-            </el-tooltip>
+            <el-button v-if="data.msg_status === 0" size="mini" round @click="updateNoti">已读</el-button>
+            <el-button v-if="data.data_id || data.msg_url" size="mini" type="primary" round @click="checkAction"> 执行 </el-button>
           </div>
         </transition>
       </div>
@@ -47,6 +41,7 @@ export default {
       if (this.updating) return;
       this.updating = true;
       await this.store.update(this.data);
+      this.$emit("read", this.data);
       this.updating = false;
     },
     async checkAction() {

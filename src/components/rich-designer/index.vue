@@ -15,12 +15,7 @@
             @change="setField(commands)"
             @focus="selectedOp = '插入工作表字段'"
           >
-            <el-option
-              v-for="item in options"
-              :key="item._fieldValue"
-              :label="item.displayName || item._fieldName"
-              :value="item._fieldValue"
-            ></el-option>
+            <el-option v-for="(o, i) in options" :key="i" :label="o.displayName || o._fieldName" :value="o._fieldValue"></el-option>
           </el-select>
           <div class="wf-table-editor__icon">
             <editor-menu-item
@@ -57,6 +52,11 @@
           </div>
         </div>
       </editor-menu-bar>
+      <div class="wf-table-editor__common" v-if="curNode">
+        <el-select size="small" filterable clearable v-model="curNode.attrs.compareto" placeholder="对比标红">
+          <el-option v-for="(o, i) in options" :key="i" :label="o.displayName || o._fieldName" :value="o._fieldValue"></el-option>
+        </el-select>
+      </div>
       <div class="wf-table-editor__table" v-if="asstableNode">
         <el-divider>关联表配置</el-divider>
         <div>
@@ -115,8 +115,6 @@
   </div>
 </template>
 <script>
-import { genComponentData } from "../form-designer/helper/index.js";
-import { WF_FIND_NODE } from "../../store/mutation-types";
 import { REVIEW_LOG_FORMAT } from "../../const/workflow";
 
 import { Editor, EditorContent, EditorFloatingMenu, EditorMenuBar } from "tiptap";
@@ -319,6 +317,7 @@ export default {
       },
       coding: false,
       reviewLogField: REVIEW_LOG_FORMAT,
+      curNode: null,
     };
   },
   computed: {
@@ -362,6 +361,7 @@ export default {
   },
   created() {
     this.$on("field-click", async (node) => {
+      this.curNode = node;
       let reviewNode;
       this.reviews.forEach(({ target }) => {
         if (target.nid === node.attrs.field) {
@@ -399,6 +399,7 @@ export default {
         format: "",
         display: "",
         sequence: "",
+        compareto: "",
       });
       this.fieldValue = "";
     },
@@ -639,6 +640,8 @@ export default {
     }
   }
 }
+
+.wf-table-editor__common,
 .wf-table-editor__table {
   padding: 0 0 15px 0;
   .wf-table-editor__table-btn {

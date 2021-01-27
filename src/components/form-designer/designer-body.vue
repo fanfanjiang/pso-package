@@ -81,7 +81,7 @@ export default {
             "pscript",
             "signature",
           ],
-          特殊控件: ["section", "remark", "aiw", "phone", "email"],
+          特殊控件: ["section", "remark", "aiw", "phone", "email", "qrcode"],
         };
       },
     },

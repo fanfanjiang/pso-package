@@ -20,20 +20,24 @@ export const COMMONFIELDS = {
     moreTarget: ''
 }
 
-export const DATAFIELDS = {
-    ...COMMONFIELDS,
+export const DATABASE = {
     sourceType: '0', //数据源类型
     source: '', //数据源标记
     useCloumn: '',//列表
     defKeys: '',
     defComplexity: '',
     limit: 0,
+    viewAuth: '4', //权限
+}
+
+export const DATAFIELDS = {
+    ...COMMONFIELDS,
+    ...DATABASE,
     fieldTitle: '',
     fieldPic: '',
     fieldTime: '',
     timeAgo: true,
     paging: false, //显示分页
-    viewAuth: '4', //权限
 }
 
 export const CPNT = {
@@ -71,11 +75,12 @@ export const CPNT = {
         id: "carousel",
         name: "轮播图（走马灯）",
         data: {
-            ...DATAFIELDS,
+            ...DATABASE,
             w: 24,
-            h: 6,
-            fieldContent: [],
-            actions: [],
+            h: 10,
+            fieldTitle: '', 
+            fieldPic: '',
+            styleType: '0'
         }
     },
 

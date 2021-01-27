@@ -12,6 +12,9 @@ export const OPEN_TYPE = [{
 }, {
     n: '新页面',
     v: 2
+}, {
+    n: 'IFRAME',
+    v: 3
 }];
 
 //模板参数设置控件类型

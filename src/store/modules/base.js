@@ -21,6 +21,10 @@ export default {
             platform: '',
             theme: '1B9AEE'
         },
+        notify: {
+            initialized: false,
+            show: false
+        }
     },
     mutations: {
         [APP_SET_USER](state, user) {

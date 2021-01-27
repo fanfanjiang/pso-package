@@ -19,10 +19,10 @@
         transition="el-zoom-in-top"
         popper-class="pso-upload-wrapper"
         placement="bottom-start"
-        width="400"
+        :width="popWidth"
         v-model="showUpload"
       >
-        <pso-upload @close="showUpload = false" @confirm="confirm" :api="api" :data="data"></pso-upload>
+        <pso-upload @close="showUpload = false" @confirm="confirm" :api="api" :data="data" :visible="showUpload"></pso-upload>
         <template slot="reference">
           <slot>
             <el-button icon="el-icon-paperclip" plain size="small">上传附件</el-button>
@@ -68,6 +68,7 @@ export default {
       loadingFile: false,
       fIndex: 0,
       proxy: [],
+      popWidth: 400,
     };
   },
   computed: {
@@ -86,6 +87,11 @@ export default {
     this.cpnt.data._limit = 100;
     if (this.cpnt.data._val) {
       this.getImages(this.cpnt.data._val);
+    }
+  },
+  mounted() {
+    if (this.__isMobile__) {
+      this.popWidth = $(document).width();
     }
   },
   watch: {

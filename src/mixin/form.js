@@ -49,6 +49,11 @@ export const Printer = {
             const _unit = data._unit || '';
             $el.html((!_.isNaN(value) && !_.isNull(value)) ? `${value} ${_unit}` : '');
 
+            if (cpnt.componentid === "qrcode") {
+                $el.empty();
+                $el.append(`<img src="${value}" alt="二维码" />`);
+            }
+
             //关联表
             if (cpnt.componentid === "asstable" && proxy && fields) {
                 const display = $el.attr('display');

@@ -22,6 +22,11 @@
         :fields="[{ n: '查询字段', f: '_searchField' }]"
         @loaded="loadedHandler"
       ></picker-form>
+      <el-form-item label="模糊查询显示字段" v-if="cpnt.data._searchable">
+        <el-select multiple clearable filterable size="mini" v-model="cpnt.data._searchDisplay">
+          <el-option v-for="u in fields" :key="u._fieldValue" :label="u.fieldDisplay" :value="u._fieldValue"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="绑定其它字段" v-if="cpnt.data._searchable">
         <div class="act-text-body__shit" v-for="(f, i) in cpnt.data._bindFields" :key="i">
           <el-select size="mini" v-model="f.sid" placeholder="源字段">

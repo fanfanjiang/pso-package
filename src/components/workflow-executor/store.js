@@ -526,6 +526,27 @@ export default class WfStore {
                 }
             }
         }
+
+        try {
+            this.checkCompare();
+        } catch (error) {
+
+        }
+    }
+
+    checkCompare() {
+        // 检查对比
+        const compares = $(this.executorPrintRef).find(`[compareto]`);
+        compares.each((i, el) => {
+            const $el = $(el);
+            const compareto = $el.attr('compareto');
+            const $compare = $(this.executorPrintRef).find(`[field=${compareto}]`);
+            if ($compare.get(0)) {
+                const compareRet = $el.html() != $compare.html();
+                $el.css('color', compareRet ? 'red' : 'inherit');
+                $el.css('font-weight', compareRet ? 'bold' : 'inherit');
+            }
+        })
     }
 
     makeStaticTable(allFields, data, showIndex = false, store) {

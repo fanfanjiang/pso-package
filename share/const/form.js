@@ -22,6 +22,7 @@ const CPNT = {
       { n: '_searchable', v: false },
       { n: '_searchForm', v: '' },
       { n: '_searchField', v: '' },
+      { n: '_searchDisplay', v: [] },
       { n: '_bindFields', v: [] },
     ]
   },
@@ -551,6 +552,21 @@ const CPNT = {
       { n: '_copyTargetAutoLimit', v: [] },
       { n: '_selectType', v: 'radio' },
       { n: '_copyNotDump', v: false },
+    ]
+  },
+  qrcode: {
+    icon: "el-icon-monitor",
+    name: "二维码",
+    componentid: "qrcode",
+    class: 'unSubTable',
+    layout: false,
+    db: true,
+    host_db: false,
+    chart: false,
+    table_show: false,
+    ass_db: false,
+    data: [
+      { n: '_option', v: [] },
     ]
   }
 }

@@ -18,9 +18,7 @@
 import { CPNT } from "../../const/form";
 import PsoFormComponent from "./cpnt";
 import FormStore from "../form-designer/model/store.js";
-import shortid from "shortid";
 import emitter from "../../mixin/emitter";
-import { FIELD_FORMAT } from "../../const/form";
 import { filterByDecimal } from "../../tool/form";
 
 export default {

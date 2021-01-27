@@ -762,7 +762,7 @@ export default {
     targetSelectHandler(data) {
       this.selectedTarget = data;
     },
-    delTarget(list) {
+    delTarget() {
       this.selectedTarget.forEach((t) => {
         this.block.field_config.splice(_.findIndex(this.block.field_config, t), 1);
       });

@@ -126,6 +126,7 @@ import PsoSqlDesigner from "./components/sql-designer";
 //通知
 import PsoNotify from "./components/notify";
 import PsoNotifyPopover from "./components/notify/popover";
+import PsoNotifyBrain from "./components/notify/brain";
 
 //全文检索
 import PsoFtr from "./components/full-text-retrieval";
@@ -234,6 +235,7 @@ const components = {
 
     PsoNotify,
     PsoNotifyPopover,
+    PsoNotifyBrain,
 
     PsoFtr,
 

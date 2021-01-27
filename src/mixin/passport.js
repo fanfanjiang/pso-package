@@ -106,7 +106,7 @@ export const ConfigMixin = {
                     for (let key in group) {
                         const first = { site_name: key, site_app: 1, children: [] };
                         for (let subKey in group[key]) {
-                            first.children.push({ site_name: subKey, site_app: 1, children: group[key][subKey] });
+                            first.children.push({ site_name: subKey, site_app: 1, children: _.orderBy(group[key][subKey], ['site_order'], ['asc']) });
 
                             for (let subSite of group[key][subKey]) {
                                 first.site_type = subSite.site_type;

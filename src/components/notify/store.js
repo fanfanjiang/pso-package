@@ -68,9 +68,9 @@ export default class Notify {
         await this.fetch();
     }
 
-    async fetch() {
+    async fetch(keys = {}) {
         this.fetching = true;
-        const params = { ...this.pagination };
+        const params = { ...this.pagination, keys, orderby: 'order by msg_status asc' };
         if (typeof params.keys === 'undefined') {
             params.keys = {}
         }

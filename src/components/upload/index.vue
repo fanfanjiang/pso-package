@@ -4,7 +4,13 @@
       <div class="pso-upload__header-title">添加附件</div>
       <i class="pso-upload__header-cose el-icon-close" @click="$emit('close')"></i>
     </div>
-    <div class="pso-upload__body" @drop.prevent="dragingFile = false" @dragenter.prevent="dragenter" @dragleave.prevent="dragleave">
+    <div
+      ref="uparea"
+      class="pso-upload__body"
+      @drop.prevent="dragingFile = false"
+      @dragenter.prevent="dragenter"
+      @dragleave.prevent="dragleave"
+    >
       <el-upload
         drag
         class="pso-upload__area"
@@ -26,7 +32,7 @@
       </div>
     </div>
     <div class="pso-upload__footer">
-      <div class="pso-upload__footer-left">
+      <div class="pso-upload__footer-left" ref="upbtn">
         <el-upload
           class="pso-upload__btn"
           :data="data"
@@ -66,6 +72,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    visible: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -88,6 +98,19 @@ export default {
     },
     showFileList() {
       return !!this.upFileList.length && !this.dragingFile;
+    },
+  },
+  watch: {
+    visible(value) {
+      if (value) {
+        this.$nextTick(() => {
+          if (this.__isMobile__) {
+            [this.$refs.uparea, this.$refs.upbtn].forEach((el) => {
+              $(el).find(".el-upload__input").attr("accept", "image/*");
+            });
+          }
+        });
+      }
     },
   },
   methods: {

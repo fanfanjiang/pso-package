@@ -92,6 +92,7 @@ export default class FormViewStore {
         this.switchable = true;
         this.autoSubmit = true;
         this.keepable = true;
+        this.actionEditable = false; //在执行动作的时候强制表单可编辑
 
         //列表原始配置
         this.usedFormCol = '';
@@ -160,7 +161,7 @@ export default class FormViewStore {
     }
 
     get instanceEditable() {
-        return this.opAddable && (this.dataId ? this.getEditableByStatus(this.curInstance) : true);
+        return this.opAddable && (this.dataId ? (this.getEditableByStatus(this.curInstance) || this.actionEditable) : true);
     }
 
     getStatusEntity(d_status) {
@@ -288,6 +289,7 @@ export default class FormViewStore {
         this.switchable = true;
         this.autoSubmit = true;
         this.keepable = true;
+        this.actionEditable = false;
     }
 
     showPrev(id) {
@@ -901,11 +903,13 @@ export default class FormViewStore {
     checkActionalbe(action) {
         const { method, batchable, rule } = action;
         const data = this.selectedList;
-        if (batchable === '1' && data.length !== 1) {
-            return false;
-        }
-        if (batchable === '2' && !data.length) {
-            return false;
+        if (method !== '3') {
+            if (batchable === '1' && data.length !== 1) {
+                return false;
+            }
+            if (batchable === '2' && !data.length) {
+                return false;
+            }
         }
         if (method === '2' && rule.length) {
             return this.checkActionalbeByRule(action);
@@ -1030,7 +1034,7 @@ export default class FormViewStore {
     }
 
     async checkAction(action) {
-        const { mode, fields = {}, beforeScriptable, batchable } = action;
+        const { mode, method, fields = {}, beforeScriptable, batchable } = action;
         const data = this.selectedList;
         action.doing = true;
         this.setActionEmpty();
@@ -1048,9 +1052,10 @@ export default class FormViewStore {
             }
         }
 
-        if (mode === '3') {
+        if (mode === '3' && method !== '3') {
             if (batchable === '1') {
                 this.showInstance(data[0]);
+                this.actionEditable = true;
             } else {
                 this.newInstance();
                 this.autoSubmit = false;

@@ -48,10 +48,6 @@
     position: relative;
     height: 100%;
 
-    .el-avatar {
-        font-size: 10px;
-    }
-
     .pso-notify-view__body {
         position: relative;
         overflow: auto;
@@ -69,60 +65,70 @@
 
     .pso-notify-item__dot {
         position: absolute;
-        top: 2px;
+        top: 10px;
         left: 0px;
         width: 6px;
         height: 6px;
         border-radius: 100%;
         background-color: #F03737;
     }
+}
 
-    .pso-notify-item {
+.pso-notify-item {
+    transition: all 0.2s linear;
+    padding: 0 10px;
+
+    &:hover {
+        background-color: #FAF8F8;
         transition: all 0.2s linear;
-        padding: 0 10px;
-
-        &:hover {
-            background-color: #FAF8F8;
-            transition: all 0.2s linear;
-
-            .pso-notify-item__r {
-                border-bottom: 1px solid #FAF8F8;
-            }
-        }
- 
-        .pso-notify-item__r,
-        .pso-notify-item__body {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-        }
 
         .pso-notify-item__r {
-            flex: 1;
-            margin-left: 10px;
-            padding: 15px 0;
-            border-bottom: 1px solid #EEEEEE;
+            border-bottom: 1px solid #FAF8F8;
         }
+    }
 
-        .pso-notify-item__content {
-            flex: 1;
-            min-height: 22px;
-        }
+    .el-avatar {
+        font-size: 10px;
+        margin-top: 15px;
+    }
 
-        .pso-notify-item__tail {
+    .pso-notify-item__r {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pso-notify-item__body {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        position: relative;
+    }
+
+    .pso-notify-item__r {
+        flex: 1;
+        margin-left: 10px;
+        padding: 15px 0;
+        border-bottom: 1px solid #EEEEEE;
+    }
+
+    .pso-notify-item__content {
+        flex: 1;
+        min-height: 22px;
+    }
+
+    .pso-notify-item__tail {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-top: 5px;
+        height: 30px;
+        width: 100%;
+
+        >div {
             display: flex;
             align-items: center;
-            margin-left: 10px;
-            width: 100px;
-            justify-content: flex-end;
-
-            >div {
-                display: flex;
-                align-items: center;
-            }
         }
-
     }
 }
 

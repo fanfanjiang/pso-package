@@ -25,9 +25,10 @@
             class="text-search__result-item"
             v-for="(r, i) in searchRet"
             :key="i"
-            v-html="r[cpnt.data._searchField]"
+            v-html="searchDisplay(r)"
           ></div>
         </template>
+
         <pso-skeleton v-else :lines="1" :s-style="{ padding: '0 15px' }"></pso-skeleton>
       </div>
     </transition>
@@ -83,6 +84,17 @@ export default {
     }
   },
   methods: {
+    searchDisplay(data) {
+      let text = data[this.cpnt.data._searchField];
+      if (this.cpnt.data._searchDisplay) {
+        text =
+          text +
+          `<span class="text-search-sub">${this.cpnt.data._searchDisplay
+            .map((field) => `<span>${data[field]}</span>` || "")
+            .join("")}<span>`;
+      }
+      return text;
+    },
     handleInputBlur() {
       setTimeout(() => {
         this.focusing = false;

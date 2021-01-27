@@ -72,6 +72,10 @@
         <el-form-item label="是否默认">
           <el-checkbox v-model="data.is_default" true-label="1" false-label="0"></el-checkbox>
         </el-form-item>
+        <el-form-item label="过期时间" required>
+          <el-date-picker v-model="data.site_expire" size="mini" type="datetime" :value-format="format" :format="format">
+          </el-date-picker>
+        </el-form-item>
         <div v-for="(f, i) in FIELDS" :key="i">
           <el-form-item v-if="f.type === 'input'" :label="f.name">
             <el-input size="mini" v-model="data[f.field]" autocomplete="off"></el-input>
@@ -96,6 +100,7 @@ const FIELDS = [
   { name: "站点链接", field: "site_link", type: "input" },
   { name: "站点备注", field: "site_note", type: "input" },
   { name: "默认登录", field: "is_default" },
+  { name: "过期时间", field: "site_expire" },
 ];
 
 export default {
@@ -103,6 +108,7 @@ export default {
   props: {},
   data() {
     this.FIELDS = FIELDS;
+    this.format = "yyyy-MM-dd HH:mm:ss";
     return {
       initializing: false,
       operating: false,

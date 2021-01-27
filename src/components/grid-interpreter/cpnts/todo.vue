@@ -2,11 +2,11 @@
   <pso-grid-wrapper :cpnt="cpnt">
     <div class="pso-grid-todo">
       <div class="pso-grid-todo__body" v-if="!initializing">
-        <div class="pso-grid-todo__item" v-for="item in todo" :key="item.status_name" @click="handleClick(item)">
-          <el-badge :value="item.total" class="item" :hidden="item.total === 0">
-            <img :src="getImg(item.status_name)" alt />
+        <div class="pso-grid-todo__item" v-for="(item, i) in todo" :key="i" @click="handleClick(item)">
+          <el-badge :value="item.total" class="item" :hidden="item.total === 0 || i > 1">
+            <img :src="getImg(item.status_name)" alt /> 
           </el-badge>
-          <div>{{ item.status_name }}</div>
+          <div>{{ item.status_name }}</div> 
         </div>
       </div>
       <pso-skeleton v-if="initializing" :lines="3" :s-style="{ padding: '10px' }"></pso-skeleton>
