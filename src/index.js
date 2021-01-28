@@ -129,7 +129,8 @@ import PsoNotifyPopover from "./components/notify/popover";
 import PsoNotifyBrain from "./components/notify/brain";
 
 //全文检索
-import PsoFtr from "./components/full-text-retrieval";
+import PsoFtr from "./components/ftr-interpreter";
+import PsoFtrMgt from "./components/ftr-mgt";
 
 //数据表管理及同步
 import PsoDbtableMgt from "./components/dbtable-mgt";
@@ -238,6 +239,7 @@ const components = {
     PsoNotifyBrain,
 
     PsoFtr,
+    PsoFtrMgt,
 
     PsoDbtableMgt,
 

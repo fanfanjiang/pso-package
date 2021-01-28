@@ -2,10 +2,11 @@
   <div v-if="store">
     <el-dialog
       title="消息通知"
-      fullscreen
+      width="50%"
       append-to-body
       :show-close="false"
       :close-on-press-escape="false"
+      :close-on-click-modal="false"
       :visible.sync="base.notify.show"
     >
       <div class="pso-notify-item" v-if="curNotify">

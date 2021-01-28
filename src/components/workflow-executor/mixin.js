@@ -40,7 +40,6 @@ export const executor = {
             defForm: this.params.defForm,
             $vue: this
         });
-
         await this.store.init({ cfgId: this.params.node_id, instanceId: this.params.instance && this.params.instance.instanceId });
     },
     methods: {

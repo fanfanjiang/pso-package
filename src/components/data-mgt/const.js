@@ -21,7 +21,15 @@ export const _DATA = {
         formLabelPosition: "top",
         formLabelWith: "",
     },
-    upload: [],
+    upload: {
+        is_wf: "0",
+        wf_code: "",
+        mainfields: [],
+        relate_table: "0",
+        relate_type: "0",
+        relate_unique: "",
+        childTable: []
+    },
     rules: [],
     subCfg: [],
     stageData: [],

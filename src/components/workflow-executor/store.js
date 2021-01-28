@@ -479,7 +479,8 @@ export default class WfStore {
         }
 
         const _unit = data._unit || '';
-        $el.html((!_.isNaN(value) && !_.isNull(value) && value !== 'null' && typeof value !== 'undefined') ? `${value} ${_unit}` : '');
+        const filterVal = this.filterBadVal(value);
+        $el.html((filterVal || filterVal == 0) ? `${filterVal} ${_unit}` : '');
 
         //关联表
         if (cpnt.componentid === "asstable" && proxy && fields) {
@@ -530,7 +531,7 @@ export default class WfStore {
         try {
             this.checkCompare();
         } catch (error) {
-
+            console.log(error);
         }
     }
 
@@ -540,11 +541,13 @@ export default class WfStore {
         compares.each((i, el) => {
             const $el = $(el);
             const compareto = $el.attr('compareto');
-            const $compare = $(this.executorPrintRef).find(`[field=${compareto}]`);
-            if ($compare.get(0)) {
-                const compareRet = $el.html() != $compare.html();
-                $el.css('color', compareRet ? 'red' : 'inherit');
-                $el.css('font-weight', compareRet ? 'bold' : 'inherit');
+            if (compareto) {
+                const $compare = $(this.executorPrintRef).find(`[field=${compareto}]`);
+                if ($compare.get(0)) {
+                    const compareRet = $el.html() != $compare.html();
+                    $el.css('color', compareRet ? 'red' : 'inherit');
+                    $el.css('font-weight', compareRet ? 'bold' : 'inherit');
+                }
             }
         })
     }
@@ -576,11 +579,15 @@ export default class WfStore {
                         unit = cpnt._unit;
                     }
                 }
-                $tr.append(`<td>${data[i][f.field_name]}${unit}</td>`)
+                $tr.append(`<td>${this.filterBadVal(data[i][f.field_name])}${unit}</td>`)
             }
             $tbody.append($tr);
         }
         return $wrapper;
+    }
+
+    filterBadVal(val) {
+        return (_.isNaN(val) || _.isNull(val) || val === 'null' || val === 'undefined' || typeof val === 'undefined') ? "" : val;
     }
 
     cancelPickreject(cancel) {

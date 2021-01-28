@@ -142,7 +142,7 @@ export default class Notify {
                 return window.open(`${exist.map_key2}?insttogo=${data_id}`);
             }
 
-            this.curInstance = { code, name: '', instance_id: data_id };
+            this.curInstance = { code, name: '流程审核', instance_id: data_id };
             this.showExecutor = true;
         }
     }

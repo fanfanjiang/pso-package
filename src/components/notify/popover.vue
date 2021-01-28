@@ -3,7 +3,7 @@
     v-model="show"
     placement="bottom-end"
     transition="el-zoom-in-top"
-    width="440"
+    :width="width"
     popper-class="pso-popover-notify"
     trigger="click"
   >
@@ -39,6 +39,11 @@ export default {
       store: null,
       show: false,
     };
+  },
+  computed: {
+    width() {
+      return this.__isMobile__ ? "100%" : "440";
+    },
   },
   created() {
     this.initialize();

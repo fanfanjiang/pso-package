@@ -80,7 +80,13 @@
               :store="formStore"
               @save="saveConfig"
             ></form-publish>
-            <form-upload v-if="curTab === 'upload' && formStore" :data="upload" :code="curNode.node_name" :store="formStore"></form-upload>
+            <form-upload
+              v-if="curTab === 'upload' && formStore"
+              :data="upload"
+              :fields="tableData"
+              :code="curNode.node_name"
+              :store="formStore"
+            ></form-upload>
             <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
             <form-submit v-if="curTab === 'submit'" :data="subCfg" :fields="tableData"></form-submit>
             <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
@@ -137,9 +143,6 @@ export default {
   props: {
     params: {
       type: Object,
-      default: () => {
-        data_type: "";
-      },
     },
   },
   data() {
@@ -250,7 +253,12 @@ export default {
         }
 
         if (cfg.export_config) {
-          this.upload = JSON.parse(cfg.export_config);
+          const uploadCfg = JSON.parse(cfg.export_config);
+          if (Array.isArray(uploadCfg)) {
+            this.upload.mainfields = uploadCfg;
+          } else {
+            this.upload = uploadCfg;
+          }
         }
 
         if (cfg.inner_api) {

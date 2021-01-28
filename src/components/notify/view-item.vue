@@ -6,7 +6,7 @@
       <div class="pso-notify-item__content">
         {{ data.msg_body || "" }}
       </div>
-      <div class="pso-notify-item__tail">
+      <div class="pso-notify-item__tail" v-if="!__isMobile__">
         <transition name="el-fade-in-linear" mode="out-in">
           <span v-if="data.msg_time && !hovered">{{ formatTime(data.msg_time) }}</span>
           <div v-if="hovered">
@@ -14,6 +14,13 @@
             <el-button v-if="data.data_id || data.msg_url" size="mini" type="primary" round @click="checkAction"> 执行 </el-button>
           </div>
         </transition>
+      </div>
+      <div class="pso-notify-item__tail" v-else>
+        <span v-if="data.msg_time">{{ formatTime(data.msg_time) }}</span>
+        <div style="margin-left:20px;">
+          <el-button v-if="data.msg_status === 0" size="mini" round @click="updateNoti">已读</el-button>
+          <el-button v-if="data.data_id || data.msg_url" size="mini" type="primary" round @click="checkAction"> 执行 </el-button>
+        </div>
       </div>
     </div>
   </div>

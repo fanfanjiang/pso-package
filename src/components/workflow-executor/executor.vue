@@ -114,9 +114,9 @@ export default {
   computed: {
     executorClass() {
       return {
-        "pso-wf-executor__m": this.__isMobile__,
         "pso-wf-executor__extend__expend": !this.store.showBody,
         "pso-wf-executor__extend__zoom": !this.store.showExtend,
+        "pso-wf-executor__m": this.__isMobile__,
       };
     },
     stampStyle() {

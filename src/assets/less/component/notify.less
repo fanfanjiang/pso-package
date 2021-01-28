@@ -154,11 +154,24 @@
     }
 }
 
+@media (max-width: @screen-md-min) {
+    .pso-notify-index {
+        padding: 10px 0;
+        flex-direction: column;
+    }
+
+    .pso-notify-index__aside {
+        width: 100% !important;
+    }
+}
+
 .pso-notify-index {
     display: flex;
     justify-content: space-between;
     height: 100%;
     padding: 20px 0;
+
+
 
     .pso-notify-index__aside {
         width: 260px;

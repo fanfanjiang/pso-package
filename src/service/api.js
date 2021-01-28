@@ -192,6 +192,14 @@ export default class API {
         }
     }
 
+    static async ftrcfg(params) {
+        try {
+            return await this.RESTful('/api/ftrcfg', Object.assign({ idField: 'solr_id' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async updateWfStatus(data) {
         try {
             return await this.request('/api/workflow/status', { data, method: 'post' });
@@ -883,7 +891,6 @@ export default class API {
         }
     }
 
-
     static async getScheduleTriggers(data) {
         try {
             return await this.request('/api/schedule-trigger', { data, method: 'get' });
@@ -895,6 +902,38 @@ export default class API {
     static async addOrUpdateScheduleTrigger(data) {
         try {
             return await this.request('/api/schedule-trigger', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFTRModulesData(data) {
+        try {
+            return await this.request('/api/ftr/subdata', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getFTRModulesCfg(data) {
+        try {
+            return await this.request('/api/ftrcfg/cfg/modules', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async addOrUpdateFTRModule(data) {
+        try {
+            return await this.request('/api/ftrcfg/cfg/module', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async publishFTRCfg(data) {
+        try {
+            return await this.request('/api/ftrcfg/cfg/publish', { data, method: 'post' });
         } catch (error) {
             throw error;
         }

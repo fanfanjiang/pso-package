@@ -431,8 +431,12 @@ export default class FormViewStore {
     }
 
     checkInstToGO() {
-        if (this.insttogo && this.instances.length && this.insttogo === this.instances[0].leaf_id) {
-            this.showInstance(this.instances[0]);
+        if (this.insttogo) {
+            if (this.instances.length && this.insttogo === this.instances[0].leaf_id) {
+                this.showInstance(this.instances[0]);
+            } else {
+                this.$vue.$message.warning("未找到数据");
+            }
         }
         this.insttogo = '';
     }
@@ -849,7 +853,7 @@ export default class FormViewStore {
     }
 
     filterBadVal(val) {
-        return _.isNull(val) ? "" : val;
+        return (_.isNull(val) || val === 'null' || val === 'undefined' || typeof val === 'undefined') ? "" : val;
     }
 
     changeSelectedList(data) {

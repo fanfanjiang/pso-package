@@ -54,7 +54,7 @@
               <el-table-column type="index" label="序号" :index="1" width="50"></el-table-column>
               <template v-for="f in FIELDS">
                 <el-table-column
-                  v-if="activeView !== '1' ? f.field !== 'step_list' && f.field !== 'user_list' : true"
+                  v-if="activeView !== '1' ? f.field !== 'step_list' && f.field !== 'user_list' && f.field !== 'nextuser' : true"
                   show-overflow-tooltip
                   :key="f.field"
                   :prop="f.field"
@@ -117,6 +117,7 @@ const FIELDS = {
   instance_status: { name: "状态", field: "instance_status", sortable: "custom", width: "100" },
   step_list: { name: "步骤", field: "step_list", sortable: false, width: "110" },
   user_list: { name: "审核人", field: "user_list", sortable: false, width: "110" },
+  nextuser: { name: "下一步审核人", field: "nextuser", sortable: false, width: "110" },
   user_name: { name: "创建人", field: "user_name", sortable: "custom", width: "90" },
   dept_name: { name: "部门", field: "dept_name", sortable: "custom", width: "120" },
   create_time: { name: "创建时间", field: "create_time", sortable: "custom", width: "160" },
@@ -167,6 +168,7 @@ export default {
       orgs: [],
       workflows: [],
       customWf: [],
+      insttogo: "",
     };
   },
   computed: {
@@ -174,7 +176,6 @@ export default {
       return {
         node_id: this.curInstance.wf_code,
         instance: { instanceId: this.curInstance.instance_id },
-        displayMode: this.activeView === "0" ? "" : "",
       };
     },
     executorWidth() {
@@ -216,8 +217,10 @@ export default {
     },
   },
   created() {
+    if (this.params.insttogo) {
+      this.insttogo = this.params.insttogo;
+    }
     this.deFetch = debounce(500, this.fetch);
-    this.makeSort({ prop: "create_time", order: "descending" });
     this.initialize();
   },
   methods: {
@@ -251,9 +254,22 @@ export default {
       this.orgs = (await this.API.getOrgTree()).map((d) => ({ value: d.node_display }));
       this.workflows = (await this.API.getWfTree()).map((d) => ({ value: d.node_display }));
       this.customWf = (await this.API.getSysConfig({ keys: JSON.stringify({ config_type: { value: 14, type: 1 } }) })).data;
-
+      await this.makeSort({ prop: "create_time", order: "descending" });
       this.initializing = false;
-      this.fetch();
+      await this.checkInsttogo();
+    },
+    async checkInsttogo() {
+      //需要自动打开流程的判断
+      if (this.insttogo) {
+        const relation = await this.API.getDataRelation({ data_id: this.insttogo });
+        if (relation.success && relation.data && relation.data.wf_code) {
+          const instObj = {};
+          this.$set(instObj, "wf_code", relation.data.wf_code);
+          this.$set(instObj, "instance_id", this.insttogo);
+          this.instanceClick(instObj);
+        }
+      }
+      this.insttogo = "";
     },
     async fetch() {
       const order = this.sorts.map((item) => `${item.prop} ${item.order}`).join(",");
@@ -267,10 +283,17 @@ export default {
         }
       }
       console.log(params);
-      params.keys = JSON.stringify(params.keys);
+      if (params.keys) {
+        params.keys = JSON.stringify(params.keys);
+      }
 
       this.loading = true;
       const ret = await this.API.getTodoList(params);
+      const nextsteps = _.groupBy(ret.data.next, "instance_id");
+
+      ret.data.data.forEach((d) => {
+        d.nextuser = nextsteps[d.instance_id] ? nextsteps[d.instance_id].map(({ user_name }) => user_name).join("；") : "";
+      });
       this.instances = ret.data.data;
       this.dataTotal = ret.data.page;
       this.loading = false;

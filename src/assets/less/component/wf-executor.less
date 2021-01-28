@@ -64,8 +64,14 @@
 
     &.pso-wf-executor__m {
         .pso-wf-executor__overview {
+            flex-wrap: wrap;
+
             .pso-wf-executor__overview-item {
-                padding: 15px 2px !important;
+                flex: auto;
+                height: 50px;
+                width: 50%;
+                padding: 0 0 0 10px;
+                justify-content: center;
 
                 >span {
                     font-size: 11px !important;
@@ -76,6 +82,21 @@
         .pso-wf-executor__main-content-wrapper {
             font-size: 11px !important;
             max-width: 100% !important;
+
+            th,
+            td {
+                font-size: 11px !important;
+                padding: 2px 2px !important;
+            }
+
+            .pso-wf-executor__main-content-log {
+
+                .pso-wf-logs__item {
+                    div {
+                        font-size: 12px !important;
+                    }
+                }
+            }
         }
 
         .el-card__body {
