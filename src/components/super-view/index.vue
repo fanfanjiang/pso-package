@@ -8,7 +8,7 @@
       <div class="pso-super-view__add" v-if="store.checkActionUsable('add') && store.addAction">
         <el-button icon="el-icon-plus" circle @click="addHandler"></el-button>
       </div>
-      <pso-form-executor 
+      <pso-form-executor
         v-if="params.sourceType === '0'"
         :params="executorParams"
         :title="store.formCfg.data_name"
@@ -55,7 +55,9 @@ export default {
         formEntity: this.store.formCfg,
         dataId: this.store.dataId,
         dataInstance: this.store.instance,
+        editable: this.store.dataId && this.store.instanceEditable,
         addable: this.store.opAddable,
+        deletable: false,
         extendAuth: this.store.fieldsRule,
       };
     },

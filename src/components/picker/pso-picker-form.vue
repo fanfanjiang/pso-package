@@ -46,6 +46,10 @@ export default {
       default: false,
     },
     filter: Array,
+    requiredappid: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -77,7 +81,7 @@ export default {
   },
   async created() {
     this.initializing = true;
-    this.options = await this.API.getFormTree();
+    this.options = await this.API.getFormTree({ requiredappid: this.requiredappid });
     if (this.curCode) {
       this.changeHandler();
     }
@@ -89,7 +93,7 @@ export default {
       this.loading = true;
 
       let fields = [];
-      const store = await this.makeFormStore(this.curCode);
+      const store = await this.makeFormStore(this.curCode, { designMode: false, requiredappid: this.requiredappid });
 
       fields = store.search({
         options: { db: true },
@@ -99,10 +103,10 @@ export default {
           return !item.parent.CPNT.host_db;
         },
       });
-
+  
       if (this.source === "2" || this.source === "3") {
         fields = [];
-        const ret = await this.API.getFormDict({ data_code: this.curCode });
+        const ret = await this.API.getFormDict({ data_code: this.curCode, requiredappid: this.requiredappid });
         ret.data.forEach((d) => {
           const f = store.searchByField(d.field_name);
 

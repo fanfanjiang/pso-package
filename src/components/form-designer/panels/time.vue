@@ -5,6 +5,9 @@
         <el-radio v-model="cpnt.data._type" label="date">日期</el-radio>
         <el-radio v-model="cpnt.data._type" label="datetime">日期时间</el-radio>
         <el-radio v-model="cpnt.data._type" label="time">时间</el-radio>
+        <el-radio v-model="cpnt.data._type" label="year">年</el-radio>
+        <el-radio v-model="cpnt.data._type" label="month">月</el-radio>
+        <el-radio v-model="cpnt.data._type" label="week">星期</el-radio>
       </el-form-item>
       <el-form-item label="默认值">
         <el-select size="small" v-model="cpnt.data._defaultType" placeholder="请选择">

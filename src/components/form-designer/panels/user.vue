@@ -12,16 +12,14 @@
       v-if="cpnt.data._sourceType === '2'"
       :data="cpnt.data"
       form-field="_bindForm"
-      :fields="[
-        { n: '绑定字段', f: '_bindFormField' }
-      ]"
+      :fields="[{ n: '绑定字段', f: '_bindFormField' }]"
     ></picker-form>
     <el-form-item label="默认类型">
       <el-radio v-model="cpnt.data._defaultValType" label="choose">手动选择</el-radio>
       <el-radio v-model="cpnt.data._defaultValType" label="current">当前登录用户</el-radio>
     </el-form-item>
     <el-form-item label="默认值" v-if="!isSetCurrent" v-loading="loading">
-      <pso-picker-user :appid="cpnt.store.appid" :pattern="cpnt.data._type" @confirm="handleAddSelection"></pso-picker-user>
+      <pso-picker-user :pattern="cpnt.data._type" @confirm="handleAddSelection"></pso-picker-user>
       <div :key="cpnt.fid">
         <el-tag v-for="item in proxy.defaultList" :key="item.user_id" closable @close="handleDelSelection(item)">{{
           item.user_name

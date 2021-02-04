@@ -113,7 +113,7 @@ import { REVIEW_STATUS } from "../../const/workflow";
 const REVIEW_STATUS_LIST = Object.values(REVIEW_STATUS);
 const FIELDS = {
   wf_name: { name: "流程", field: "wf_name", sortable: "custom", width: "180" },
-  instance_name: { name: "事项", field: "instance_name", sortable: false },
+  d_name: { name: "事项", field: "d_name", sortable: false },
   instance_status: { name: "状态", field: "instance_status", sortable: "custom", width: "100" },
   step_list: { name: "步骤", field: "step_list", sortable: false, width: "110" },
   user_list: { name: "审核人", field: "user_list", sortable: false, width: "110" },
@@ -157,7 +157,7 @@ export default {
       dataTotal: 0,
       keywords: {
         wf_name: "",
-        instance_name: "",
+        d_name: "",
         instance_status: [],
         user_name: "",
         dept_name: "",

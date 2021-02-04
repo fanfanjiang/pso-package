@@ -14,6 +14,15 @@
         <el-radio v-model="cpnt.data._displayType" label="1" :disabled="cpnt.data._type === 2">标签</el-radio>
         <el-radio v-model="cpnt.data._displayType" label="2">列表</el-radio>
       </el-form-item>
+      <el-form-item label="选择方式">
+        <el-radio v-model="cpnt.data._selectMode" label="1">弹出列表</el-radio>
+        <el-radio v-model="cpnt.data._selectMode" label="2">输入框检索</el-radio>
+      </el-form-item>
+      <el-form-item v-if="cpnt.data._selectMode === '2'" label="选择检索字段" v-loading="loading">
+        <el-select filterable clearable multiple size="mini" v-model="cpnt.data._selectFields" placeholder="请选择">
+          <el-option v-for="(o, i) in cpnt.cache.fieldOptions" :key="i" :label="o._fieldName" :value="o._fieldValue"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="选择显示列表" v-loading="loading">
         <el-select clearable size="mini" v-model="cpnt.data._showFields" placeholder="请选择">
           <el-option v-for="(c, i) in column" :key="i" :label="c.name" :value="c.name"></el-option>
@@ -28,13 +37,8 @@
         <el-input-number size="mini" v-model="cpnt.data._printCount" controls-position="right" :min="0"></el-input-number>
       </el-form-item>
       <el-form-item v-if="cpnt.data._type === 1" label="选择单选显示字段" v-loading="loading">
-        <el-select size="mini" v-model="cpnt.data._radioField" placeholder="请选择">
-          <el-option
-            v-for="item in cpnt.cache.fieldOptions"
-            :key="item._fieldValue"
-            :label="item._fieldName"
-            :value="item._fieldValue"
-          ></el-option>
+        <el-select filterable size="mini" v-model="cpnt.data._radioField" placeholder="请选择">
+          <el-option v-for="(o, i) in cpnt.cache.fieldOptions" :key="i" :label="o._fieldName" :value="o._fieldValue"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="设置">

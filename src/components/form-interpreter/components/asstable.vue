@@ -2,19 +2,45 @@
   <pso-label :cpnt="cpnt" v-loading="initializing || loading">
     <div class="pso-ip__ast" v-if="!initializing">
       <div class="pso-ip__ast-btns" style="margin-bottom: 5px" v-if="cpntEditable">
-        <el-button v-if="cpnt.data._relate" type="primary" plain icon="el-icon-plus" size="mini" @click="showTable = true">
-          选择{{ cpnt.data._fieldName }}
-        </el-button>
+        <template v-if="cpnt.data._relate">
+          <div class="cpnt-text" v-if="cpnt.data._selectMode === '2'">
+            <el-input
+              size="mini"
+              autosize
+              v-model="searchProxy"
+              :placeholder="cpnt.data._fieldName"
+              @focus="focusing = true"
+              @blur="inputBlurHandler"
+            ></el-input>
+            <transition name="el-zoom-in-top">
+              <div class="text-search__result" v-if="showResult">
+                <template v-if="!searching">
+                  <div
+                    @click="selectSearchRet(r)"
+                    class="text-search__result-item"
+                    v-for="(r, i) in searchRet"
+                    :key="i"
+                    v-html="searchDisplay(r)"
+                  ></div>
+                </template>
+                <pso-skeleton v-else :lines="1" :s-style="{ padding: '0 15px' }"></pso-skeleton>
+              </div>
+            </transition>
+          </div>
+          <el-button v-if="cpnt.data._selectMode !== '2'" type="primary" plain icon="el-icon-plus" size="mini" @click="showTable = true">
+            选择{{ cpnt.data._fieldName }}
+          </el-button>
+        </template>
         <el-button v-if="showAddBtn" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd">
           添加{{ cpnt.data._fieldName }}
         </el-button>
         <transition name="el-zoom-in-center">
           <el-button
-            v-show="cpnt.data._relate && !justShowOne && selectedList.length"
+            v-show="cpnt.data._relate && !justShowOne && astStore.selectedList.length"
             type="danger"
             icon="el-icon-delete"
             size="mini"
-            @click="handleDelList(selectedList)"
+            @click="handleDelList(astStore.selectedList)"
           >
             取消所选数据
           </el-button>
@@ -78,11 +104,10 @@
 <script>
 import { pickerMixin } from "../../../mixin/picker";
 import cpntMixin from "../mixin";
-import FormStore from "../../form-designer/model/store.js";
-import shortid from "shortid";
 
 import ASTStore from "../astStore";
 import ViewTable from "../../form-view/table";
+import debounce from "throttle-debounce/debounce";
 
 export default {
   components: { PsoFormInterpreter: () => import("../index"), ViewTable },
@@ -123,6 +148,10 @@ export default {
       addDataCallback: null,
       cachedIds: [],
       watchFun: [],
+      searching: false,
+      focusing: false,
+      searchRet: [],
+      searchProxy: "",
     };
   },
   computed: {
@@ -147,9 +176,6 @@ export default {
       } else {
         return [];
       }
-    },
-    selectedList() {
-      return this.astStore.selectedList;
     },
     dataId() {
       return this.astStore.dataId;
@@ -230,6 +256,9 @@ export default {
         auth_config: this.authCfg.authCfg,
       };
     },
+    showResult() {
+      return this.focusing && this.searchRet.length;
+    },
   },
   watch: {
     "cpnt.data._type": {
@@ -245,7 +274,14 @@ export default {
   },
   async created() {
     this.clearWatch();
+
+    this.searchByKeysBounce = debounce(200, this.searchByKeys);
+
     await this.initialize();
+
+    this.$watch("searchProxy", (val) => {
+      this.searchByKeysBounce(val);
+    });
 
     //初始赋值
     if (this.cpnt.data._val && typeof this.cpnt.data._val === "string") {
@@ -289,6 +325,48 @@ export default {
     });
   },
   methods: {
+    searchDisplay(data) {
+      const fields = this.cpnt.data._selectFields;
+      let text = data[fields[0]];
+      if (fields.length > 1) {
+        text =
+          text +
+          `<span class="text-search-sub">${fields
+            .slice(1)
+            .map((field) => `<span>${data[field]}</span>` || "")
+            .join("")}<span>`;
+      }
+      return text;
+    },
+    async searchByKeys(value) {
+      if (_.trim(value)) {
+        this.searching = true;
+        const ret = await this.API.searchForm({
+          form_code: this.cpnt.data._option,
+          leaf_auth: 4,
+          keys: {
+            [this.cpnt.data._selectFields[0]]: {
+              type: 2,
+              value,
+            },
+          },
+        });
+        if (ret.success) {
+          this.searchRet = ret.data;
+        }
+        this.searching = false;
+      } else {
+        this.searchRet = [];
+      }
+    },
+    selectSearchRet(data) {
+      this.handleAddSelection([data]);
+    },
+    inputBlurHandler() {
+      setTimeout(() => {
+        this.focusing = false;
+      }, 200);
+    },
     clearWatch() {
       //清除监听器
       if (this.watchFun.length) {
@@ -300,6 +378,7 @@ export default {
       this.astStore.instances = data;
       if (this.astStore.$table) {
         this.astStore.$table.clearSelection();
+        this.astStore.selectedList = [];
       }
       const shouldSavedIdList = data.filter((d) => !d.__dump__);
       this.cpnt.data._val = _.map(shouldSavedIdList, "leaf_id").join(",");
@@ -358,7 +437,6 @@ export default {
     },
     setMockData() {
       if (this.cpnt.store && this.cpnt.store.mockAsstables && this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]) {
-        console.log(55555, this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]);
         this.handleAddSelection([this.cpnt.store.mockAsstables[this.cpnt.data._fieldValue]]);
       } else {
         this.proxy.valList = [];

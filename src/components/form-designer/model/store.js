@@ -15,7 +15,7 @@ export default class FormStore {
         this.redoList = [];
         this.undoList = [];
 
-        this.appid = '3';
+        this.appid = '';
         this.data_name = '动态表单'; //表单配置名称
         this.data_id = ""; //表单配置id
         this.data_code = ""; //表单配置code

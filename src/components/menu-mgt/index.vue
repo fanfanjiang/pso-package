@@ -188,12 +188,20 @@ export default {
     },
     async updateNode() {
       this.saving = true;
+
+      const data = {};
+      for (let key in this.curNode) {
+        if (!_.isNull(this.curNode[key])) {
+          data[key] = this.curNode[key];
+        }
+      }
+
       const ret = await this.API.trees({
         data: {
           open_type: "",
-          ...this.curNode,
-          dimen: this.curNode.node_dimen,
-          code: this.curNode.node_name,
+          ...data,
+          dimen: data.node_dimen,
+          code: data.node_name,
           param_value: JSON.stringify(this.curTpDetail),
           auth_config: JSON.stringify(this.viewData),
         },

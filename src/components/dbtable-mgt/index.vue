@@ -22,7 +22,7 @@
             </pso-picker-tree>
             <el-button style="margin-left: 10px" type="success" size="mini" @click="asyncHandler">同步系统表</el-button>
             <pso-picker-tree :request-options="{ dimen: '3' }" pattern="checkbox" @confirm="confirmForm">
-              <el-button style="margin-left: 10px" type="success" size="mini">同步表单</el-button>
+              <el-button style="margin-left: 10px" type="success" size="mini">同步表单数据</el-button>
             </pso-picker-tree>
           </div>
         </div>
@@ -103,9 +103,9 @@
         </el-form>
       </div>
     </pso-dialog>
-    <pso-dialog :visible="asyncProxy.visible" width="40%" @close="asyncProxy.visible = false">
+    <pso-dialog :visible="syncProxy.visible" width="40%" @close="syncProxy.visible = false">
       <template #title>
-        <div class="form-executor-header" v-loading="asyncProxy.doing">
+        <div class="form-executor-header" v-loading="syncProxy.doing">
           <div class="form-executor-header__l">
             <div class="form-executor-title">
               <i class="el-icon-edit-outline"></i>
@@ -120,24 +120,29 @@
       <div style="height: 100%; padding: 15px; overflow: auto" v-loading="editing">
         <el-form label-position="left" label-width="110px" size="small">
           <el-form-item label="同步目标APP" required>
-            <el-select filterable clearable size="small" v-model="asyncProxy.tid">
+            <el-select filterable clearable size="small" v-model="syncProxy.tid">
               <el-option v-for="(s, i) in sites" :key="i" :label="s.site_name" :value="s.site_app"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="同步类型" required>
-            <el-select filterable clearable size="small" v-model="asyncProxy.type">
+            <el-select filterable clearable size="small" v-model="syncProxy.type">
               <el-option v-for="(t, i) in ASYNC_TYPE" :key="i" :label="t.n" :value="t.v"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="同步表单" required>
             <div class="pso-picker__showlist">
-              <span v-for="(d, i) in asyncProxy.data" :key="i">
+              <span v-for="(d, i) in syncProxy.data" :key="i">
                 <el-tag size="medium" closable @close="closeHandler(i)">
-                  {{ d[asyncProxy.nameField] }}
+                  {{ d[syncProxy.nameField] }}
                 </el-tag>
               </span>
             </div>
           </el-form-item>
+          <pso-form-interpreter
+            v-if="syncProxy.entity"
+            :form-entity="syncProxy.entity"
+            @data-loaded="formLoadHandler"
+          ></pso-form-interpreter>
         </el-form>
       </div>
     </pso-dialog>
@@ -156,6 +161,7 @@
 <script>
 import { PagingMixin } from "../../mixin/view";
 import WipeDialog from "../form-view/wipe-dialog";
+import FormAsstable from "../form-interpreter/components/asstable";
 
 const DATA = {
   table_id: "",
@@ -172,8 +178,10 @@ const ASYNC_TYPE = [
   { n: "插入或更新", v: "2" },
 ];
 
+const FID = "ffuucckk";
+
 export default {
-  components: { WipeDialog },
+  components: { WipeDialog, FormAsstable },
   mixins: [PagingMixin],
   data() {
     this.ASYNC_TYPE = ASYNC_TYPE;
@@ -186,7 +194,7 @@ export default {
       curInstance: { ...DATA },
       selected: [],
       sites: [],
-      asyncProxy: {
+      syncProxy: {
         doing: false,
         visible: false,
         tid: "",
@@ -194,6 +202,8 @@ export default {
         idField: "",
         nameField: "",
         type: "0",
+        entity: null,
+        store: null,
       },
       wipeProxy: {
         visible: false,
@@ -203,6 +213,14 @@ export default {
         doing: false,
       },
     };
+  },
+  watch: {
+    "syncProxy.data": {
+      deep: true,
+      handler() {
+        this.checkCouldSelectData();
+      },
+    },
   },
   async created() {
     this.startWatch();
@@ -234,7 +252,6 @@ export default {
     async saveHandler(params) {
       if (this.editing) return;
       this.editing = true;
-      let auto_no;
       let data = {};
       if (params) {
         data = { ...params, optype: 2 };
@@ -263,21 +280,65 @@ export default {
     confirmForm(data) {
       this.prepareAsync(data, "node_name", "node_display");
     },
+    formLoadHandler(store) {
+      this.syncProxy.store = store;
+    },
+    checkCouldSelectData() {
+      const data = this.syncProxy.data;
+      const id = this.syncProxy.idField;
+      if (data.length === 1 && id === "node_name") {
+        this.syncProxy.entity = {
+          forceInsertSys: false,
+          withSys: false,
+          designMode: false,
+          data_config: [
+            {
+              componentid: "asstable",
+              _fieldValue: FID,
+              _fieldName: "同步数据",
+              _type: 2,
+              _option: data[0].node_name,
+              _displayType: "2",
+              _relate: true,
+              _new: false,
+            },
+          ],
+        };
+      } else {
+        this.syncProxy.entity = null;
+        this.syncProxy.store = null;
+      }
+      if (!data.length) {
+        this.syncProxy.visible = false;
+      }
+    },
     prepareAsync(data, id, name) {
       if (!data.length) return this.$message({ type: "warning", message: "请选择需要同步的表单" });
-      this.asyncProxy.idField = id;
-      this.asyncProxy.nameField = name;
-      this.asyncProxy.data = data;
-      this.asyncProxy.visible = true;
+      this.syncProxy.idField = id;
+      this.syncProxy.nameField = name;
+      this.syncProxy.data = data;
+      this.syncProxy.visible = true;
+    },
+    getSelectedData() {
+      if (this.syncProxy.store) {
+        const cpnt = this.syncProxy.store.searchByField(FID, true);
+        return cpnt._val;
+      }
+      return "";
     },
     async goAsync() {
-      if (this.asyncProxy.doing) return;
-      const { tid: custom_id, data, idField, type: async_type } = this.asyncProxy;
-      this.asyncProxy.doing = true;
-      const ret = await this.API.asyncDBTable({ custom_id, async_type, code: data.map((d) => d[idField]).join(",") });
+      if (this.syncProxy.doing) return;
+      const { tid: custom_id, data, idField, type: async_type } = this.syncProxy;
+      this.syncProxy.doing = true;
+      const ret = await this.API.asyncDBTable({
+        custom_id,
+        async_type,
+        code: data.map((d) => d[idField]).join(","),
+        ids: this.getSelectedData(),
+      });
       this.ResultNotify(ret);
-      this.asyncProxy.doing = false;
-      this.asyncProxy.visible = false;
+      this.syncProxy.doing = false;
+      this.syncProxy.visible = false;
     },
     confirmWipe(data) {
       let temp = this.selected.map((s) => ({ n: s.table_name, id: s.table_id }));
@@ -295,7 +356,7 @@ export default {
       this.wipeProxy.visible = false;
     },
     closeHandler(index) {
-      this.asyncProxy.data.splice(index, 1);
+      this.syncProxy.data.splice(index, 1);
     },
   },
 };

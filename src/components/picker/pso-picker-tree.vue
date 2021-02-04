@@ -43,10 +43,6 @@
 <script>
 export default {
   props: {
-    appid: {
-      type: String,
-      default: "3",
-    },
     pattern: {
       type: String,
       default: "radio",

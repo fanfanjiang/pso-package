@@ -10,7 +10,6 @@
     </el-form-item>
     <el-form-item label="默认值" v-if="!isSetCurrent" v-loading="loading">
       <pso-picker-dept
-        :appid="cpnt.store.appid"
         ref="selector"
         :show="show"
         :pattern="cpnt.data._type"

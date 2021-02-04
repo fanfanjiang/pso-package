@@ -30,6 +30,7 @@ import PsoEmpty from "./components/empty";
 import PsoSkeleton from "./components/skeleton";
 import PsoDrawer from "./components/drawer";
 import PsoDialog from "./components/dialog";
+import PsoDialogHeader from "./components/dialog/header";
 
 import PsoPickerTag from "./components/picker/pso-picker-tag";
 import PsoPickerDept from "./components/picker/pso-picker-dept";
@@ -139,6 +140,7 @@ import PsoDbtableMgt from "./components/dbtable-mgt";
 import PsoScheduleMgt from "./components/schedule-mgt";
 import PsoScheduleTrigger from "./components/schedule-trigger";
 
+import PsoDbmodelMgt from "./components/dbmodel-mgt";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -203,6 +205,7 @@ const components = {
     PsoDataFilter,
     PsoTagEditor,
     PsoDialog,
+    PsoDialogHeader,
     PsoFileList,
     PsoSearch,
     PsoAffix,
@@ -242,7 +245,8 @@ const components = {
     PsoFtrMgt,
 
     PsoDbtableMgt,
-
+    PsoDbmodelMgt,
+    
     PsoScheduleMgt,
     PsoScheduleTrigger,
 
@@ -264,7 +268,7 @@ const components = {
     PsoFormEntry
 }
 
-const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host, xssFilter = false } = {}) {
+const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host, xssFilter = false, __CONST__ } = {}) {
     Object.keys(components).map(key => {
         Vue.component(key, components[key]);
     })
@@ -304,6 +308,7 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.__device__ = parser.getResult();
     Vue.prototype.__xssFilter__ = xssFilter;
     Vue.prototype.__isMobile__ = Vue.prototype.__device__.device.type === 'mobile';
+    Vue.prototype.__CONST__ = __CONST__ || {};
 };
 
 // auto install

@@ -28,7 +28,6 @@
             v-html="searchDisplay(r)"
           ></div>
         </template>
-
         <pso-skeleton v-else :lines="1" :s-style="{ padding: '0 15px' }"></pso-skeleton>
       </div>
     </transition>
@@ -63,7 +62,7 @@ export default {
   },
   created() {
     if (this.cpnt.data._searchable && this.cpnt.data._searchForm && this.cpnt.data._searchField) {
-      this.fetch = debounce(this.getFormData, 500);
+      this.fetch = debounce(500, this.getFormData);
       this.$watch("cpnt.data._val", async (val) => {
         if (_.trim(val)) {
           this.searching = true;

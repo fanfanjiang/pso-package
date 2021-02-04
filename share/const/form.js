@@ -300,6 +300,8 @@ const CPNT = {
       { n: '_displayType', v: '' },
       { n: '_printCount', v: 99999 },
       { n: '_printFields', v: '' },
+      { n: '_selectMode', v: '1' },
+      { n: '_selectFields', v: [] },
     ]
   },
   assfield: {

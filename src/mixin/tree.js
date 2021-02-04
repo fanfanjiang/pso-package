@@ -5,7 +5,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
         props: {
             appid: {
                 type: String,
-                default: '3'
+                default: ''
             },
             rootable: {
                 type: Boolean,
@@ -353,6 +353,12 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
 
                 data.data_name = data.node_display;
                 data.code = data.node_name;
+
+                for (let key in data) {
+                    if (_.isNull(data[key])) {
+                        delete data[key]
+                    }
+                }
 
                 const ret = await this.API.trees({ data, method: IS_NEW ? "post" : "put" });
 

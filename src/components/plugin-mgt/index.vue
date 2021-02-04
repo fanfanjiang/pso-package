@@ -1,7 +1,9 @@
 <template>
   <div class="pso-view-withtop" v-loading="groupInitializing">
     <div class="pso-view-top" v-if="!groupInitializing">
-      <pso-typebar :defBar="defGroup" v-model="curGroup"></pso-typebar>
+      <pso-typebar :defBar="defGroup" v-model="curGroup">
+        <el-button size="mini" type="primary" @click="syncPulgin" :disabled="syncing" :loading="syncing">同步默认插件</el-button>
+      </pso-typebar>
     </div>
     <div :class="viewClass" v-if="curGroup.feildvalue">
       <div class="pso-view-extend">
@@ -120,6 +122,7 @@ export default {
       curTab: "base",
       tpType: "",
       expandWider: false,
+      syncing: false,
       ..._DATA,
     };
   },
@@ -248,6 +251,11 @@ export default {
       });
       this.ResultNotify(ret);
       this.saving = false;
+    },
+    async syncPulgin() {
+
+
+      
     },
   },
 };

@@ -56,39 +56,6 @@
 <script>
 import { TP_CTL_TYPE } from "../../const/menu";
 import { PLUGIN_PARAMS } from "../../const/sys";
-const FORM = [
-  { field: "cfgId", value: "", picker: "picker-form", name: "表单源", saveType: "1", relateParam: "" },
-  { field: "where", value: "", picker: "input", name: "条件约束", saveType: "1", relateParam: "" },
-  { field: "textGroup", value: "", picker: "picker-text", name: "文本组", saveType: "1", relateParam: "" },
-  { field: "defKeys", value: "", picker: "input", name: "初始keys", saveType: "1", relateParam: "" },
-  { field: "searchType", value: "", picker: "input", name: "搜索参数", relateParam: "", saveType: "1" },
-  { field: "useCloumn", value: "", picker: "picker-column", name: "列表配置", relateParam: "cfgId", saveType: "1" },
-  { field: "hideAuthTab", value: "", picker: "picker-yes", name: "权限视图切换", saveType: "1", relateParam: "" },
-  { field: "hideStatusTab", value: "", picker: "picker-yes", name: "状态视图切换", saveType: "1", relateParam: "" },
-  { field: "hideNewBtn", value: "", picker: "picker-yes", name: "隐藏新增按钮", saveType: "1", relateParam: "" },
-  { field: "hideChangeBtn", value: "", picker: "picker-yes", name: "隐藏更改按钮", saveType: "1", relateParam: "" },
-  { field: "hideStage", value: "", picker: "picker-yes", name: "隐藏阶段按钮", saveType: "1", relateParam: "" },
-  { field: "hideCopyBtn", value: "", picker: "picker-yes", name: "隐藏复制按钮", saveType: "1", relateParam: "" },
-  { field: "hideMoreBtn", value: "", picker: "picker-yes", name: "隐藏更多按钮", saveType: "1", relateParam: "" },
-  { field: "defComplexity", value: "", picker: "input", name: "复杂条件", saveType: "1", relateParam: "" },
-];
-
-const WORKFLOW = [
-  { field: "wfId", value: "", picker: "picker-wf", name: "流程", saveType: "1", relateParam: "" },
-  { field: "textGroup", value: "", picker: "picker-text", name: "文本", saveType: "1", relateParam: "" },
-  { field: "defKeys", value: "", picker: "input", name: "初始keys", saveType: "1", relateParam: "" },
-  { field: "searchType", value: "", picker: "input", name: "项目参数", relateParam: "", saveType: "1" },
-  { field: "useCloumn", value: "", picker: "picker-column", name: "列表配置", relateParam: "wfId", saveType: "1" },
-  { field: "hideAuthTab", value: "", picker: "picker-yes", name: "权限视图切换", saveType: "1", relateParam: "" },
-  { field: "hideStatusTab", value: "", picker: "picker-yes", name: "状态视图切换", saveType: "1", relateParam: "" },
-  { field: "hideNewBtn", value: "", picker: "picker-yes", name: "隐藏新增按钮", saveType: "1", relateParam: "" },
-  { field: "hideChangeBtn", value: "", picker: "picker-yes", name: "隐藏更改按钮", saveType: "1", relateParam: "" },
-  { field: "hideStage", value: "", picker: "picker-yes", name: "隐藏阶段按钮", saveType: "1", relateParam: "" },
-  { field: "hideCopyBtn", value: "", picker: "picker-yes", name: "隐藏复制按钮", saveType: "1", relateParam: "" },
-  { field: "hideMoreBtn", value: "", picker: "picker-yes", name: "隐藏更多按钮", saveType: "1", relateParam: "" },
-  { field: "hideArchiveBtn", value: "", picker: "picker-yes", name: "隐藏归档按钮", saveType: "1", relateParam: "" },
-  { field: "hideBackBtn", value: "", picker: "picker-yes", name: "隐藏撤销按钮", saveType: "1", relateParam: "" },
-];
 
 export default {
   props: ["data"],
@@ -119,10 +86,10 @@ export default {
       }
     },
     addFormParam() {
-      this.addParams(FORM);
+      this.addParams(this.__CONST__.PLUGIN_PARAMS_FORM);
     },
     addFlowParam() {
-      this.addParams(WORKFLOW);
+      this.addParams(this.__CONST__.PLUGIN_PARAMS_WORKFLOW);
     },
     addParams(source, prefix = "") {
       source.forEach((d) => {
@@ -140,7 +107,7 @@ export default {
     },
     handleAssParams() {
       this.showEditor = false;
-      this.addParams(FORM, this.prefix);
+      this.addParams(this.__CONST__.PLUGIN_PARAMS_FORM, this.prefix);
     },
   },
 };

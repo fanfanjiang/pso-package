@@ -9,7 +9,7 @@
       :fetch-suggestions="getWorkflows"
     ></el-autocomplete>
     <el-divider direction="vertical"></el-divider>
-    <el-input size="mini" prefix-icon="el-icon-search" placeholder="搜索事项" clearable v-model="keywords.instance_name"></el-input>
+    <el-input size="mini" prefix-icon="el-icon-search" placeholder="搜索事项" clearable v-model="keywords.d_name"></el-input>
     <el-divider direction="vertical"></el-divider>
     <el-select size="mini" multiple collapse-tags v-model="keywords.instance_status" placeholder="流程状态">
       <el-option v-for="(r, i) in REVIEW_STATUS_LIST" :key="i" :label="r.name" :value="r.value"> </el-option>

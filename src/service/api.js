@@ -288,6 +288,14 @@ export default class API {
         }
     }
 
+    static async dbmodel(params) {
+        try {
+            return await this.RESTful('/api/dbmodel', Object.assign({ idField: 'struct_id' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async searchUsers(data) {
         try {
             return await this.request('/api/users/search', { data });
@@ -400,9 +408,13 @@ export default class API {
         }
     }
 
-    static async getFormTree() {
+    static async getFormTree(params) {
         try {
-            const ret = await this.trees({ data: { dimen: "3" } });
+            const data = { dimen: "3" };
+            if (params) {
+                Object.assign(data, params)
+            }
+            const ret = await this.trees({ data });
             return ret.data.tagtree.filter(node => node.is_leaf);
         } catch (error) {
             throw error;

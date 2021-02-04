@@ -101,10 +101,6 @@
 import debounce from "throttle-debounce/debounce";
 export default {
   props: {
-    appid: {
-      type: String,
-      default: "3",
-    },
     pattern: {
       type: String,
       default: "radio",
@@ -126,7 +122,6 @@ export default {
       dataTable: [],
       selected: [],
       treeOptions: {
-        appid: this.appid,
         dbconfig: "",
         dimen: 2,
       },

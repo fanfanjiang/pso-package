@@ -2,19 +2,21 @@
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
     <el-time-picker
       ref="cpnt"
-      v-if="cpnt.data._type==='time'"
+      size="small"
+      v-if="cpnt.data._type === 'time'"
       :disabled="!cpntEditable"
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
       :value-format="format"
-      :format="format"
+      :format="displayFormat"
       :autofocus="cpnt.data._autofocus"
     ></el-time-picker>
     <el-date-picker
       v-else
       ref="cpnt"
+      size="small"
       :value-format="format"
-      :format="format"
+      :format="displayFormat"
       v-model="cpnt.data._val"
       :disabled="!cpntEditable"
       :type="cpnt.data._type"
@@ -32,6 +34,18 @@ const TIME_FORMAT = {
   date: "yyyy-MM-dd",
   datetime: "yyyy-MM-dd HH:mm:ss",
   time: "HH:mm:ss",
+  year: "yyyy-MM-dd HH:mm:ss",
+  month: "yyyy-MM-dd HH:mm:ss",
+  week: "yyyy-MM-dd HH:mm:ss",
+};
+
+const TIME_DISPLAY_FORMAT = {
+  date: "yyyy-MM-dd",
+  datetime: "yyyy-MM-dd HH:mm:ss",
+  time: "HH:mm:ss",
+  year: "yyyy",
+  month: "yyyy-MM",
+  week: "yyyy 第 WW 周",
 };
 
 export default {
@@ -39,6 +53,9 @@ export default {
   computed: {
     format() {
       return TIME_FORMAT[this.cpnt.data._type];
+    },
+    displayFormat() {
+      return TIME_DISPLAY_FORMAT[this.cpnt.data._type];
     },
   },
   created() {

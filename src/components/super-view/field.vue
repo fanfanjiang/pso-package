@@ -1,5 +1,5 @@
 <template>
-  <div class="view-field">
+  <div class="view-field" @click="$emit('click')">
     <span v-if="titleable">{{ f.display }}：</span>
     <column-tag v-if="f.componentid === 'tag' && !store.fetching" :store="store" :data="data" :field="f"></column-tag>
     <column-ast v-else-if="f.componentid === 'asstable' && !store.fetching" :store="store" :data="data" :field="f"></column-ast>

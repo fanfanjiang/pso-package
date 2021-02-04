@@ -5,7 +5,7 @@
         <div class="pso-sv-view-item-body">
           <div class="pso-sv-view-item__t">
             <span class="pso-sv-view-title">
-              <view-field v-if="params.fieldTitle" :field="params.fieldTitle" :store="store" :data="d"></view-field>
+              <view-field v-if="params.fieldTitle" :field="params.fieldTitle" :store="store" :data="d" @click="detailHandler(d)"></view-field>
             </span>
           </div>
           <div class="pso-sv-view-item__c">
@@ -102,6 +102,11 @@ export default {
         this.loadHandler();
       }
       return shouldTrigger;
+    },
+    detailHandler(data) {
+      if (this.store.sourceType === "0") {
+        this.store.showInstance(data);
+      }
     },
   },
 };

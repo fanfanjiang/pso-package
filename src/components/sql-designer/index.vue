@@ -24,7 +24,15 @@
     <div class="sql-designer-wrapper">
       <template v-if="sql && sql.length">
         <transition name="el-fade-in">
-          <designer v-if="curBlock" :scode="scode" :block="curBlock" :names="names" :msg-mains="msgMains" :msg-subs="msgSubs"></designer>
+          <designer
+            v-if="curBlock"
+            :scode="scode"
+            :block="curBlock"
+            :names="names"
+            :msg-mains="msgMains"
+            :msg-subs="msgSubs"
+            @gencolumn="$emit('gencolumn', $event)"
+          ></designer>
         </transition>
       </template>
       <pso-empty v-else text="暂无脚本"></pso-empty>
@@ -77,7 +85,7 @@ export default {
       formatJSONList(this.sql, SQL_FEILDS);
       this.resetActiveTab();
       this.message = !!this.getMsgBlock();
-      
+
       const data = (await this.API.getSysConfig({ keys: JSON.stringify({ config_type: { value: "9,10", type: 4 } }) })).data;
       const grouped = _.groupBy(data, "config_type");
       if (grouped["9"]) {

@@ -1,52 +1,41 @@
 <template>
-  <div class="pso-view">
-    <div class="pso-view-body">
-      <div ref="header">
-        <div class="pso-view-header">
-          <div class="pso-view-header__l">
-            <div class="pso-view-title">
-              <i class="el-icon-s-order"></i>
-              <span>全文检索</span>
-            </div>
-          </div>
-          <div class="pso-view-header__r">
-            <div class="pso-view-authtab" v-show="authViews.length > 1 && !params.hideAuthTab">
-              <el-tabs v-model="activeView">
-                <el-tab-pane v-for="(ah, i) in authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
-              </el-tabs>
-            </div>
-          </div>
-        </div>
-        <div class="pso-view-fun">
-          <div class="pso-view-fun-l">
-            <div class="view-table-fun">
-              <pso-search text="搜索关键字" v-model="fetchParams.keywords"></pso-search>
-            </div>
-          </div>
+  <div class="pso-ftr">
+    <div class="pso-ftr-wrapper pso-container" v-if="store">
+      <div class="pso-ftr-header">
+        <div class="pso-ftr-search">
+          <el-input v-model="fetchParams.keywords"></el-input>
+          <i class="el-icon-search" @click="fetch"></i>
         </div>
       </div>
-      <div class="pso-view-table">
-        <el-table v-loading="fetching" size="small" border :data="instances" style="width: 100%">
-          <template #default>
-            <el-table-column type="index" label="序号" :index="1" width="50"></el-table-column>
-            <template v-for="f in FIELDS">
-              <el-table-column :key="f.field" :prop="f.field" :label="f.name" :width="f.width" show-overflow-tooltip>
-                <template slot-scope="scope">
-                  <div v-if="f.field === 'instance_status'">{{ getStatusName(scope.row[f.field]) }}</div>
-                  <div v-else v-html="getFiltered(scope.row[f.field], f.field)"></div>
+      <div class="pso-ftr-tabs"></div>
+      <div class="pso-ftr-body" v-if="store.instances.length">
+        <div class="pso-ftr-item" v-for="(d, i) in store.instances" :key="i">
+          <div class="pso-ftr-item-main" @click="mainClickHandler(d)">
+            <ftr-item :data="d" :fields="FIELDS" :store="store"></ftr-item>
+          </div>
+          <div class="pso-ftr-sub">
+            <el-timeline>
+              <el-timeline-item :timestamp="m.child_name" placement="top" v-for="(m, j) in store.modules" :key="j">
+                <template v-if="getModuleData(m, d).length">
+                  <ftr-item
+                    v-for="(md, k) in getModuleData(m, d)"
+                    :key="k"
+                    :data="md"
+                    :fields="JSON.parse(m.child_content)"
+                    :store="store"
+                  ></ftr-item>
                 </template>
-              </el-table-column>
-            </template>
-          </template>
-          <template #empty>
-            <pso-empty></pso-empty>
-          </template>
-        </el-table>
-        <div class="pso-view-table__footer">
+                <span v-else>无</span>
+              </el-timeline-item>
+            </el-timeline>
+          </div>
+        </div>
+        <div class="pso-ftr-footer" v-if="store.dataTotal && !store.fetching">
           <el-pagination
-            layout="total, sizes, prev, pager, next, jumper"
+            background
+            layout="total,prev, pager, next"
             :page-sizes="[20, 30, 50, 100]"
-            :total="dataTotal"
+            :total="store.dataTotal"
             :page-size="fetchParams.limit"
             :current-page="fetchParams.start"
             @size-change="sizeChangeHandler"
@@ -56,31 +45,19 @@
           ></el-pagination>
         </div>
       </div>
+      <pso-empty v-else :text="fetchParams.keywords ? '暂无数据' : '请输入查询条件'"></pso-empty>
     </div>
   </div>
 </template>
 <script>
-import { PagingMixin, AuthViewMixin } from "../../mixin/view";
 import debounce from "throttle-debounce/debounce";
-
-const FIELDS = [
-  { field: "pro_name", name: "项目", width: "240" },
-  { field: "pro_code", name: "项目编号", width: "140" },
-  { field: "d_tag_x", name: "类型", width: "120" },
-  { field: "wt_unit", name: "委托单位", width: "120" },
-  { field: "js_unit", name: "建设单位", width: "120" },
-  { field: "xs_user_x", name: "销售人员", width: "90" },
-  { field: "xs_dept_x", name: "销售部门", width: "90" },
-  { field: "xm_user_x", name: "项目组长", width: "90" },
-  { field: "sd_user_x", name: "编制主持人", width: "90" },
-  { field: "bz_user_x", name: "编制人员", width: "90" },
-  { field: "bz_dept_x", name: "编制部门", width: "90" },
-  { field: "is_qc_x", name: "是否期初", width: "80" },
-  { field: "is_gd_x", name: "是否归档", width: "80" },
-  { field: "is_sh_x", name: "是否审核", width: "80" },
-];
+import FtrItem from "./ftr-item";
+import FTRStore from "./store";
+import { PagingMixin, AuthViewMixin } from "../../mixin/view";
+import { FIELDS } from "./const";
 
 export default {
+  components: { FtrItem },
   mixins: [PagingMixin, AuthViewMixin],
   props: {
     params: {
@@ -91,12 +68,23 @@ export default {
   data() {
     this.FIELDS = FIELDS;
     return {
-      fetching: false,
-      instances: [],
-      dataTotal: 0,
+      store: null,
     };
   },
   async created() {
+    const { viewAuth, auth_config = [], q = "" } = this.params;
+    if (viewAuth) {
+      this.analyzeAuthView(viewAuth, auth_config);
+    }
+    this.fetchParams.keywords = q;
+
+    this.store = new FTRStore({ $vue: this, activeView: this.activeView });
+    await this.store.initialize();
+
+    if (q) {
+      await this.fetch();
+    }
+
     this.deFetch = debounce(200, (params) => {
       this.fetch(params);
     });
@@ -106,35 +94,23 @@ export default {
     });
     this.$watch("activeView", () => {
       this.fetchParams.start = 1;
+      this.store.setActiveView(this.activeView);
       this.deFetch();
     });
-    if (this.params.viewAuth) {
-      this.analyzeAuthView(this.params.viewAuth, this.params.auth_config);
-    }
   },
   methods: {
-    async refresh() {
-      this.fetch();
-    },
     async fetch() {
-      const dq = this.fetchParams.keywords;
-      if (dq) {
-        this.fetching = true;
-        const params = this.getFetchParams();
-        const ret = await this.API.getFTR({ ...params, dq, leaf_auth: this.activeView });
-        this.instances = ret.data.data;
-        this.dataTotal = ret.data.total;
-        this.fetching = false;
-      } else {
-        this.instances = [];
-        this.dataTotal = 0;
+      await this.store.fetch(this.fetchParams);
+    },
+    mainClickHandler(data) {
+      const cate = this.store.getCategory();
+      if (cate.solr_link) {
+        window.open(`${cate.solr_link}?insttogo=${data.id}`);
       }
     },
-    getFiltered(text) {
-      if (text) {
-        return text.replace(this.fetchParams.keywords, `<span style="color:red">${this.fetchParams.keywords}</span>`);
-      }
-      return "";
+    getModuleData(mod, data) {
+      console.log(data["id"]);
+      return this.store.getModuleData(mod, data);
     },
   },
 };

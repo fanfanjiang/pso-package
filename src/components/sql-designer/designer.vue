@@ -177,7 +177,10 @@
               <div class="">
                 <pso-search text="查询字段" v-model="sourcekyd"></pso-search>
               </div>
-              <el-button size="mini" type="success" @click="genSql">生成脚本</el-button>
+              <div>
+                <el-button size="mini" @click="genColumn">发布列表</el-button>
+                <el-button size="mini" type="success" @click="genSql">生成脚本</el-button>
+              </div>
             </div>
             <el-tabs key="sourceTab" v-model="activeTab" type="card">
               <el-tab-pane v-for="tab in sourceTabs" :key="tab.v" :label="tab.n" :name="tab.v"> </el-tab-pane>
@@ -295,6 +298,11 @@
               <el-table-column type="index" :index="1" width="40"></el-table-column>
               <el-table-column prop="field" label="字段" show-overflow-tooltip></el-table-column>
               <el-table-column prop="name" label="名称" show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="name" label="显示">
+                <template slot-scope="scope">
+                  <el-input size="mini" v-model="scope.row.display"></el-input>
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
@@ -546,6 +554,12 @@ export default {
     },
     "querySubSource.data_code"(val) {
       this.block.query_sub_code = val;
+    },
+    columns: {
+      deep: true,
+      handler() {
+        this.$emit("gencolumn", this.columns);
+      },
     },
   },
   async created() {
@@ -810,9 +824,11 @@ export default {
           const exist = _.find(this.trueSource, { _fieldValue: d.field });
           if (exist) {
             d.name = exist.fieldDisplay;
+            d.display = exist._fieldName || "";
           }
           return d;
         });
+        this.$emit("gencolumn", this.columns);
       }
       this.columning = false;
     },

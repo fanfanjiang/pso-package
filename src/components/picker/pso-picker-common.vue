@@ -106,10 +106,6 @@ import debounce from "throttle-debounce/debounce";
 export default {
   components: { PsoTypebar },
   props: {
-    appid: {
-      type: String,
-      default: "3",
-    },
     show: {
       type: Boolean,
       default: false,

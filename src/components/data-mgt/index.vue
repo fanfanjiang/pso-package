@@ -148,7 +148,7 @@ export default {
   data() {
     return {
       initializing: true,
-      appid: "Main",
+      appid: "",
       key: 0,
       treeOptions: {
         dimen: 3,
@@ -283,7 +283,7 @@ export default {
       window.open(`/printer-designer/${this.curNode.node_name}`, "_blank");
     },
     goForm({ pid = "", id = "" }) {
-      this.$router.push({ name: "formDesigner", params: { appid: this.appid }, query: { pid, id, appid: this.appid } });
+      this.$router.push({ name: "formDesigner", query: { pid, id } });
     },
     async getFields(formStore) {
       let ret = await this.API.getFormDict({ data_code: this.curNode.node_name });

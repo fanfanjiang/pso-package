@@ -66,7 +66,11 @@ export const formOp = {
     },
     methods: {
         async makeFormStore(id, options = { designMode: false }) {
-            const ret = await this.API.formsCfg({ data: { id }, method: "get" });
+            const data = { id };
+            if (options && options.requiredappid) {
+                data.requiredappid = options.requiredappid;
+            }
+            const ret = await this.API.formsCfg({ data, method: "get" });
             if (!ret.success) return;
             this.formConfig = ret.data;
             this.formStore = new FormStore({ ...ret.data, options });
