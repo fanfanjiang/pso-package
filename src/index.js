@@ -156,6 +156,7 @@ import PsoTreeTimeline from "./components/composite/tree-timeline";
 import PsoNodeAny from "./components/composite/node-any";
 import PsoFvStats from "./components/composite/fv-stats";
 import PsoFormEntry from "./components/composite/form";
+import PsoFvtree from "./components/composite/fvtree";
 
 const components = {
     PsoEmpty,
@@ -265,7 +266,8 @@ const components = {
     PsoTreeTimeline,
     PsoNodeAny,
     PsoFvStats,
-    PsoFormEntry
+    PsoFormEntry,
+    PsoFvtree
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host, xssFilter = false, __CONST__ } = {}) {

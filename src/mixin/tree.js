@@ -170,6 +170,8 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
 
                 this.treeData = await this.getNodeData();
 
+                this.$emit("tree-loaded", this.treeData);
+
                 this.loadingWholeTree = false;
 
                 if (this.checkAfterLoad) {
@@ -224,6 +226,8 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 if (this.nodeDataFilter) {
                     treeList = await this.nodeDataFilter(ret.data.tagtree);
                 }
+
+                this.$emit("data-loaded", treeList);
 
                 //将列表数据转化为树结构数据
                 const data = listToTree({

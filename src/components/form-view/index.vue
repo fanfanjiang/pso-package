@@ -78,11 +78,12 @@
         </div>
         <!-- 表格 -->
         <div class="pso-view-table" v-loading="store.starting">
-          <view-table :store="store" :params="{ ...params, ...$props }">
+          <view-table v-if="!__isMobile__" :store="store" :params="{ ...params, ...$props }">
             <template v-slot:column="scope">
               <slot name="column" v-bind:data="scope.data"></slot>
             </template>
           </view-table>
+          <mobile-view v-else :store="store"></mobile-view>
         </div>
       </div>
       <pso-form-executor
@@ -109,9 +110,10 @@ import DataFun from "./data-fun";
 import ViewTable from "./table";
 import Icon from "./icon";
 import WipeDialog from "./wipe-dialog";
+import MobileView from "./mobile-view";
 
 export default {
-  components: { FastSwitch, TableFun, DataFun, ViewTable, Icon, WipeDialog },
+  components: { FastSwitch, TableFun, DataFun, ViewTable, Icon, WipeDialog, MobileView },
   props: {
     params: {
       type: Object,
@@ -282,6 +284,8 @@ export default {
           autoChange: this.autoChange,
           insttogo: this.params.insttogo,
           wipeallable: this.wipeallable,
+          sourceType: "0",
+          fetchMode: this.__isMobile__ ? "2" : "1",
         });
 
         if (this.viewAuth) {

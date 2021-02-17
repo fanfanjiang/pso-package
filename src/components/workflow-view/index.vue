@@ -106,7 +106,8 @@
         </div>
         <!-- 表格 -->
         <div class="pso-view-table" v-loading="store.starting">
-          <view-table :store="store" :params="{ ...params, ...$props, checkbox }"></view-table>
+          <view-table v-if="!__isMobile__" :store="store" :params="{ ...params, ...$props, checkbox }"></view-table>
+          <mobile-view v-else :store="store"></mobile-view>
         </div>
       </div>
       <pso-dialog :title="store.wfCfg.wf_name" :visible="store.showExecutor" :width="executorWidth" @close="excutorClosedHandler">
@@ -147,9 +148,10 @@ import DataFun from "../form-view/data-fun";
 import ViewTable from "../form-view/table";
 import Dropdown from "../form-view/dropdown";
 import Icon from "./icon";
+import MobileView from "../form-view/mobile-view";
 
 export default {
-  components: { FastSwitch, TableFun, DataFun, ViewTable, Dropdown, Icon },
+  components: { FastSwitch, TableFun, DataFun, ViewTable, Dropdown, Icon, MobileView },
   props: {
     params: {
       type: Object,
@@ -240,6 +242,8 @@ export default {
           $vue: this,
           defSearchType: this.params.searchType,
           insttogo: this.params.insttogo,
+          sourceType: "0",
+          fetchMode: this.__isMobile__ ? "2" : "1",
         });
 
         if (this.params.viewAuth) {

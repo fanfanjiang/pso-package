@@ -115,6 +115,16 @@ export default class FormViewStore {
 
         this.fetchMode = '1';//加载模式 1为分页加载，2为滚动加载
 
+        this.disabledFetch = false;
+
+        this.mobileField = {
+            fieldTitle: "d_name",
+            fieldPic: "",
+            fieldContent: [],
+            fieldTime: "",
+            timeAgo: true
+        }
+
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
                 this[op] = options[op];
@@ -190,6 +200,8 @@ export default class FormViewStore {
     }
 
     async fetchStatus() {
+        if (this.disabledFetch) return;
+
         this.starting = true;
         const params = {
             leaf_auth: this.activeView, data_code: this.formCfg.data_code,
@@ -340,6 +352,9 @@ export default class FormViewStore {
             delete this.keys[key];
         }
         this.page = 1;
+        if (this.fetchMode === '2') {
+            this.instances = [];
+        }
         await this.fetch();
     }
 
@@ -395,6 +410,8 @@ export default class FormViewStore {
     }
 
     async fetch() {
+        if (this.disabledFetch) return;
+
         this.fetching = true;
 
         const data = this.getFetchParams();
@@ -410,6 +427,7 @@ export default class FormViewStore {
             if (this.fetchMode === '1') {
                 this.instances = ret.data;
             } else {
+                this.workInstance(ret.data);
                 this.instances = this.instances.concat(ret.data);
                 if (!ret.data.length) {
                     this.fetchFinished = true;
@@ -430,6 +448,12 @@ export default class FormViewStore {
         this.fixLayout();
     }
 
+    workInstance(data) {
+        data.forEach(d => {
+            this.$vue.$set(d, '__checkedshit__', false)
+        })
+    }
+
     checkInstToGO() {
         if (this.insttogo) {
             if (this.instances.length && this.insttogo === this.instances[0].leaf_id) {
@@ -448,12 +472,11 @@ export default class FormViewStore {
     }
 
     appendSearchType(data) {
-        if (this.defSearchType) {
-            const viewTarget = _.find(this.authViews, { v: parseInt(this.activeView) });
-            if (viewTarget && viewTarget.field) {
-                data.search_type = this.defSearchType;
-                data.field_name = viewTarget.field;
-            }
+        //2021.2.8将search_type改为非必要条件
+        const viewTarget = _.find(this.authViews, { v: parseInt(this.activeView) });
+        if (viewTarget && viewTarget.field) {
+            data.search_type = this.defSearchType;
+            data.field_name = viewTarget.field;
         }
     }
 
@@ -629,18 +652,23 @@ export default class FormViewStore {
             return this.$vue.$message.error("表单列表配置错误，请重新配置列表参数")
         }
         if (cfg.column && cfg.column.length) {
+            let exist = cfg.column[0];
             if (defKey) {
-                const exist = _.find(cfg.column, { name: defKey });
-                if (exist) {
-                    this.usedFormCol = defKey;
-                    this.usedActionIds = exist.actions;
-                    return exist.data;
+                const temp = _.find(cfg.column, { name: defKey });
+                if (temp) {
+                    exist = temp;
                 }
             }
 
-            this.usedFormCol = cfg.column[0].name;
-            this.usedActionIds = cfg.column[0].actions;
-            return cfg.column[0].data;
+            this.usedFormCol = exist.name;
+            this.usedActionIds = exist.actions;
+
+            for (let key in this.mobileField) {
+                if (exist[key]) {
+                    this.mobileField[key] = exist[key];
+                }
+            }
+            return exist.data;
         } else {
             return null
         }
@@ -856,6 +884,16 @@ export default class FormViewStore {
         return (_.isNull(val) || val === 'null' || val === 'undefined' || typeof val === 'undefined') ? "" : val;
     }
 
+    checkSelectByShit() {
+        const checked = [];
+        for (let d of this.instances) {
+            if (d.__checkedshit__) {
+                checked.push(d);
+            }
+        }
+        this.changeSelectedList(checked);
+    }
+
     changeSelectedList(data) {
         this.selectedList = data;
         this.analyzeAvaiableChange(this.statuses, 'd_status');
@@ -881,7 +919,7 @@ export default class FormViewStore {
         })
     }
 
-    async checkDataChange({ op, formData }) {
+    async checkDataChange({ op, formData }, emit = true) {
         if (this.actioning) {
             if (op === 2 || op === 1) {
                 let data = formData.dataArr;
@@ -892,7 +930,7 @@ export default class FormViewStore {
                             delete data[0][f.id];
                         }
                     });
-                    await this.batchAddOrUpdate(data[0], _.map(this.selectedList, 'leaf_id'), false);
+                    await this.batchAddOrUpdate(data[0], _.map(this.selectedList, 'leaf_id'), false, emit);
                     data = this.selectedList.map((d) => ({ ...d, ...data[0], leaf_id: d.leaf_id }));
 
                 }
@@ -904,7 +942,7 @@ export default class FormViewStore {
         }
     }
 
-    checkActionalbe(action) {
+    checkActionable(action) {
         const { method, batchable, rule } = action;
         const data = this.selectedList;
         if (method !== '3') {
@@ -916,12 +954,12 @@ export default class FormViewStore {
             }
         }
         if (method === '2' && rule.length) {
-            return this.checkActionalbeByRule(action);
+            return this.checkActionableByRule(action);
         }
         return true;
     }
 
-    checkActionalbeByRule(action) {
+    checkActionableByRule(action) {
         const { rule, ruleType } = action;
 
         for (let data of this.selectedList) {
@@ -1044,7 +1082,7 @@ export default class FormViewStore {
         this.setActionEmpty();
 
         //查看是否满足使用条件
-        if (!this.checkActionalbeByRule(action)) {
+        if (!this.checkActionableByRule(action)) {
             return this.$vue.$message({ message: '不满足执行条件', type: 'warning' });
         }
 
@@ -1096,12 +1134,12 @@ export default class FormViewStore {
         }
     }
 
-    async batchAddOrUpdate(data, idList, refresh = true) {
+    async batchAddOrUpdate(data, idList, refresh = true, emit = true) {
         const list = idList || this.selectedList.map(d => d.leaf_id);
         if (!list.length) return;
         const { data_name, node_id, data_code } = this.store;
         for (let leaf_id of list) {
-            await this.addOrUpdate({ leaf_id, formData: { data_name, node_id, data_code, dataArr: [{ leaf_id, optype: 1, ...data }] } }, false);
+            await this.addOrUpdate({ leaf_id, formData: { data_name, node_id, data_code, dataArr: [{ leaf_id, optype: 1, ...data }] } }, false, emit);
         }
         if (refresh) {
             this.fetchStatus();

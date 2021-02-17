@@ -36,7 +36,7 @@
             :data-id="mainDataId"
             :form-entity="mainCfg"
             :data-default="mainDefForm"
-            :editable="bodyEditalbe"
+            :editable="bodyEditable"
             ignore-ast-column
             @data-loaded="astLoadedHandler"
             @cpnt-value-changed="astChangeHandler"

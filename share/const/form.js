@@ -302,6 +302,7 @@ const CPNT = {
       { n: '_printFields', v: '' },
       { n: '_selectMode', v: '1' },
       { n: '_selectFields', v: [] },
+      { n: '_actionable', v: false },
     ]
   },
   assfield: {

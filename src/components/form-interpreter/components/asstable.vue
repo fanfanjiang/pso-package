@@ -1,50 +1,65 @@
 <template>
   <pso-label :cpnt="cpnt" v-loading="initializing || loading">
     <div class="pso-ip__ast" v-if="!initializing">
-      <div class="pso-ip__ast-btns" style="margin-bottom: 5px" v-if="cpntEditable">
-        <template v-if="cpnt.data._relate">
-          <div class="cpnt-text" v-if="cpnt.data._selectMode === '2'">
-            <el-input
+      <div class="pso-ip__ast-header" v-if="cpntEditable">
+        <div class="pso-ip__ast-l">
+          <template v-if="cpnt.data._relate">
+            <div class="cpnt-text" v-if="cpnt.data._selectMode === '2'">
+              <el-input
+                size="mini"
+                autosize
+                v-model="searchProxy"
+                :placeholder="cpnt.data._fieldName"
+                @focus="focusing = true"
+                @blur="inputBlurHandler"
+              ></el-input>
+              <transition name="el-zoom-in-top">
+                <div class="text-search__result" v-if="showResult">
+                  <template v-if="!searching">
+                    <div
+                      @click="selectSearchRet(r)"
+                      class="text-search__result-item"
+                      v-for="(r, i) in searchRet"
+                      :key="i"
+                      v-html="searchDisplay(r)"
+                    ></div>
+                  </template>
+                  <pso-skeleton v-else :lines="1" :s-style="{ padding: '0 15px' }"></pso-skeleton>
+                </div>
+              </transition>
+            </div>
+            <el-button v-if="cpnt.data._selectMode !== '2'" type="primary" plain icon="el-icon-plus" size="mini" @click="showTable = true">
+              选择{{ cpnt.data._fieldName }}
+            </el-button>
+          </template>
+          <el-button v-if="showAddBtn" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd">
+            添加{{ cpnt.data._fieldName }}
+          </el-button>
+          <transition name="el-zoom-in-center">
+            <el-button
+              v-show="cpnt.data._relate && !justShowOne && astStore.selectedList.length"
+              type="danger"
+              icon="el-icon-delete"
               size="mini"
-              autosize
-              v-model="searchProxy"
-              :placeholder="cpnt.data._fieldName"
-              @focus="focusing = true"
-              @blur="inputBlurHandler"
-            ></el-input>
-            <transition name="el-zoom-in-top">
-              <div class="text-search__result" v-if="showResult">
-                <template v-if="!searching">
-                  <div
-                    @click="selectSearchRet(r)"
-                    class="text-search__result-item"
-                    v-for="(r, i) in searchRet"
-                    :key="i"
-                    v-html="searchDisplay(r)"
-                  ></div>
-                </template>
-                <pso-skeleton v-else :lines="1" :s-style="{ padding: '0 15px' }"></pso-skeleton>
-              </div>
-            </transition>
-          </div>
-          <el-button v-if="cpnt.data._selectMode !== '2'" type="primary" plain icon="el-icon-plus" size="mini" @click="showTable = true">
-            选择{{ cpnt.data._fieldName }}
-          </el-button>
-        </template>
-        <el-button v-if="showAddBtn" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd">
-          添加{{ cpnt.data._fieldName }}
-        </el-button>
-        <transition name="el-zoom-in-center">
-          <el-button
-            v-show="cpnt.data._relate && !justShowOne && astStore.selectedList.length"
-            type="danger"
-            icon="el-icon-delete"
-            size="mini"
-            @click="handleDelList(astStore.selectedList)"
-          >
-            取消所选数据
-          </el-button>
-        </transition>
+              @click="handleDelList(astStore.selectedList)"
+            >
+              取消所选数据
+            </el-button>
+          </transition>
+        </div>
+        <div class="pso-ip__ast-r">
+          <data-fun
+            :store="astStore"
+            :addable="false"
+            :selectable="false"
+            :changable="false"
+            :stageable="false"
+            :copyable="false"
+            :moreable="false"
+            :exportable="false"
+            :wipeable="false"
+          ></data-fun>
+        </div>
       </div>
       <div class="pso-form-asstable-table">
         <el-tag
@@ -93,8 +108,10 @@
         :title="store.data_name"
         :opener="astStore"
         :instanceids="astStore.instanceids"
+        :auto-submit="astStore.autoSubmit"
+        :switchable="astStore.switchable"
         :keepable="keepable"
-        @data-changed="dataChangeHandler"
+        @data-changed="beforeDataChangeHandler"
         @prev="astStore.showPrev.call(astStore, $event)"
         @next="astStore.showNext.call(astStore, $event)"
       ></pso-form-executor>
@@ -107,10 +124,11 @@ import cpntMixin from "../mixin";
 
 import ASTStore from "../astStore";
 import ViewTable from "../../form-view/table";
+import DataFun from "../../form-view/data-fun";
 import debounce from "throttle-debounce/debounce";
 
 export default {
-  components: { PsoFormInterpreter: () => import("../index"), ViewTable },
+  components: { PsoFormInterpreter: () => import("../index"), ViewTable, DataFun },
   mixins: [
     cpntMixin,
     pickerMixin({
@@ -191,9 +209,8 @@ export default {
       return {
         selectionType: this.selectionType,
         modifiable: this.cpntEditable,
-        checkbox: this.cpntEditable,
+        checkbox: this.cpntEditable && (this.cpnt.data._relate || this.cpnt.data._actionable),
         tableSize: "small",
-        checkbox: this.cpnt.data._relate,
       };
     },
     editable() {
@@ -207,9 +224,10 @@ export default {
         dataDefault: this.defForm,
         addable: this.cpnt.data.__forceAdd__ || this.editable,
         editable: this.editable,
-        deletable: this.editable && !this.cpnt.data._relate,
+        deletable: this.editable && !this.cpnt.data._relate && !this.astStore.actioning,
         mockAsstables: this.unsavedSelf,
         parentInstanceId: this.cpnt.store ? this.cpnt.store.instance_id : "",
+        extendAuth: this.astStore.fieldsRule,
       };
     },
     authCfg() {
@@ -400,7 +418,7 @@ export default {
 
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option, auth: 1 }, method: "get" });
 
-      this.astStore = new ASTStore({ $vue: this, limit: 10 });
+      this.astStore = new ASTStore({ $vue: this, limit: 10, disabledFetch: true });
       this.cpnt.astStore = this.astStore;
 
       this.astStore.analyzeFormCfg(ret.data, this.cpnt.store && this.cpnt.store.ignoreAstColumn ? "" : this.cpnt.data._showFields);
@@ -486,7 +504,13 @@ export default {
 
       this.astStore.newInstance();
     },
-    async dataChangeHandler({ leaf_id, op, formData }) {
+    async beforeDataChangeHandler(evt) {
+      await this.astStore.checkDataChange(evt, true);
+      this.dataChangeHandler(evt);
+    },
+    async dataChangeHandler(evt) {
+      const { leaf_id, op, formData } = evt;
+
       if (op === 1 || op === 2) {
         const isTemporary = formData.dataArr[0]["__temporary__"];
         let data;
@@ -542,5 +566,11 @@ export default {
   .el-dialog__body {
     padding: 0;
   }
+}
+.pso-ip__ast-header {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

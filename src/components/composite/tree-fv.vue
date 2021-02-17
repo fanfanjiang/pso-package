@@ -12,7 +12,7 @@
       </div>
       <div class="pso-page-body__content">
         <div class="pso-page-body__wrapper" v-if="curNode">
-          <pso-form-view v-bind="formParams" :params="formParams">></pso-form-view>
+          <pso-form-view v-bind="formParams" :params="formParams"></pso-form-view>
         </div>
       </div>
     </div>

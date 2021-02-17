@@ -91,6 +91,7 @@
           </el-form-item>
         </div>
       </transition>
+      <component v-if="cid" v-bind:is="getCpntEl(cid)" :node="node" :data="data"></component>
     </el-form>
     <pso-drawer size="50%" :visible="showDesigner" title="设计脚本" @close="showDesigner = false">
       <template v-slot:whole>
@@ -116,9 +117,24 @@ import { PLUGIN_PARAMS } from "../../const/sys";
 import SqlDesigner from "../sql-designer";
 import StatsPicker from "./stats-picker";
 
+const componentsMap = {};
+const requireComponent = require.context("./cpnts", true);
+requireComponent.keys().forEach((fileName) => {
+  const componentConfig = requireComponent(fileName);
+  const componentName = _.upperFirst(
+    _.camelCase(
+      fileName
+        .split("/")
+        .pop()
+        .replace(/\.\w+$/, "")
+    )
+  );  
+  componentsMap[`PluginCpntPso${componentName}`] = componentConfig.default;
+});
+
 export default {
   mixins: [formOp],
-  components: { formulaDesigner, SqlDesigner, StatsPicker },
+  components: { formulaDesigner, SqlDesigner, StatsPicker, ...componentsMap },
   props: {
     data: Array,
     node: Object,
@@ -148,6 +164,7 @@ export default {
         code: "",
         data: {},
       },
+      cid: "",
     };
   },
   async created() {
@@ -197,6 +214,12 @@ export default {
           });
         }
 
+        if (cfg.tp_component) {
+          this.cid = cfg.tp_component;
+        } else {
+          this.cid = "";
+        }
+        console.log(cfg.tp_component);
         if (cfg.tp_content) {
           this.fields = JSON.parse(cfg.tp_content);
           if (Array.isArray(this.fields)) {
@@ -285,6 +308,9 @@ export default {
         this.statsOpener.data = data.value;
         this.statsOpener.show = true;
       }
+    },
+    getCpntEl(id) {
+      return `plugin-cpnt-${id}`;
     },
   },
 };

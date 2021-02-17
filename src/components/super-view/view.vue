@@ -2,10 +2,19 @@
   <div ref="container" class="pso-sv-view" @scroll="scrollHandler">
     <div v-if="store.instances.length">
       <div class="pso-sv-view-item" v-for="(d, i) in store.instances" :key="i">
+        <div v-if="checkable" class="pso-sv-view-item-check">
+          <el-checkbox v-model="d.__checkedshit__" @change="checkHandler"></el-checkbox>
+        </div>
         <div class="pso-sv-view-item-body">
           <div class="pso-sv-view-item__t">
             <span class="pso-sv-view-title">
-              <view-field v-if="params.fieldTitle" :field="params.fieldTitle" :store="store" :data="d" @click="detailHandler(d)"></view-field>
+              <view-field
+                v-if="params.fieldTitle"
+                :field="params.fieldTitle"
+                :store="store"
+                :data="d"
+                @click="detailHandler(d)"
+              ></view-field>
             </span>
           </div>
           <div class="pso-sv-view-item__c">
@@ -55,7 +64,7 @@
         </div>
       </div>
     </div>
-    <pso-empty v-else></pso-empty>
+    <pso-empty v-if="!store.fetching && !store.instances.length"></pso-empty>
     <pso-skeleton v-if="store.fetching" :lines="3" :s-style="{ padding: '10px' }"></pso-skeleton>
   </div>
 </template>
@@ -69,6 +78,10 @@ export default {
   props: {
     store: Object,
     params: Object,
+    checkable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     scrollDisabled() {
@@ -107,6 +120,9 @@ export default {
       if (this.store.sourceType === "0") {
         this.store.showInstance(data);
       }
+    },
+    checkHandler() {
+      this.store.checkSelectByShit();
     },
   },
 };

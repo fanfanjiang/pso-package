@@ -108,7 +108,17 @@ export default class WFVStore extends FVStore {
         const ret = await API.workflow({ data, method: "get" });
 
         if (ret.success) {
-            this.instances = ret.data.data;
+
+            if (this.fetchMode === '1') {
+                this.instances = ret.data.data;
+            } else {
+                this.workInstance(ret.data.data);
+                this.instances = this.instances.concat(ret.data.data);
+                if (!ret.data.data.length) {
+                    this.fetchFinished = true;
+                }
+            }
+
             this.dataTotal = ret.data.page;
             this.summary = ret.data.sum || null;
 

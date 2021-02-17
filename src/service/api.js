@@ -950,6 +950,22 @@ export default class API {
             throw error;
         }
     }
+
+    static async siteLevel(data, method) {
+        try {
+            return await this.request('/api/sitelevel', { data, method });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async sitebranch(data, method) {
+        try {
+            return await this.request('/api/sitebranch', { data, method });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

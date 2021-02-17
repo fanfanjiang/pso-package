@@ -1,8 +1,10 @@
 <template>
-  <div class="pso-view-withtop" v-loading="groupInitializing">
+  <div class="pso-view-withtop" v-loading="groupInitializing || syncing">
     <div class="pso-view-top" v-if="!groupInitializing">
       <pso-typebar :defBar="defGroup" v-model="curGroup">
-        <el-button size="mini" type="primary" @click="syncPulgin" :disabled="syncing" :loading="syncing">同步默认插件</el-button>
+        <el-button v-if="treeRoot" size="mini" type="primary" @click="syncPlugin" :disabled="syncing" :loading="syncing"
+          >同步默认插件</el-button
+        >
       </pso-typebar>
     </div>
     <div :class="viewClass" v-if="curGroup.feildvalue">
@@ -14,6 +16,8 @@
           :auto-edit="true"
           @before-edit-submit="beforeNodeUpdate"
           @node-click="nodeClickHandler"
+          @tree-loaded="tLoadedHandler"
+          @data-loaded="dLoadedHandler"
         >
           <template v-slot:default="nodeData">
             <div v-if="nodeData.node.is_leaf">
@@ -105,9 +109,7 @@ export default {
   props: {
     params: {
       type: Object,
-      default: () => {
-        data_type: "";
-      },
+      default: () => ({ data_type: "" }),
     },
   },
   data() {
@@ -123,6 +125,8 @@ export default {
       tpType: "",
       expandWider: false,
       syncing: false,
+      treeRoot: null,
+      treeData: [],
       ..._DATA,
     };
   },
@@ -252,10 +256,62 @@ export default {
       this.ResultNotify(ret);
       this.saving = false;
     },
-    async syncPulgin() {
+    tLoadedHandler(data) {
+      if (data.length && !data[0].is_leaf) {
+        this.treeRoot = data[0];
+      } else {
+        this.treeRoot = null;
+      }
+    },
+    dLoadedHandler(data) {
+      this.treeData = data.filter((d) => d.is_leaf);
+    },
+    async syncPlugin() {
+      const plugins = this.__CONST__.PLUGIN_DEFAULT;
+      this.syncing = true;
 
+      for (let item of this.treeData) {
+        if (!item.tp_component) {
+          const ret = await this.API.getTreeNode({ code: item.node_name });
+          if (ret.success) {
+            const cfg = ret.data.data;
+            for (let key in cfg) {
+              this.$set(item, key, cfg[key]);
+            }
+          }
+        }
+      }
 
-      
+      for (let item of plugins) {
+        const { id: tp_component, n: tp_name, path: tp_route, params, type: tp_type } = item;
+        const options = { node_display: tp_name, tp_name, tp_route, tp_component, route_setting: JSON.stringify(params), tp_type };
+
+        let exist = _.find(this.treeData, { tp_component });
+        if (!exist) {
+          exist = _.find(this.treeData, { tp_route });
+        }
+
+        if (!exist) {
+          await this.API.trees({
+            data: {
+              tp_head: "",
+              data_name: tp_name,
+              node_name: tp_name,
+              node_dimen: this.treeRoot.node_dimen,
+              node_pid: this.treeRoot.node_id,
+              is_leaf: 1,
+              ...options,
+            },
+            method: "post",
+          });
+        } else {
+          const { node_id, node_name: tp_code } = exist;
+          await this.API.trees({ data: { node_id, code: tp_code, ...options }, method: "put" });
+        }
+      }
+      this.$message({ message: "已同步", type: "success" });
+      this.syncing = false;
+      this.$refs.tree.loadWholeTree();
     },
   },
 };

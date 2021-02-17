@@ -8,13 +8,13 @@ export const MENU_TYPE = [{
 
 export const OPEN_TYPE = [{
     n: '默认',
-    v: 1
+    v: '1'
 }, {
     n: '新页面',
-    v: 2
+    v: '2'
 }, {
     n: 'IFRAME',
-    v: 3
+    v: '3'
 }];
 
 //模板参数设置控件类型

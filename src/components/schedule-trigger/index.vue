@@ -180,7 +180,6 @@ export default {
     async saveHandler(params) {
       if (this.editing) return;
       this.editing = true;
-      let trigger_id;
       let data = {};
       if (params) {
         data = { ...params, optype: 2 };

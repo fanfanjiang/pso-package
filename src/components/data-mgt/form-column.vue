@@ -14,6 +14,26 @@
               <el-option v-for="(a, i) in actions" :key="i" :label="a.name" :value="a.id"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="标题字段" style="margin-bottom: 10px">
+            <el-select size="mini" filterable clearable v-model="col.fieldTitle">
+              <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="头图字段" style="margin-bottom: 10px">
+            <el-select size="mini" filterable clearable v-model="col.fieldPic">
+              <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="内容字段" style="margin-bottom: 10px">
+            <el-select size="mini" filterable multiple clearable v-model="col.fieldContent">
+              <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="时间字段" style="margin-bottom: 10px">
+            <el-select size="mini" filterable clearable v-model="col.fieldTime">
+              <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
+            </el-select>
+          </el-form-item>
         </el-form>
         <el-table
           key="list"
@@ -116,12 +136,20 @@
   </div>
 </template>
 <script>
-import { formOp } from "../form-designer/mixin.js";
-import debounce from "throttle-debounce/debounce";
-import { FORM_COLUMN_FIELDS } from "../../const/sys";
 import shortid from "shortid";
+import { formOp } from "../form-designer/mixin.js";
+import { FORM_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList } from "../../utils/util";
-
+const BASE = {
+  name: "",
+  actions: [],
+  data: [],
+  fieldTitle: "",
+  fieldPic: "",
+  fieldContent: [],
+  fieldTime: "",
+  timeAgo: true,
+};
 export default {
   mixins: [formOp],
   props: ["data", "defCol", "actions"],
@@ -140,11 +168,7 @@ export default {
     if (!this.data.column.length) {
       this.addCol(formatJSONList(_.cloneDeep(this.defCol), FORM_COLUMN_FIELDS));
     } else {
-      this.data.column.forEach((col) => {
-        if (!col.actions) {
-          this.$set(col, "actions", []);
-        }
-      });
+      formatJSONList(this.data.column, BASE);
       this.activeTab = "0";
     }
   },

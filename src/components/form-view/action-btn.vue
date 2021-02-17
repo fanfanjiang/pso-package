@@ -3,7 +3,7 @@
     class="action-btn"
     size="mini"
     :style="{ 'background-color': action.color, 'border-color': action.color, color: '#fff' }"
-    :disabled="(checkable && !checkActionalbe(action)) || action.doing"
+    :disabled="(checkable && !checkActionable(action)) || action.doing"
     :loading="action.doing"
     @click="checkAction(action)"
   >
@@ -29,8 +29,8 @@ export default {
       if (action.mode === "2") return;
       this.$emit("click", action);
     },
-    checkActionalbe(action) {
-      return this.store.checkActionalbe(action);
+    checkActionable(action) {
+      return this.store.checkActionable(action);
     },
   },
 };

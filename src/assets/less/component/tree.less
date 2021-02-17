@@ -12,6 +12,16 @@
         }
     }
 
+    &.expand-icon-invisible {
+        .el-tree-node__expand-icon {
+            opacity: 0 !important;
+            width: 1px !important;
+            padding: 0 !important;
+            height: 24px !important;
+            transform: rotate(0deg) !important;
+        }
+    }
+
     .pso-tree__header {
         display: flex;
         align-items: center;
@@ -38,14 +48,6 @@
     .pso-tree__body {
         overflow: auto;
         height: 100%;
-    }
-
-    .el-tree-node__expand-icon {
-        opacity: 0 !important;
-        width: 1px !important;
-        padding: 0 !important;
-        height: 24px !important;
-        transform: rotate(0deg) !important;
     }
 
     .pso-tree__node {

@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-tree" :class="treeClass" :style="treeStyle">
+  <div class="pso-tree expand-icon-invisible" :class="treeClass" :style="treeStyle">
     <div class="pso-tree__header">
       <div class="pso-tree__search" v-if="searchable">
         <mu-text-field v-model="filterText">
@@ -27,8 +27,8 @@
         :allow-drag="allowDragHandler"
         :lazy="lazyLoad"
         :load="getNodeData"
-        @node-drag-start="nodeDragStart"
         :show-checkbox="showCheckbox"
+        @node-drag-start="nodeDragStart"
         @node-click="nodeClickHandler"
         @node-drop="nodeDropHandler"
         @check="checkChangeHandler"

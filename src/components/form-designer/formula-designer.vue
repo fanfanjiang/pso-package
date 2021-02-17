@@ -127,13 +127,15 @@ export default {
               tempVal = "123";
               break;
           }
-          codeCopy = codeCopy.replace(new RegExp(`@${item.fid}@`, "g"), tempVal);
+          if (item.fid !== "__date__" && item.fid !== "__no__") {
+            codeCopy = codeCopy.replace(new RegExp(`@${item.fid}@`, "g"), tempVal);
+          }
         });
         this.example = codeCopy;
         this.result = eval(codeCopy);
       } catch (error) {
         this.result = error;
-        this.$message({ message: "公式错误", type: "warning" });
+        this.$message({ message: "公式错误，如果预期结果是字符串，请在最外层添加英文引号", type: "warning" });
       }
     },
     confirm() {

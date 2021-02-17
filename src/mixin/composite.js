@@ -61,7 +61,7 @@ export const FormAsMainMixin = {
         bottomHeight() {
             return this.params.bottomHeight || '50%';
         },
-        bodyEditalbe() {
+        bodyEditable() {
             return this.vStore.getEditableByStatus(this.mainCurRow);
         }
     },
@@ -106,10 +106,8 @@ export const FormAsMainMixin = {
                 },
             });
 
-            const formNodes = await this.API.getFormTree();
             this.asstables = asstables.map((item) => {
-                const node = _.find(formNodes, { node_name: item._option });
-                return { id: item._option, name: node.node_display, type: "asstable" };
+                return { id: item._fieldValue, name: item._fieldName, type: "asstable" };
             });
         },
         astLoadedHandler(store) {
@@ -120,8 +118,8 @@ export const FormAsMainMixin = {
             if (!this.astStore) return;
             this.astStore._forEach((cpnt) => {
                 cpnt.data._hideFieldName = true;
-                cpnt.data._hideForever = cpnt.data._hideOnNew = cpnt.data._option !== this.activeAst;
-                this.$set(cpnt.data, "forceShow", cpnt.data._option === this.activeAst);
+                cpnt.data._hideForever = cpnt.data._hideOnNew = cpnt.data._fieldValue !== this.activeAst;
+                this.$set(cpnt.data, "forceShow", cpnt.data._fieldValue === this.activeAst);
             });
         },
         mainChangeHandler({ leaf_id, op }) {

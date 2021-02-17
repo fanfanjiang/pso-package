@@ -5,6 +5,9 @@
         <slot name="title"></slot>
       </div>
     </div>
+    <div class="form-executor-header__r">
+      <slot name="action"></slot>
+    </div>
   </div>
 </template>
 <script>
