@@ -125,8 +125,8 @@ export const FormAsMainMixin = {
         mainChangeHandler({ leaf_id, op }) {
 
         },
-        astChangeHandler({ cpnt }) {
-            if (cpnt.data.componentid === "asstable") {
+        astChangeHandler({ trigger, cpnt }) {
+            if (cpnt.data.componentid === "asstable" && trigger !== 'action') {
                 this.$nextTick(() => {
                     this.saveAst();
                 })

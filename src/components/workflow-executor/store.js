@@ -482,6 +482,10 @@ export default class WfStore {
         const filterVal = this.filterBadVal(value);
         $el.html((filterVal || filterVal == 0) ? `${filterVal} ${_unit}` : '');
 
+        if (cpnt.componentid === 'signature' && value) {
+            $el.addClass('sig-wrapper').empty().append(`<img src="${value}" alt="签名">`);
+        }
+
         //关联表
         if (cpnt.componentid === "asstable" && proxy && fields) {
             const display = $el.attr('display');

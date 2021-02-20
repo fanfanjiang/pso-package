@@ -39,9 +39,9 @@
   </pso-grid-wrapper>
 </template>
 <script>
-import shortid from "shortid";
 import { mapState } from "vuex";
 import { BaseMixin } from "../mixin";
+import { analyzeMenu } from "../../../tool/app";
 
 export default {
   mixins: [BaseMixin],
@@ -160,7 +160,7 @@ export default {
       this.initializing = false;
     },
     async handleClick(data) {
-      const { map_key0, map_key2, map_key3, loading } = data;
+      const { map_key0, map_key2, map_key3 } = data;
       if (map_key2 === "workflow") {
         this.curWf = { code: map_key3, name: map_key0 };
         this.showExecutor = true;
@@ -170,29 +170,7 @@ export default {
       } else if (map_key2 === "menu") {
         //解析菜单
         data.loading = true;
-        const ret = await this.API.getMenuInfo({ menu_code: map_key3 });
-
-        if (ret.success && ret.data) {
-          const { open_type, menu_link, menu_type, menu_code } = ret.data;
-          let path = "";
-          if (menu_type === 1) {
-            const tpRet = await this.API.getTreeNode({ code: menu_link });
-            if (tpRet.success && tpRet.data.data) {
-              path = tpRet.data.data.tp_route.replace(/:menu_code/g, menu_code);
-            }
-          } else if (menu_type === 2) {
-            path = menu_link;
-          }
-          if (path) {
-            if (open_type === 2) {
-              //打开新窗口
-              window.open(path);
-            } else {
-              this.$router.push({ path });
-            }
-          }
-        }
-
+        await analyzeMenu({ menu_code: map_key3, uid: this.base.user.user_id, router: this.$router });
         data.loading = false;
       }
     },

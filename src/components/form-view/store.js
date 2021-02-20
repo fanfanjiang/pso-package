@@ -167,7 +167,7 @@ export default class FormViewStore {
     }
 
     get operableSotrs() {
-        return this.sorts.filter(s => s.operable);
+        return this.sorts;
     }
 
     get instanceEditable() {
@@ -934,7 +934,7 @@ export default class FormViewStore {
                     data = this.selectedList.map((d) => ({ ...d, ...data[0], leaf_id: d.leaf_id }));
 
                 }
-                const scriptRet = await this.checkActionScript(this.actioning, data);
+                await this.checkActionScript(this.actioning, data);
                 this.checkActionLink(this.actioning, this.selectedList);
                 this.setActionEmpty();
                 this.showExecutor = false;
@@ -1049,7 +1049,7 @@ export default class FormViewStore {
         if (!scriptable) return true;
         const ret = await API.doActionScript({ btn_id: action.id, btn_type: '1', data_code: this.store.data_code, data });
         this.$vue.ResultNotify(ret);
-        this.$vue.$emit('actioned', ret)
+        this.$vue.$emit('actioned', { data })
     }
 
     checkActionLink(action, data) {
@@ -1111,7 +1111,7 @@ export default class FormViewStore {
             this.actioning = action;
             this.switchable = false;
         } else {
-            const scriptRet = await this.checkActionScript(action, data);
+            await this.checkActionScript(action, data);
             this.checkActionLink(action, data);
             await this.fetchStatus();
         }

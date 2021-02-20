@@ -47,7 +47,7 @@
             </el-button>
           </transition>
         </div>
-        <div class="pso-ip__ast-r">
+        <div class="pso-ip__ast-r" style="padding-top: 5px">
           <data-fun
             :store="astStore"
             :addable="false"
@@ -170,6 +170,7 @@ export default {
       focusing: false,
       searchRet: [],
       searchProxy: "",
+      trigger: "",
     };
   },
   computed: {
@@ -324,14 +325,25 @@ export default {
     this.cpnt.data._fieldInfo = tip + (tip ? `<br><br>${defaultTip}` : defaultTip);
 
     this.prepareByProxy(this.proxy.valList);
+
+    //1、初始化的时候发出通知
     this.dispatch("PsoformInterpreter", "cpnt-asstable-initialized", this.getChangeEntity());
 
     this.watchFun.push(
       this.$watch("proxy.valList", {
         deep: true,
-        handler(data) {
+        handler(data, preData) {
           this.prepareByProxy(data);
+
+          //2、只要proxy发生变化就发出通知，此时_val可能发生变化也可能不变
           this.dispatch("PsoformInterpreter", "asstable-selected", this.getChangeEntity());
+
+          //3、只有_val发生变化才发出通知（mixin中）
+
+          //4、当proxy发生变化但是_val并没有发生变化时才发出通知
+          if (data.length === preData.length) {
+            this.dispatch("PsoformInterpreter", "asstable-change", this.getChangeEntity());
+          }
         },
       })
     );
@@ -340,6 +352,18 @@ export default {
       this.astStore.dataId = evt.leaf_id;
       await this.dataChangeHandler(evt);
       this.astStore.dataId = "";
+    });
+
+    this.$on("actioned", async ({ data }) => {
+      this.trigger = "action";
+      for (let item of data) {
+        this.astStore.dataId = item.leaf_id;
+        await this.dataChangeHandler({ leaf_id: item.leaf_id, formData: { dataArr: [item] }, op: 2 });
+        this.astStore.dataId = "";
+      }
+      this.$nextTick(() => {
+        this.trigger = "";
+      });
     });
   },
   methods: {
@@ -410,6 +434,7 @@ export default {
         fields: this.astStore ? this.astStore.fields : [],
         printFields: this.astStore && this.cpnt.data._printFields ? this.astStore.getColumnByName(this.cpnt.data._printFields) : [],
         store: this.store,
+        trigger: this.trigger,
       };
     },
     async initialize() {
@@ -526,14 +551,14 @@ export default {
 
         if (this.dataId && data) {
           //删除列表中修改的数据
-          this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
+          this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1, data);
         }
 
-        if (data) {
+        if (!this.dataId && data) {
           this.handleAddSelection([data]);
 
           //新增数据回调
-          if (!this.dataId && this.addDataCallback) {
+          if (this.addDataCallback) {
             this.$nextTick(() => {
               this.addDataCallback(data);
             });

@@ -62,10 +62,8 @@
 </template>
 <script>
 import { GridLayout, GridItem } from "vue-grid-layout";
-import shortid from "shortid";
-
 import GridStore from "./store";
-import { CPNT, MENU } from "./const";
+import { MENU } from "./const";
 
 const componentsMap = {};
 const requireComponent = require.context("./panels", true);
@@ -82,7 +80,7 @@ requireComponent.keys().forEach((fileName) => {
   componentsMap[`GridPanel${componentName}`] = componentConfig.default;
 });
 export default {
-  components: componentsMap,
+  components: { ...componentsMap, GridLayout, GridItem },
   props: {
     code: String,
     type: "",

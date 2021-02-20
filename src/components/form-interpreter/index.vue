@@ -88,6 +88,7 @@ export default {
   created() {
     this.isInterpreter = true;
 
+    //选择不一定_val就会改变
     this.$on("asstable-selected", (val) => {
       this.broadcast("PsoformItem", "asstable-selected", val);
       this.$emit("value-change", val);

@@ -53,9 +53,11 @@
           </div>
           <!-- 排序标签 -->
           <div class="pso-view-sorttag" v-if="store.operableSotrs.length">
-            <el-tag size="small" v-for="(sort, i) in store.operableSotrs" :key="i" closable @close="store.removeSort(i)">
-              {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
-            </el-tag>
+            <template v-for="(sort, i) in store.operableSotrs">
+              <el-tag v-if="sort.operable" size="small" :key="i" :closable="sort.operable" @close="store.removeSort(i)">
+                {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
+              </el-tag>
+            </template>
           </div>
           <div class="pso-view-fun">
             <div class="pso-view-fun-l">

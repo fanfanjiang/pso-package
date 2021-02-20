@@ -121,6 +121,7 @@ import PsoSignSocial from "./components/passport/sign-social.vue";
 import PsoAccess from "./components/passport/access.vue";
 import PsoAppswitch from "./components/passport/appswitch.vue";
 import PsoPassport from "./components/passport/passport-wrapper.vue";
+import PsoApproval from "./components/passport/approval.vue";
 
 import PsoSqlDesigner from "./components/sql-designer";
 
@@ -141,6 +142,8 @@ import PsoScheduleMgt from "./components/schedule-mgt";
 import PsoScheduleTrigger from "./components/schedule-trigger";
 
 import PsoDbmodelMgt from "./components/dbmodel-mgt";
+
+import PsoApprovalMgt from "./components/approval-mgt";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -234,6 +237,7 @@ const components = {
     PsoAccess,
     PsoAppswitch,
     PsoPassport,
+    PsoApproval,
 
     PsoSqlDesigner,
     PsoUserProfile,
@@ -247,11 +251,12 @@ const components = {
 
     PsoDbtableMgt,
     PsoDbmodelMgt,
-    
+
     PsoScheduleMgt,
     PsoScheduleTrigger,
 
     PsoSuperView,
+    PsoApprovalMgt,
 
     //混合视图
     PsoFvAst,
@@ -293,6 +298,9 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     BASEAPI.PSODOMPurify = DOMPurify;
     if (API && API.handleAuthError) {
         BASEAPI.handleAuthError = API.handleAuthError;
+    }
+    if (API && API.handleUnapprovedError) {
+        BASEAPI.handleUnapprovedError = API.handleUnapprovedError;
     }
 
     Vue.prototype.API = API || BASEAPI;

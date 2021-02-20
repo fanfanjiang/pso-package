@@ -296,6 +296,14 @@ export default class API {
         }
     }
 
+    static async approval(params) {
+        try {
+            return await this.RESTful('/api/approval', Object.assign({ idField: 'auto_no' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async searchUsers(data) {
         try {
             return await this.request('/api/users/search', { data });
@@ -966,6 +974,22 @@ export default class API {
             throw error;
         }
     }
+
+    static async updateFormCode(data) {
+        try {
+            return await this.request('/api/formcfg/prop/code', { data, method: 'put' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async approve(data) {
+        try {
+            return await this.request('/api/approval/approve', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器
@@ -989,6 +1013,9 @@ axios.interceptors.response.use((response) => {
 }, (error) => {
     if (error.response && error.response.status === 401) {
         API.handleAuthError && API.handleAuthError();
+    }
+    if (error.response && error.response.status === 403) {
+        API.handleUnapprovedError && API.handleUnapprovedError();
     }
     return Promise.reject(error);
 });

@@ -136,8 +136,14 @@
             display: flex;
             align-items: center;
             overflow: auto;
+            padding-top: 6px;
+            margin-top: -6px;
 
             .el-badge {
+                .el-badge__content {
+                    line-height: 15px;
+                }
+
                 &+.el-badge {
                     margin-left: 10px;
                 }
@@ -186,43 +192,6 @@
             }
         }
 
-        .view-data-fun {
-            display: flex;
-            align-items: center;
-
-            .view-data-fun__actions {
-                margin: 0 10px;
-            }
-
-            .el-dropdown {
-
-                &+.el-dropdown,
-                &+button {
-                    margin-left: 10px;
-                }
-            }
-
-            button {
-
-                &+.el-dropdown,
-                &+button {
-                    margin-left: 10px;
-                }
-            }
-
-
-            .el-dropdown,
-            >span,
-            >button {
-
-                &+.el-dropdown,
-                &+span,
-                &+button {
-                    margin-left: 10px;
-                }
-            }
-        }
-
         .pso-view-fun {
             display: flex;
             align-items: center;
@@ -236,6 +205,47 @@
                 background-color: #fff;
             }
 
+        }
+    }
+}
+
+.view-data-fun {
+    display: flex;
+    align-items: center;
+
+    .view-data-fun__actions {
+        margin: 0 10px;
+
+        &+.view-data-fun__actions {
+            margin-left: 0;
+        }
+    }
+
+    .el-dropdown {
+
+        &+.el-dropdown,
+        &+button {
+            margin-left: 10px;
+        }
+    }
+
+    button {
+
+        &+.el-dropdown,
+        &+button {
+            margin-left: 10px;
+        }
+    }
+
+
+    .el-dropdown,
+    >span,
+    >button {
+
+        &+.el-dropdown,
+        &+span,
+        &+button {
+            margin-left: 10px;
         }
     }
 }

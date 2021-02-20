@@ -150,6 +150,7 @@ const MODEL_TYPE = [
 const MAP_PARAMS = {
   sf: "",
   tf: "",
+  is_sys: "",
 };
 
 const FIELD_PARAMS = {
@@ -245,7 +246,7 @@ export default {
         sid: "_fieldValue",
         base: MAP_PARAMS,
         assemble(src) {
-          return { sf: src._fieldValue };
+          return { sf: src._fieldValue, is_sys: src.is_sys };
         },
       });
       this.srcMaping = false;

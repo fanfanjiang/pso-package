@@ -23,6 +23,7 @@
           </div>
           <div class="pso-view-header__r">
             <el-button size="mini" type="primary" @click="saveConfig">保存设置</el-button>
+            <el-button size="mini" type="primary" plain @click="showCodeEditor = true">修改CODE</el-button>
             <el-button size="mini" type="primary" plain @click="goPrinterDeisgner">打印设计</el-button>
             <el-button size="mini" type="primary" plain @click="handleEditForm">表单设计</el-button>
           </div>
@@ -96,6 +97,17 @@
           <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
         </div>
       </template>
+      <el-dialog title="修改CODE" append-to-body :visible.sync="showCodeEditor" :width="'400px'">
+        <el-form label-width="80px">
+          <el-form-item label="CODE">
+            <el-input size="small" v-model="code" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button size="mini" @click="showCodeEditor = false">取 消</el-button>
+          <el-button size="mini" type="primary" @click="editCode()">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -167,6 +179,8 @@ export default {
         { n: "导出", v: 4 },
         { n: "更改阶段", v: 8 },
       ],
+      showCodeEditor: false,
+      code: "",
       ..._.cloneDeep(_DATA),
     };
   },
@@ -374,6 +388,12 @@ export default {
 
       this.saving = false;
       this.$notify({ title: ret.success ? "保存成功" : "保存失败", type: ret.success ? "success" : "warning" });
+    },
+    async editCode() {
+      if (!this.code) return;
+      this.showCodeEditor = false;
+      const ret = await this.API.updateFormCode({ data_code: this.curNode.node_name, change_code: this.code });
+      this.ResultNotify(ret);
     },
   },
 };

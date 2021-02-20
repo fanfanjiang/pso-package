@@ -78,9 +78,20 @@ export const CPNT = {
             ...DATABASE,
             w: 24,
             h: 10,
-            fieldTitle: '', 
+            fieldTitle: '',
             fieldPic: '',
             styleType: '0'
+        }
+    },
+    nav: {
+        id: "nav",
+        name: "导航",
+        data: {
+            ...COMMONFIELDS,
+            w: 8,
+            h: 8,
+            style: '',
+            menus: [],
         }
     },
 
@@ -186,7 +197,7 @@ export const CPNT = {
 export const MENU = [
     {
         name: '通用',
-        children: [CPNT.dataview, CPNT.chart, CPNT.carousel, CPNT.text]
+        children: [CPNT.dataview, CPNT.chart, CPNT.carousel, CPNT.nav, CPNT.text]
     },
     {
         name: '系统功能',

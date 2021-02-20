@@ -24,7 +24,8 @@ export default {
         notify: {
             initialized: false,
             show: false
-        }
+        },
+        unapproved: false
     },
     mutations: {
         [APP_SET_USER](state, user) {
@@ -42,6 +43,10 @@ export default {
         },
         [APP_SIGNIN](state, { token, user }) {
             Auth.setToken(token);
+            if (user.unapproved) {
+                delete user.unapproved;
+                this.commit('APP_UNAPPROVED');
+            }
             this.commit(APP_SET_USER, user)
         },
         ['APP_SET_APPCONFIG'](state, data = {}) {
@@ -53,6 +58,12 @@ export default {
             if (data) {
                 try { state.appConfig = { ...state.appConfig, ...JSON.parse(data) }; } catch (error) { }
             }
+        },
+        ['APP_UNAPPROVED'](state) {
+            state.unapproved = true;
+        },
+        ['APP_APPROVED'](state) {
+            state.unapproved = false;
         }
     },
     actions: {

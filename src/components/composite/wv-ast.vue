@@ -23,6 +23,7 @@
             :data-default="defForm"
             @data-loaded="formLoadedHandler"
             @cpnt-value-changed="formValChangeHandler"
+            @asstable-change="formValChangeHandler"
           ></pso-form-interpreter>
         </div>
       </template>
@@ -129,8 +130,8 @@ export default {
         }
       });
     },
-    formValChangeHandler({ cpnt }) {
-      if (cpnt.data.componentid === "asstable") {
+    formValChangeHandler({ trigger, cpnt }) {
+      if (cpnt.data.componentid === "asstable" && trigger !== "action") {
         this.saveForm();
       }
     },

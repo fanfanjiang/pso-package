@@ -22,8 +22,6 @@
 </template>
 <script>
 import { GridLayout, GridItem } from "vue-grid-layout";
-import shortid from "shortid";
-
 import GridStore from "../grid-designer/store";
 
 const componentsMap = {};
@@ -41,7 +39,7 @@ requireComponent.keys().forEach((fileName) => {
   componentsMap[`GridCpnt${componentName}`] = componentConfig.default;
 });
 export default {
-  components: componentsMap,
+  components: { ...componentsMap, GridLayout, GridItem },
   props: {
     params: Object,
   },
