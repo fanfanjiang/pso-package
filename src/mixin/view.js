@@ -126,12 +126,13 @@ export const PagingMixin = {
         }
     },
     methods: {
-        getFetchParams(field) {
+        getFetchParams(field, extend = {}) {
             const { start, limit, keywords } = this.fetchParams
-            const params = { limit, start: start - 1 };
+            const params = { limit, start: start - 1, keys: extend };
             if (keywords && field) {
-                params.keys = JSON.stringify({ [field]: { value: keywords, type: 2 } });
+                params.keys[field] = { value: keywords, type: 2 };
             }
+            params.keys = JSON.stringify(params.keys);
             return params;
         },
         startWatch() {

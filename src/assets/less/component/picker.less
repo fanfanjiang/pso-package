@@ -69,6 +69,17 @@
         overflow: auto;
         max-height: 50px;
     }
+
+    .pso-view-fun,
+    .pso-view-table,
+    .pso-view-body,
+    .pso-view-top {
+        padding: 0 !important;
+    }
+
+    .pso-view-table {
+        margin: 0;
+    }
 }
 
 .pso-picker-tag {
@@ -180,5 +191,16 @@
     >span {
         margin: 2px;
         box-sizing: content-box;
+    }
+}
+
+.pso-popover-fs {
+    @media (max-width: @screen-sm-min) {
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
     }
 }

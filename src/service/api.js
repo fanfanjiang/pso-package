@@ -990,6 +990,22 @@ export default class API {
             throw error;
         }
     }
+
+    static async getSysData(data, method) {
+        try {
+            return await this.request('/api/sys/data', { data, method: 'get' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async syncUsers(data, method) {
+        try {
+            return await this.request('/api/users/action/sync', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 //请求拦截器

@@ -186,10 +186,12 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             },
             setCurrentNode(data, level = 1) {
                 //设置默认节点
+                let seted = false;
                 const setNode = (nodeData) => {
                     level -= 1;
                     for (let n of nodeData) {
-                        if (!(this.folderMode && n.is_leaf === 0) && this.$refs[treeRef]) {
+                        if (!(this.folderMode && n.is_leaf === 0) && this.$refs[treeRef] && !seted) {
+                            seted = true;
                             this.$refs[treeRef].setCurrentKey(n.node_id);
                             this.nodeClickHandler(n);
                             return n;

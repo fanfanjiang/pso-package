@@ -1,6 +1,12 @@
 <template>
   <div class="act-text-body">
     <common-panel :cpnt="cpnt" info="可以添加图片、文件" :needPlaceholder="false" :needDefaultValue="false" :needUnique="false">
+      <el-form-item label="来源">
+        <el-select multiple clearable size="mini" v-model="cpnt.data._source" placeholder="请选择">
+          <el-option label="上传" :value="1"></el-option>
+          <el-option label="知识库" :value="2"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="个数限制">
         <el-input-number size="small" v-model="cpnt.data._limit" :min="1"></el-input-number>
       </el-form-item>

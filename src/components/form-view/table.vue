@@ -38,10 +38,10 @@
                 :data="scope.row"
                 :field="f"
               ></column-ast>
-              <span v-else-if="store.checkFile(f.field_name)" class="modifier-file">
+              <span v-else-if="store.checkFile(f.field_name)" class="modifier-file pso-src-mini">
                 <pso-attachment
                   :ids="scope.row[f.field_name]"
-                  @initialized="attachInited($event, { row, index: scope.$index, f })"
+                  @initialized="attachInited($event, { row: scope.row, index: scope.$index, f })"
                 ></pso-attachment>
               </span>
               <span v-else class="modifier-value" :style="{ 'text-align': f.align }">{{ store.formatListVal(scope.row, f) }}</span>
@@ -68,10 +68,11 @@
         :background="!forceclick"
         :small="forceclick"
         :layout="paginationLayout"
-        :page-sizes="[baseLimit, 30, 50, 100, 200, 500]"
         :total="store.dataTotal"
-        :page-size="store.limit"
         :current-page="store.page"
+        :pager-count="3"
+        :page-size="store.limit"
+        :page-sizes="[baseLimit, 30, 50, 100, 200, 500]"
         @size-change="sizeChangeHandler"
         @current-change="currentChangeHandler"
         @prev-click="prevClickHandler"

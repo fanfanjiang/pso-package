@@ -145,6 +145,8 @@ import PsoDbmodelMgt from "./components/dbmodel-mgt";
 
 import PsoApprovalMgt from "./components/approval-mgt";
 
+import PsoKnowl from "./components/knowl";
+
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
 import PsoFvWv from "./components/composite/fv-wv";
@@ -160,6 +162,7 @@ import PsoNodeAny from "./components/composite/node-any";
 import PsoFvStats from "./components/composite/fv-stats";
 import PsoFormEntry from "./components/composite/form";
 import PsoFvtree from "./components/composite/fvtree";
+import PsoFvSrcv from "./components/composite/fv-srcv";
 
 const components = {
     PsoEmpty,
@@ -258,6 +261,8 @@ const components = {
     PsoSuperView,
     PsoApprovalMgt,
 
+    PsoKnowl,
+
     //混合视图
     PsoFvAst,
     PsoFvWv,
@@ -272,7 +277,8 @@ const components = {
     PsoNodeAny,
     PsoFvStats,
     PsoFormEntry,
-    PsoFvtree
+    PsoFvtree,
+    PsoFvSrcv
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host, xssFilter = false, __CONST__ } = {}) {

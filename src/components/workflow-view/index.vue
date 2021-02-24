@@ -52,7 +52,7 @@
             ></fast-switch>
           </div>
           <!-- 排序标签 -->
-          <div class="pso-view-sorttag" v-if="store.operableSotrs.length">
+          <div class="pso-view-sorttag" v-if="store.displayableSotrs.length">
             <template v-for="(sort, i) in store.operableSotrs">
               <el-tag v-if="sort.operable" size="small" :key="i" :closable="sort.operable" @close="store.removeSort(i)">
                 {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
@@ -183,6 +183,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    statusesFilter: {
+      type: String,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -246,6 +250,7 @@ export default {
           insttogo: this.params.insttogo,
           sourceType: "0",
           fetchMode: this.__isMobile__ ? "2" : "1",
+          statusesFilter: this.statusesFilter,
         });
 
         if (this.params.viewAuth) {

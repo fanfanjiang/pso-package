@@ -106,7 +106,6 @@ export default class WfStore {
         return this.data.nextUser && this.data.nextUser.auth_user === 'Empty';
     }
 
-
     get doNextUser() {
         return this.data.instanceId ? this.data.nextUser : this.cfg.nextUser;
     }

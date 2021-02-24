@@ -32,14 +32,26 @@
             ></pso-tree-common>
             <div class="pso-picker-menu">
               <template v-if="activeTab === TABS.post">
-                <el-tabs tab-position="right" v-model="curPost" @tab-click="menuChangeHandler('post_id', 'duty_id', $event)">
-                  <el-tab-pane v-for="(d, i) in postData" :key="i" :label="d.post_name" :name="d.post_id"></el-tab-pane>
-                </el-tabs>
+                <div class="pso-tabs">
+                  <el-tabs tab-position="left" v-model="curPost" @tab-click="menuChangeHandler('post_id', 'duty_id', $event)">
+                    <el-tab-pane v-for="(n, i) in postData" :label="n.post_name" :name="n.post_id" :key="i">
+                      <div class="pso-tabs-item" slot="label">
+                        <span>{{ n.post_name }}</span>
+                      </div>
+                    </el-tab-pane>
+                  </el-tabs>
+                </div>
               </template>
               <template v-if="activeTab === TABS.duty">
-                <el-tabs tab-position="right" v-model="curDuty" @tab-click="menuChangeHandler('duty_id', 'post_id', $event)">
-                  <el-tab-pane v-for="(d, i) in dutyData" :key="i" :label="d.duty_name" :name="d.duty_id"></el-tab-pane>
-                </el-tabs>
+                <div class="pso-tabs">
+                  <el-tabs tab-position="left" v-model="curDuty" @tab-click="menuChangeHandler('duty_id', 'post_id', $event)">
+                    <el-tab-pane v-for="(n, i) in dutyData" :label="n.duty_name" :name="n.duty_id" :key="i">
+                      <div class="pso-tabs-item" slot="label">
+                        <span>{{ n.duty_name }}</span>
+                      </div>
+                    </el-tab-pane>
+                  </el-tabs>
+                </div>
               </template>
             </div>
           </div>
@@ -234,7 +246,7 @@ export default {
 
       let ret = await this.API.searchUsers({ ...this.options, start: this.options.start - 1 });
       this.loading = false;
-      this.dataTable = ret.data.data;
+      this.dataTable = _.uniqBy(ret.data.data, "user_id");
       this.dataTotal = ret.data.page;
     },
     handleAllUserSelect(selections) {

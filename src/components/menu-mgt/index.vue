@@ -105,9 +105,6 @@ export default {
   props: {
     params: {
       type: Object,
-      default: () => {
-        data_type: "";
-      },
     },
   },
   data() {
@@ -182,6 +179,9 @@ export default {
           }
         } else {
           // this.curTab = "auth";
+        }
+        if (this.curNode.open_type === "0") {
+          this.curNode.open_type = "1";
         }
         this.loadingInfo = false;
       }

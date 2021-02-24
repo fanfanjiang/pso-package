@@ -1,66 +1,63 @@
 <template>
-  <pso-picker-common
-    :pattern="pattern"
-    :source="source"
-    :tree-option="treeOption"
-    :props="props"
-    :table-field="tableField"
-    :tree-filter="treeFilter"
-    :node-click-fun="nodeClickFun"
-    :fetch-table-fun="fetchTableFun"
-    @confirm="$emit('confirm',$event)"
+  <el-popover
+    :visible-arrow="false"
+    popper-class="pso-popover-fs"
+    transition="el-zoom-in-top"
+    placement="top-end"
+    width="460"
+    @show="opened = true"
+    @after-leave="afterHandler"
+    v-model="show"
   >
-    <slot></slot>
-  </pso-picker-common>
+    <div class="pso-picker" v-if="opened">
+      <div style="height: 330px">
+        <knowl :data_type="data_type" :opable="false" :treeable="false" @select="selectHandler"></knowl>
+      </div>
+      <div class="pso-picker__controller">
+        <el-button @click="show = false" size="mini">取 消</el-button>
+        <el-button type="primary" @click="confirm" size="mini">确 定</el-button>
+      </div>
+    </div>
+    <template slot="reference">
+      <slot>
+        <el-button icon="el-icon-plus" plain size="mini">选择资源</el-button>
+      </slot>
+    </template>
+  </el-popover>
 </template>
 <script>
-import PsoPickerCommon from "./pso-picker-common";
+import Knowl from "../knowl";
 
 export default {
-  components: { PsoPickerCommon },
+  components: { Knowl },
   props: {
     pattern: {
       type: String,
       default: "radio",
     },
-    source: {
+    data_type: {
       type: String,
-      default: "tree",
+      default: "sysdoc",
     },
-    options: Object,
   },
   data() {
     return {
-      treeOption: {
-        dimen: 6,
-        data_type: "sysdoc",
-      },
-      props: {
-        tableIdName: "leaf_id",
-        tableDisplayName: "r_name",
-      },
-      tableField: [
-        { prop: "r_name", label: "资源名" },
-        { prop: "r_time", label: "添加时间" },
-      ],
-      currentNode: null,
+      opened: false,
+      show: false,
+      selected: [],
     };
   },
   methods: {
-    treeFilter(list) {
-      return list.filter((item) => item.is_leaf);
+    selectHandler(data) {
+      this.selected = data;
     },
-    nodeClickFun(node) {
-      this.currentNode = node;
+    confirm() {
+      this.$emit("confirm", this.selected);
+      this.show = false;
     },
-    async fetchTableFun(option) {
-      return await this.API.resource({
-        data: {
-          ...option,
-          node_id: this.currentNode.node_id,
-          page: option.start - 1,
-        },
-      });
+    afterHandler() {
+      this.opened = false;
+      this.selected = [];
     },
   },
 };

@@ -53,6 +53,7 @@
         <div class="pso-view-table__footer">
           <el-pagination
             layout="total, sizes, prev, pager, next, jumper"
+            background
             :page-sizes="[20, 30, 50, 100]"
             :total="dataTotal"
             :page-size="fetchParams.limit"
@@ -67,19 +68,17 @@
     </div>
     <pso-dialog :visible="showEditor" width="70%" @close="showEditor = false">
       <template #title>
-        <div class="form-executor-header" v-loading="editing">
-          <div class="form-executor-header__l">
-            <div class="form-executor-title">
-              <i class="el-icon-edit-outline"></i>
-              <span>数据结构配置</span>
-            </div>
-          </div>
-          <div class="form-executor-header__r">
+        <pso-dialog-header>
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>数据结构配置</span>
+          </template>
+          <template #action>
             <el-button type="primary" size="mini" @click="saveHandler()">同步</el-button>
-          </div>
-        </div>
+          </template>
+        </pso-dialog-header>
       </template>
-      <div style="height: 100%; padding: 15px; overflow: auto" v-loading="editing">
+      <div class="pso-dialog-content" v-loading="editing">
         <model-sync :data="curInstance" :sites="sites"></model-sync>
       </div>
     </pso-dialog>

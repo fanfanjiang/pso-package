@@ -307,7 +307,7 @@ export default {
       await this.setDataByIds(this.cpnt.data._val.split(","));
 
       //只有在请求后没有取到数据，且父级数据没有生成前，才可以设置模拟数据
-      if (!this.proxy.valList.length && !this.cpnt.store.parentInstanceId) {
+      if (!this.proxy.valList.length && this.cpnt.store && !this.cpnt.store.parentInstanceId) {
         this.setMockData();
       }
     } else {

@@ -12,6 +12,7 @@
       @dragleave.prevent="dragleave"
     >
       <el-upload
+        v-if="upable"
         drag
         class="pso-upload__area"
         :data="data"
@@ -34,6 +35,7 @@
     <div class="pso-upload__footer">
       <div class="pso-upload__footer-left" ref="upbtn">
         <el-upload
+          v-if="upable"
           class="pso-upload__btn"
           :data="data"
           :headers="uploadHeader"
@@ -47,7 +49,9 @@
         >
           <el-button icon="el-icon-upload" size="small" type="text">本地</el-button>
         </el-upload>
-        <el-button icon="el-icon-folder" size="small" type="text">知识库</el-button>
+        <pso-picker-resource @confirm="resourceChange" v-if="srcable">
+          <el-button icon="el-icon-folder" size="small" type="text" :loading="fileDemanding">知识库</el-button>
+        </pso-picker-resource>
       </div>
       <div class="pso-upload__footer-right" v-show="showFileList">
         <el-button class="pso-upload__footer-cancel" size="small" type="text" @click="$emit('close')">取消</el-button>
@@ -60,8 +64,10 @@
 import Auth from "../../tool/auth";
 import PsoFileList from "../file-list";
 import { makeFiles } from "../../tool/file";
+import { Resource } from "../../mixin/resource";
 
 export default {
+  mixins: [Resource],
   components: { PsoFileList },
   props: {
     api: {
@@ -75,6 +81,14 @@ export default {
     visible: {
       type: Boolean,
       default: false,
+    },
+    upable: {
+      type: Boolean,
+      default: true,
+    },
+    srcable: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
@@ -161,103 +175,12 @@ export default {
         this.dragingFile = false;
       }
     },
+    async resourceChange(data) {
+      const resources = await this.demandFiles(data);
+      if (resources.length) {
+        this.upFileList = this.upFileList.concat(resources);
+      }
+    },
   },
 };
 </script>
-<style lang="less" scoped>
-@deep: ~">>>";
-.pso-upload {
-  background-color: #fff;
-  height: 260px;
-  line-height: initial;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-.pso-upload__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 40px;
-  padding: 0 10px;
-  .pso-upload__header-title {
-    font-size: 13px;
-    color: #666;
-  }
-  .pso-upload__header-cose {
-    font-size: 16px;
-    cursor: pointer;
-  }
-}
-.pso-upload__body {
-  flex: 1;
-  position: relative;
-  .pso-upload__area {
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    .pso-upload__area-text {
-      font-size: 13px;
-      color: #999;
-    }
-    @{deep} .el-upload {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-    @{deep} .el-upload-dragger {
-      cursor: auto;
-      border: none;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      .el-icon-upload {
-        margin: 0 0 5px 0;
-      }
-    }
-  }
-  .pso-upload__list-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 2;
-    background-color: #fff;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    padding: 0 10px;
-  }
-}
-.pso-upload__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 10px;
-  height: 50px;
-  > div {
-    display: flex;
-    align-items: center;
-  }
-  .pso-upload__btn {
-    line-height: initial;
-    margin-right: 10px;
-  }
-  .pso-upload__footer-cancel {
-    align-self: flex-end;
-  }
-  .pso-upload__footer-confirm {
-    align-self: flex-end;
-  }
-
-  @{deep} .el-button--small {
-    font-size: 13px;
-    color: #999;
-  }
-  @{deep} .el-button--primary {
-    color: #fff;
-  }
-}
-</style>

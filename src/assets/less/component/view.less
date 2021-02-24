@@ -90,13 +90,16 @@
 
         .pso-view-header {
             display: flex;
-            margin-bottom: 10px;
             justify-content: space-between;
             align-items: center;
 
-            .pso-view-header__l {}
+            .pso-view-header__l {
+                margin-bottom: 10px;
+            }
 
-            .pso-view-header__r {}
+            .pso-view-header__r {
+                margin-bottom: 10px;
+            }
 
             .pso-view-title {
                 display: flex;
@@ -196,6 +199,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+
+            .pso-view-fun-r {
+                min-height: 40px;
+                align-items: center;
+                display: flex;
+            }
         }
 
         .pso-view-table {
@@ -205,6 +214,20 @@
                 background-color: #fff;
             }
 
+        }
+    }
+}
+
+.pso-src-mini {
+    .pso-upload__list {
+        .pso-upload__list-item {
+            width: 60px;
+            height: 60px;
+            flex-basis: 60px;
+        }
+
+        .pso-upload__list-info__bg {
+            background-size: auto 100%;
         }
     }
 }
@@ -257,6 +280,10 @@
         .el-tabs__header {
             margin-bottom: 0;
         }
+    }
+
+    .pso-view-fun {
+        padding-right: 10px;
     }
 
     >.pso-view-body {
@@ -334,10 +361,7 @@
     .modifier-file {
         width: 100%;
 
-        .pso-upload__list-item {
-            width: 60px;
-            height: 60px;
-        }
+
     }
 
     .modifier-value {
@@ -455,6 +479,17 @@
 
 .pso-view-withtop {
     height: 100%;
+
+    .pso-view-top {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+
+        .pso-typebar {
+            flex: 1;
+        }
+    }
 
     .pso-view {
         height: calc(100% - 40px);

@@ -14,21 +14,32 @@
         <pso-skeleton v-else :lines="1"></pso-skeleton>
       </div>
       <el-popover
-        v-if="cpntEditable"
+        v-if="cpntEditable && checkable(1)"
         :visible-arrow="false"
         transition="el-zoom-in-top"
-        popper-class="pso-upload-wrapper"
+        popper-class="pso-upload-wrapper pso-popover-fs"
         placement="bottom-start"
         :width="popWidth"
         v-model="showUpload"
       >
-        <pso-upload @close="showUpload = false" @confirm="confirm" :api="api" :data="data" :visible="showUpload"></pso-upload>
+        <pso-upload
+          @close="showUpload = false"
+          @confirm="confirm"
+          :api="api"
+          :data="data"
+          :visible="showUpload"
+          :upable="checkable(1)"
+          :srcable="checkable(2)"
+        ></pso-upload>
         <template slot="reference">
           <slot>
             <el-button icon="el-icon-paperclip" plain size="small">上传附件</el-button>
           </slot>
         </template>
       </el-popover>
+      <pso-picker-resource v-if="cpntEditable && checkable(2) && !checkable(1)" @confirm="resourceChange">
+        <el-button icon="el-icon-paperclip" plain size="small" :loading="fileDemanding">选择资源</el-button>
+      </pso-picker-resource>
     </div>
   </pso-label>
 </template>
@@ -37,9 +48,10 @@ import PsoUpload from "../../upload/index.vue";
 import PsoFileList from "../../file-list/index.vue";
 import { makeFiles } from "../../../tool/file";
 import cpntMixin from "../mixin";
+import { Resource } from "../../../mixin/resource";
 
 export default {
-  mixins: [cpntMixin],
+  mixins: [cpntMixin, Resource],
   components: {
     PsoUpload,
     PsoFileList,
@@ -138,6 +150,15 @@ export default {
       if (index !== -1) {
         this.proxy.splice(index, 1);
         this.$emit("delete", file);
+      }
+    },
+    checkable(val) {
+      return this.cpnt.data._source && this.cpnt.data._source.length ? this.cpnt.data._source.includes(val) : true;
+    },
+    async resourceChange(data) {
+      const resources = await this.demandFiles(data);
+      if (resources.length) {
+        this.confirm(resources);
       }
     },
   },

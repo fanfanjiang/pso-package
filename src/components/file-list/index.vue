@@ -12,13 +12,13 @@
             <div class="pso-upload__list-info__name" v-if="!file.isImg">{{ file.name }}</div>
           </div>
           <div class="pso-upload__list-panel">
-            <span class="pso-upload__list-panel__item" v-if="check" @click="goShowViewer({ index, file })">
+            <span class="pso-upload__list-panel__item" v-if="check" @click.stop="goShowViewer({ index, file })">
               <i class="el-icon-zoom-in"></i>
             </span>
-            <span class="pso-upload__list-panel__item" v-if="downloadable" @click="download(file)">
+            <span class="pso-upload__list-panel__item" v-if="downloadable" @click.stop="download(file)">
               <i class="el-icon-download"></i>
             </span>
-            <span class="pso-upload__list-panel__item" v-if="remove" @click="$emit('delete', file)">
+            <span class="pso-upload__list-panel__item" v-if="remove" @click.stop="$emit('delete', file)">
               <i class="el-icon-delete"></i>
             </span>
           </div>

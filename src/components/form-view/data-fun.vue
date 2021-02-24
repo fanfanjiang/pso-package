@@ -1,9 +1,14 @@
 <template>
   <div class="view-data-fun">
-    <el-button v-if="opAddable" type="primary" size="mini" @click="$emit('new')">{{ store.cpntText.add }}</el-button>
-    <el-button v-if="selectable" type="primary" size="mini" @click="$emit('select')">选择</el-button>
-    <el-button v-if="wipeable" type="danger" size="mini" @click="$emit('wipe')">清除数据</el-button>
-    <slot name="op" v-bind:data="store"></slot>
+    <template v-if="!hidden">
+      <el-button v-if="opAddable" type="primary" size="mini" @click="$emit('new')">{{ store.cpntText.add }}</el-button>
+      <el-button v-if="selectable" type="primary" size="mini" @click="$emit('select')">选择</el-button>
+      <el-button v-if="wipeable" type="danger" size="mini" @click="$emit('wipe')">清除数据</el-button>
+      <slot name="op" v-bind:data="store"></slot>
+      <el-button v-if="opAddable && copyable" type="primary" size="mini" @click="store.copyInstance.call(store)" :disabled="disableCopy">
+        {{ store.cpntText.copy }}
+      </el-button>
+    </template>
     <div class="view-data-fun__actions" v-for="(a, i) in store.actions" :key="i">
       <el-popconfirm
         v-if="a.mode === '2'"
@@ -32,9 +37,6 @@
       :options="store.stages"
       @change="store.changeStage.call(store, $event)"
     ></dropdown>
-    <el-button v-if="opAddable && copyable" type="primary" size="mini" @click="store.copyInstance.call(store)" :disabled="disableCopy">
-      {{ store.cpntText.copy }}
-    </el-button>
     <el-dropdown size="small" @command="operateMore" v-if="moreable">
       <el-button class="el-dropdown-link" size="mini" type="text">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
       <el-dropdown-menu slot="dropdown">
@@ -93,6 +95,10 @@ export default {
       default: true,
     },
     wipeable: {
+      type: Boolean,
+      default: false,
+    },
+    hidden: {
       type: Boolean,
       default: false,
     },

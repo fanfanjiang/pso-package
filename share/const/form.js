@@ -97,32 +97,6 @@ const CPNT = {
       { n: '_prefixList', v: [] },
     ]
   },
-  unit: {
-    icon: "el-icon-cpu",
-    name: "单位",
-    componentid: "unit",
-    type: 'text',
-    layout: false,
-    db: true,
-    host_db: false,
-    chart: false,
-    table_show: false,
-    data: [
-      { n: '_type', v: 'radio' },
-      { n: '_source', v: 'table' },
-      { n: '_treeOptions', v: '' },
-      { n: '_relateUnit', v: '' },
-      { n: '_relateNum', v: '' },
-      { n: '_relateStandardNum', v: '' },
-      { n: '_relatePrice', v: '' },
-      { n: '_relateSummary', v: '' },
-      { n: '_relateWarehouse', v: '' },
-      { n: '_relateStandardUnit', v: '' },
-      { n: '_relateDisUnitName', v: '' },
-      { n: '_relateStandardUnit', v: '' },
-      { n: '_relateName', v: '' },
-    ]
-  },
   checkbox: {
     icon: "el-icon-set-up",
     name: "多选",
@@ -242,7 +216,7 @@ const CPNT = {
     chart: true,
     table_show: true,
     value_format_id: 'leaf_id',
-    data: [{ n: '_limit', v: 10 }, { n: '_showwidth', v: '' }, { n: '_showheight', v: '' }]
+    data: [{ n: '_limit', v: 10 }, { n: '_showwidth', v: '' }, { n: '_showheight', v: '' }, { n: '_source', v: [1, 2] }]
   },
   row: {
     icon: "el-icon-crop",

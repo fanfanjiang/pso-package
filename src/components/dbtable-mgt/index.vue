@@ -12,18 +12,24 @@
         </div>
         <div class="pso-view-fun">
           <div class="pso-view-fun-l">
-            <pso-search text="搜索" v-model="fetchParams.keywords"></pso-search>
+            <div class="view-table-fun">
+              <pso-search text="搜索" v-model="fetchParams.keywords"></pso-search>
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="text" icon="el-icon-refresh" @click="fetch">刷新</el-button>
+            </div>
           </div>
           <div class="pso-view-fun-r">
-            <el-button type="primary" size="mini" @click="addHandler">新增</el-button>
-            <el-button type="danger" size="mini" @click="delHandler">删除</el-button>
-            <pso-picker-tree :request-options="{ dimen: '3' }" pattern="checkbox" @confirm="confirmWipe">
-              <el-button style="margin-left: 10px" type="danger" size="mini">清空数据库</el-button>
-            </pso-picker-tree>
-            <el-button style="margin-left: 10px" type="success" size="mini" @click="asyncHandler">同步系统表</el-button>
-            <pso-picker-tree :request-options="{ dimen: '3' }" pattern="checkbox" @confirm="confirmForm">
-              <el-button style="margin-left: 10px" type="success" size="mini">同步表单数据</el-button>
-            </pso-picker-tree>
+            <div class="view-data-fun">
+              <el-button type="primary" size="mini" @click="addHandler">新增</el-button>
+              <el-button type="danger" size="mini" @click="delHandler">删除</el-button>
+              <pso-picker-tree :request-options="{ dimen: '3' }" pattern="checkbox" @confirm="confirmWipe">
+                <el-button type="danger" size="mini">清空数据库</el-button>
+              </pso-picker-tree>
+              <el-button style="margin-left: 10px" type="success" size="mini" @click="asyncHandler">同步系统表</el-button>
+              <pso-picker-tree :request-options="{ dimen: '3' }" pattern="checkbox" @confirm="confirmForm">
+                <el-button type="success" size="mini">同步表单数据</el-button>
+              </pso-picker-tree>
+            </div>
           </div>
         </div>
       </div>
@@ -53,11 +59,12 @@
         </el-table>
         <div class="pso-view-table__footer">
           <el-pagination
-            layout="total, sizes, prev, pager, next, jumper"
+            background
             :page-sizes="[20, 30, 50, 100]"
             :total="dataTotal"
             :page-size="fetchParams.limit"
             :current-page="fetchParams.start"
+            layout="total, sizes, prev, pager, next, jumper"
             @size-change="sizeChangeHandler"
             @current-change="currentChangeHandler"
             @prev-click="prevClickHandler"
@@ -103,21 +110,19 @@
         </el-form>
       </div>
     </pso-dialog>
-    <pso-dialog :visible="syncProxy.visible" width="40%" @close="syncProxy.visible = false">
+    <pso-dialog :visible="syncProxy.visible" width="60%" @close="syncProxy.visible = false">
       <template #title>
-        <div class="form-executor-header" v-loading="syncProxy.doing">
-          <div class="form-executor-header__l">
-            <div class="form-executor-title">
-              <i class="el-icon-edit-outline"></i>
-              <span>数据表同步</span>
-            </div>
-          </div>
-          <div class="form-executor-header__r">
+        <pso-dialog-header v-loading="syncProxy.doing">
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>数据表同步</span>
+          </template>
+          <template #action>
             <el-button type="primary" size="mini" @click="goAsync()">同步</el-button>
-          </div>
-        </div>
+          </template>
+        </pso-dialog-header>
       </template>
-      <div style="height: 100%; padding: 15px; overflow: auto" v-loading="editing">
+      <div class="pso-dialog-content" v-loading="editing">
         <el-form label-position="left" label-width="110px" size="small">
           <el-form-item label="同步目标APP" required>
             <el-select filterable clearable size="small" v-model="syncProxy.tid">
@@ -143,6 +148,7 @@
             :form-entity="syncProxy.entity"
             @data-loaded="formLoadHandler"
           ></pso-form-interpreter>
+          <sys-table v-if="couldSyncSys" ref="systable" :code="syncProxy.data[0].table_name"></sys-table>
         </el-form>
       </div>
     </pso-dialog>
@@ -162,6 +168,7 @@
 import { PagingMixin } from "../../mixin/view";
 import WipeDialog from "../form-view/wipe-dialog";
 import FormAsstable from "../form-interpreter/components/asstable";
+import SysTable from "./sys-table";
 
 const DATA = {
   table_id: "",
@@ -181,7 +188,7 @@ const ASYNC_TYPE = [
 const FID = "ffuucckk";
 
 export default {
-  components: { WipeDialog, FormAsstable },
+  components: { WipeDialog, FormAsstable, SysTable },
   mixins: [PagingMixin],
   data() {
     this.ASYNC_TYPE = ASYNC_TYPE;
@@ -213,6 +220,11 @@ export default {
         doing: false,
       },
     };
+  },
+  computed: {
+    couldSyncSys() {
+      return this.syncProxy.idField === "table_id" && this.syncProxy.data.length === 1;
+    },
   },
   watch: {
     "syncProxy.data": {
@@ -320,9 +332,13 @@ export default {
       this.syncProxy.visible = true;
     },
     getSelectedData() {
-      if (this.syncProxy.store) {
-        const cpnt = this.syncProxy.store.searchByField(FID, true);
-        return cpnt._val;
+      if (this.couldSyncSys) {
+        return _.map(this.$refs.systable.instances, "id").join(",");
+      } else {
+        if (this.syncProxy.store) {
+          const cpnt = this.syncProxy.store.searchByField(FID, true);
+          return cpnt._val;
+        }
       }
       return "";
     },

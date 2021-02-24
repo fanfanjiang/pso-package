@@ -10,9 +10,9 @@ export const Attach = {
         };
     },
     methods: {
-        createCpnt(ids = "") {
+        createCpnt(ids = "", name = "") {
             this.attach.data = genComponentData({ componentid: "attachment", _fieldName: "", _val: ids });
-            this.attach.data._fieldName = "";
+            this.attach.data._fieldName = name;
         }
     }
 };

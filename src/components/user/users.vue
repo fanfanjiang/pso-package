@@ -27,6 +27,7 @@
             <el-popconfirm title="你确定要删除吗？" @confirm="delHandler">
               <el-button size="mini" type="danger" plain slot="reference" :disabled="!selected.length">删除</el-button>
             </el-popconfirm>
+            <el-button v-if="syncable" size="mini" type="primary" @click="syncSys" :disabled="syncing" :loading="syncing">同步</el-button>
           </div>
         </div>
       </div>
@@ -69,7 +70,7 @@
           <el-pagination
             background
             layout="total, sizes, prev, pager, next, jumper"
-            :page-sizes="[15, 30, 50, 100, 200, 500]"
+            :page-sizes="[10, 15, 20, 30, 50]"
             :total="dataTotal"
             :page-size="fetchParams.limit"
             :current-page="fetchParams.start"
@@ -153,19 +154,21 @@ export default {
       type: String,
       default: "",
     },
+    syncable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     this.SEX = SEX;
     return {
+      syncing: false,
       initializing: false,
       operating: false,
       showEditor: false,
       loading: false,
       keywords: "",
       dataTotal: 0,
-      limit: 20,
-      page: 1,
-      keys: {},
       instances: [],
       selected: [],
       isSys: "",
@@ -206,6 +209,7 @@ export default {
     },
   },
   async created() {
+    this.fetchParams.limit = 15;
     this.roles = (await this.API.getUserType()).data;
     this.resetUser();
     this.startWatch();
@@ -239,7 +243,7 @@ export default {
       this.selected = val;
       this.$emit("select", val);
     },
-    setHandler(uid) {
+    setHandler() {
       this.$router.push({ name: "userConfig", params: { uid: _.map(this.selected, "user_id").join(",") } });
     },
     addHandler(data) {
@@ -309,6 +313,12 @@ export default {
         }
       }
       this.showEditor = true;
+    },
+    async syncSys() {
+      this.syncing = true;
+      const ret = await this.API.syncUsers();
+      this.ResultNotify(ret);
+      this.syncing = false;
     },
   },
 };

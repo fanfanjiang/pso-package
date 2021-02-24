@@ -62,6 +62,7 @@ export default class FormViewStore {
         this.clickedRow = null;
         this.selectedList = [];
         this.statuses = [];
+        this.statusesFilter = [];
         this.stages = [];
         this.uploadAttach = { data: {} };
         this.statusesObj = {};
@@ -168,6 +169,10 @@ export default class FormViewStore {
 
     get operableSotrs() {
         return this.sorts;
+    }
+
+    get displayableSotrs() {
+        return this.sorts.filter(s => s.operable);
     }
 
     get instanceEditable() {
@@ -559,7 +564,8 @@ export default class FormViewStore {
         }
 
         if (status_config) {
-            this.statuses = JSON.parse(status_config);
+            //过滤
+            this.statuses = JSON.parse(status_config).filter(s => !this.statusesFilter.includes(s.value));
             this.statuses.forEach(s => {
                 this.statusesObj[s.value + ''] = s;
             })

@@ -1,7 +1,7 @@
 <template>
   <div class="users-mgt">
     <div class="users-mgt-l">
-      <users @clickinstance="clickHandler"></users>
+      <users @clickinstance="clickHandler" syncable></users>
     </div>
     <div class="users-mgt-r">
       <div class="pso-view-mgt-tabs">
@@ -40,11 +40,13 @@ export default {
   height: 100%;
   display: flex;
   .users-mgt-l {
-    width: 700px;
+    width: 760px;
   }
   .users-mgt-r {
     flex: 1;
     padding: 10px;
+    height: 100%;
+    overflow: auto;
   }
 }
 </style>

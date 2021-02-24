@@ -4,14 +4,13 @@
       <pso-form-view
         key="main"
         v-bind="params"
-        :params="{ ...params, hideAuthTab: true, hideStatusTab: true, hideTablefun: true, hideViewTitle: true }"
+        :params="{ ...params, hideAuthTab: true, hideStatusTab: true, hideTablefun: true, hideViewTitle: true, hideMoreBtn: true }"
         :def-limit="20"
         :table-row-click="mainRowClickHandler"
         :addable="opable"
         :deletable="opable"
         :detailEditable="opable"
         :modifiable="opable"
-        :checkbox="opable"
         :changable="opable"
         :stageable="opable"
         simple-pagination

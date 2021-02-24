@@ -23,8 +23,8 @@
                 <span>{{ pageTitle }}</span>
               </div>
             </div>
-            <div class="pso-view-header__r">
-              <div class="pso-view-authtab" v-show="store.authViews.length > 1 && !params.hideAuthTab">
+            <div class="pso-view-header__r" v-show="store.authViews.length > 1 && !params.hideAuthTab">
+              <div class="pso-view-authtab">
                 <el-tabs v-model="store.activeView">
                   <el-tab-pane v-for="(ah, i) in store.authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
                 </el-tabs>
@@ -45,15 +45,15 @@
             ></fast-switch>
           </div>
           <!-- 排序标签 -->
-          <div class="pso-view-sorttag" v-if="store.operableSotrs.length">
+          <div class="pso-view-sorttag" v-if="store.displayableSotrs.length">
             <template v-for="(sort, i) in store.operableSotrs">
               <el-tag v-if="sort.operable" size="small" :key="i" :closable="sort.operable" @close="store.removeSort(i)">
                 {{ sort.name }} {{ sort.order === "desc" ? "降序" : "升序" }}
               </el-tag>
             </template>
           </div>
-          <div class="pso-view-fun" v-if="!params.hideTablefun">
-            <div class="pso-view-fun-l">
+          <div class="pso-view-fun">
+            <div class="pso-view-fun-l" v-if="!params.hideTablefun">
               <table-fun :store="store" :files="params.downloadFiles"></table-fun>
             </div>
             <div class="pso-view-fun-r">
@@ -67,6 +67,7 @@
                 :moreable="!params.hideMoreBtn"
                 :exportable="!params.hideExport"
                 :wipeable="wipeable"
+                :hidden="!!params.hideTablefun"
                 @new="newInstance"
                 @select="$emit('selection-confirm', store.selectedList)"
                 @wipe="wipeHandler"
@@ -221,6 +222,10 @@ export default {
       type: String,
       default: "",
     },
+    statusesFilter: {
+      type: String,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -288,6 +293,7 @@ export default {
           wipeallable: this.wipeallable,
           sourceType: "0",
           fetchMode: this.__isMobile__ ? "2" : "1",
+          statusesFilter: this.statusesFilter,
         });
 
         if (this.viewAuth) {

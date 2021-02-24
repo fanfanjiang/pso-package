@@ -207,7 +207,6 @@ export default {
     async saveHandler(params) {
       if (this.editing) return;
       this.editing = true;
-      let job_id;
       let data = {};
       if (params) {
         data = { ...params, optype: 2 };

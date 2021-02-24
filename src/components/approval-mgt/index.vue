@@ -57,19 +57,17 @@
     </div>
     <pso-dialog :visible="showEditor" width="50%" @close="showEditor = false">
       <template #title>
-        <div class="form-executor-header" v-loading="editing">
-          <div class="form-executor-header__l">
-            <div class="form-executor-title">
-              <i class="el-icon-edit-outline"></i>
-              <span>生成授权码</span>
-            </div>
-          </div>
-          <div class="form-executor-header__r">
+        <pso-dialog-header v-loading="editing">
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>生成授权码</span>
+          </template>
+          <template #action>
             <el-button type="primary" size="mini" @click="saveHandler()">保存</el-button>
-          </div>
-        </div>
+          </template>
+        </pso-dialog-header>
       </template>
-      <div style="height: 100%; padding: 15px; overflow: auto" v-loading="editing">
+      <div class="pso-dialog-content" v-loading="editing">
         <el-form label-position="left" label-width="100px" size="small">
           <el-form-item label="应用" required>
             <el-select filterable clearable size="small" v-model="curInstance.site_app">

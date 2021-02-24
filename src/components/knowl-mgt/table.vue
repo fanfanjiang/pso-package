@@ -119,7 +119,7 @@ export default {
 
       if (this.defKeys) {
         this.defKeys.split(";").forEach((item) => {
-          const key = item.split(",");
+          const key = item.split("#");
           this.defaultKeys[key[0]] = { value: key[1], type: key[2] };
         });
       }
