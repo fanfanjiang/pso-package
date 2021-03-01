@@ -135,7 +135,7 @@ export default {
         return this.$message.error("上传失败");
       }
       if (_file) {
-        _file.leaf_id = ret.data[0].LeafId;
+        _file.res_id = _file.leaf_id = ret.data[0].LeafId;
         makeFiles({ files: [Object.assign(_file, ret.data[0])] });
       }
       this.$message({

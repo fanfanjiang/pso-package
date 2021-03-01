@@ -1,68 +1,64 @@
 <template>
-  <div class="pso-page">
-    <div class="pso-page-body">
-      <div class="pso-page__tree">
-        <pso-tree-common
-          ref="tree"
-          :request-options="treeOptions"
-          :default-node-data="defaultNodeData"
-          :auto-edit="false"
-          @before-node-new="handleNewNode"
-          @node-click="nodeClickHandler"
-        ></pso-tree-common>
-      </div>
-      <div class="pso-page-body__content">
-        <div class="pso-page-body__wrapper" v-if="curNode" v-loading="loading">
-          <div class="pso-page-body__header">
-            <pso-title>流程：{{ curNode.node_display }}</pso-title>
-            <div class="pso-page-body__btns">
-              <el-button size="small" type="primary" plain @click="handleEditWf">设计流程</el-button>
-              <el-button size="small" type="primary" plain @click="handleSaveWf">保存设置</el-button>
+  <div :class="viewClass">
+    <div class="pso-view-extend">
+      <pso-tree-common
+        ref="tree"
+        :request-options="treeOptions"
+        :default-node-data="defaultNodeData"
+        :auto-edit="false"
+        @before-node-new="handleNewNode"
+        @node-click="nodeClickHandler"
+      ></pso-tree-common>
+    </div>
+    <div class="pso-view-body" v-loading="loading">
+      <template v-if="curNode">
+        <div class="pso-view-header">
+          <div class="pso-view-header__l">
+            <div class="pso-view-title">
+              <i class="el-icon-document"></i>
+              <span>流程：{{ curNode.node_display }}</span>
             </div>
           </div>
-          <div class="pso-page-body__tab">
-            <el-tabs v-model="curTab">
-              <template v-if="!!curNode.is_leaf">
-                <el-tab-pane label="预览" name="preview"></el-tab-pane>
-                <el-tab-pane label="代理" name="proxy"></el-tab-pane>
-                <el-tab-pane label="文号" name="file"></el-tab-pane>
-                <el-tab-pane label="快捷标签" name="tag"></el-tab-pane>
-                <el-tab-pane label="文本" name="text"></el-tab-pane>
-                <el-tab-pane label="子流程" name="subwf"></el-tab-pane>
-                <el-tab-pane label="状态" name="script"></el-tab-pane>
-              </template>
-              <el-tab-pane label="权限" name="auth"></el-tab-pane>
-            </el-tabs>
-          </div>
-          <div class="pso-page-body__tabbody">
-            <template v-if="!!curNode.is_leaf && !loading">
-              <div class="pso-page-wf__stage" v-if="curTab === 'preview'">
-                <pso-wf-stage :workflow-data="wfImage" read-mode v-if="wfImage"></pso-wf-stage>
-              </div>
-              <pso-wf-agent v-if="curTab === 'proxy'" :node="curNode"></pso-wf-agent>
-              <pso-wf-autoid v-if="curTab === 'file'" :node="curNode"></pso-wf-autoid>
-              <pso-wf-tag v-if="curTab === 'tag'" :data="tagData"></pso-wf-tag>
-              <pso-wf-text v-if="curTab === 'text'" :data="textData"></pso-wf-text>
-              <pso-wf-subwf v-if="curTab === 'subwf'" :data="subWfData"></pso-wf-subwf>
-              <pso-wf-script
-                v-if="curTab === 'script'"
-                :data="script"
-                :fields="formFields"
-                :code="wfDesigner.formStore.data_code"
-              ></pso-wf-script>
-            </template>
-            <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+          <div class="pso-view-header__r">
+            <el-button size="mini" type="primary" plain @click="handleEditWf">设计流程</el-button>
+            <el-button size="mini" type="primary" @click="handleSaveWf">保存设置</el-button>
           </div>
         </div>
-      </div>
+        <div class="pso-view-viewtab">
+          <button-tabs v-if="!!curNode.is_leaf" v-model="curTab" :data="TABS" :indexed="false"></button-tabs>
+          <button-tabs v-else v-model="curTab" :data="TABS_FOLDER" :indexed="false"></button-tabs>
+        </div>
+        <div class="pso-view-table" :style="{ overflow: curTab === 'preview' ? 'hidden' : 'auto' }">
+          <template v-if="!!curNode.is_leaf && !loading">
+            <div class="pso-page-wf__stage" style="margin-top: 20px" v-if="curTab === 'preview'">
+              <pso-wf-stage :workflow-data="wfImage" read-mode v-if="wfImage"></pso-wf-stage>
+            </div>
+            <pso-wf-agent v-if="curTab === 'proxy'" :node="curNode"></pso-wf-agent>
+            <pso-wf-autoid v-if="curTab === 'file'" :node="curNode"></pso-wf-autoid>
+            <pso-wf-tag v-if="curTab === 'tag'" :data="tagData"></pso-wf-tag>
+            <pso-wf-text v-if="curTab === 'text'" :data="textData"></pso-wf-text>
+            <pso-wf-subwf v-if="curTab === 'subwf'" :data="subWfData"></pso-wf-subwf>
+            <pso-wf-script
+              v-if="curTab === 'script'"
+              :data="script"
+              :fields="formFields"
+              :code="wfDesigner.formStore.data_code"
+            ></pso-wf-script>
+          </template>
+          <div v-if="curTab === 'auth'" style="padding-top: 20px">
+            <pso-nodeauth :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 <script>
-import PsoWfStage from "../workflow-designer/stage";
-import PsoTypebar from "../type-bar";
 import { WF_INIT, WF_RESET } from "../../store/mutation-types";
 import { mapState } from "vuex";
+
+import PsoWfStage from "../workflow-designer/stage";
+import PsoTypebar from "../type-bar";
 import PsoWfTageditor from "./tag-editor";
 import PsoWfAgent from "./agent";
 import PsoWfTag from "./tag";
@@ -70,7 +66,22 @@ import PsoWfText from "./text";
 import PsoWfSubwf from "./wf-sub";
 import PsoWfAutoid from "./autoid";
 import PsoWfScript from "./script";
+
+import ButtonTabs from "../button-tabs";
+
 import { REVIEW_STATUS } from "../../const/workflow";
+import { MgtMixin } from "../../mixin/view";
+const TABS = [
+  { label: "预览", id: "preview", icon: "el-icon-picture" },
+  { label: "状态", id: "script", icon: "el-icon-s-help" },
+  { label: "文本", id: "text", icon: "el-icon-s-operation" },
+  { label: "文号", id: "file", icon: "el-icon-s-promotion" },
+  { label: "快捷标签", id: "tag", icon: "el-icon-document-add" },
+  { label: "代理", id: "proxy", icon: "el-icon-s-custom" },
+  { label: "子流程", id: "subwf", icon: "el-icon-share" },
+  { label: "权限", id: "auth", icon: "el-icon-key" },
+];
+const TABS_FOLDER = [{ label: "权限", id: "auth", icon: "el-icon-key" }];
 
 const _DATA = {
   tagData: [
@@ -136,16 +147,16 @@ const _DATA = {
 };
 
 export default {
-  components: { PsoWfStage, PsoTypebar, PsoWfTageditor, PsoWfAgent, PsoWfTag, PsoWfText, PsoWfSubwf, PsoWfAutoid, PsoWfScript },
+  components: { ButtonTabs, PsoWfStage, PsoTypebar, PsoWfTageditor, PsoWfAgent, PsoWfTag, PsoWfText, PsoWfSubwf, PsoWfAutoid, PsoWfScript },
+  mixins: [MgtMixin],
   props: {
     params: {
       type: Object,
-      default: () => {
-        data_type: "";
-      },
     },
   },
   data() {
+    this.TABS = TABS;
+    this.TABS_FOLDER = TABS_FOLDER;
     return {
       loading: false,
       curNode: {},
@@ -167,7 +178,7 @@ export default {
     treeOptions() {
       return {
         dimen: 7,
-        data_type: this.params.data_type,
+        data_type: "",
       };
     },
     defaultNodeData() {

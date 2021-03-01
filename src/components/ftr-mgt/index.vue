@@ -9,7 +9,7 @@
           <button-tabs v-model="curTab" :data="TABS"></button-tabs>
         </div>
         <div style="margin-top: 20px">
-          <main-designer v-show="curTab === 0" ref="designer" :store="store" @save="saveHandler"></main-designer>
+          <main-designer v-show="curTab === 0" ref="designer" :store="store" @save="saveHandler" @save-pub="savePubHandler"></main-designer>
           <sub-view v-if="curTab === 1" :store="store"></sub-view>
         </div>
       </div>
@@ -48,8 +48,11 @@ export default {
         this.$refs.designer.extandData(data);
       });
     },
-    saveHandler(data) {
-      this.store.modify({ ...data, optype: 1 });
+    saveHandler(data, pub = false) {
+      this.store.modify({ ...data, optype: 1 }, pub);
+    },
+    savePubHandler(data) {
+      this.saveHandler(data, true);
     },
   },
 };
@@ -60,11 +63,18 @@ export default {
   display: flex;
   .pso-frtmgt-l {
     background: #fff;
+    height: 100%;
+    overflow: auto;
   }
   .pso-frtmgt-r {
     width: 800px;
     padding: 10px 10px 10px 20px;
     flex-shrink: 0;
+    height: 100%;
+    overflow: auto;
+  }
+  .pso-view-top {
+    padding: 0 !important;
   }
 }
 </style>

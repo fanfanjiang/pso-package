@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-tree expand-icon-invisible" :class="treeClass" :style="treeStyle">
+  <div class="pso-tree" :class="treeClass" :style="treeStyle">
     <div class="pso-tree__header">
       <div class="pso-tree__search" v-if="searchable">
         <mu-text-field v-model="filterText">
@@ -28,6 +28,7 @@
         :lazy="lazyLoad"
         :load="getNodeData"
         :show-checkbox="showCheckbox"
+        :expand-on-click-node="false"
         @node-drag-start="nodeDragStart"
         @node-click="nodeClickHandler"
         @node-drop="nodeDropHandler"
@@ -35,7 +36,7 @@
       >
         <span class="pso-tree__node" slot-scope="{ node }">
           <span class="pso-tree__node-title">
-            <img :src="getNodeIcon(node)" alt />
+            <i class="pso-tree__node-icon" :class="getNodeIconClass(node)"></i>
             <span>{{ node.label }}</span>
           </span>
           <span v-if="editMode" :class="[{ 'pso-tree__node-btns': true }, { show: node.showMenu }]">

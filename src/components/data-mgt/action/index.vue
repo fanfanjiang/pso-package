@@ -4,7 +4,7 @@
       <div class="pso-tabs">
         <div class="pso-tabs-header">
           <div class="pso-tabs-title">
-            <i class="el-icon-s-custom"></i>
+            <i class="el-icon-s-promotion"></i>
             <span>按钮</span>
           </div>
           <div class="pso-tabs-r">

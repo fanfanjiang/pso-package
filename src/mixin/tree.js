@@ -285,6 +285,24 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     }.png`;
 
             },
+            getNodeIconClass(node) {
+                const option = {};
+                if (this.folderMode && !this.isLeaf(node)) {
+                    option['folder'] = true;
+                    if (node.data.children && node.data.children.length && node.expanded) {
+                        option['fa fa-folder-open'] = true;
+                    } else {
+                        option['fa fa-folder'] = true;
+                    }
+                } else {
+                    option['node'] = true;
+                    option[`el-icon-document`] = true;
+                    if (node.isCurrent) {
+                        option['node-expanded'] = true;
+                    }
+                }
+                return option;
+            },
             treeFunHandler(command, node) {
                 switch (command) {
                     case 'newFolder':

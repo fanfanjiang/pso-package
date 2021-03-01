@@ -1,7 +1,7 @@
 <template>
   <pso-label :cpnt="cpnt">
     <div class="pso-form-upload">
-      <div class="pso-form-upload__files" :style="showStyle" v-if="preview && proxy.length">
+      <div class="pso-form-upload__files" :style="showStyle" v-if="preview && proxy.length && !cpnt.data._hideShowBox">
         <pso-file-list
           v-if="!loadingFile"
           :files="proxy"
@@ -146,7 +146,7 @@ export default {
       this.showUpload = false;
     },
     deleteFile(file) {
-      const index = _.findIndex(this.proxy, { fid: file.fid });
+      const index = _.findIndex(this.proxy, { res_id: file.res_id });
       if (index !== -1) {
         this.proxy.splice(index, 1);
         this.$emit("delete", file);
@@ -160,6 +160,9 @@ export default {
       if (resources.length) {
         this.confirm(resources);
       }
+    },
+    deleteCpntValue(data) {
+      this.deleteFile(data);
     },
   },
 };

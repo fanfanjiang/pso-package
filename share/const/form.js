@@ -385,6 +385,7 @@ const CPNT = {
     op: FILTER_TYPE.user.op,
     fop: [{ ...OP_FILTER.op1 }],
     data: [
+      { n: '_fieldFormat', v: 'user' },
       { n: '_type', v: 'radio' },
       { n: '_defaultValType', v: 'choose' },
       { n: '_bindForm', v: '' },
@@ -403,7 +404,7 @@ const CPNT = {
     chart: true,
     table_show: true,
     value_format_id: 'node_id',
-    data: [{ n: '_type', v: 'radio' }, { n: '_defaultValType', v: 'choose' }, { n: '_bindUser', v: '' }],
+    data: [{ n: '_fieldFormat', v: 'dept' }, { n: '_type', v: 'radio' }, { n: '_defaultValType', v: 'choose' }, { n: '_bindUser', v: '' }],
     op: FILTER_TYPE.dept.op,
     fop: [{ ...OP_FILTER.op1 }],
   },

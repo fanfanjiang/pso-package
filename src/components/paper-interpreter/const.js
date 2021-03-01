@@ -7,8 +7,12 @@ export const PAPER_STATUS = {
         v: '1',
         n: '已答题'
     },
-    graded: {
+    passed: {
         v: '2',
-        n: '已完成'
+        n: '已及格'
+    },
+    failed: {
+        v: '9',
+        n: '未及格'
     }
 }

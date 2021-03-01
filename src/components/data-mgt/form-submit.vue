@@ -3,7 +3,7 @@
     <div class="pso-table-controller">
       <el-button size="mini" type="primary" plain @click="addHandler">添加脚本</el-button>
     </div>
-    <el-table key="status" :data="data" style="width: 100%">
+    <el-table key="status" size="mini" border :data="data" style="width: 100%">
       <el-table-column label="类型" width="120">
         <template slot-scope="scope">
           <el-select size="mini" v-model="scope.row.subtype" clearable>
@@ -14,12 +14,7 @@
       <el-table-column label="参数" width="200">
         <template slot-scope="scope">
           <el-select size="mini" v-model="scope.row.param" filterable clearable multiple>
-            <el-option
-              v-for="item in fields"
-              :key="item.field_name"
-              :label="showName(item)"
-              :value="item.field_name"
-            ></el-option>
+            <el-option v-for="item in fields" :key="item.field_name" :label="showName(item)" :value="item.field_name"></el-option>
           </el-select>
         </template>
       </el-table-column>

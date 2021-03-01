@@ -1,81 +1,101 @@
 <template>
-  <div class="pso-data-mgt__column" style="padding: 20px 0 30px 0">
+  <div class="pso-data-mgt__column" style="padding: 20px 0 0 0">
     <div class="pso-table-controller">
       <el-button size="mini" type="primary" @click="addCol(null)">添加列表</el-button>
     </div>
     <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeCol">
       <el-tab-pane :label="col.name" :name="index + ''" v-for="(col, index) in data.column" :key="index">
-        <el-form label-position="left" label-width="80px" :inline="true">
-          <el-form-item label="列表名称" style="margin-bottom: 10px">
-            <el-input size="mini" v-model="col.name"></el-input>
-          </el-form-item>
-          <el-form-item label="动作" style="margin-bottom: 10px">
-            <el-select size="mini" multiple clearable v-model="col.actions">
-              <el-option v-for="(a, i) in actions" :key="i" :label="a.name" :value="a.id"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="标题字段" style="margin-bottom: 10px">
-            <el-select size="mini" filterable clearable v-model="col.fieldTitle">
-              <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="头图字段" style="margin-bottom: 10px">
-            <el-select size="mini" filterable clearable v-model="col.fieldPic">
-              <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="内容字段" style="margin-bottom: 10px">
-            <el-select size="mini" filterable multiple clearable v-model="col.fieldContent">
-              <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="时间字段" style="margin-bottom: 10px">
-            <el-select size="mini" filterable clearable v-model="col.fieldTime">
-              <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <el-table
-          key="list"
-          size="mini"
-          :data="col.data"
-          style="width: 100%"
-          height="500"
-          :sort-by="['number']"
-          @row-dblclick="rowClickHandler($event, col.data)"
-        >
-          <el-table-column type="index" :index="1" fixed="left" width="50"></el-table-column>
-          <el-table-column prop="field_name" label="字段" width="120" fixed="left"></el-table-column>
-          <el-table-column prop="display" label="显示名称" width="120" fixed="left"></el-table-column>
-          <el-table-column prop="number" label="顺序" width="160" sortable>
-            <template slot-scope="scope">
-              <el-input-number size="mini" v-model="scope.row.number" controls-position="right" :min="0"></el-input-number>
-            </template>
-          </el-table-column>
-          <el-table-column prop="width" label="列宽" width="60"></el-table-column>
-          <el-table-column prop="docWidth" label="签单列宽" width="110"></el-table-column>
-          <el-table-column prop="using" label="启用" width="70" sortable>
-            <template slot-scope="scope">
-              <el-switch size="mini" v-model="scope.row.using" active-value="1" inactive-value="0"></el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column prop="show" label="显示" width="70" sortable>
-            <template slot-scope="scope">
-              <el-switch size="mini" v-model="scope.row.show" active-value="1" inactive-value="0"></el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column prop="searchable" label="筛选" width="70" sortable>
-            <template slot-scope="scope">{{ scope.row.searchable }}</template>
-          </el-table-column>
-          <el-table-column prop="sortable" label="手动排序" width="100" sortable></el-table-column>
-          <el-table-column prop="editable" label="编辑" width="70" sortable>
-            <template slot-scope="scope">{{ scope.row.editable }}</template>
-          </el-table-column>
-          <el-table-column prop="cal" label="统计" width="70" sortable></el-table-column>
-          <el-table-column prop="align" label="对齐方式" width="100" sortable></el-table-column>
-          <el-table-column prop="defSort" label="默认排序类型" width="120" sortable></el-table-column>
-          <el-table-column prop="defSortOrder" label="默认排序顺序" width="120" sortable></el-table-column>
-        </el-table>
+        <great-panel>
+          <template #header>
+            <i class="el-icon-edit-outline"></i>
+            <span>基础配置</span>
+          </template>
+          <div class="form-column-base">
+            <el-form label-position="left" label-width="100px" :inline="true">
+              <el-form-item label="列表名称" style="margin-bottom: 10px">
+                <el-input size="mini" v-model="col.name"></el-input>
+              </el-form-item>
+              <el-form-item label="动作" style="margin-bottom: 10px">
+                <el-select size="mini" multiple clearable v-model="col.actions">
+                  <el-option v-for="(a, i) in actions" :key="i" :label="a.name" :value="a.id"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="快捷搜索" style="margin-bottom: 10px">
+                <el-select size="mini" filterable clearable v-model="col.qsearch">
+                  <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="标题字段" style="margin-bottom: 10px">
+                <el-select size="mini" filterable clearable v-model="col.fieldTitle">
+                  <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="头图字段" style="margin-bottom: 10px">
+                <el-select size="mini" filterable clearable v-model="col.fieldPic">
+                  <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="内容字段" style="margin-bottom: 10px">
+                <el-select size="mini" filterable multiple clearable collapse-tags v-model="col.fieldContent">
+                  <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="时间字段" style="margin-bottom: 10px">
+                <el-select size="mini" filterable clearable v-model="col.fieldTime">
+                  <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
+        </great-panel>
+        <great-panel :padding="0" color="#fff">
+          <template #header>
+            <i class="el-icon-edit-outline"></i>
+            <span>列表配置 (双击编辑)</span>
+          </template>
+          <el-table
+            key="list"
+            size="mini"
+            border
+            :data="col.data"
+            style="width: 100%; margin-top: 20px"
+            height="320"
+            :sort-by="['number']"
+            @row-dblclick="rowClickHandler($event, col.data)"
+          >
+            <el-table-column type="index" :index="1" fixed="left" width="50"></el-table-column>
+            <el-table-column prop="field_name" label="字段" width="120" fixed="left"></el-table-column>
+            <el-table-column prop="display" label="显示名称" width="120" fixed="left"></el-table-column>
+            <el-table-column prop="number" label="顺序" width="160" sortable>
+              <template slot-scope="scope">
+                <el-input-number size="mini" v-model="scope.row.number" controls-position="right" :min="0"></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column prop="width" label="列宽" width="60"></el-table-column>
+            <el-table-column prop="docWidth" label="签单列宽" width="110"></el-table-column>
+            <el-table-column prop="using" label="启用" width="70" sortable>
+              <template slot-scope="scope">
+                <el-switch size="mini" v-model="scope.row.using" active-value="1" inactive-value="0"></el-switch>
+              </template>
+            </el-table-column>
+            <el-table-column prop="show" label="显示" width="70" sortable>
+              <template slot-scope="scope">
+                <el-switch size="mini" v-model="scope.row.show" active-value="1" inactive-value="0"></el-switch>
+              </template>
+            </el-table-column>
+            <el-table-column prop="searchable" label="筛选" width="70" sortable>
+              <template slot-scope="scope">{{ scope.row.searchable }}</template>
+            </el-table-column>
+            <el-table-column prop="sortable" label="手动排序" width="100" sortable></el-table-column>
+            <el-table-column prop="editable" label="编辑" width="70" sortable>
+              <template slot-scope="scope">{{ scope.row.editable }}</template>
+            </el-table-column>
+            <el-table-column prop="cal" label="统计" width="70" sortable></el-table-column>
+            <el-table-column prop="align" label="对齐方式" width="100" sortable></el-table-column>
+            <el-table-column prop="defSort" label="默认排序类型" width="120" sortable></el-table-column>
+            <el-table-column prop="defSortOrder" label="默认排序顺序" width="120" sortable></el-table-column>
+          </el-table>
+        </great-panel>
       </el-tab-pane>
     </el-tabs>
     <pso-dialog title="编辑" :visible="opener.show" @close="opener.show = false" width="40%">
@@ -140,6 +160,7 @@ import shortid from "shortid";
 import { formOp } from "../form-designer/mixin.js";
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList } from "../../utils/util";
+import GreatPanel from "../great-panel";
 const BASE = {
   name: "",
   actions: [],
@@ -149,10 +170,12 @@ const BASE = {
   fieldContent: [],
   fieldTime: "",
   timeAgo: true,
+  qsearch: "d_name",
 };
 export default {
-  mixins: [formOp],
   props: ["data", "defCol", "actions"],
+  components: { GreatPanel },
+  mixins: [formOp],
   data() {
     return {
       forms: [],
@@ -202,6 +225,11 @@ export default {
     top: 24px;
     right: 0px;
     z-index: 2;
+  }
+}
+.form-column-base {
+  .el-form-item__content {
+    width: 170px;
   }
 }
 </style>

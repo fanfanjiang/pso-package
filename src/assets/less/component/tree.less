@@ -22,6 +22,16 @@
         }
     }
 
+    .el-tree-node__expand-icon {
+        &.is-leaf {
+            opacity: 0 !important;
+            width: 6px !important;
+            padding: 0 !important;
+            height: 24px !important;
+            transform: rotate(0deg) !important;
+        }
+    }
+
     .pso-tree__header {
         display: flex;
         align-items: center;
@@ -67,6 +77,24 @@
         >span {
             display: flex;
             align-items: center;
+        }
+
+        .pso-tree__node-icon {
+            margin-right: 4px;
+
+            &.folder {
+                color: #F1AA44;
+                width: 16px;
+                margin-top: 2px;
+            }
+
+            &.node { 
+                width: 16px;
+
+                &.node-expanded {
+                    color: #F1AA44;
+                }
+            }
         }
 
         .pso-tree__node-title {

@@ -1,6 +1,19 @@
 <template>
   <div style="padding: 15px; height: 100%">
     <div style="background: #fff; padding: 15px; height: 100%；overflow: auto;">
+      <pso-title>打印预览</pso-title>
+      <div class="print-preview">
+        <div class="print-preview-body" :style="preStyle">
+          <div class="print-preview-content">
+            <div class="print-preview-title">标题</div>
+            <div class="print-preview-header">头部</div>
+            <div class="print-preview-list">
+              <p v-for="(c, i) in config.count" :key="i">第{{ i + 1 }}行</p>
+            </div>
+            <div class="print-preview-footer">底部</div>
+          </div>
+        </div>
+      </div>
       <pso-title>整体配置</pso-title>
       <el-form size="small" label-position="top" style="margin-bottom: 30px">
         <div class="form-wrapper">
@@ -93,6 +106,12 @@ export default {
   computed: {
     asstables() {
       return this.fields.filter((d) => d.componentid === "asstable");
+    },
+    preStyle() {
+      const mg = this.config.margins;
+      return {
+        padding: `${mg[1]}px ${mg[2]}px ${mg[3]}px ${mg[0]}px`,
+      };
     },
   },
   created() {

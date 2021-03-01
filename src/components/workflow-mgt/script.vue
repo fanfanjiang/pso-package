@@ -1,13 +1,8 @@
 <template>
-  <div>
-    <el-table key="status" :data="data" style="width: 100%">
-      <el-table-column label="状态值" width="100" prop="name"></el-table-column>
-      <el-table-column label="执行脚本">
-        <template slot-scope="scope">
-          {{ scope.row.script }}
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="300" fixed="right">
+  <div style="margin-top: 20px">
+    <el-table border size="mini" key="status" :data="data" style="width: 100%">
+      <el-table-column label="状态值" prop="name"></el-table-column>
+      <el-table-column label="操作" width="110" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="success" @click="goDesigner(scope.$index)">设计脚本</el-button>
         </template>

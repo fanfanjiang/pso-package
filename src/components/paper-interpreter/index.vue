@@ -98,6 +98,8 @@ requireComponent.keys().forEach((fileName) => {
   componentsMap[`PaperCpnt${componentName}`] = componentConfig.default;
 });
 
+const EXCULDED = ["plug_code", "size", "appid", "paperId"];
+
 export default {
   components: { ...componentsMap, Scoreboard },
   props: {
@@ -133,7 +135,13 @@ export default {
   methods: {
     async initialize() {
       const { plug_code: code, size = "medium", appid, paperId = "" } = this.params;
-      this.store = new Store({ $vue: this, code, size, mode: this.mode, appid, paperId });
+      const extension = {};
+      for (let q in this.$router.currentRoute.query) {
+        if (EXCULDED.indexOf(q) === -1) {
+          extension[q] = this.$router.currentRoute.query[q];
+        }
+      }
+      this.store = new Store({ $vue: this, code, size, mode: this.mode, appid, paperId, extension });
       await this.store.initialize();
       this.$emit("initialized", this.store);
     },

@@ -1,20 +1,14 @@
 <template>
-  <el-table :data="data" style="width: 100%" key="tag">
-    <el-table-column type="index" :index="1"></el-table-column>
-    <el-table-column prop="tagType" label="文本类型" width="180"></el-table-column>
+  <el-table border size="mini" :data="data" style="width: 100%; margin-top: 20px" key="tag">
+    <el-table-column prop="tagType" label="文本类型" width="120" align="center"></el-table-column>
     <el-table-column prop="tagVal" label="文本值">
       <template slot-scope="scope">
-        <el-tag
-          v-for="(itemVal,index) in scope.row.tagVal"
-          :key="itemVal"
-          closable
-          @close="handleDelTag(index,scope.row)"
-        >{{itemVal}}</el-tag>
+        <el-tag size="small" v-for="(d, i) in scope.row.tagVal" :key="i" closable @close="handleDelTag(i, scope.row)">{{ d }}</el-tag>
       </template>
     </el-table-column>
-    <el-table-column fixed="right" label="操作">
+    <el-table-column label="操作" width="110" align="center">
       <template slot-scope="scope">
-        <pso-wf-tageditor :data="scope.row" @confirm="addTagText($event,scope.row)"></pso-wf-tageditor>
+        <pso-wf-tageditor :data="scope.row" @confirm="addTagText($event, scope.row)"></pso-wf-tageditor>
       </template>
     </el-table-column>
   </el-table>
@@ -34,7 +28,7 @@ export default {
     },
     handleDelTag(index, data) {
       data.tagVal.splice(index, 1);
-    }
-  }
+    },
+  },
 };
 </script>

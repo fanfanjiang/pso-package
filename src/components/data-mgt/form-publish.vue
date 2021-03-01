@@ -1,93 +1,119 @@
 <template>
-  <div v-if="!init">
-    <div class="pso-table-controller">
-      <el-button size="mini" type="primary" plain @click="$emit('save')">保存</el-button>
-    </div>
-    <div>
-      <span>是否对外开放</span>
+  <div v-if="!init" style="margin-top: 20px">
+    <great-panel>
+      <template #header>
+        <i class="el-icon-edit-outline"></i>
+        <span>是否对外开放</span>
+      </template>
       <el-switch v-model="data.isPublic"></el-switch>
-    </div>
-    <div v-if="data.isPublic" class="pso-dd-public">
-      <pso-title>对外配置</pso-title>
-      <el-form ref="form" label-width="120px" label-position="left">
-        <pso-form-attach :cpnt="logo" @value-change="handleLogoChange">
-          <el-button icon="el-icon-paperclip" plain size="mini">上传LOGO</el-button>
-        </pso-form-attach>
-        <el-form-item label="标题">
-          <el-input v-model="data.name" size="mini"></el-input>
-        </el-form-item>
-        <el-form-item label="提交文本">
-          <el-input v-model="data.subBtnText" size="mini"></el-input>
-        </el-form-item>
-        <el-form-item label="完成文本">
-          <el-input v-model="data.doneText" size="mini"></el-input>
-        </el-form-item>
-        <el-form-item label="是否提交">
-          <el-switch v-model="data.submitable"></el-switch>
-        </el-form-item>
-        <el-form-item label="表单label宽度">
-          <el-input v-model="data.formLabelWith" size="mini"></el-input>
-        </el-form-item>
-        <el-form-item label="对齐方式">
-          <el-select size="mini" v-model="data.formLabelPosition">
-            <el-option label="顶部对齐" value="top"></el-option>
-            <el-option label="左对齐" value="left"></el-option>
-            <el-option label="右对齐" value="right"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <pso-title>发布数据规则</pso-title>
-      <div>
-        <el-dropdown trigger="click" @command="handleFilterAdd">
-          <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus">添加规则</el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="(f, index) in fields" :key="index" :command="index">{{ f._fieldName }}</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <span style="margin-left: 10px">
-          <el-button :disabled="!selectedList.length" type="primary" size="mini" @click="genQRByRule">生成二维码</el-button>
-        </span>
-      </div>
-      <el-table :data="data.rules" style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
-        <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
-        <el-table-column label="字段" width="140" prop="name"></el-table-column>
-        <el-table-column label="值">
-          <template slot-scope="scope">
-            <el-form>
-              <pso-form-component
-                :force-show="true"
-                :cpnt="scope.row.cpnt"
-                @value-change="valueChangeHandler($event, scope.row)"
-              ></pso-form-component>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="110" fixed="right">
-          <template slot-scope="scope">
-            <el-button size="mini" type="danger" @click="delHandler(scope.$index)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div style="margin: 10px 0 10px 0">
-        <el-row :gutter="10">
-          <el-col :span="4" v-for="q in data.qrList" :key="q.id">
-            <el-card :body-style="{ padding: '0px' }">
-              <img :src="q.qr" />
-              <div style="padding: 0px 10px 10px 10px">
-                <div>规则序号:{{ q.value }}</div>
-                <el-button size="mini" class="button" @click="updateRule(q)">更新规则</el-button>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-      </div>
-      <pso-title>表单链接</pso-title>
-      <p>{{ host }}/form/{{ node.node_name }}</p>
-      <pso-title>链接二维码</pso-title>
-      <div>
+    </great-panel>
+    <div v-if="data.isPublic" class="pso-dd-public" style="margin-top: 15px">
+      <great-panel>
+        <template #header>
+          <i class="el-icon-edit-outline"></i>
+          <span>对外配置</span>
+        </template>
+        <el-form ref="form" label-width="120px" label-position="left">
+          <div class="form-wrapper">
+            <pso-form-attach :cpnt="logo" @value-change="handleLogoChange">
+              <el-button icon="el-icon-paperclip" plain size="mini">上传LOGO</el-button>
+            </pso-form-attach>
+          </div>
+          <div class="form-wrapper">
+            <el-form-item label="标题">
+              <el-input v-model="data.name" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="提交文本">
+              <el-input v-model="data.subBtnText" size="mini"></el-input>
+            </el-form-item>
+          </div>
+          <div class="form-wrapper">
+            <el-form-item label="完成文本">
+              <el-input v-model="data.doneText" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="是否提交">
+              <el-switch v-model="data.submitable"></el-switch>
+            </el-form-item>
+          </div>
+          <div class="form-wrapper">
+            <el-form-item label="表单LABEL宽度">
+              <el-input v-model="data.formLabelWith" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="对齐方式">
+              <el-select size="mini" v-model="data.formLabelPosition">
+                <el-option label="顶部对齐" value="top"></el-option>
+                <el-option label="左对齐" value="left"></el-option>
+                <el-option label="右对齐" value="right"></el-option>
+              </el-select>
+            </el-form-item>
+          </div>
+        </el-form>
+      </great-panel>
+      <great-panel>
+        <template #header>
+          <i class="el-icon-edit-outline"></i>
+          <span>发布数据规则</span>
+        </template>
+        <div style="margin-bottom: 10px; text-align: right">
+          <el-dropdown trigger="click" @command="handleFilterAdd">
+            <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus">添加规则</el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="(f, index) in fields" :key="index" :command="index">{{ f._fieldName }}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <span style="margin-left: 10px">
+            <el-button :disabled="!selectedList.length" type="primary" size="mini" @click="genQRByRule">生成二维码</el-button>
+          </span>
+        </div>
+        <el-table border size="mini" :data="data.rules" style="width: 100%" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
+          <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
+          <el-table-column label="字段" width="140" prop="name"></el-table-column>
+          <el-table-column label="值">
+            <template slot-scope="scope">
+              <el-form>
+                <pso-form-component
+                  :force-show="true"
+                  :cpnt="scope.row.cpnt"
+                  @value-change="valueChangeHandler($event, scope.row)"
+                ></pso-form-component>
+              </el-form>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="110" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="danger" @click="delHandler(scope.$index)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div style="margin: 10px 0 10px 0">
+          <el-row :gutter="10">
+            <el-col :span="4" v-for="q in data.qrList" :key="q.id">
+              <el-card :body-style="{ padding: '0px' }">
+                <img :src="q.qr" />
+                <div style="padding: 0px 10px 10px; display: flex; align-items: center; justify-content: space-between">
+                  <div>规则序号:{{ q.value }}</div>
+                  <el-button size="mini" class="button" @click="updateRule(q)">更新规则</el-button>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
+        </div>
+      </great-panel>
+      <great-panel>
+        <template #header>
+          <i class="el-icon-edit-outline"></i>
+          <span>表单链接</span>
+        </template>
+        <p>{{ host }}/form/{{ node.node_name }}</p>
+      </great-panel>
+      <great-panel>
+        <template #header>
+          <i class="el-icon-edit-outline"></i>
+          <span>链接二维码</span>
+        </template>
         <img :src="qrsrc" alt />
-      </div>
+      </great-panel>
     </div>
   </div>
 </template>
@@ -98,9 +124,10 @@ import FormStore from "../form-designer/model/store.js";
 import { genComponentData } from "../form-designer/helper";
 import shortid from "shortid";
 import Qs from "qs";
+import GreatPanel from "../great-panel";
 export default {
   props: ["data", "node", "store"],
-  components: { PsoFormComponent, PsoFormAttach },
+  components: { GreatPanel, PsoFormComponent, PsoFormAttach },
   data() {
     return {
       qrsrc: "",
@@ -142,7 +169,7 @@ export default {
       this.data.attach = value;
     },
     async genQR(params = {}) {
-      params.appid = this.$store.state.base.user.appid; 
+      params.appid = this.$store.state.base.user.appid;
       return await QRCode.toDataURL(`${this.host}/form/${this.node.node_name}?${Qs.stringify(params)}`);
     },
     handleFilterAdd(index) {

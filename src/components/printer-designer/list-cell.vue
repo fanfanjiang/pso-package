@@ -2,9 +2,9 @@
   <div style="margin: 20px 0">
     <div style="margin-bottom: 10px">
       <el-button size="mini" type="primary" @click="addHandler">添加数据</el-button>
-      <el-button size="mini" type="danger" @click="delHandler">删除数据</el-button>
+      <el-button size="mini" type="danger" @click="delHandler" :disabled="!selected.length">删除数据</el-button>
     </div>
-    <el-table size="mini" :data="data" style="width: 100%" @selection-change="changeHandler">
+    <el-table border size="mini" :data="data" style="width: 100%" @selection-change="changeHandler">
       <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
       <el-table-column prop="text" label="数据" fixed="left"></el-table-column>
       <el-table-column prop="style" label="样式" width="120">
@@ -38,7 +38,7 @@
           <el-input-number size="mini" v-model="scope.row.rowSpan" controls-position="right" :min="0"></el-input-number>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="100" fixed="right">
+      <el-table-column label="操作" width="110" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" type="success" @click="goDesigner(scope.$index)">设计数据</el-button>
         </template>
@@ -83,6 +83,7 @@ export default {
     return {
       curCell: null,
       showDesigner: false,
+      selected: [],
     };
   },
   created() {

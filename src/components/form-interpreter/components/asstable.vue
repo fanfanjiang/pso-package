@@ -88,14 +88,15 @@
         :visible="showTable"
       >
         <pso-form-view
-          :cfgId="cpnt.data._option"
           checkbox
+          selectable
+          expanding
+          :cfgId="cpnt.data._option"
           :deletable="false"
           :selection-type="selectionType"
           :view-auth="formTableViewAuth"
           :addable="false"
           :edtail-editable="false"
-          selectable
           :changable="false"
           :stageable="false"
           :params="formTableCfg"

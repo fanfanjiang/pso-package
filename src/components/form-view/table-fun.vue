@@ -19,7 +19,7 @@
     <el-divider direction="vertical"></el-divider>
     <el-input
       ref="keywords"
-      placeholder="搜索"
+      :placeholder="quickSearchLabel"
       prefix-icon="el-icon-search"
       size="mini"
       clearable
@@ -30,7 +30,7 @@
       @change="doRefresh"
     ></el-input>
     <el-button v-show="!showKeywords" type="text" icon="el-icon-search" @click="onClickSearch">
-      <template v-if="!__isMobile__">搜索</template>
+      <template v-if="!__isMobile__">{{ quickSearchLabel }}</template>
     </el-button>
     <el-divider direction="vertical"></el-divider>
     <el-button type="text" icon="el-icon-refresh" @click="doRefresh"><template v-if="!__isMobile__">刷新</template></el-button>
@@ -56,6 +56,11 @@ export default {
       showKeywords: false,
       fileList: [],
     };
+  },
+  computed: {
+    quickSearchLabel() { 
+      return `搜索${this.store.quickSearch ? this.store.quickSearch.display : ""}`;
+    },
   },
   async created() {
     if (this.files) {

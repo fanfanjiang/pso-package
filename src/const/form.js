@@ -94,6 +94,26 @@ export const DATE_OPTION = {
             name: "指定时间",
             value: "2"
         }
+    ],
+    year: [
+        {
+            name: "不设置",
+            value: ""
+        },
+        {
+            name: "当年",
+            value: "1"
+        }
+    ],
+    month: [
+        {
+            name: "不设置",
+            value: ""
+        },
+        {
+            name: "当月",
+            value: "1"
+        }
     ]
 }
 

@@ -1,6 +1,6 @@
 <template>
-  <el-table key="status" :data="data" style="width: 100%" v-loading="initializing">
-    <el-table-column prop="n" label="视图项" width="100" fixed="left"></el-table-column>
+  <el-table key="status" border size="mini" :data="data" style="width: 100%" v-loading="initializing">
+    <el-table-column prop="n" label="视图项" width="100"></el-table-column>
     <el-table-column label="显示值">
       <template slot-scope="scope">
         <el-input size="mini" v-model="scope.row.text" placeholder></el-input>
@@ -8,31 +8,14 @@
     </el-table-column>
     <el-table-column label="关联表单" width="200">
       <template slot-scope="scope">
-        <el-select
-          size="mini"
-          v-model="scope.row.form"
-          filterable
-          clearable
-          @change="handleFormChange($event)"
-        >
-          <el-option
-            v-for="item in forms"
-            :key="item.node_name"
-            :label="item.node_display"
-            :value="item.node_name"
-          ></el-option>
+        <el-select size="mini" v-model="scope.row.form" filterable clearable @change="handleFormChange($event)">
+          <el-option v-for="item in forms" :key="item.node_name" :label="item.node_display" :value="item.node_name"></el-option>
         </el-select>
       </template>
     </el-table-column>
     <el-table-column label="关联字段" width="200">
       <template slot-scope="scope">
-        <el-select
-          size="mini"
-          v-model="scope.row.field"
-          filterable
-          clearable
-          v-if="!loadingFields&&scope.row.form"
-        >
+        <el-select size="mini" v-model="scope.row.field" filterable clearable v-if="!loadingFields && scope.row.form">
           <el-option
             v-for="item in formFields[scope.row.form]"
             :key="item.field_name"
@@ -56,7 +39,7 @@ export default {
       initializing: false,
       forms: [],
       loadingFields: false,
-      formFields: {}
+      formFields: {},
     };
   },
   async created() {
@@ -87,13 +70,13 @@ export default {
       this.loadingFields = true;
       const formStore = await this.makeFormStore(value);
       const ret = await this.API.getFormDict({ data_code: value });
-      ret.data.forEach(item => {
+      ret.data.forEach((item) => {
         const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
         item.field_display = (field ? field._fieldName : "系统字段") + `(${item.field_name})`;
       });
       this.formFields[value] = ret.data;
       this.loadingFields = false;
-    }
-  }
+    },
+  },
 };
 </script>

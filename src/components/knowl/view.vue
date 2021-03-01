@@ -19,6 +19,12 @@
           </div>
         </div>
       </div>
+      <div class="pso-view-sorttag" v-if="curNode && mgtable">
+        <el-tabs v-model="curTab">
+          <el-tab-pane v-if="!!curNode.is_leaf" label="资源" name="data"></el-tab-pane>
+          <el-tab-pane label="权限" name="auth"></el-tab-pane>
+        </el-tabs>
+      </div>
       <div class="pso-view-fun">
         <div class="pso-view-fun-l">
           <div class="view-table-fun">
@@ -39,7 +45,7 @@
         </div>
       </div>
       <div class="pso-view-table" style="height: calc(100% - 50px)">
-        <div class="pso-view-table__body" ref="tableRef">
+        <div class="pso-view-table__body" ref="tableRef" v-if="curTab === 'data'">
           <knowl-table
             ref="table"
             :fetching="fetching"
@@ -64,6 +70,7 @@
             ></el-pagination>
           </div>
         </div>
+        <pso-nodeauth v-if="curTab === 'auth' && curNode" :node="curNode"></pso-nodeauth>
       </div>
     </div>
     <pso-dialog :visible="showEditor" width="50%" @close="showEditor = false">
@@ -92,9 +99,10 @@
   </div>
 </template>
 <script>
+import PsoNodeauth from "../node-auth";
+import KnowlTable from "./table";
 import { PagingMixin, AuthViewMixin } from "../../mixin/view";
 import { Attach } from "../../mixin/form";
-import KnowlTable from "./table";
 const DATA = {
   r_name: "",
   map_key: "",
@@ -102,7 +110,7 @@ const DATA = {
 
 export default {
   mixins: [PagingMixin, AuthViewMixin, Attach],
-  components: { KnowlTable },
+  components: { PsoNodeauth, KnowlTable },
   props: {
     data_type: {
       type: String,
@@ -127,6 +135,10 @@ export default {
       type: String,
       default: "checkbox",
     },
+    mgtable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -141,6 +153,7 @@ export default {
       showEditor: false,
       curInstance: { ...DATA },
       watchFun: [],
+      curTab: "data",
     };
   },
   computed: {

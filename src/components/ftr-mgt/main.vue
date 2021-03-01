@@ -12,12 +12,20 @@
         </div>
         <div class="pso-view-fun">
           <div class="pso-view-fun-l">
-            <pso-search text="搜索" v-model="fetchParams.keywords"></pso-search>
+            <div class="view-table-fun">
+              <pso-search text="搜索" v-model="fetchParams.keywords"></pso-search>
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="text" icon="el-icon-refresh" @click="fetch">刷新</el-button>
+            </div>
           </div>
           <div class="pso-view-fun-r">
-            <el-button type="primary" size="mini" @click="addHandler">新增</el-button>
-            <el-button size="mini" @click="publishHandler" :disabled="publishing" :loading="publishing">发布</el-button>
-            <el-button type="danger" size="mini" @click="delHandler" :disabled="deleting" :loading="deleting">删除</el-button>
+            <div class="view-data-fun">
+              <el-button type="primary" size="mini" @click="addHandler">新增</el-button>
+              <el-button size="mini" @click="publishHandler" :disabled="selected.length !== 1 || publishing" :loading="publishing">
+                发布
+              </el-button>
+              <el-button type="danger" size="mini" @click="delHandler" :disabled="deleting" :loading="deleting">删除</el-button>
+            </div>
           </div>
         </div>
       </div>
@@ -59,7 +67,7 @@
         </div>
       </div>
     </div>
-    <pso-dialog :visible="showEditor" width="40%" @close="showEditor = false">
+    <pso-dialog :visible="showEditor" width="70%" @close="showEditor = false">
       <template #title>
         <div class="form-executor-header">
           <div class="form-executor-header__l">
@@ -71,7 +79,7 @@
         </div>
       </template>
       <div style="height: 100%; padding: 15px; overflow: auto" v-loading="store.saving">
-        <main-designer ref="designer" @save="goAdd"></main-designer>
+        <main-designer ref="designer" @save="goAdd" :store="store"></main-designer>
       </div>
     </pso-dialog>
   </div>

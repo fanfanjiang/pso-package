@@ -103,7 +103,10 @@ export const FORM_UPLOAD_FIELDS = {
     field: "",
     name: "",
     type: "",
-    enable: false
+    enable: false,
+    format: '',
+    relate_field: '',
+    relate_target: ''
 }
 
 export const FORM_STATUS_FIELDS = {

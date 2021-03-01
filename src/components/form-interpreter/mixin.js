@@ -57,6 +57,10 @@ export default {
             this.cpnt.__setDataByIds = this.setDataByIds;
         }
 
+        if (this.deleteCpntValue) {
+            this.cpnt.__deleteCpntValue = this.deleteCpntValue;
+        }
+
         this.cpnt.$state = this.$data;
 
         if (this.cpnt.data._association) {
@@ -79,6 +83,9 @@ export default {
                         this.cpnt.data._val = purified;
                         return;
                     }
+                }
+                if (this.makeShowValue) {
+                    this.makeShowValue();
                 }
                 this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });
                 this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });

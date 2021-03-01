@@ -15,7 +15,7 @@
     <div class="pso-view-body" v-loading="initializing">
       <template v-if="curNode && !initializing">
         <div class="pso-view-header">
-          <div class="pso-view-header__l" v-if="!params.hideTitle">
+          <div class="pso-view-header__l">
             <div class="pso-view-title">
               <i class="el-icon-document"></i>
               <span>工作表：{{ curNode.node_display }}({{ curNode.node_name }})</span>
@@ -29,50 +29,22 @@
           </div>
         </div>
         <div class="pso-view-viewtab">
-          <el-tabs v-model="curTab" type="card">
-            <template v-if="!!curNode.is_leaf">
-              <el-tab-pane label="数据" name="preview"></el-tab-pane>
-              <el-tab-pane label="列表" name="list"></el-tab-pane>
-              <el-tab-pane label="动作" name="action"></el-tab-pane>
-              <el-tab-pane label="字段" name="field"></el-tab-pane>
-              <el-tab-pane label="状态" name="status"></el-tab-pane>
-              <el-tab-pane label="发布" name="publish"></el-tab-pane>
-              <el-tab-pane label="上传" name="upload"></el-tab-pane>
-              <el-tab-pane label="显示" name="rule"></el-tab-pane>
-              <el-tab-pane label="提交" name="submit"></el-tab-pane>
-              <el-tab-pane label="阶段" name="stage"></el-tab-pane>
-              <el-tab-pane label="子表" name="asstable"></el-tab-pane>
-              <el-tab-pane label="内部API" name="innerapi"></el-tab-pane>
-              <el-tab-pane label="外部API" name="outerapi"></el-tab-pane>
-            </template>
-            <el-tab-pane label="权限" name="auth"></el-tab-pane>
-          </el-tabs>
+          <button-tabs v-if="!!curNode.is_leaf" v-model="curTab" :data="TABS" :indexed="false"></button-tabs>
+          <button-tabs v-else v-model="curTab" :data="TABS_FOLDER" :indexed="false"></button-tabs>
         </div>
         <div class="pso-view-table" v-loading="saving">
           <template v-if="!!curNode.is_leaf">
-            <pso-form-view
-              v-show="curTab === 'preview'"
-              :key="curNode.node_id"
-              :cfg-id="curNode.node_name"
-              :view-auth="4"
-              wipeable
-              wipeallable
-            >
-            </pso-form-view>
+            <pso-form-view v-show="curTab === 'preview'" :cfg-id="curNode.node_name" :view-auth="4" wipeable wipeallable> </pso-form-view>
             <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
             <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData" :actions="actions"></form-column>
             <form-action v-if="curTab === 'action' && formStore" :actions="actions" :store="formStore"></form-action>
             <form-status
               v-if="curTab === 'status' && formStore"
               :code="formStore.data_code"
-              :data="staData"
               :fields="tableData"
-            ></form-status>
-            <form-status
-              v-if="curTab === 'stage' && formStore"
-              :code="formStore.data_code"
-              :data="stageData"
-              :fields="tableData"
+              :status="staData"
+              :stage="stageData"
+              :subdata="subCfg"
             ></form-status>
             <form-publish
               v-if="curTab === 'publish' && formStore"
@@ -89,12 +61,12 @@
               :store="formStore"
             ></form-upload>
             <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
-            <form-submit v-if="curTab === 'submit'" :data="subCfg" :fields="tableData"></form-submit>
             <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
-            <form-iapicfg v-if="curTab === 'innerapi'" :data="inner_api" :fields="tableData" :code="formStore.data_code"></form-iapicfg>
-            <form-oapicfg v-if="curTab === 'outerapi'"></form-oapicfg>
+            <form-apicfg v-if="curTab === 'api'" :data="inner_api" :fields="tableData" :code="formStore.data_code"></form-apicfg>
           </template>
-          <pso-nodeauth v-if="curTab === 'auth'" :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+          <div v-if="curTab === 'auth'" style="padding-top: 20px">
+            <pso-nodeauth :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
+          </div>
         </div>
       </template>
       <el-dialog title="修改CODE" append-to-body :visible.sync="showCodeEditor" :width="'400px'">
@@ -122,18 +94,32 @@ import FormColumn from "./form-column";
 import FormStatus from "./form-status";
 import FormPublish from "./form-publish";
 import FormRule from "./form-rule";
-import FormSubmit from "./form-submit";
 import FormAsstable from "./form-asstable";
 import FormUpload from "./form-upload";
-import FormIapicfg from "./form-iapicfg";
-import FormOapicfg from "./form-oapicfg";
+import FormApicfg from "./form-apicfg";
 import FormAction from "./action";
+
+import ButtonTabs from "../button-tabs";
+import GreatPanel from "../great-panel";
 
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList } from "../../utils/util";
 import { MgtMixin } from "../../mixin/view";
 import { _DATA } from "./const";
-
+const TABS = [
+  { label: "数据", id: "preview", icon: "el-icon-coin" },
+  { label: "视图", id: "list", icon: "el-icon-picture" },
+  { label: "动作", id: "action", icon: "el-icon-s-promotion" },
+  { label: "状态", id: "status", icon: "el-icon-s-help" },
+  { label: "规则", id: "rule", icon: "el-icon-s-operation" },
+  { label: "发布", id: "publish", icon: "el-icon-monitor" },
+  { label: "导入", id: "upload", icon: "el-icon-upload" },
+  { label: "字段", id: "field", icon: "el-icon-cpu" },
+  { label: "子表", id: "asstable", icon: "el-icon-connection" },
+  { label: "API", id: "api", icon: "el-icon-share" },
+  { label: "权限", id: "auth", icon: "el-icon-key" },
+];
+const TABS_FOLDER = [{ label: "权限", id: "auth", icon: "el-icon-key" }];
 export default {
   mixins: [formOp, MgtMixin],
   components: {
@@ -145,12 +131,12 @@ export default {
     FormStatus,
     FormPublish,
     FormRule,
-    FormSubmit,
     FormAsstable,
     FormUpload,
-    FormIapicfg,
-    FormOapicfg,
+    FormApicfg,
     FormAction,
+    ButtonTabs,
+    GreatPanel,
   },
   props: {
     params: {
@@ -158,6 +144,8 @@ export default {
     },
   },
   data() {
+    this.TABS = TABS;
+    this.TABS_FOLDER = TABS_FOLDER;
     return {
       initializing: true,
       appid: "",

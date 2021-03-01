@@ -21,6 +21,10 @@ export default class Paper extends Module {
             addressRequired: false,
             passScore: 60,
             order: [],
+            examEndSqlRequired: false,
+            examEndSql: [],
+            gradeEndSqlRequired: false,
+            gradeEndSql: []
         }
     }
 

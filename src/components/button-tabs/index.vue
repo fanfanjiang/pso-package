@@ -1,11 +1,11 @@
 <template>
   <div class="pso-btntabs">
-    <div :class="tabsClass(i)" v-for="(d, i) in data" :key="i" @click="clickHandler(i)">
+    <div :class="tabsClass(d, i)" v-for="(d, i) in data" :key="i" @click="clickHandler(d, i)">
       <div class="pso-btntabs-label">
         <i :class="d.icon" v-if="d.icon"></i>
         <span>{{ d.label }}</span>
       </div>
-      <span class="pso-btntabs-split" v-if="i !== data.length - 1">/</span>
+      <span class="el-breadcrumb__separator" v-if="i !== data.length - 1">/</span>
     </div>
   </div>
 </template>
@@ -13,7 +13,11 @@
 export default {
   props: {
     data: Array,
-    value: Number,
+    value: [Number, String],
+    indexed: {
+      type: Boolean,
+      default: true,
+    },
   },
   model: {
     prop: "value",
@@ -21,7 +25,7 @@ export default {
   },
   data() {
     return {
-      activeIndex: 0,
+      activeIndex: this.value,
     };
   },
   watch: {
@@ -29,18 +33,18 @@ export default {
       this.$emit("change", val);
     },
   },
-  created() {
-    this.activeIndex = this.value;
-  },
   methods: {
-    tabsClass(index) {
+    tabsClass(tab, index) {
       return {
-        "pso-btntabs-item__active": index === this.activeIndex,
+        "pso-btntabs-item__active": this.getID(tab, index) === this.activeIndex,
         "pso-btntabs-item": true,
       };
     },
-    clickHandler(i) {
-      this.activeIndex = i;
+    clickHandler(tab, index) {
+      this.activeIndex = this.getID(tab, index);
+    },
+    getID(tab, index) {
+      return this.indexed ? index : tab.id || tab.label;
     },
   },
 };

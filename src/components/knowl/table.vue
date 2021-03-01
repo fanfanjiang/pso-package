@@ -11,6 +11,7 @@
   >
     <template #default>
       <el-table-column v-if="checkable" type="selection" width="40" header-align="center" align="center"></el-table-column>
+      <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
       <el-table-column label="资源" width="90" align="center">
         <div class="pso-src-mini" slot-scope="scope">
           <pso-attachment

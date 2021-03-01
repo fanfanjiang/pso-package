@@ -48,7 +48,7 @@
         </div>
       </div>
     </div>
-    <pso-dialog :visible="showEditor" width="40%" @close="showEditor = false">
+    <pso-dialog :visible="showEditor" width="50%" @close="showEditor = false">
       <template #title>
         <div class="form-executor-header">
           <div class="form-executor-header__l">

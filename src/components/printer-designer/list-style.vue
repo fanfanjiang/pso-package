@@ -4,7 +4,7 @@
       <el-button size="mini" type="primary" @click="addHandler">添加样式</el-button>
       <el-button size="mini" type="danger" @click="delHandler">删除样式</el-button>
     </div>
-    <el-table size="mini" :data="data" style="width: 100%" @selection-change="changeHandler">
+    <el-table border size="mini" :data="data" style="width: 100%" @selection-change="changeHandler">
       <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
       <el-table-column prop="name" label="名称" fixed="left">
         <template slot-scope="scope">

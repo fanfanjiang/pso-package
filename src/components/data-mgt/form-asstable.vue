@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div style="margin-top: 20px">
     <template v-if="data.length">
       <el-tabs v-model="activeTab" type="border-card">
         <el-tab-pane :label="t.name" :name="t.id" v-for="t in data" :key="t.id">
           <pso-title>基本参数</pso-title>
-          <el-form ref="form" label-width="120px" label-position="left">
+          <el-form ref="form" label-width="120px" label-position="left" :inline="true">
             <el-form-item label="是否开启权限">
               <el-switch v-model="t.authable" size="mini"></el-switch>
             </el-form-item>
@@ -13,12 +13,7 @@
             </el-form-item>
             <el-form-item label="状态约束">
               <el-select v-model="t.status" size="mini" clearable multiple>
-                <el-option
-                  v-for="sts in statusCfg[t.id]"
-                  :key="sts.value"
-                  :label="sts.name"
-                  :value="sts.value"
-                ></el-option>
+                <el-option v-for="sts in statusCfg[t.id]" :key="sts.value" :label="sts.name" :value="sts.value"></el-option>
               </el-select>
             </el-form-item>
           </el-form>

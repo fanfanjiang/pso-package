@@ -108,6 +108,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    defingop: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -153,8 +157,13 @@ export default {
       designMode: false,
       forceInsertSys: false,
     });
+
     if (this.pick.cpnt) {
       this.makeCpnt(this.pick.cpnt.fid);
+
+      if (!this.pick.op && this.defingop && this.opOptions.length) {
+        this.pick.op = this.opOptions[0].id;
+      }
       if (this.pick.op && !this.pick.match) {
         this.opChange();
       }

@@ -195,7 +195,7 @@ export default {
           data[key] = this.curNode[key];
         }
       }
-
+      delete data.node_display;
       const ret = await this.API.trees({
         data: {
           open_type: "",

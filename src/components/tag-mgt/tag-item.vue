@@ -2,27 +2,14 @@
   <div class="pso-tag">
     <div class="pso-tag__l">
       <div class="pso-tag-controller">
-        <el-button size="small" type="primary" plain @click="addHandler()">新增</el-button>
+        <el-button size="mini" type="primary" plain @click="addHandler()">新增</el-button>
       </div>
-      <el-table
-        size="small"
-        v-loading="loadingTable"
-        :data="data"
-        style="width: 100%"
-        height="470"
-        @row-click="instanceClick"
-      >
+      <el-table border size="mini" v-loading="loadingTable" :data="data" style="width: 100%" height="470" @row-click="instanceClick">
         <el-table-column prop="tag_name" label="标签名"></el-table-column>
         <el-table-column prop="tag_type" label="标签类型" width="80"></el-table-column>
-        <el-table-column label="操作" fixed="right" width="50">
+        <el-table-column label="操作" width="110" align="center">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              circle
-              @click="delHandler(scope.row)"
-            ></el-button>
+            <el-button size="mini" type="danger" @click.stop="delHandler(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -38,7 +25,7 @@
         ></el-pagination>
       </div>
     </div>
-    <pso-drawer size="48%" :visible="showTagEditor" title="标签属性" @close="showTagEditor=false">
+    <pso-drawer size="48%" :visible="showTagEditor" title="标签属性" @close="showTagEditor = false">
       <div class="pso-tag__contet" v-if="curTag" v-loading="loading">
         <div class="pso-tag__tab">
           <el-tabs v-model="curTab">
@@ -46,18 +33,18 @@
             <template v-if="curTag.tag_meter">
               <el-tab-pane label="计量" name="cal"></el-tab-pane>
             </template>
-            <el-tab-pane label="查询参数" name="search" v-if="curTag.tag_type==='searchtag'"></el-tab-pane>
+            <el-tab-pane label="查询参数" name="search" v-if="curTag.tag_type === 'searchtag'"></el-tab-pane>
           </el-tabs>
         </div>
         <div class="pso-tag__body" :key="curTag.node_id">
-          <div v-show="curTab==='base'">
+          <div v-show="curTab === 'base'">
             <tag-editor :data="curTag"></tag-editor>
-            <div style="text-align:right">
+            <div style="text-align: right">
               <el-button size="mini" type="primary" @click="editHandler(curTag)">保 存</el-button>
             </div>
           </div>
-          <tag-cal v-if="curTab==='cal'" :tag="curTag"></tag-cal>
-          <tag-search v-if="curTab==='search'" :tag="curTag"></tag-search>
+          <tag-cal v-if="curTab === 'cal'" :tag="curTag"></tag-cal>
+          <tag-search v-if="curTab === 'search'" :tag="curTag"></tag-search>
         </div>
       </div>
     </pso-drawer>
@@ -89,7 +76,7 @@ export default {
       curTab: "base",
       dataTotal: 0,
       page: 1,
-      newTag: { 
+      newTag: {
         tag_name: "",
         tag_type: "",
         tag_note: "",

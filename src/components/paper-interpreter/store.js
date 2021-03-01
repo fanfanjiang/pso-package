@@ -19,6 +19,7 @@ export default class Interpreter extends Designer {
         this.appid = options.appid || '';
         this.start = this.mode !== 'edit';
         this.paperId = options.paperId;
+        this.extension = options.extension;
 
         this.instResult = [];
         this.instStatus = '0';
@@ -171,6 +172,11 @@ export default class Interpreter extends Designer {
         return { exam_name: name, id, phone, address };
     }
 
+    async doSqlScript(sql, extension = {}) {
+        const params = { script: [{ sql, param: {} }], params: { exam_id: this.code, exam_user: this.base.userid, ...extension } };
+        return await API.getPscriptData(params);
+    }
+
     async completePaper() {
         if (this.completing) return;
         this.completing = true;
@@ -190,6 +196,11 @@ export default class Interpreter extends Designer {
                 optype: 0
             });
             if (ret.success) {
+                const { examEndSqlRequired, examEndSql } = this.paperConfig;
+                if (examEndSqlRequired) {
+                    await this.doSqlScript(examEndSql, { ...this.getPaperRet(), result_id: ret.message || '' });
+                }
+
                 this.$vue.ResultNotify({ success: true, message: '完成答题' });
                 this.completed = true;
             }
@@ -199,19 +210,31 @@ export default class Interpreter extends Designer {
         }
     }
 
+    getPaperRet() {
+        const { passScore } = this.paperConfig;
+        return { result_id: this.paperId, result_score: this.score, passed: this.score >= passScore ? '1' : '0' };
+    }
+
     async gradePaper() {
         if (this.grading) return;
         this.grading = true;
+        const { gradeEndSqlRequired, gradeEndSql } = this.paperConfig;
+        const paperRet = this.getPaperRet();
         const ret = await API.addOrUpdatePaper({
             exam_id: this.code,
             result_id: this.paperId,
             result_score: this.score,
-            exam_status: PAPER_STATUS.graded.v,
+            exam_status: PAPER_STATUS[paperRet.passed === '1' ? 'passed' : 'failed'].v,
             exam_content: JSON.stringify(this.paperResult),
             optype: 1
         });
+        if (ret.success) {
+            if (gradeEndSqlRequired) {
+                await this.doSqlScript(gradeEndSql, paperRet);
+            }
+        }
         this.$vue.ResultNotify(ret);
-        this.$vue.$emit('graded')
+        this.$vue.$emit('graded');
         this.grading = false;
     }
 }

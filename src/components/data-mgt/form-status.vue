@@ -1,92 +1,40 @@
 <template>
-  <div>
-    <div class="pso-table-controller">
-      <el-button size="mini" type="primary" plain @click="addHandler">添加属性</el-button>
-    </div>
-    <el-table key="status" :data="data" style="width: 100%">
-      <el-table-column label="状态值" width="160">
-        <template slot-scope="scope">
-          <el-input-number size="mini" v-model="scope.row.value" controls-position="right" :min="0"></el-input-number>
-        </template>
-      </el-table-column>
-      <el-table-column label="显示名称" width="160">
-        <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.name" placeholder></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column label="禁止编辑" width="100">
-        <template slot-scope="scope">
-          <el-switch size="mini" v-model="scope.row.uneditable"></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="显示颜色" align="center" width="100">
-        <template slot-scope="scope">
-          <el-color-picker size="mini" v-model="scope.row.color"></el-color-picker>
-        </template>
-      </el-table-column>
-      <el-table-column label="显示方式">
-        <template slot-scope="scope">
-          <el-select size="mini" v-model="scope.row.display">
-            <el-option label="仅自身文字" value="1"></el-option>
-            <el-option label="整行文字" value="2"></el-option>
-            <el-option label="整行背景色" value="3"></el-option>
-          </el-select>
-        </template>
-      </el-table-column>
-      <el-table-column label="目标值">
-        <template slot-scope="scope">
-          <el-select size="mini" v-model="scope.row.target" multiple>
-            <template v-for="(d, i) in data">
-              <el-option v-if="i !== scope.$index" :label="d.name" :value="d.value" :key="i"></el-option>
-            </template>
-          </el-select>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="200" fixed="right">
-        <template slot-scope="scope">
-          <el-button size="mini" type="success" @click="goDesigner(scope.$index)">设计脚本</el-button>
-          <el-button size="mini" type="danger" @click="delHandler(scope.$index)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <sql-designer :opener="showDeisgner" :scode="code" :sql="curSql"></sql-designer>
+  <div style="margin-top: 20px">
+    <great-panel>
+      <template #header>
+        <i class="el-icon-edit-outline"></i>
+        <span>状态配置</span>
+      </template>
+      <status-designer :code="code" :data="status" :fields="fields"></status-designer>
+    </great-panel>
+    <great-panel>
+      <template #header>
+        <i class="el-icon-edit-outline"></i>
+        <span>阶段配置</span>
+      </template>
+      <status-designer :code="code" :data="stage" :fields="fields"></status-designer>
+    </great-panel>
+    <great-panel>
+      <template #header>
+        <i class="el-icon-edit-outline"></i>
+        <span>提交配置</span>
+      </template>
+      <form-submit :data="subdata" :fields="fields"></form-submit>
+    </great-panel>
   </div>
 </template>
 <script>
-import SqlDesigner from "../sql-designer";
-import { FORM_STATUS_FIELDS } from "../../const/sys";
-import { formatJSONList } from "../../utils/util";
-
+import StatusDesigner from "./status-designer";
+import FormSubmit from "./form-submit";
+import GreatPanel from "../great-panel";
 export default {
-  components: { SqlDesigner },
-  props: ["data", "fields", "code"],
-  data() {
-    return {
-      curSql: null,
-      showDeisgner: { show: false },
-    };
-  },
-  created() {
-    formatJSONList(this.data, FORM_STATUS_FIELDS);
-    this.data.forEach((d) => {
-      if (typeof d.script === "string") {
-        this.$delete(d, "script");
-        delete d.script;
-        this.$set(d, "script", []);
-      }
-    });
-  },
-  methods: {
-    goDesigner(index) {
-      this.curSql = this.data[index].script;
-      this.showDeisgner.show = true;
-    },
-    addHandler() {
-      this.data.push(_.cloneDeep(FORM_STATUS_FIELDS));
-    },
-    delHandler(index) {
-      this.data.splice(index, 1);
-    },
+  components: { GreatPanel, StatusDesigner, FormSubmit },
+  props: {
+    fields: Array,
+    code: String,
+    status: Array,
+    stage: Array,
+    subdata: Array,
   },
 };
 </script>

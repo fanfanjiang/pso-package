@@ -35,7 +35,8 @@
         v-loading="loadingTable"
         :data="authData"
         style="width: 100%"
-        size="medium"
+        size="mini"
+        border
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>

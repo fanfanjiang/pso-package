@@ -1,18 +1,32 @@
 <template>
   <div class="pso-form_rule">
     <div class="pso-form_rule-l">
-      <pso-title info="为选择的字段设置条件，只有当表单满足条件时才显示这些字段">显示规则</pso-title>
-      <div class="rule-list">
-        <div :class="ruleListClass(index)" class="rule-list-item" v-for="(r, index) in rules" :key="index" @click="handleRuleClick(index)">
-          <div>规则{{ index + 1 }}</div>
-          <i class="rule-list-item__del el-icon-delete-solid" @click.stop="handleRuleDel(index)"></i>
+      <great-panel color="#fff">
+        <template #header>
+          <i class="el-icon-edit-outline"></i>
+          <span>规则（为选择的字段设置条件，只有当表单满足条件时这些字段才显示或必填）</span>
+        </template>
+        <div class="rule-list">
+          <div
+            :class="ruleListClass(index)"
+            class="rule-list-item"
+            v-for="(r, index) in rules"
+            :key="index"
+            @click="handleRuleClick(index)"
+          >
+            <div>规则{{ index + 1 }}</div>
+            <i class="rule-list-item__del el-icon-delete-solid" @click.stop="handleRuleDel(index)"></i>
+          </div>
         </div>
-      </div>
-      <div class="rule-btn-add" @click="handleRuleAdd"><i class="el-icon-plus"></i>添加规则</div>
+        <div class="rule-btn-add" @click="handleRuleAdd"><i class="el-icon-plus"></i>添加规则</div>
+      </great-panel>
     </div>
     <div class="pso-form_rule-r">
-      <div v-if="curRule">
-        <pso-title>设置规则</pso-title>
+      <great-panel v-if="curRule">
+        <template #header>
+          <i class="el-icon-edit-outline"></i>
+          <span>设置规则</span>
+        </template>
         <h4>选择规则类型</h4>
         <el-select size="mini" v-model="curRule.controlType" placeholder="规则类型">
           <el-option v-for="(t, i) in ctrlType" :key="i" :label="t.n" :value="t.v"></el-option>
@@ -31,7 +45,7 @@
             </el-select>
           </div>
           <div class="rule-set__filter">
-            <h4>满足以下条件时显示</h4>
+            <h4>满足以下条件时显示或必填</h4>
             <div class="rule-set__filter-item" v-for="(f, index) in curRule.filters" :key="index">
               <div class="rule-set__filter-item-wrapper">
                 <div class="rule-set__filter-item__op">
@@ -69,7 +83,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </great-panel>
       <div v-else class="rule-set-empty">请选择一个规则</div>
     </div>
   </div>
@@ -78,10 +92,11 @@
 import { CPNT } from "../../const/form";
 import FormStore from "../form-designer/model/store.js";
 import PsoFormComponent from "../form-interpreter/cpnt";
+import GreatPanel from "../great-panel";
 
 export default {
   props: ["store", "rules"],
-  components: { PsoFormComponent },
+  components: { GreatPanel, PsoFormComponent },
   data() {
     this.ruleType = [
       { n: "且", v: 1 },

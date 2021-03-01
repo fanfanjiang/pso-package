@@ -27,6 +27,10 @@ export default class FTRStore {
         }
     }
 
+    get curCateFields() {
+        return this.getCateFields(this.activeCate);
+    }
+
     setActiveView(value) {
         this.activeView = value;
     }
@@ -40,6 +44,14 @@ export default class FTRStore {
     getCategory(solr_id) {
         solr_id = solr_id || this.activeCate;
         return _.find(this.categories, { solr_id });
+    }
+
+    getCateFields(solr_id) {
+        const cate = this.getCategory(solr_id);
+        if (cate && cate.solr_field) {
+            return JSON.parse(cate.solr_field);
+        }
+        return []
     }
 
     async initialize() {
@@ -62,7 +74,7 @@ export default class FTRStore {
         this.fetching = true;
         this.keywords = params.keywords;
         if (this.keywords) {
-            const ret = await API.getFTR({ ...params, dq: this.keywords, leaf_auth: this.activeView || 4 });
+            const ret = await API.getFTR({ ...params, solr_id: this.activeCate, dq: this.keywords, leaf_auth: this.activeView || 4 });
             this.instances = ret.data.data;
             this.dataTotal = ret.data.total;
         } else {

@@ -148,7 +148,7 @@
             :form-entity="syncProxy.entity"
             @data-loaded="formLoadHandler"
           ></pso-form-interpreter>
-          <sys-table v-if="couldSyncSys" ref="systable" :code="syncProxy.data[0].table_name"></sys-table>
+          <sys-table v-if="couldSyncSys" ref="systable" :code="syncProxy.data[0].table_id"></sys-table>
         </el-form>
       </div>
     </pso-dialog>

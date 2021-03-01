@@ -7,11 +7,15 @@
           <i class="el-icon-search" @click="fetch"></i>
         </div>
       </div>
-      <div class="pso-ftr-tabs"></div>
+      <div class="pso-ftr-tabs">
+        <el-tabs v-model="store.activeCate">
+          <el-tab-pane v-for="(ct, i) in store.categories" :key="i" :label="ct.solr_name" :name="ct.solr_id"></el-tab-pane>
+        </el-tabs>
+      </div>
       <div class="pso-ftr-body" v-if="store.instances.length">
         <div class="pso-ftr-item" v-for="(d, i) in store.instances" :key="i">
           <div class="pso-ftr-item-main" @click="mainClickHandler(d)">
-            <ftr-item :data="d" :fields="FIELDS" :store="store"></ftr-item>
+            <ftr-item :data="d" :fields="store.curCateFields" :store="store"></ftr-item>
           </div>
           <div class="pso-ftr-sub">
             <el-timeline>
@@ -54,7 +58,6 @@ import debounce from "throttle-debounce/debounce";
 import FtrItem from "./ftr-item";
 import FTRStore from "./store";
 import { PagingMixin, AuthViewMixin } from "../../mixin/view";
-import { FIELDS } from "./const";
 
 export default {
   components: { FtrItem },
@@ -66,7 +69,6 @@ export default {
     },
   },
   data() {
-    this.FIELDS = FIELDS;
     return {
       store: null,
     };
@@ -109,7 +111,6 @@ export default {
       }
     },
     getModuleData(mod, data) {
-      console.log(data["id"]);
       return this.store.getModuleData(mod, data);
     },
   },

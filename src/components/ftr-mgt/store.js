@@ -6,6 +6,8 @@ export default class FTRStore {
         this.fetching = false;
         this.fetchingModule = false;
         this.saving = false;
+        this.pubing = false;
+        this.indexing = false;
         this.savingSub = false;
 
         this.instances = [];
@@ -38,12 +40,12 @@ export default class FTRStore {
     }
 
     async fetchModules(params = {}) {
-        if (!params.keys) params.keys = {};
+        this.keysToObj(params);
         if (this.curInstance) {
             params.keys['solr_id'] = { type: '1', value: this.curInstance.solr_id }
         }
         this.keysToString(params);
-        this.fetchingModule = true; 
+        this.fetchingModule = true;
         const ret = await API.getFTRModulesCfg(params);
         if (ret.success) {
             this.modules = ret.data;
@@ -52,23 +54,42 @@ export default class FTRStore {
     }
 
     keysToString(params) {
-        if (params.keys) {
+        if (params.keys && typeof params.keys !== 'string') {
             params.keys = JSON.stringify(params.keys)
         }
     }
 
-    async modify(data) {
-        const { optype, solr_name } = data;
+    keysToObj(params) {
+        if (!params.keys) params.keys = {};
+        if (typeof params.keys === 'string') {
+            params.keys = JSON.parse(params.keys)
+        }
+    }
+
+    async modify(data, publish = false) {
+        const { optype, solr_name, solr_field, solr_id } = data;
         if (typeof optype === 'undefined' || (optype != 2 && !solr_name)) return this.$vue.$message.warning("请完善信息");
         this.saving = true;
-        const ret = await API.ftrcfg({ data, method: 'post' });
+        const ret = await API.ftrcfg({ data: { ...data, solr_field: JSON.stringify(solr_field) }, method: 'post' });
+        if (publish && solr_id) {
+            await this.publish({ solr_id });
+        }
         this.$vue.ResultNotify(ret);
         this.saving = false;
     }
 
     async publish(data) {
+        this.pubing = true;
         const ret = await API.publishFTRCfg(data);
         this.$vue.ResultNotify(ret);
+        this.pubing = false;
+    }
+
+    async makeIndexes(data) {
+        this.indexing = true;
+        const ret = await API.request('/api/ftrcfg/cfg/indexes', { data, method: 'post' });
+        this.$vue.ResultNotify(ret);
+        this.indexing = false;
     }
 
     async modifySub(data) {

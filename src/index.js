@@ -50,7 +50,7 @@ import PsoNodeauth from "./components/node-auth";
 import PsoMenuMgt from "./components/menu-mgt";
 import PsoTreeDimen from "./components/tree-dimen";
 import PsoTagMgt from "./components/tag-mgt";
-import PsoKnowlMgt from "./components/knowl-mgt";
+import PsoKnowlMgt from "./components/knowl";
 import PsoDataFilter from "./components/data-filter";
 import PsoFileList from "./components/file-list";
 
@@ -144,9 +144,7 @@ import PsoScheduleTrigger from "./components/schedule-trigger";
 import PsoDbmodelMgt from "./components/dbmodel-mgt";
 
 import PsoApprovalMgt from "./components/approval-mgt";
-
-import PsoKnowl from "./components/knowl";
-
+ 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
 import PsoFvWv from "./components/composite/fv-wv";
@@ -261,8 +259,6 @@ const components = {
     PsoSuperView,
     PsoApprovalMgt,
 
-    PsoKnowl,
-
     //混合视图
     PsoFvAst,
     PsoFvWv,
@@ -343,7 +339,19 @@ const Mixin = {
     FormMixin
 };
 
-export { BASEAPI, store, WfStore, FormStore, genComponentData, CONST, Mixin }
+import Auth from './tool/auth';
+
+const tool = {
+    Auth,
+    genComponentData
+};
+
+const Store = {
+    WfStore,
+    FormStore
+}
+ 
+export { BASEAPI, store, Store, CONST, Mixin, tool }
 
 export default {
     install

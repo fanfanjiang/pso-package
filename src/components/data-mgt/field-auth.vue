@@ -22,17 +22,18 @@
     <div class="pso-nodeauth__body">
       <el-table
         ref="table"
+        border
         v-loading="loadingTable"
         :data="authData"
         style="width: 100%"
-        size="medium"
+        size="mini"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="user_name" label="用户" width="180"></el-table-column>
         <el-table-column label="权限">
           <template slot-scope="scope">
-            <el-tag v-for="itemVal in getAuthTag(scope.row.show_auth)" :key="itemVal">{{ itemVal }}</el-tag>
+            <el-tag size="small" v-for="itemVal in getAuthTag(scope.row.show_auth)" :key="itemVal">{{ itemVal }}</el-tag>
           </template>
         </el-table-column>
       </el-table>

@@ -16,6 +16,7 @@
             :fixedfield="fixedfield"
             :pick="andCondition"
             :fieldsOptions="fieldsOptions"
+            :defingop="defingop"
           ></pso-datafilteritem>
           <i v-if="!(fixed || fixedfield)" class="data-filter__del el-icon-delete-solid" @click="delCondition({ orIndex, andIndex })"></i>
         </div>
@@ -61,6 +62,10 @@ export default {
       default: false,
     },
     fixedfield: {
+      type: Boolean,
+      default: false,
+    },
+    defingop: {
       type: Boolean,
       default: false,
     },

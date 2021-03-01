@@ -11,7 +11,7 @@ export const BaseMixin = {
     async created() {
         this.initializing = true;
         const { start = 0, num = 0 } = this.cpnt.data;
-        const data = await this.cpnt.store.fetchScriptData(this.cpnt, { limit: num, start });
+        const data = await this.cpnt.store.fetchScriptData(this.cpnt, { limit: num, start, ...this.cpnt.store.extension });
 
         const result = this.cpnt.store.instResult.filter(({ child_id }) => child_id === this.cpnt.urine.child_id);
 

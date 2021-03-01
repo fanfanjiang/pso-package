@@ -10,6 +10,7 @@
             :condition="store.defCondition"
             :fieldsOptions="store.conditionOptions"
             fixedfield
+            defingop
           ></pso-data-filter>
         </transition>
       </div>
@@ -187,6 +188,10 @@ export default {
       type: String,
       default: () => [],
     },
+    expanding: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -201,7 +206,7 @@ export default {
     },
     viewClass() {
       return {
-        "pso-view__expand": this.store && this.store.showFilter,
+        "pso-view__expand": this.store && this.store.defCondition.length && this.store.showFilter,
       };
     },
     displayMode() {
@@ -263,6 +268,7 @@ export default {
 
         this.makeKeys();
         await this.store.initialize(this.params.wfId, this.params.useCloumn);
+        this.store.showFilter = this.expanding;
         this.$emit("initialized", { store: this.store.store, cfg: this.store.formCfg, wvStore: this.store });
         await this.store.fetchStatus();
 

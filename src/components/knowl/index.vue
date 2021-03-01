@@ -7,7 +7,8 @@
       :treeable="curTab === 0"
       :searchType="curTab"
       :opable="curTab === 0 && opable"
-      :data_type="data_type"
+      :data_type="params.data_type"
+      :mgtable="!!params.mgtable && params.mgtable !== '0'"
       @select="$emit('select', $event)"
     ></knowl-view>
   </div>
@@ -20,8 +21,9 @@ const TABS = [{ label: "资料中心" }, { label: "我收藏的" }, { label: "�
 export default {
   components: { ButtonTabs, KnowlView },
   props: {
-    data_type: {
-      type: String,
+    params: {
+      type: Object,
+      default: () => ({ data_type: "", mgtable: false }),
     },
     treeable: {
       type: Boolean,

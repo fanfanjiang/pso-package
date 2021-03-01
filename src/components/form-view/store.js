@@ -98,6 +98,7 @@ export default class FormViewStore {
         //列表原始配置
         this.usedFormCol = '';
         this.oriColData = null;
+        this.quickSearch = { field_name: 'd_name', display: '' };//快捷搜索，默认d_name 
 
         //加载后立即打开的实例
         this.insttogo = '';
@@ -392,8 +393,8 @@ export default class FormViewStore {
             params.where = this.defComplexity;
         }
 
-        if (this.keywords !== "" && !params.keys.d_name) {
-            params.keys.d_name = { value: this.keywords, type: 2 };
+        if (this.keywords !== "" && !params.keys[this.quickSearch.field_name]) {
+            params.keys[this.quickSearch.field_name] = { value: this.keywords, type: 2 };
         }
 
         if (this.insttogo) {
@@ -669,6 +670,13 @@ export default class FormViewStore {
             this.usedFormCol = exist.name;
             this.usedActionIds = exist.actions;
 
+            if (exist.qsearch) {
+                const qs = _.find(exist.data, { field_name: exist.qsearch });
+                if (qs) {
+                    this.quickSearch = qs;
+                }
+            }
+
             for (let key in this.mobileField) {
                 if (exist[key]) {
                     this.mobileField[key] = exist[key];
@@ -700,9 +708,12 @@ export default class FormViewStore {
         let uploadCfg = this.formCfg.export_config;
         if (uploadCfg) {
             if (typeof uploadCfg === 'string') {
-                uploadCfg = JSON.parse(uploadCfg)
+                uploadCfg = JSON.parse(uploadCfg);
+                if (Array.isArray(uploadCfg)) {
+                    return this.$vue.$message({ message: '配置参数已不适用版本，请更新配置', type: 'warning' });
+                }
             }
-            const cfg = uploadCfg.filter(f => f.enable);
+            const cfg = uploadCfg.mainfields.filter(f => f.enable);
             const data = {};
             cfg.forEach(c => {
                 data[c.field] = c.name;

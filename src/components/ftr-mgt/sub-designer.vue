@@ -13,22 +13,58 @@
         <el-radio v-model="data.child_status" :label="0">关闭</el-radio>
         <el-radio v-model="data.child_status" :label="1">开启</el-radio>
       </el-form-item>
-      <el-form-item label="配置内容">
-        <el-input v-model="data.child_content" size="mini" autocomplete="off"></el-input>
-      </el-form-item>
       <el-form-item label="配置数据">
         <el-button size="mini" type="success" @click="showDeisgner.show = true">设计脚本</el-button>
       </el-form-item>
       <el-form-item label="配置字段">
         <el-input v-model="data.child_field" size="mini" autocomplete="off"></el-input>
       </el-form-item>
+      <el-form-item label="链接">
+        <el-input v-model="data.child_url" size="mini" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="排序">
+        <el-input-number size="mini" v-model="data.child_order" controls-position="right"></el-input-number>
+      </el-form-item>
     </el-form>
+    <great-panel :padding="10">
+      <template #header>
+        <i class="el-icon-s-operation"></i>
+        <span>字段配置</span>
+      </template>
+      <div style="text-align: right">
+        <el-button type="success" size="mini" @click="syncHandler">同步字段</el-button>
+      </div>
+      <el-table border size="mini" height="300" style="width: 100%; margin-top: 5px" :data="columnProxy">
+        <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="field" label="字段" width="110">
+          <template slot-scope="scope">
+            <el-input size="mini" v-model="scope.row.field"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="名称">
+          <template slot-scope="scope">
+            <el-input size="mini" v-model="scope.row.name"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="titled" label="是否标题" width="120" align="center">
+          <template slot-scope="scope">
+            <el-switch size="mini" v-model="scope.row.titled" active-value="1" inactive-value="0"></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column prop="titled" label="显示" width="120" align="center">
+          <template slot-scope="scope">
+            <el-switch size="mini" v-model="scope.row.show"></el-switch>
+          </template>
+        </el-table-column>
+      </el-table>
+    </great-panel>
     <sql-designer :opener="showDeisgner" :sql="proxy" @gencolumn="gencolumn"></sql-designer>
   </div>
 </template> 
 <script>
 import { formatJSONList } from "../../utils/util";
 import SqlDesigner from "../sql-designer";
+import GreatPanel from "../great-panel";
 const BASE = {
   child_id: "",
   solr_id: "",
@@ -38,9 +74,11 @@ const BASE = {
   child_status: 1,
   child_data: "",
   child_field: "",
+  child_order: 0,
+  child_url: "",
 };
 export default {
-  components: { SqlDesigner },
+  components: { GreatPanel, SqlDesigner },
   props: {
     data: Object,
   },
@@ -51,8 +89,10 @@ export default {
       { n: "脚本", v: "Script" },
     ];
     return {
+      syncing: false,
       showDeisgner: { show: false },
       proxy: [],
+      columnProxy: [],
     };
   },
   watch: {
@@ -63,16 +103,32 @@ export default {
         }
       },
     },
+    columnProxy: {
+      deep: true,
+      handler(value) {
+        this.data.child_content = JSON.stringify(value);
+      },
+    },
   },
   created() {
     formatJSONList([this.data], BASE);
     if (this.data.child_type === "Script" && this.data.child_data) {
       this.proxy = JSON.parse(this.data.child_data);
     }
+    if (this.data.child_content) {
+      this.columnProxy = JSON.parse(this.data.child_content);
+    }
   },
   methods: {
     gencolumn(column) {
-      this.data.child_content = JSON.stringify(column.map(({ display, field }) => ({ display, field })));
+      if (!this.syncing) return;
+      this.syncing = false;
+      this.showDeisgner.show = false;
+      this.columnProxy = column.map(({ display, field }) => ({ name: display, field, titled: "0", show: true }));
+    },
+    syncHandler() {
+      this.syncing = true;
+      this.showDeisgner.show = true;
     },
   },
 };
