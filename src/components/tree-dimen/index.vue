@@ -20,7 +20,7 @@
           </div>
           <div class="pso-view-fun-r">
             <div class="view-data-fun">
-              <el-button type="primary" size="mini" @click="newDimen">新增维度</el-button>
+              <el-button type="primary" size="mini" @click="newDimen">新增维度类型</el-button>
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@
             <el-table-column label="操作" width="160" align="center">
               <template slot-scope="scope">
                 <el-button size="mini" @click.stop.prevent="editDimen(scope.row)">编辑</el-button>
-                <el-button size="mini" type="danger" @click.stop.prevent="delDimen(scope.row)">删除</el-button>
+                <el-button v-if="!scope.row.is_sys" size="mini" type="danger" @click.stop.prevent="delDimen(scope.row)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>

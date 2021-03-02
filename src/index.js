@@ -144,7 +144,9 @@ import PsoScheduleTrigger from "./components/schedule-trigger";
 import PsoDbmodelMgt from "./components/dbmodel-mgt";
 
 import PsoApprovalMgt from "./components/approval-mgt";
- 
+
+import PsoCommonView from "./components/common-view";
+
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
 import PsoFvWv from "./components/composite/fv-wv";
@@ -258,7 +260,7 @@ const components = {
 
     PsoSuperView,
     PsoApprovalMgt,
-
+    PsoCommonView,
     //混合视图
     PsoFvAst,
     PsoFvWv,
@@ -350,7 +352,7 @@ const Store = {
     WfStore,
     FormStore
 }
- 
+
 export { BASEAPI, store, Store, CONST, Mixin, tool }
 
 export default {

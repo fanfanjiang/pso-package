@@ -1,48 +1,49 @@
 <template>
   <div class="pso-form-designer" v-loading="loading">
     <div class="pso-form-designer__header">
-      <pso-header title="表单设计" @back="$emit('back',{params})" v-if="storeReady">
+      <pso-header title="表单设计" @back="$emit('back', { params })" v-if="storeReady">
         <template v-slot:btn>
-          <el-button
-            :disabled="!formStore.canUndo"
-            type="primary"
-            size="small"
-            icon="fa fa-undo"
-            plain
-            @click="()=>formStore.undo()"
-          ></el-button>
-          <el-button
-            :disabled="!formStore.canRedo"
-            type="primary"
-            size="small"
-            icon="fa fa-repeat"
-            plain
-            @click="()=>formStore.redo()"
-          ></el-button>
+          <el-tooltip effect="dark" content="撤销" placement="bottom-end">
+            <el-button
+              :disabled="!formStore.canUndo"
+              type="primary"
+              size="mini"
+              icon="fa fa-undo"
+              plain
+              @click="() => formStore.undo()"
+            ></el-button>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="恢复" placement="bottom-end">
+            <el-button
+              :disabled="!formStore.canRedo"
+              type="primary"
+              size="mini"
+              icon="fa fa-repeat"
+              plain
+              @click="() => formStore.redo()"
+            ></el-button>
+          </el-tooltip>
           <el-button
             v-if="params.id"
             type="primary"
-            size="small"
+            size="mini"
             icon="fa fa-floppy-o"
             :loading="saving"
             :disabled="saving"
             @click="formSaveHandler('1')"
-          >发布</el-button>
+            >发布</el-button
+          >
           <el-button
-            v-if="params.id||params.pid"
+            v-if="params.id || params.pid"
             type="primary"
-            size="small"
+            size="mini"
             icon="fa fa-floppy-o"
             :loading="saving"
             :disabled="saving"
             @click="formSaveHandler('0')"
-          >保存</el-button>
-          <el-dropdown
-            class="pso-form-designer__more"
-            trigger="click"
-            :hide-on-click="false"
-            @command="handleCommand"
+            >保存</el-button
           >
+          <el-dropdown class="pso-form-designer__more" trigger="click" :hide-on-click="false" @command="handleCommand">
             <span class="el-dropdown-link">
               更多
               <i class="el-icon-arrow-down el-icon--right"></i>
@@ -51,11 +52,7 @@
               <el-dropdown-item command="saveTemp">保存为模板</el-dropdown-item>
               <el-dropdown-item v-if="formStore.templateId" command="updateTemp">更新模板</el-dropdown-item>
               <el-dropdown-item>
-                <pso-picker-resource
-                  @confirm="handleTempSelection"
-                  source="table"
-                  :options="importTreeOption"
-                >
+                <pso-picker-resource @confirm="handleTempSelection" source="table" :options="importTreeOption">
                   <el-button type="text">导入模板</el-button>
                 </pso-picker-resource>
               </el-dropdown-item>
@@ -74,12 +71,9 @@
         </el-form-item>
         <el-form-item label="保存位置" label-width="80px">
           <div class="tag-list" v-if="resource.list.length">
-            <el-tag
-              v-for="item in resource.list"
-              :key="item.node_id"
-              closable
-              @close="handleDelSelection(item)"
-            >{{item.node_display}}</el-tag>
+            <el-tag v-for="item in resource.list" :key="item.node_id" closable @close="handleDelSelection(item)">{{
+              item.node_display
+            }}</el-tag>
           </div>
           <pso-picker-tree
             rootable
@@ -92,13 +86,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="showTempPop = false">取 消</el-button>
-        <el-button
-          size="mini"
-          type="primary"
-          :loading="savingCfg"
-          :disabled="savingCfg"
-          @click="prepareTempData"
-        >确 定</el-button>
+        <el-button size="mini" type="primary" :loading="savingCfg" :disabled="savingCfg" @click="prepareTempData">确 定</el-button>
       </div>
     </el-dialog>
   </div>

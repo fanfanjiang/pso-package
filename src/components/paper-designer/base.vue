@@ -23,8 +23,12 @@
     <great-panel :padding="0" color="#fff">
       <template #header>
         <i class="el-icon-edit-outline"></i>
-        <span>考试结束脚本</span>
+        <span>考试结束脚本：</span>
       </template>
+      <div style="padding: 10px; background: #f7f8fa">
+        传入参数
+        <br />exam_id：试卷ID；<br />exam_user：答题人ID；<br />result_id：答题结果ID；<br />result_score：分数;<br />passed：是否及格
+      </div>
       <el-switch size="mini" v-model="store.paperConfig.examEndSqlRequired"> </el-switch>
       <el-button
         v-if="store.paperConfig.examEndSqlRequired"
@@ -39,7 +43,7 @@
     <great-panel :padding="0" color="#fff">
       <template #header>
         <i class="el-icon-edit-outline"></i>
-        <span>阅卷结束脚本</span>
+        <span>阅卷结束脚本：</span>
       </template>
       <el-switch size="mini" v-model="store.paperConfig.gradeEndSqlRequired"> </el-switch>
       <el-button

@@ -1,23 +1,19 @@
 <template>
-  <div :class="viewClass">
+  <div :class="viewClass" v-if="config">
     <div class="pso-view-extend">
       <div class="pso-tree">
         <div class="pso-tree__body">
-          <el-tree
+          <pso-tree-common
             ref="tree"
             node-key="leaf_id"
-            :default-expand-all="true"
-            :empty-text="emptyText"
-            :data="treeData"
-            :props="treeProps"
+            :edit-mode="false"
+            :draggable="false"
+            :show-checkbox="false"
+            :tree-props="treeProps"
+            static-mode
+            :filter="['d_name']"
             @node-click="nodeClickHandler"
-          >
-            <span class="pso-tree__node" slot-scope="{ node }">
-              <span class="pso-tree__node-title">
-                <span>{{ node.data.d_name }}</span>
-              </span>
-            </span>
-          </el-tree>
+          ></pso-tree-common>
         </div>
       </div>
     </div>
@@ -44,7 +40,6 @@ export default {
       curNode: null,
       emptyText: "暂无数据",
       formNodes: [],
-      treeData: [],
       treeProps: {
         children: "children",
         label: "d_name",
@@ -55,30 +50,32 @@ export default {
   computed: {
     formParams() {
       if (this.curNode) {
-        const params = {};
-        const { data_code, __mock__, __id__ } = this.curNode;
-        const node = this.$refs.tree.getNode(this.curNode);
-        let pnode = null;
-        if (node) {
-          pnode = node.parent;
-        }
-        const fvtree = this.params.fvtree;
-        let defForm = null;
+        const { data_code, __mock__, __id__, d_name } = this.curNode;
+
+        const $node = this.treeImage.getNode(this.curNode);
+        const $pnode = $node ? $node.parent : null;
+
+        const params = { defForm: null, titleText: d_name };
+        let cfg = null;
+
         if (__mock__) {
           params.cfgId = data_code;
-          const item = _.find(fvtree, { id: __id__ });
-          if (pnode) {
-            defForm = { [item.field]: pnode.data[item.pfield] };
+          cfg = this.getConfig({ id: __id__ });
+          if ($pnode) {
+            params.defForm = { [cfg.field]: $pnode.data[cfg.pfield] };
           }
         } else {
-          const item = _.find(fvtree, { pid: __id__ });
-          if (item) {
-            params.cfgId = item.fid;
-            defForm = { [item.field]: this.curNode[item.pfield] };
+          cfg = this.getConfig({ pid: __id__ });
+          if (cfg) {
+            params.cfgId = cfg.fid;
+            params.defForm = { [cfg.field]: this.curNode[cfg.pfield] };
           }
         }
+        if (cfg && params.defForm) {
+          Object.assign(params.defForm, this.getRelations(cfg));
+        }
 
-        return { ...this.params, ...params, defForm };
+        return { ...this.params, ...params };
       }
     },
     viewClass() {
@@ -90,17 +87,31 @@ export default {
         "pso-fvtree": true,
       };
     },
+    config() {
+      if (this.params.fvtree && this.params.fvtree.length) {
+        return this.params.fvtree;
+      }
+    },
+    treeImage() {
+      return this.$refs.tree.$refs.tree;
+    },
+    treeData: {
+      get() {
+        return this.$refs.tree.treeData;
+      },
+      set(data) {
+        this.$refs.tree.treeData = data;
+      },
+    },
   },
   async created() {
     this.formNodes = await this.API.getFormTree();
-    const fvtree = this.params.fvtree;
-    if (fvtree) {
-      const tree = this.makeDataNode(listToTree({ list: fvtree }));
-      if (tree.length > 1) {
-        this.treeData = tree;
-      }
-      if (tree.length) {
-        this.nodeClickHandler(tree[0]);
+
+    if (this.config) {
+      this.treeData = this.makeDataNode(listToTree({ list: this.config }));
+      //根节点数量
+      if (this.treeData.length) {
+        this.nodeClickHandler(this.treeData[0]);
       }
     }
   },
@@ -109,17 +120,17 @@ export default {
       return data.map((d) => {
         const { fid, id } = d;
         const node = _.find(this.formNodes, { node_name: fid });
-        return { d_name: node.node_display, data_code: fid, leaf_id: id, __id__: id, __mock__: true, __loaded__: false };
+        return { children: [], d_name: node.node_display, data_code: fid, leaf_id: id, __id__: id, __mock__: true, __loaded__: false };
       });
     },
     nodeClickHandler(node) {
       const { __id__ } = node;
-      const fvtree = this.params.fvtree;
-      const children = this.makeDataNode(fvtree.filter((d) => d.pid === __id__));
+
+      //当前节点的子节点配置
+      const children = this.makeDataNode(this.config.filter((d) => d.pid === __id__));
+
       if (children.length > 1) {
-        children.forEach((d) => {
-          this.$refs.tree.append(d, node);
-        });
+        children.forEach((d) => this.treeImage.append(d, node));
         this.curNode = null;
       } else if (children.length) {
         this.curNode = node;
@@ -127,31 +138,50 @@ export default {
         this.curNode = null;
       }
     },
+    getConfig(option) {
+      return _.find(this.config, option);
+    },
+    getRelations(config) {
+      const relation = {};
+      if (config.other) {
+        const nodes = {};
+
+        let $node = this.treeImage.getNode(this.curNode);
+        while ($node && $node.data && $node.data.__id__) {
+          if (!$node.data["__mock__"]) nodes[$node.data.__id__] = $node.data;
+          $node = $node.parent;
+        }
+
+        for (let [k, { field, pfield }] of Object.entries(config.other)) {
+          if (nodes[k]) {
+            relation[field] = nodes[k][pfield];
+          }
+        }
+      }
+      return relation;
+    },
     dataLoadHandler(data) {
-      const fvtree = this.params.fvtree;
       let { __mock__, __id__ } = this.curNode;
+
       if (!__mock__) {
-        const item = _.find(fvtree, { pid: __id__ });
-        __id__ = item.id;
+        __id__ = this.getConfig({ pid: __id__ })["id"];
       }
 
-      if (!_.find(fvtree, { pid: __id__ })) {
+      const subCfg = this.getConfig({ pid: __id__ });
+      if (!subCfg) {
         return;
       }
 
-      if (this.treeData.length) {
-        data.forEach((d) => {
-          d.__id__ = __id__;
-          if (!this.$refs.tree.getNode(d)) {
-            this.$refs.tree.append(d, this.$refs.tree.getNode(this.curNode));
-          }
-        });
-      } else {
-        data.forEach((d) => {
-          d.__id__ = __id__;
-        });
-        this.treeData = data;
-      }
+      const isLeaf = this.getConfig({ pid: subCfg.id });
+
+      data.forEach((d) => {
+        d.__id__ = __id__;
+        d.is_leaf = !!isLeaf ? 0 : 1;
+        this.$set(d, "children", []);
+        if (!this.treeImage.getNode(d)) {
+          this.treeImage.append(d, this.treeImage.getNode(this.curNode));
+        }
+      });
     },
   },
 };

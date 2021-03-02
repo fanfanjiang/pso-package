@@ -101,6 +101,10 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             defaultNodeid: {
                 type: String,
                 default: ''
+            },
+            staticMode: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
@@ -149,18 +153,20 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
         },
         async created() {
             //检查树参数
-            this.requestOptionHandler(this.requestOptions);
+            if (!this.staticMode) {
+                this.requestOptionHandler(this.requestOptions);
 
-            if (!this.lazyLoad) {
-                this.loadWholeTree();
-            } else {
-                //懒加载时关闭自动展开全部
-                this.defaultExpendAll = false;
-            }
+                if (!this.lazyLoad) {
+                    this.loadWholeTree();
+                } else {
+                    //懒加载时关闭自动展开全部
+                    this.defaultExpendAll = false;
+                }
 
-            const ret = await this.API.getTreeDimen();
-            if (ret.success) {
-                this.dimens = ret.data;
+                const ret = await this.API.getTreeDimen();
+                if (ret.success) {
+                    this.dimens = ret.data;
+                }
             }
         },
         methods: {
@@ -473,7 +479,6 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     }
                     keys = this.filter;
                 }
-
                 for (let key of keys) {
                     if ((data[key] + '').indexOf(value) !== -1) return true;
                 }
