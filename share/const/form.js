@@ -420,6 +420,7 @@ const CPNT = {
     table_show: true,
     value_format_id: 'node_id',
     data: [
+      { n: '_fieldFormat', v: 'tag' },
       { n: '_type', v: 'radio' },
       { n: '_copy', v: false },
       { n: '_source', v: 'tree' },

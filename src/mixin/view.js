@@ -136,6 +136,8 @@ export const PagingMixin = {
             return params;
         },
         startWatch() {
+            this.watchFun.forEach((f) => f());
+            this.watchFun = [];
             this.watchFun.push(
                 this.$watch("fetchParams.limit", () => {
                     this.$emit('load');

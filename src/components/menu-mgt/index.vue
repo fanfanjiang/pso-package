@@ -27,7 +27,7 @@
             </div>
           </div>
           <div class="pso-view-viewtab">
-            <el-tabs v-model="curTab" type="card">
+            <el-tabs v-model="curTab">
               <el-tab-pane label="属性" name="param"></el-tab-pane>
               <el-tab-pane v-if="!params.hide" label="权限" name="auth"></el-tab-pane>
               <el-tab-pane v-if="!params.hide" label="权限参数" name="view"></el-tab-pane>
@@ -76,9 +76,6 @@
                   <el-form-item v-else label="菜单链接">
                     <el-input size="small" v-model="curNode.menu_link" autocomplete="off"></el-input>
                   </el-form-item>
-                </div>
-                <div class="pso-menu-param__controller" v-if="!params.hide">
-                  <el-button type="primary" @click="updateNode" size="mini">保存</el-button>
                 </div>
               </el-form>
             </div>

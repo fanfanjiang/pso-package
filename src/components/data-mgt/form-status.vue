@@ -19,7 +19,7 @@
         <i class="el-icon-edit-outline"></i>
         <span>提交配置</span>
       </template>
-      <form-submit :data="subdata" :fields="fields"></form-submit>
+      <form-submit :code="code" :data="subdata"></form-submit>
     </great-panel>
   </div>
 </template>
@@ -27,6 +27,7 @@
 import StatusDesigner from "./status-designer";
 import FormSubmit from "./form-submit";
 import GreatPanel from "../great-panel";
+
 export default {
   components: { GreatPanel, StatusDesigner, FormSubmit },
   props: {

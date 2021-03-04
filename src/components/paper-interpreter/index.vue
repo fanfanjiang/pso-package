@@ -8,7 +8,7 @@
         </div>
       </div>
       <div v-if="store.completed" class="paper-interpreter-starter completed">
-        <div class="paper-interpreter-starter__title">你已完成答题</div>
+        <div class="paper-interpreter-starter__title">{{store.completedTip}}</div>
         <i class="el-icon-trophy"></i>
       </div>
       <div v-if="store.showScoreboard" class="paper-interpreter-board">
@@ -98,8 +98,6 @@ requireComponent.keys().forEach((fileName) => {
   componentsMap[`PaperCpnt${componentName}`] = componentConfig.default;
 });
 
-const EXCULDED = ["plug_code", "size", "appid", "paperId"];
-
 export default {
   components: { ...componentsMap, Scoreboard },
   props: {
@@ -135,13 +133,7 @@ export default {
   methods: {
     async initialize() {
       const { plug_code: code, size = "medium", appid, paperId = "" } = this.params;
-      const extension = {};
-      for (let q in this.$router.currentRoute.query) {
-        if (EXCULDED.indexOf(q) === -1) {
-          extension[q] = this.$router.currentRoute.query[q];
-        }
-      }
-      this.store = new Store({ $vue: this, code, size, mode: this.mode, appid, paperId, extension });
+      this.store = new Store({ $vue: this, code, size, mode: this.mode, appid, paperId, prepareArgs: this.params });
       await this.store.initialize();
       this.$emit("initialized", this.store);
     },

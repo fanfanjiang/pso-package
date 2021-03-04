@@ -12,7 +12,7 @@ export const PAPER_STATUS = {
         n: '已及格'
     },
     failed: {
-        v: '9',
+        v: '3',
         n: '未及格'
     }
 }

@@ -282,7 +282,7 @@ export default {
           params.keys[k] = { value, type: k === "create_time" ? 3 : isValueAry ? 4 : 2 };
         }
       }
-      console.log(params);
+
       if (params.keys) {
         params.keys = JSON.stringify(params.keys);
       }

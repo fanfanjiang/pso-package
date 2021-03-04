@@ -10,6 +10,7 @@ export default class Paper extends Module {
 
     constructor(options) {
         super(options);
+        this.prepareArgs = options.prepareArgs || {};
 
         this.activePanelTab = 0;
 
@@ -24,7 +25,13 @@ export default class Paper extends Module {
             examEndSqlRequired: false,
             examEndSql: [],
             gradeEndSqlRequired: false,
-            gradeEndSql: []
+            gradeEndSql: [],
+            args: [],
+            paperNameRefer: '',
+            unlimited: true,
+            examLimit: 1,
+            gradeable: true,
+            showResult: false
         }
     }
 
@@ -35,16 +42,16 @@ export default class Paper extends Module {
             if (typeof data === 'object') {
                 this.paperConfig = Object.assign(this.paperConfig, data);
             }
+            if (this.prepareArgs[this.paperConfig.paperNameRefer]) {
+                this.pluginCfg.tp_name = this.prepareArgs[this.paperConfig.paperNameRefer];
+            }
         }
         return;
     }
 
     async savePaperConfig() {
         const ret = await API.templates({
-            data: {
-                tp_code: this.code,
-                tp_content: JSON.stringify(this.paperConfig),
-            },
+            data: { tp_code: this.code, tp_content: JSON.stringify(this.paperConfig) },
             method: "put",
         });
         this.$vue.ResultNotify(ret);

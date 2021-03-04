@@ -361,6 +361,7 @@ export default class FormViewStore {
         if (this.fetchMode === '2') {
             this.instances = [];
         }
+
         await this.fetch();
     }
 
@@ -446,7 +447,6 @@ export default class FormViewStore {
         }
 
         this.$vue.$emit("data-loaded", this.instances);
-
 
         this.fetching = false;
         this.attachments = {};

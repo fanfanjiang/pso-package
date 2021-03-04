@@ -39,6 +39,7 @@
     <div class="pso-nodeauth__body">
       <el-table
         ref="table"
+        border
         v-loading="loadingTable"
         :data="authData"
         style="width: 100%"

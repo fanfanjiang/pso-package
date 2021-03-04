@@ -13,7 +13,7 @@
       </el-form-item>
       <el-form-item label="字段类型">
         <el-select size="mini" v-model="cpnt.data._fieldFormat" placeholder="请选择">
-          <el-option v-for="item in FIELD_FORMAT" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          <el-option v-for="(f, i) in FIELD_FORMAT" :key="i" :label="f.label" :value="f.value" :disabled="f.disabled"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="字段存储类型">
@@ -84,8 +84,8 @@
       <el-form-item label="是否加密">
         <el-switch size="mini" v-model="cpnt.data._encry" active-value="1" inactive-value="0"></el-switch>
       </el-form-item>
-      <el-form-item label="fid">
-        <el-input size="mini" v-model.trim="cpnt.data.fid" clearable></el-input>
+      <el-form-item label="FID">
+        <el-input size="mini" v-model.trim="cpnt.data.fid" clearable disabled></el-input>
       </el-form-item>
       <el-form-item label="输出格式">
         <el-input size="mini" :clearable="true" type="textarea" v-model.trim="cpnt.data._outputFormat"></el-input>

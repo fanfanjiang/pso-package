@@ -1,5 +1,5 @@
 <template>
-  <el-table key="status" border size="mini" :data="data" style="width: 100%" v-loading="initializing">
+  <el-table border size="mini" :data="data" style="width: 100%; margin-top: 20px" v-loading="initializing">
     <el-table-column prop="n" label="视图项" width="100"></el-table-column>
     <el-table-column label="显示值">
       <template slot-scope="scope">

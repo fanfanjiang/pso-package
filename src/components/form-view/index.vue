@@ -282,6 +282,7 @@ export default {
   },
   methods: {
     async initialize() {
+
       if (this.watchFun.length) {
         this.watchFun.forEach((f) => f());
         this.watchFun = [];

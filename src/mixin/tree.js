@@ -392,7 +392,10 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
 
                 const ret = await this.API.trees({ data, method: IS_NEW ? "post" : "put" });
 
-                if (!ret.success) return;
+                if (!ret.success) {
+                    this.nodePayload.loading = false;
+                    return;
+                }
 
                 if (!IS_NEW) {
                     //编辑节点
@@ -407,21 +410,23 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     this.$refs[treeRef].append(data, data.node_pid);
                 }
 
-                this.$nextTick(() => {
+                this.$nextTick(async () => {
                     this.nodePayload.loading = false;
                     this.nodePayload.showForm = false;
 
-
-                    this.$notify({ title: "成功", message: "添加成功", type: "success" });
-                    this.$emit(data.node_id ? "after-node-edit" : "after-node-new", data);
-                    this.setCurrentNode([data]);
+                    if (IS_NEW) {
+                        await this.loadWholeTree(false);
+                    } else {
+                        this.$notify({ title: "成功", message: "添加成功", type: "success" });
+                        this.$emit(data.node_id ? "after-node-edit" : "after-node-new", data);
+                        this.setCurrentNode([data]);
+                    }
                 });
             },
             nodeDragStart(node, event) {
                 this.isCopy = event.ctrlKey;
             },
             async moveNode(data) {
-
                 if (!data.node_id || !data.node_pid) {
                     return this.$message({ message: "不能移动", type: "warning" });
                 }
@@ -485,6 +490,9 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 return false;
             },
             async moveToTrash(data) {
+                if (data.children && data.children.length) {
+                    return this.$message({ message: "含有子节点，不能删除", type: "warning" });
+                }
                 this.updateTrash({ code: data.node_name, method: 'WasteNode' });
             },
             async restoreTrash() {

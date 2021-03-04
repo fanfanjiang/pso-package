@@ -144,7 +144,8 @@ export const FIELD_FORMAT = {
     },
     autotag: {
         label: '标签编号',
-        value: 'autotag'
+        value: 'autotag',
+        disabled: true
     },
     autocode: {
         label: '普通编号',

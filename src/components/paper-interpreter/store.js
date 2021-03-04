@@ -19,7 +19,9 @@ export default class Interpreter extends Designer {
         this.appid = options.appid || '';
         this.start = this.mode !== 'edit';
         this.paperId = options.paperId;
-        this.extension = options.extension;
+
+        //脚本外部参数
+        this.extension = {};
 
         this.instResult = [];
         this.instStatus = '0';
@@ -29,6 +31,8 @@ export default class Interpreter extends Designer {
         this.completing = false;
         this.completed = false;
         this.grading = false;
+
+        this.completedTip = '你已完成答题';
     }
 
     get previewMode() {
@@ -98,8 +102,10 @@ export default class Interpreter extends Designer {
     async onInitialized() {
         super.onInitialized();
 
+
         if (this.editMode) {
-            const { authRequired } = this.paperConfig;
+            const { authRequired, unlimited, gradeable, examLimit } = this.paperConfig;
+
             if (authRequired && this.mockSignin) {
                 this.$vue.$router.replace({
                     name: 'login',
@@ -109,25 +115,85 @@ export default class Interpreter extends Designer {
 
             if (authRequired) {
                 const ret = await API.getPapers({ keys: JSON.stringify({ exam_user: { value: this.base.userid, type: 1 }, exam_id: { value: this.code, type: 1 } }) });
-                if (ret.success && ret.data.length) {
-                    this.completed = true;
+                if (ret.success) {
+                    const examinedTime = ret.data.length;
+                    const ungraded = gradeable ? ret.data.some(d => d.exam_status === PAPER_STATUS.completed.v) : false;
+                    const lastExam = _.maxBy(ret.data.filter(d => d.appra_time), 'appra_time');
+
+                    if (ungraded) {
+                        //是否未阅卷
+                        this.showUnGradeResult();
+                    } else if (lastExam && lastExam.exam_status === PAPER_STATUS.passed.v) {
+                        //是否已通过
+                        this.showExamResult(lastExam);
+                    } else if (!unlimited && examinedTime >= examLimit) {
+                        this.showExamResult(lastExam);
+                    }
+                }
+            }
+        }
+
+        if (this.previewMode) {
+            //准备预览参数
+            for (let arg of this.paperConfig.args) {
+                if (arg.arg && arg.mock) {
+                    this.prepareArgs[arg.alias || arg.arg] = arg.mock;
                 }
             }
         }
 
         if (this.paperId) {
             await this.fetchPaperRet();
+        } else {
+            this.makeExtentions(this.prepareArgs);
         }
+    }
+
+    makeExtentions(data) {
+        this.extension = {};
+        for (let arg of this.paperConfig.args) {
+            const field = arg.alias || arg.arg;
+            if (arg.arg && data[field]) {
+                this.extension[field] = data[field];
+            }
+        }
+    }
+
+    showExamResult(data) {
+        const { showResult } = this.paperConfig;
+        const result = {};
+        if (showResult && data) {
+            const { result_score, exam_status } = data;
+            result.tip = `你${exam_status === PAPER_STATUS.passed.v ? '已' : '未能'}通过考试，分数：${result_score}分`;
+        }
+        this.showCompletion(result);
+    }
+
+    showUnGradeResult() {
+        this.showCompletion({ tip: '你已完成答题，请等待阅卷' });
+    }
+
+    showCompletion({ tip = '你已完成答题' } = {}) {
+        this.completedTip = tip;
+        this.completed = true;
     }
 
     async fetchPaperRet() {
         const ret = await API.getPapers({ keys: JSON.stringify({ result_id: { value: this.paperId, type: 1 }, exam_id: { value: this.code, type: 1 } }) });
         if (ret.success && ret.data.length) {
-            const { exam_content, exam_user, exam_name, exam_status, exam_submit } = ret.data[0];
+            const { exam_content, exam_user, exam_name, exam_status, exam_submit, appra_conent } = ret.data[0];
 
             if (exam_submit) {
                 Object.assign(this.base, JSON.parse(exam_submit))
             }
+
+            if (appra_conent) {
+                const content = JSON.parse(appra_conent);
+                if (content.extension) {
+                    this.makeExtentions(content.extension);
+                }
+            }
+
             this.base.userid = exam_user;
             this.base.name = exam_name;
 
@@ -172,9 +238,9 @@ export default class Interpreter extends Designer {
         return { exam_name: name, id, phone, address };
     }
 
-    async doSqlScript(sql, extension = {}) {
-        const params = { script: [{ sql, param: {} }], params: { exam_id: this.code, exam_user: this.base.userid, ...extension } };
-        return await API.getPscriptData(params);
+    async doSqlScript(script, extension = {}) {
+        const params = { script, params: { exam_id: this.code, exam_user: this.base.userid, ...extension, ...this.extension } };
+        return await API.executeSQLScript(params, false);
     }
 
     async completePaper() {
@@ -185,7 +251,7 @@ export default class Interpreter extends Designer {
                 throw new Error('你已完成答题');
             }
             const baseParams = this.checkRequired();
-            const ret = await API.addOrUpdatePaper({
+            const params = {
                 ...baseParams,
                 exam_id: this.code,
                 exam_user: this.base.userid,
@@ -193,16 +259,23 @@ export default class Interpreter extends Designer {
                 exam_submit: JSON.stringify(baseParams),
                 result_score: this.score,
                 exam_content: JSON.stringify(this.paperResult),
+                appra_conent: JSON.stringify({ extension: this.extension }),
                 optype: 0
-            });
+            };
+            const ret = await API.addOrUpdatePaper(params);
             if (ret.success) {
-                const { examEndSqlRequired, examEndSql } = this.paperConfig;
+                const { examEndSqlRequired, examEndSql, gradeable } = this.paperConfig;
                 if (examEndSqlRequired) {
                     await this.doSqlScript(examEndSql, { ...this.getPaperRet(), result_id: ret.message || '' });
                 }
-
+                if (!gradeable) {
+                    this.paperId = ret.message;
+                    const args = await this.gradePaper();
+                    this.showExamResult(args);
+                } else {
+                    this.showUnGradeResult();
+                }
                 this.$vue.ResultNotify({ success: true, message: '完成答题' });
-                this.completed = true;
             }
         } catch (error) {
             this.$vue.$message({ type: 'warning', message: error.message })
@@ -220,14 +293,15 @@ export default class Interpreter extends Designer {
         this.grading = true;
         const { gradeEndSqlRequired, gradeEndSql } = this.paperConfig;
         const paperRet = this.getPaperRet();
-        const ret = await API.addOrUpdatePaper({
+        const args = {
             exam_id: this.code,
             result_id: this.paperId,
             result_score: this.score,
             exam_status: PAPER_STATUS[paperRet.passed === '1' ? 'passed' : 'failed'].v,
             exam_content: JSON.stringify(this.paperResult),
             optype: 1
-        });
+        };
+        const ret = await API.addOrUpdatePaper(args);
         if (ret.success) {
             if (gradeEndSqlRequired) {
                 await this.doSqlScript(gradeEndSql, paperRet);
@@ -236,5 +310,6 @@ export default class Interpreter extends Designer {
         this.$vue.ResultNotify(ret);
         this.$vue.$emit('graded');
         this.grading = false;
+        return args;
     }
 }

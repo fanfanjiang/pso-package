@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 20px">
-    <div class="pso-view-mgt-tabs">
+    <div class="pso-view-mgt-tabs" style="margin-bottom:20px">
       <button-tabs v-model="curTab" :data="TABS"></button-tabs>
     </div>
     <div class="pso-view-table" v-if="node">

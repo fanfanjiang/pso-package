@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-view">
+  <div class="pso-view" ref="view">
     <div class="pso-view-body">
       <div ref="header">
         <div class="pso-view-header">
@@ -13,8 +13,11 @@
         <div class="pso-view-fun">
           <div class="pso-view-fun-l">
             <div class="view-table-fun">
-              <pso-search text="搜索" v-model="fetchParams.keywords"></pso-search>
-              <el-divider direction="vertical"></el-divider>
+              <slot name="tablefun"></slot>
+              <template v-if="searchable">
+                <pso-search text="搜索" v-model="fetchParams.keywords"></pso-search>
+                <el-divider direction="vertical"></el-divider>
+              </template>
               <el-button type="text" icon="el-icon-refresh" @click="fetch">刷新</el-button>
             </div>
           </div>
@@ -23,16 +26,16 @@
           </div>
         </div>
       </div>
-      <div class="pso-view-table">
+      <div class="pso-view-table" v-if="!initializing">
         <div class="pso-view-table__body" ref="tableRef">
-          <el-table v-loading="fetching" :size="size" border :data="instances" style="width: 100%">
+          <el-table v-loading="fetching" :size="size" border :data="instances" style="width: 100%" :height="tableHeight">
             <template #default>
               <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
-              <el-table-column type="index" label="序号" :index="1" width="50"></el-table-column>
-              <el-table-column v-for="(f, i) in fields" :key="i" :prop="f.v" :label="f.n" :width="f.w">
+              <el-table-column type="index" label="序号" :index="1" width="50" align="center"></el-table-column>
+              <el-table-column v-for="(f, i) in fields" :key="i" :prop="f.v" :label="f.n" :width="f.w" show-overflow-tooltip resizable>
                 <template slot-scope="scope">
                   <span v-if="f.trans">{{ f.trans(scope.row[f.v]) }}</span>
-                  <span v-else>{{scope.row[f.v]}}</span>
+                  <span v-else>{{ scope.row[f.v] }}</span>
                 </template>
               </el-table-column>
             </template>
@@ -88,9 +91,14 @@ export default {
       type: Number,
       default: 20,
     },
+    searchable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
+      initializing: true,
       fetching: false,
       editing: false,
       instances: [],
@@ -99,15 +107,24 @@ export default {
       curInstance: { ...DATA },
       selected: [],
       sites: [],
+      tableHeight: 200,
     };
   },
   async created() {
     this.fetchParams.limit = this.initLimit;
+
     this.startWatch();
     await this.fetch();
     this.$on("load", () => {
       this.fetch();
     });
+  },
+  mounted() {
+    const height = $(this.$refs.view).height() - $(this.$refs.header).height() - 65;
+    if (height > 100) {
+      this.tableHeight = height;
+    }
+    this.initializing = false;
   },
   methods: {
     async fetch() {

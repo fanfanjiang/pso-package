@@ -991,7 +991,7 @@ export default class API {
         }
     }
 
-    static async getSysData(data, method) {
+    static async getSysData(data) {
         try {
             return await this.request('/api/sys/data', { data, method: 'get' });
         } catch (error) {
@@ -999,9 +999,17 @@ export default class API {
         }
     }
 
-    static async syncUsers(data, method) {
+    static async syncUsers(data) {
         try {
             return await this.request('/api/users/action/sync', { data, method: 'post' });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async executeSQLScript(data, showMsg) {
+        try {
+            return await this.request('/api/sql/execute', { data, method: 'post', showMsg });
         } catch (error) {
             throw error;
         }

@@ -62,13 +62,13 @@
           </span>
         </span>
       </el-tree>
-      <el-popover placement="top-start" width="240" trigger="click" v-if="editMode">
+      <el-popover placement="top-start" width="300" trigger="click" v-if="editMode">
         <div class="pso-tree__trash-body" v-loading="loading">
           <div class="pso-tree__trash-btns">
             <el-button size="mini" @click="restoreTrash" :disabled="canTrash">还 原</el-button>
             <el-button size="mini" type="danger" @click="emptyTrash" :disabled="canTrash">清 空</el-button>
           </div>
-          <el-table size="mini" :data="trash" style="width: 100%" @selection-change="handleTrashSelect">
+          <el-table border size="mini" :data="trash" style="width: 100%" @selection-change="handleTrashSelect" height="200">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="node_display" label="名称"></el-table-column>
           </el-table>
@@ -89,7 +89,7 @@
           <el-form-item :label="nodePayload.nameLable">
             <el-input size="small" v-model="nodePayload.node.data.node_display" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="标签" v-if="nodePayload.node.data.node_pid === 0">
+          <el-form-item label="标签" v-if="!nodePayload.node.data.node_id && nodePayload.node.data.node_pid === 0">
             <el-select size="small" v-model="nodePayload.node.data.data_type">
               <el-option v-for="item in dimens" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
             </el-select>

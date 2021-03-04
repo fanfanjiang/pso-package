@@ -57,12 +57,12 @@
         </div>
       </div>
     </div>
-    <el-dialog width="30%" :append-to-body="true" :close-on-click-modal="false" title="维度编辑" :visible.sync="showEditor">
+    <el-dialog width="30%" :append-to-body="true" title="维度编辑" :visible.sync="showEditor">
       <el-form :model="curDimen" label-width="100px">
         <el-form-item label="维度标签名">
           <el-input size="small" v-model="curDimen.tag_name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="维度">
+        <el-form-item label="维度" v-if="!curDimen.dimen_tag">
           <el-select size="small" v-model="curDimen.node_dimen">
             <el-option v-for="item in DIMEN_TYPE" :key="item.n" :label="item.n" :value="item.v"></el-option>
           </el-select>

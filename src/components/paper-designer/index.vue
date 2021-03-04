@@ -41,7 +41,7 @@
           <div class="grid-designer__stage-body">
             <div class="grid-designer__stage-body-l">
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="考试设置" name="1">
+                <el-collapse-item title="试卷配置" name="1">
                   <paper-base :store="store"></paper-base>
                 </el-collapse-item>
                 <el-collapse-item title="题目" name="2">
