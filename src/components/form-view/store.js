@@ -142,6 +142,10 @@ export default class FormViewStore {
         this.deFixLayout = debounce(1000, (params) => {
             this.fixLayout(params);
         });
+
+        this.deReloadInstance = debounce(300, (params) => {
+            this.reloadInstance(params);
+        });
     }
 
     get __FIELDID__() {
@@ -413,6 +417,9 @@ export default class FormViewStore {
 
     async refetch() {
         this.page = 1;
+        if (this.fetchMode === '2') {
+            this.instances = [];
+        }
         this.deFetch();
     }
 
@@ -452,6 +459,27 @@ export default class FormViewStore {
         this.attachments = {};
 
         this.fixLayout();
+    }
+
+    async reloadInstance(leaf_id) {
+        if (leaf_id) {
+            const exist = _.find(this.instances, { leaf_id })
+            if (exist) {
+                this.$vue.$set(exist, '__loading__', true);
+                const newInst = await this.fetchInstance(leaf_id);
+                if (newInst) {
+                    Object.assign(exist, newInst)
+                }
+                exist['__loading__'] = false;
+            }
+        }
+    }
+
+    async fetchInstance(value) {
+        const ret = await API.form({ data: { keys: JSON.stringify({ leaf_id: { value, type: 1 } }), data_code: this.formCfg.data_code }, method: "get" });
+        if (ret.success && ret.data.length === 1) {
+            return ret.data[0]
+        }
     }
 
     workInstance(data) {
@@ -1106,8 +1134,8 @@ export default class FormViewStore {
         //查看脚本
         if (beforeScriptable) {
             const ret = await API.doActionScript({ btn_id: action.id, btn_type: '0', data_code: this.store.data_code, data });
-            if (ret.success) {
-                return this.$vue.$message({ message: ret.message || '不能执行', type: 'warning' });
+            if (!ret.success) {
+                return action.doing = false;
             }
         }
 

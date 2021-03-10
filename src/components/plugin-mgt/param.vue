@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     addParam() {
-      this.data.push({ ...PLUGIN_PARAMS });
+      this.data.push(_.cloneDeep(PLUGIN_PARAMS));
     },
     delParam(index) {
       this.data.splice(index, 1);

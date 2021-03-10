@@ -101,6 +101,9 @@ import PsoStaScript from "./components/statistics/script";
 import PsoAvatar from "./components/avatar";
 import PsoApicfg from "./components/apicfg";
 import PsoApiauth from "./components/apicfg/api-auth";
+import PsoApiType from "./components/apicfg/type";
+import PsoApiOuter from "./components/apicfg/outer";
+import PsoApiInner from "./components/apicfg/inner";
 
 import PsoPrinterDesigner from "./components/printer-designer";
 import PsoPrinter from "./components/printer";
@@ -261,6 +264,10 @@ const components = {
     PsoSuperView,
     PsoApprovalMgt,
     PsoCommonView,
+    PsoApiType,
+    PsoApiOuter,
+    PsoApiInner,
+
     //混合视图
     PsoFvAst,
     PsoFvWv,
@@ -337,24 +344,14 @@ Object.keys(formulajs).forEach(key => {
 const CONST = require('../share/const');
 import FormMixin from './mixin/form';
 
-const Mixin = {
-    FormMixin
-};
+const Mixin = { FormMixin };
 
 import Auth from './tool/auth';
 
-const tool = {
-    Auth,
-    genComponentData
-};
+const tool = { Auth, genComponentData };
 
-const Store = {
-    WfStore,
-    FormStore
-}
+const Store = { WfStore, FormStore };
 
-export { BASEAPI, store, Store, CONST, Mixin, tool }
+export { BASEAPI, store, Store, CONST, Mixin, tool };
 
-export default {
-    install
-};
+export default { install };

@@ -152,7 +152,7 @@ const CPNT = {
     host_db: false,
     chart: true,
     table_show: true,
-    data: [{ n: '_fieldRealType', v: 'datetime' }, { n: '_type', v: 'date' }, { n: '_defaultType', v: '' }]
+    data: [{ n: '_fieldRealType', v: 'datetime' }, { n: '_type', v: 'date' }, { n: '_defaultType', v: '' }, { n: '_defaultFormat', v: '' }]
   },
   phone: {
     icon: "el-icon-phone",

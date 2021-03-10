@@ -236,22 +236,9 @@
     display: flex;
     align-items: center;
 
-    .view-data-fun__actions {
-        margin: 0 10px;
 
-        &+.view-data-fun__actions {
-            margin-left: 0;
-        }
-    }
-
-    .el-dropdown {
-
-        &+.el-dropdown,
-        &+button {
-            margin-left: 10px;
-        }
-    }
-
+    .view-data-fun__actions,
+    .el-dropdown,
     button {
 
         &+.el-dropdown,
@@ -264,6 +251,9 @@
     .el-dropdown,
     >span,
     >button {
+        &+.view-data-fun__actions {
+            margin-left: 10px;
+        }
 
         &+.el-dropdown,
         &+span,

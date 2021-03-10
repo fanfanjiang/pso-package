@@ -114,6 +114,81 @@ export const FormModifierMixin = {
     }
 }
 
+export const FetchMixin = {
+    created() {
+        this.$watch("fetchParams", {
+            deep: true,
+            handler() {
+                this.$refs.view.fetch();
+            }
+        })
+    },
+    data() {
+        return {
+            showEditor: false,
+            editing: false,
+            deleting: false,
+            fetchParams: {},
+            selected: [],
+            curInstance: null,
+            ID: ''
+        }
+    },
+    methods: {
+        getFetchParams(params) {
+            if (params.keys) {
+                if (typeof params.keys === 'string') {
+                    params.keys = JSON.parse(params.keys)
+                }
+            } else {
+                params.keys = {}
+            }
+            for (let k in this.fetchParams) {
+                const isValueAry = Array.isArray(this.fetchParams[k]);
+                const value = isValueAry ? `${this.fetchParams[k].join(",")}` : this.fetchParams[k];
+                if (value) {
+                    params.keys[k] = { value, type: (this.timeParams && this.timeParams.indexOf(k) !== -1) ? 3 : isValueAry ? 4 : 2 };
+                }
+            }
+            params.keys = JSON.stringify(params.keys)
+            return params;
+        },
+        selectHandler(data) {
+            this.selected = data;
+        },
+        addHandler() {
+            this.curInstance = { ...this.DATA };
+            this.showEditor = true;
+        },
+        dbClickHandler(row) {
+            this.curInstance = row;
+            this.showEditor = true;
+        },
+        async delHandler() {
+            if (!this.selected.length) return;
+            this.deleting = true;
+            await this.saveHandler({ [this.ID]: this.selected[0][this.ID] });
+            this.deleting = false;
+        },
+        async saveHandler(params) {
+            if (this.editing) return;
+            this.editing = true;
+            let data = {};
+            if (params) {
+                data = { ...params, optype: 2 };
+            } else {
+                const IDNotEmpty = this.curInstance[this.ID];
+                data = { ...this.curInstance, optype: IDNotEmpty ? 1 : 0 };
+            }
+            const ret = await this.addOrUpdate(data);
+            this.ResultNotify(ret);
+            this.showEditor = false;
+            this.editing = false;
+            this.$refs.view.fetch();
+        },
+    }
+}
+
 export const PagingMixin = {
     data() {
         return {
@@ -122,7 +197,7 @@ export const PagingMixin = {
                 limit: 20,
                 keywords: '',
             },
-            watchFun: []
+            pagingWatchFun: []
         }
     },
     methods: {
@@ -136,9 +211,9 @@ export const PagingMixin = {
             return params;
         },
         startWatch() {
-            this.watchFun.forEach((f) => f());
-            this.watchFun = [];
-            this.watchFun.push(
+            this.pagingWatchFun.forEach((f) => f());
+            this.pagingWatchFun = [];
+            this.pagingWatchFun.push(
                 this.$watch("fetchParams.limit", () => {
                     this.$emit('load');
                 }),
@@ -146,6 +221,7 @@ export const PagingMixin = {
                     this.$emit('load');
                 }),
                 this.$watch("fetchParams.keywords", () => {
+                    console.log(123)
                     this.$emit('load');
                 }),
             );

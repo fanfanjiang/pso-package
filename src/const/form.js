@@ -60,6 +60,7 @@ export const FORMULA_OP_LIST = [
     }
 ];
 
+const DATE_OPTION_INPUT = { name: "手动输入", value: "99" };
 export const DATE_OPTION = {
     date: [
         {
@@ -69,7 +70,8 @@ export const DATE_OPTION = {
         {
             name: "当日",
             value: "1"
-        }
+        },
+        DATE_OPTION_INPUT
     ],
     datetime: [
         {
@@ -79,7 +81,8 @@ export const DATE_OPTION = {
         {
             name: "当前时间",
             value: "1"
-        }
+        },
+        DATE_OPTION_INPUT
     ],
     time: [
         {
@@ -93,7 +96,8 @@ export const DATE_OPTION = {
         {
             name: "指定时间",
             value: "2"
-        }
+        },
+        DATE_OPTION_INPUT
     ],
     year: [
         {
@@ -103,7 +107,8 @@ export const DATE_OPTION = {
         {
             name: "当年",
             value: "1"
-        }
+        },
+        DATE_OPTION_INPUT
     ],
     month: [
         {
@@ -113,7 +118,8 @@ export const DATE_OPTION = {
         {
             name: "当月",
             value: "1"
-        }
+        },
+        DATE_OPTION_INPUT
     ]
 }
 

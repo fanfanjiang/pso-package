@@ -92,7 +92,7 @@ export function formatJSONList(list, fieldObj, compare = true) {
     return data;
 }
 
-export function assignList({ target, source, base, tid, sid, assemble }) {
+export function assignList({ target, source, base, tid, sid, assemble, replaceField = [] }) {
     for (let i = target.length - 1; i >= 0; i--) {
         const t = target[i];
         if (!t) {
@@ -107,7 +107,12 @@ export function assignList({ target, source, base, tid, sid, assemble }) {
     source.forEach(s => {
         const exist = _.find(target, { [tid]: s[sid] });
         if (exist) {
-            formatJSONList([exist], base)
+            formatJSONList([exist], base);
+            for (let k of replaceField) {
+                if (typeof s[k] !== 'undefined') {
+                    exist[k] = s[k]
+                }
+            }
         } else {
             if (assemble) {
                 target.push({ ...base, ...assemble(s) })

@@ -230,7 +230,6 @@ export default class STAVStore extends FVStore {
                 console.log(error);
             }
 
-
             this.instances = ret.data.DATA;
             if (ret.data.PAGE) {
                 this.dataTotal = Object.values(ret.data.PAGE[0])[0];

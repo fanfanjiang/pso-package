@@ -72,7 +72,9 @@
               <plugin-text v-if="curTab === 'text'" :data="tpText" :def-text="tpButtons"></plugin-text>
               <plugin-base v-if="curTab === 'base'" :node="curNode"></plugin-base>
             </template>
-            <pso-nodeauth v-if="curTab === 'auth'" :node="curNode"></pso-nodeauth>
+            <div v-if="curTab === 'auth'" style="margin-top: 20px">
+              <pso-nodeauth :node="curNode"></pso-nodeauth>
+            </div>
           </div>
         </template>
       </div>
@@ -284,8 +286,7 @@ export default {
 
       for (let item of plugins) {
         const { id: tp_component, n: tp_name, path: tp_route, params, type: tp_type } = item;
-        // const options = { node_display: tp_name, tp_name, tp_route, tp_component, route_setting: JSON.stringify(params), tp_type };
-        const options = { tp_name, tp_route, tp_component, route_setting: JSON.stringify(params), tp_type };
+        const options = { node_display: tp_name, tp_name, tp_route, tp_component, route_setting: JSON.stringify(params), tp_type };
 
         let exist = _.find(this.treeData, { tp_component });
         if (!exist) {

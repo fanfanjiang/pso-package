@@ -35,13 +35,13 @@
             <el-select v-if="p.picker === 'picker-tag'" filterable clearable size="mini" v-model="p.value">
               <el-option v-for="item in tags" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
             </el-select>
-            <el-input v-if="p.picker === 'input'" v-model="p.value" size="mini" autocomplete="off"></el-input>
+            <el-input v-if="p.picker === 'input'" clearable v-model="p.value" size="mini" autocomplete="off"></el-input>
             <el-switch v-if="p.picker === 'picker-yes'" v-model="p.value"></el-switch>
             <el-select v-if="p.picker === 'picker-text'" filterable clearable size="mini" v-model="p.value">
               <el-option v-for="item in text" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
             <el-select
-              v-if="p.picker === 'picker-field' && !loadingFields && getRelateItem(p)"
+              v-if="p.picker === 'picker-field' && !loadingFields && formCfg[getRelateItem(p)]"
               filterable
               clearable
               size="mini"
@@ -51,7 +51,7 @@
               <el-option
                 v-for="item in formCfg[getRelateItem(p)].fields"
                 :key="item.field_name"
-                :label="item.field_display"
+                :label="item.fieldDisplay"
                 :value="item.field_name"
               ></el-option>
             </el-select>
@@ -86,8 +86,30 @@
               pattern="checkbox"
               @confirm="handlefileChecked($event, p)"
             ></pso-picker-resource>
+            <el-select
+              v-if="p.picker === 'picker-select'"
+              filterable
+              clearable
+              size="mini"
+              :multiple="p.saveType === '2'"
+              v-model="p.value"
+            >
+              <el-option v-for="(d, i) in p.options" :key="i" :label="d.n" :value="d.v"></el-option>
+            </el-select>
+            <dfilter
+              v-if="p.picker === 'picker-dfilter' && !loadingFields && formCfg[getRelateItem(p)]"
+              :fields="formCfg[getRelateItem(p)].fields"
+              :data="p"
+            ></dfilter>
             <el-button v-if="p.picker === 'picker-sql'" size="mini" type="primary" plain @click="editSql(p)"> 编辑脚本 </el-button>
             <el-button v-if="p.picker === 'picker-stats'" size="mini" type="primary" plain @click="setStats(p)"> 设置关联统计 </el-button>
+            <template #label>
+              {{ p.name }}
+              <el-tooltip v-if="p.tip" effect="dark" placement="top-start">
+                <div slot="content" v-html="p.tip"></div>
+                <i class="tip el-icon-question"></i>
+              </el-tooltip>
+            </template>
           </el-form-item>
         </div>
       </transition>
@@ -115,7 +137,8 @@ import { genComponentData } from "../form-designer/helper";
 import { assignList } from "../../utils/util";
 import { PLUGIN_PARAMS } from "../../const/sys";
 import SqlDesigner from "../sql-designer";
-import StatsPicker from "./stats-picker";
+import StatsPicker from "./picker/stats-picker";
+import Dfilter from "./picker/filter";
 
 const componentsMap = {};
 const requireComponent = require.context("./cpnts", true);
@@ -128,13 +151,13 @@ requireComponent.keys().forEach((fileName) => {
         .pop()
         .replace(/\.\w+$/, "")
     )
-  );  
+  );
   componentsMap[`PluginCpntPso${componentName}`] = componentConfig.default;
 });
 
 export default {
   mixins: [formOp],
-  components: { formulaDesigner, SqlDesigner, StatsPicker, ...componentsMap },
+  components: { formulaDesigner, SqlDesigner, StatsPicker, Dfilter, ...componentsMap },
   props: {
     data: Array,
     node: Object,
@@ -211,15 +234,18 @@ export default {
             tid: "field",
             sid: "field",
             base: PLUGIN_PARAMS,
+            replaceField: ["name", "picker", "saveType", "tip", "options", "relateParam", "order"],
           });
         }
+
+        const ordered = _.orderBy(this.data, ["order"], ["asc"]);
+        this.data.splice(0, this.data.length, ...ordered);
 
         if (cfg.tp_component) {
           this.cid = cfg.tp_component;
         } else {
           this.cid = "";
         }
-        console.log(cfg.tp_component);
         if (cfg.tp_content) {
           this.fields = JSON.parse(cfg.tp_content);
           if (Array.isArray(this.fields)) {
@@ -258,14 +284,10 @@ export default {
       this.loadingFields = true;
       try {
         const formStore = await this.makeFormStore(value);
-        const ret = await this.API.getFormDict({ data_code: value });
-        if (ret.data) {
-          ret.data.forEach((item) => {
-            const field = formStore.search({ options: { fid: item.field_name }, onlyData: true });
-            item.field_display = (field ? field._fieldName : "系统字段") + `(${item.field_name})`;
-          });
+        if (formStore) {
+          const fields = await this.makeFormFields({ store: formStore, source: "3", code: value });
           const column = formStore.display_columns ? JSON.parse(formStore.display_columns).column : [];
-          this.formCfg[field || value] = { fields: ret.data, column };
+          this.formCfg[field || value] = { fields, column };
         }
       } catch (error) {}
 

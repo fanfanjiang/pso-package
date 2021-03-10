@@ -30,7 +30,7 @@
           :sortable="f.sortable === '1' ? 'custom' : false"
         >
           <template slot-scope="scope">
-            <div class="modifier-placeholder" :ref="scope.$index + f.field_name">
+            <div class="modifier-placeholder" :ref="scope.$index + f.field_name" v-if="!scope.row['__loading__']">
               <column-tag v-if="f.componentid === 'tag' && !store.fetching" :store="store" :data="scope.row" :field="f"></column-tag>
               <column-ast
                 v-else-if="f.componentid === 'asstable' && !store.fetching"
@@ -51,6 +51,7 @@
                 @click.stop="openModifier(scope.row, f, scope.$index)"
               ></span>
             </div>
+            <pso-skeleton v-else :lines="1"></pso-skeleton>
           </template>
         </el-table-column>
         <el-table-column v-if="params.operate" label="操作" :width="params.operateWidth" fixed="right" align="center" header-align="center">

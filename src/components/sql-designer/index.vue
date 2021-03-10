@@ -14,10 +14,25 @@
           </el-tabs>
         </div>
         <div class="form-executor-header__r">
-          <div class="sql-designer__add">
-            <el-button size="mini" type="success" icon="el-icon-plus" @click="addSqlBlock()">新增脚本</el-button>
-            <el-checkbox v-model="message">消息</el-checkbox>
-          </div>
+          <el-button size="mini" type="success" icon="el-icon-plus" @click="addSqlBlock()">新增脚本</el-button>
+          <el-popover :visible-arrow="false" transition="el-zoom-in-top" placement="bottom-end" width="180" v-model="showOrder">
+            <div class="sql-designer-sort">
+              <draggable tag="transition-group" v-model="sql" :componentData="dragOption" :animation="100">
+                <div class="sql-designer-sort-item" :class="{ active: block.id === activeTab }" v-for="(block, i) in sql" :key="i">
+                  <div class="sql-designer-nav-item__body">
+                    <span>{{ block.name }}</span>
+                  </div>
+                  <div class="sql-designer-nav-item__ctrl">
+                    <i class="el-icon-sort designer-nav-drag"></i>
+                  </div>
+                </div>
+              </draggable>
+            </div>
+            <template slot="reference">
+              <el-button size="mini" type="primary" icon="el-icon-sort">排序</el-button>
+            </template>
+          </el-popover>
+          <el-checkbox v-model="message">消息</el-checkbox>
         </div>
       </div>
     </template>
@@ -59,10 +74,17 @@ export default {
     names: Array,
   },
   data() {
+    this.dragOption = {
+      props: {
+        type: "transition",
+        name: "flip-list",
+      },
+    };
     return {
       activeTab: "",
       curBlock: null,
       message: false,
+      showOrder: false,
       msgMains: [],
       msgSubs: [],
     };
@@ -102,7 +124,7 @@ export default {
         if (this.names) {
           name = this.names[0];
         } else {
-          name = "脚本";
+          name = `脚本${this.sql.length + 1}`;
         }
       }
 

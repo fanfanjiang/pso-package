@@ -23,6 +23,23 @@
      }
  }
 
+ .sql-designer-sort {
+     .sql-designer-sort-item {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         cursor: grab;
+
+         &+.sql-designer-sort-item {
+             margin-top: 5px;
+         }
+
+         &.active {
+             color: @main-color;
+         }
+     }
+ }
+
  .sql-designer-wrapper {
      position: relative;
      height: 100%;

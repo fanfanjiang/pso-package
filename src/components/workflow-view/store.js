@@ -131,6 +131,13 @@ export default class WFVStore extends FVStore {
         this.fixLayout();
     }
 
+    async fetchInstance(value) {
+        const ret = await API.workflow({ data: { keys: JSON.stringify({ leaf_id: { value, type: 1 } }), wf_code: this.wfCfg.wf_code }, method: "get" });
+        if (ret.success && ret.data.data.length === 1) {
+            return ret.data.data[0]
+        }
+    }
+
     async changeStatus(data) {
         await this.makeChange({ data, api: 'updateFormStatus', type: 'status', field: 'd_status', extend: { wf_code: this.wfCfg.wf_code } });
     }

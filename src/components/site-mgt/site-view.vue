@@ -212,10 +212,12 @@ export default {
   },
   methods: {
     getParentName(auto_no) {
-      return _.find(this.pTypes, { auto_no }).map_key0;
+      const exist = _.find(this.pTypes, { auto_no });
+      return exist ? exist.map_key0 : "";
     },
     getSubName(auto_no) {
-      return _.find(this.types, { auto_no }).map_key0;
+      const exist = _.find(this.types, { auto_no });
+      return exist ? exist.map_key0 : "";
     },
     async fetch() {
       this.loading = true;

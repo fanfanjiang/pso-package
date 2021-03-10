@@ -461,7 +461,7 @@ export default class WfStore {
     }
 
     //设置主体部分的值
-    setTableVal({ cpnt, value, proxy, fields, store }) {
+    setTableVal({ cpnt, value, proxy, fields, store, printFields }) {
         const { data } = cpnt;
         if (!data._fieldValue) return;
         const $el = $(this.executorPrintRef).find(`[field=${data._fieldValue}]`);
@@ -513,14 +513,24 @@ export default class WfStore {
                 }
             } else {
                 const sequence = $el.attr('sequence');
+                const direction = $el.attr('direction');
                 if (cpnt.data._type == 1 && display !== 'table') {
                     if (proxy.valList.length) {
                         $el.html(proxy.valList[0][cpnt.data._radioField || 'leaf_id']);
                     }
                 } else {
                     if (proxy.valList.length) {
+                        const defOpts = { data: proxy.valList, store, showIndex: sequence === '1' };
+
                         $el.css({ display: 'block', overflow: 'auto' });
-                        $el.append(this.makeStaticTable(fields, proxy.valList, sequence === '1', store));
+                        $el.append(this.makeStaticTable({
+                            allFields: (printFields && printFields.length) ? printFields : fields,
+                            showIndex: sequence === '1',
+                            tableFunc: (opts) => {
+                                return direction === '1' ? this.makeLTable(opts, defOpts) : this.makeHTable(opts, defOpts)
+                            }
+                        }));
+
                         const parentTd = $('.pso-static-table').parentsUntil('td');
                         if (parentTd.get(0)) {
                             $('.pso-static-table').addClass('outer-border-none');
@@ -555,16 +565,7 @@ export default class WfStore {
         })
     }
 
-    makeStaticTable(allFields, data, showIndex = false, store) {
-        const fields = allFields.filter((f) => f.show === "1" && f.using === '1');
-        const $wrapper = $(`<table class="pso-static-table"><colgroup></colgroup><thead><tr></tr></thead><tbody></tbody></table>`);
-        const $colgroup = $wrapper.find('colgroup');
-        const $ftr = $wrapper.find('thead>tr');
-        const $tbody = $wrapper.find('tbody');
-        if (showIndex) {
-            $colgroup.append(`<col width="40">`);
-            $ftr.append(`<th>项次</th>`);
-        }
+    makeHTable({ $wrapper, $colgroup, $ftr, $tbody, fields }, { data, showIndex, store }) {
         for (let f of fields) {
             $colgroup.append(`<col width="${f.docWidth || f.width || 120}">`);
             $ftr.append(`<th>${f.display}</th>`);
@@ -587,6 +588,42 @@ export default class WfStore {
             $tbody.append($tr);
         }
         return $wrapper;
+    }
+
+    makeLTable({ $wrapper, $colgroup, $tbody, fields }, { data, store }) {
+        $colgroup.append(`<col width="200">`);
+        let count = 0;
+        for (let f of fields) {
+            const $tr = $(`<tr></tr>`);
+            const style = `style="${count === 0 ? 'border-top:0' : ''}"`;
+            $tr.append(`<td ${style}>${f.display}</td>`);
+            for (let d of data) {
+                let unit = '';
+                if (store) {
+                    const cpnt = store.searchByField(f.field_name, true);
+                    if (cpnt && cpnt._unit) {
+                        unit = cpnt._unit;
+                    }
+                }
+                $tr.append(`<td ${style}>${this.filterBadVal(d[f.field_name])}${unit}</td>`)
+            }
+            $tbody.append($tr);
+            count++;
+        }
+        return $wrapper;
+    }
+
+    makeStaticTable({ allFields, showIndex = false, tableFunc }) {
+        const fields = allFields.filter((f) => f.show === "1" && f.using === '1');
+        const $wrapper = $(`<table class="pso-static-table"><colgroup></colgroup><thead><tr></tr></thead><tbody></tbody></table>`);
+        const $colgroup = $wrapper.find('colgroup');
+        const $ftr = $wrapper.find('thead>tr');
+        const $tbody = $wrapper.find('tbody');
+        if (showIndex) {
+            $colgroup.append(`<col width="40">`);
+            $ftr.append(`<th>项次</th>`);
+        }
+        return tableFunc({ $wrapper, $colgroup, $ftr, $tbody, fields });
     }
 
     filterBadVal(val) {

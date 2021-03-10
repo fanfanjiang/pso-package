@@ -16,7 +16,7 @@
           <div class="pso-view-header__l">
             <div class="pso-view-title">
               <i class="el-icon-document"></i>
-              <span>流程：{{ curNode.node_display }}</span>
+              <span>流程：{{ curNode.node_display }}({{ curNode.node_name }})</span>
             </div>
           </div>
           <div class="pso-view-header__r">

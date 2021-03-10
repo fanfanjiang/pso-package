@@ -90,10 +90,8 @@
             </div>
           </div>
           <div class="form-executor-header__r">
-            <div class="sql-designer__add">
-              <el-button size="mini" type="success" icon="el-icon-plus" @click="handleParamsAdd()">添加参数</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-upload" @click="saveSearch()">保存</el-button>
-            </div>
+            <el-button size="mini" type="success" icon="el-icon-plus" @click="handleParamsAdd()">添加参数</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-upload" @click="saveSearch()">保存</el-button>
           </div>
         </div>
       </template>
@@ -148,12 +146,10 @@
             </div>
           </div>
           <div class="form-executor-header__r">
-            <div class="sql-designer__add">
-              <el-button v-if="curCol && curCol.drillTarget" size="mini" type="success" icon="el-icon-plus" @click="drillAdd()">
-                添加参数
-              </el-button>
-              <el-button size="mini" type="primary" @click="saveDrill()">确 定</el-button>
-            </div>
+            <el-button v-if="curCol && curCol.drillTarget" size="mini" type="success" icon="el-icon-plus" @click="drillAdd()">
+              添加参数
+            </el-button>
+            <el-button size="mini" type="primary" @click="saveDrill()">确 定</el-button>
           </div>
         </div>
       </template>

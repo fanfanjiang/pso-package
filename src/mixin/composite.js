@@ -126,9 +126,14 @@ export const FormAsMainMixin = {
 
         },
         astChangeHandler({ trigger, cpnt }) {
-            if (cpnt.data.componentid === "asstable" && trigger !== 'action') {
-                this.$nextTick(() => {
-                    this.saveAst();
+            if (cpnt.data.componentid === "asstable") {
+                if (trigger !== 'action') {
+                    this.$nextTick(async () => {
+                        await this.saveAst();
+                    })
+                }
+                this.$nextTick(async () => {
+                    this.vStore.deReloadInstance(this.mainDataId);
                 })
             }
         },

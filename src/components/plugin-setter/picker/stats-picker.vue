@@ -10,9 +10,7 @@
           </div>
         </div>
         <div class="form-executor-header__r">
-          <div class="sql-designer__add">
-            <el-button v-if="stats.statsId" size="mini" type="success" icon="el-icon-plus" @click="addRelation()"> 添加参数 </el-button>
-          </div>
+          <el-button v-if="stats.statsId" size="mini" type="success" icon="el-icon-plus" @click="addRelation()"> 添加参数 </el-button>
         </div>
       </div>
     </template>
@@ -59,8 +57,8 @@
   </pso-dialog>
 </template>
 <script>
-import PickerForm from "../picker/pso-picker-form";
-import { KEYS_TYPE } from "../../const/sys";
+import PickerForm from "../../picker/pso-picker-form";
+import { KEYS_TYPE } from "../../../const/sys";
 
 export default {
   components: { PickerForm },

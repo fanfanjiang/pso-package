@@ -37,47 +37,60 @@
             <menu-auth v-if="curTab === 'auth'" :node="curNode"></menu-auth>
             <view-set v-if="curTab === 'view'" :data="viewData"></view-set>
             <div class="pso-menu-param" v-if="curTab === 'param'" v-loading="saving || loadingInfo">
-              <el-form label-position="left" label-width="180px">
-                <template v-if="!params.hide">
-                  <pso-title>基本参数</pso-title>
-                  <el-form-item label="菜单名称">
-                    <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
-                  </el-form-item>
-                  <el-form-item label="节点名称">
-                    <el-input size="small" v-model="curNode.node_display" autocomplete="off"></el-input>
-                  </el-form-item>
-                  <el-form-item label="菜单图标">
-                    <el-input size="small" v-model="curNode.menu_icon">
-                      <template slot="prepend">
-                        <el-button icon="el-icon-edit" @click="handleIcon"></el-button>
-                      </template>
-                    </el-input>
-                  </el-form-item>
-                  <el-form-item label="排序">
-                    <el-input-number size="small" v-model="curNode.node_serial" controls-position="right" :min="0"></el-input-number>
-                  </el-form-item>
+              <great-panel>
+                <template #header>
+                  <i class="el-icon-edit-outline"></i>
+                  <span>基本参数</span>
                 </template>
-                <div v-if="!!curNode.is_leaf">
-                  <el-form-item label="打开方式">
-                    <el-select size="small" v-model="curNode.open_type">
-                      <el-option v-for="item in OPEN_TYPE" :key="item.v" :label="item.n" :value="item.v"></el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="菜单类型">
-                    <el-select size="small" v-model="curNode.menu_type">
-                      <el-option v-for="item in MENU_TYPE" :key="item.v" :label="item.n" :value="item.v"></el-option>
-                    </el-select>
-                  </el-form-item>
-                  <plugin-setter v-if="curNode.menu_type === MENU_TYPE[0].v" :data="curTpDetail" :node="curNode" field="menu_link">
-                    <template v-slot:default="slotProps">
-                      <slot v-bind:data="{ node_name: curNode.node_name, set: slotProps.data }"></slot>
-                    </template>
-                  </plugin-setter>
-                  <el-form-item v-else label="菜单链接">
-                    <el-input size="small" v-model="curNode.menu_link" autocomplete="off"></el-input>
-                  </el-form-item>
-                </div>
-              </el-form>
+                <el-form label-position="left" label-width="180px">
+                  <template v-if="!params.hide">
+                    <div class="form-wrapper">
+                      <el-form-item label="菜单名称">
+                        <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
+                      </el-form-item>
+                      <el-form-item label="节点名称">
+                        <el-input size="small" v-model="curNode.node_display" autocomplete="off"></el-input>
+                      </el-form-item>
+                    </div>
+                    <div class="form-wrapper">
+                      <el-form-item label="菜单图标">
+                        <el-input size="small" v-model="curNode.menu_icon">
+                          <template slot="prepend">
+                            <el-button icon="el-icon-edit" @click="handleIcon"></el-button>
+                          </template>
+                        </el-input>
+                      </el-form-item>
+                      <el-form-item label="排序">
+                        <el-input-number size="small" v-model="curNode.node_serial" controls-position="right" :min="0"></el-input-number>
+                      </el-form-item>
+                    </div>
+                  </template>
+                  <div class="form-wrapper" v-if="!!curNode.is_leaf">
+                    <el-form-item label="打开方式">
+                      <el-select size="small" v-model="curNode.open_type">
+                        <el-option v-for="item in OPEN_TYPE" :key="item.v" :label="item.n" :value="item.v"></el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="菜单类型">
+                      <el-select size="small" v-model="curNode.menu_type" @change="typeChange">
+                        <el-option v-for="item in MENU_TYPE" :key="item.v" :label="item.n" :value="item.v"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </div>
+                  <div class="form-wrapper">
+                    <el-form-item v-if="curNode.menu_type === MENU_TYPE[1].v" label="菜单链接">
+                      <el-input size="small" v-model="curNode.menu_link" autocomplete="off"></el-input>
+                    </el-form-item>
+                  </div>
+                </el-form>
+              </great-panel>
+              <great-panel v-if="curNode.menu_type === MENU_TYPE[0].v">
+                <template #header>
+                  <i class="el-icon-edit-outline"></i>
+                  <span>插件配置</span>
+                </template>
+                <plugin-setter :data="curTpDetail" :node="curNode" field="menu_link"> </plugin-setter>
+              </great-panel>
             </div>
           </div>
         </template>
@@ -95,10 +108,11 @@ import ViewSet from "./view";
 import { MENU_TYPE, OPEN_TYPE, MENU_LEAF_AUTH } from "../../const/menu";
 import PsoPickerIcon from "../picker/pso-picker-icon";
 import { MgtMixin } from "../../mixin/view";
+import GreatPanel from "../great-panel";
 
 export default {
   mixins: [MgtMixin],
-  components: { MenuAuth, PluginSetter, ViewSet, PsoPickerIcon },
+  components: { MenuAuth, PluginSetter, ViewSet, PsoPickerIcon, GreatPanel },
   props: {
     params: {
       type: Object,
@@ -192,14 +206,15 @@ export default {
           data[key] = this.curNode[key];
         }
       }
-      delete data.node_display;
+
+      const params_value = this.curTpDetail.map(({ value, field }) => ({ value, field }));
       const ret = await this.API.trees({
         data: {
           open_type: "",
           ...data,
           dimen: data.node_dimen,
           code: data.node_name,
-          param_value: JSON.stringify(this.curTpDetail),
+          param_value: JSON.stringify(params_value),
           auth_config: JSON.stringify(this.viewData),
         },
         method: "put",
@@ -216,6 +231,9 @@ export default {
     pickIcon(icon) {
       this.curNode.menu_icon = icon;
       this.showIconBox = false;
+    },
+    typeChange() {
+      this.curNode.menu_link = "";
     },
   },
 };

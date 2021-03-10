@@ -9,7 +9,7 @@ export default {
   data() {
     return {
       loading: true,
-      src: `${this.APIURL}/pdf?url=${this.file.url}`
+      src: `${this.APIURL}/pdf?url=${encodeURIComponent(this.file.url)}`
     };
   }
 };

@@ -80,6 +80,16 @@
             >设置脚本</el-button
           >
         </div>
+        <div style="margin-top: 15px">
+          <el-switch
+            size="mini"
+            v-model="asstableNode.attrs.direction"
+            active-value="1"
+            inactive-value="0"
+            active-text="纵向表格"
+            inactive-text="横向表格"
+          ></el-switch>
+        </div>
       </div>
     </div>
     <div class="wf-table-editor__save" v-if="saveButton">

@@ -18,7 +18,7 @@
                   <span>
                     <span>{{ m.user_name }}</span>
                   </span>
-                  <span v-if="m.com_content">发布留言:{{ m.com_content }}</span>
+                  <span v-if="m.com_content">发布留言：{{ m.com_content }}</span>
                   <span v-else>上传了附件</span>
                 </div>
               </div>

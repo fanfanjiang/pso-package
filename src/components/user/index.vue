@@ -7,7 +7,7 @@
       <div class="pso-view-mgt-tabs">
         <button-tabs v-model="curTab" :data="TABS"></button-tabs>
       </div>
-      <div class="pso-view-table" v-if="user">
+      <div class="pso-view-table" style="padding-top: 20px" v-if="user">
         <node-auth v-if="curTab === 0" key="form" type="form" :bind-id="user.user_id" bind-type="0"></node-auth>
         <node-auth v-if="curTab === 1" key="wf" type="wf" :bind-id="user.user_id" bind-type="0"></node-auth>
       </div>

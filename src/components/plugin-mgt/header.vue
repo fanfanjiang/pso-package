@@ -21,9 +21,7 @@
             </div>
           </div>
           <div class="form-executor-header__r">
-            <div class="sql-designer__add">
-              <el-button size="mini" type="primary" icon="el-icon-upload" @click="save()">保存</el-button>
-            </div>
+            <el-button size="mini" type="primary" icon="el-icon-upload" @click="save()">保存</el-button>
           </div>
         </div>
       </template>

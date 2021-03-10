@@ -22,13 +22,24 @@
             </div>
           </div>
           <div class="pso-view-fun-r">
-            <div class="view-data-fun"></div>
+            <div class="view-data-fun">
+              <slot name="datafun"></slot>
+            </div>
           </div>
         </div>
       </div>
       <div class="pso-view-table" v-if="!initializing">
         <div class="pso-view-table__body" ref="tableRef">
-          <el-table v-loading="fetching" :size="size" border :data="instances" style="width: 100%" :height="tableHeight">
+          <el-table
+            v-loading="fetching"
+            :size="size"
+            border
+            :data="instances"
+            style="width: 100%"
+            :height="tableHeight"
+            @row-dblclick="$emit('dbclick', $event)"
+            @selection-change="$emit('select', $event)"
+          >
             <template #default>
               <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
               <el-table-column type="index" label="序号" :index="1" width="50" align="center"></el-table-column>
@@ -64,7 +75,6 @@
 </template>
 <script>
 import { PagingMixin } from "../../mixin/view";
-const DATA = {};
 
 export default {
   mixins: [PagingMixin],
@@ -103,10 +113,6 @@ export default {
       editing: false,
       instances: [],
       dataTotal: 0,
-      showEditor: false,
-      curInstance: { ...DATA },
-      selected: [],
-      sites: [],
       tableHeight: 200,
     };
   },

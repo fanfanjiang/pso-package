@@ -6,12 +6,21 @@
         :rootable="true"
         :edit-mode="false"
         :request-options="treeOptions"
+        :check-auth="!mgtable"
         @node-click="nodeClickHandler"
       ></pso-tree-common>
     </div>
     <div class="pso-view-body">
       <div class="pso-view-header">
-        <div class="pso-view-header__r" v-show="authViews.length">
+        <div class="pso-view-header__l" v-if="curNode && mgtable">
+          <div class="pso-view-authtab">
+            <el-tabs v-model="curTab">
+              <el-tab-pane v-if="!!curNode.is_leaf" label="资源" name="data"></el-tab-pane>
+              <el-tab-pane label="权限" name="auth"></el-tab-pane>
+            </el-tabs>
+          </div>
+        </div>
+        <div class="pso-view-header__r" v-show="authViews.length && !mgtable">
           <div class="pso-view-authtab">
             <el-tabs v-model="activeView">
               <el-tab-pane v-for="(ah, i) in authViews" :key="i" :label="ah.n" :name="ah.v + ''"></el-tab-pane>
@@ -19,17 +28,13 @@
           </div>
         </div>
       </div>
-      <div class="pso-view-sorttag" v-if="curNode && mgtable">
-        <el-tabs v-model="curTab">
-          <el-tab-pane v-if="!!curNode.is_leaf" label="资源" name="data"></el-tab-pane>
-          <el-tab-pane label="权限" name="auth"></el-tab-pane>
-        </el-tabs>
-      </div>
-      <div class="pso-view-fun">
+      <div class="pso-view-fun" v-if="curTab === 'data'">
         <div class="pso-view-fun-l">
           <div class="view-table-fun">
-            <pso-search text="搜索" v-model="fetchParams.keywords"></pso-search>
-            <el-divider direction="vertical"></el-divider>
+            <template v-if="searchable">
+              <pso-search text="搜索" v-model="fetchParams.keywords"></pso-search>
+              <el-divider direction="vertical"></el-divider>
+            </template>
             <el-button type="text" icon="el-icon-refresh" @click="fetch">刷新</el-button>
           </div>
         </div>
@@ -51,6 +56,8 @@
             :fetching="fetching"
             :opable="opable"
             :instances="instances"
+            :collectable="collectable"
+            :redcheckable="redcheckable"
             @row-click="rowClickHandler"
             @selection-change="changeHandler"
             @collect="collect"
@@ -70,7 +77,7 @@
             ></el-pagination>
           </div>
         </div>
-        <pso-nodeauth v-if="curTab === 'auth' && curNode" :node="curNode"></pso-nodeauth>
+        <menu-auth v-if="curTab === 'auth' && curNode" :node="curNode"></menu-auth>
       </div>
     </div>
     <pso-dialog :visible="showEditor" width="50%" @close="showEditor = false">
@@ -99,7 +106,7 @@
   </div>
 </template>
 <script>
-import PsoNodeauth from "../node-auth";
+import MenuAuth from "../menu-mgt/auth";
 import KnowlTable from "./table";
 import { PagingMixin, AuthViewMixin } from "../../mixin/view";
 import { Attach } from "../../mixin/form";
@@ -110,7 +117,7 @@ const DATA = {
 
 export default {
   mixins: [PagingMixin, AuthViewMixin, Attach],
-  components: { PsoNodeauth, KnowlTable },
+  components: { MenuAuth, KnowlTable },
   props: {
     data_type: {
       type: String,
@@ -138,6 +145,22 @@ export default {
     mgtable: {
       type: Boolean,
       default: false,
+    },
+    collectable: {
+      type: Boolean,
+      default: false,
+    },
+    redcheckable: {
+      type: Boolean,
+      default: false,
+    },
+    searchable: {
+      type: Boolean,
+      default: true,
+    },
+    resid: {
+      type: String,
+      default: "",
     },
   },
   data() {
@@ -184,7 +207,7 @@ export default {
       this.fetch();
     });
     if (!this.treeable) {
-      await this.fetch();
+      this.switchPatten();
     }
   },
   methods: {
@@ -228,7 +251,15 @@ export default {
     async fetch() {
       this.fetching = true;
 
-      const params = this.getFetchParams("r_name", this.curNode ? { node_id: { type: 1, value: this.curNode.node_id } } : {});
+      const defKeys = {};
+      if (this.curNode) {
+        defKeys.node_id = { type: 1, value: this.curNode.node_id };
+      }
+      if (this.resid) {
+        defKeys["res_id"] = { type: 1, value: this.resid };
+      }
+
+      const params = this.getFetchParams("r_name", defKeys);
       params.page = params.start;
       params.leaf_auth = this.activeView;
       if (this.searchType) params.search_type = this.searchType;
@@ -264,7 +295,7 @@ export default {
       if (!this.selected.length) return;
       this.saveHandler({ ...this.selected[0], optype: 2 });
     },
-    async saveHandler(params) {
+    async saveHandler(params, refresh = true) {
       if (this.editing) return;
       this.editing = true;
       let data = {};
@@ -272,7 +303,7 @@ export default {
       if (params) {
         data = params;
       } else {
-        data = { ...this.curInstance, optype: leaf_id ? 1 : 0 };
+        data = { ...this.curInstance, map_key: this.attach.data._val, optype: leaf_id ? 1 : 0 };
         if (!leaf_id) {
           data.node_id = this.curNode.node_id;
         }
@@ -280,7 +311,9 @@ export default {
       const ret = await this.API.resource({ data, method: leaf_id ? "put" : "post" });
       this.ResultNotify(ret);
       this.showEditor = false;
-      this.fetch();
+      if (ret.success) {
+        this.fetch();
+      }
       this.editing = false;
     },
     share(users) {
@@ -289,9 +322,11 @@ export default {
       this.saveHandler({ leaf_id, res_id, res_user: users[0].user_id, optype: 1, extendop: true });
     },
     collect(data) {
-      const { map_key: res_id, auto_no } = data;
+      const { map_key, res_id, res_name, r_name, auto_no } = data;
+      const shitName = r_name || res_name;
+      const shitId = res_id || map_key;
       this.$set(data, "collecting", true);
-      this.saveHandler({ ...data, res_id, optype: auto_no ? 2 : 0, extendop: true });
+      this.saveHandler({ ...data, res_id: shitId, leaf_id: shitId, r_name: shitName, optype: auto_no ? 2 : 0, extendop: true });
       data.collecting = false;
     },
   },

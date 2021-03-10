@@ -138,6 +138,7 @@ export default {
         _file.res_id = _file.leaf_id = ret.data[0].LeafId;
         makeFiles({ files: [Object.assign(_file, ret.data[0])] });
       }
+      this.$emit("success", _file);
       this.$message({
         message: "上传成功",
         type: "success",

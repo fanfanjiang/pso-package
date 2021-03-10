@@ -332,7 +332,6 @@ export default {
 
     this.watchFun.push(
       this.$watch("proxy.valList", {
-        deep: true,
         handler(data, preData) {
           this.prepareByProxy(data);
 
@@ -342,7 +341,8 @@ export default {
           //3、只有_val发生变化才发出通知（mixin中）
 
           //4、当proxy发生变化但是_val并没有发生变化时才发出通知
-          if (data.length === preData.length) {
+          //删除时和新增时 获取到新旧值的长度是不一样的，新增时可以正确获取到长度不同的新旧值，但是删除时不行
+          if (data.length === preData.length && data === preData) {
             this.dispatch("PsoformInterpreter", "asstable-change", this.getChangeEntity());
           }
         },
@@ -566,7 +566,13 @@ export default {
           }
         }
       } else if (op === 3) {
-        this.proxy.valList.splice(_.findIndex(this.proxy.valList, { leaf_id }), 1);
+        const newProxy = [];
+        for (let item of this.proxy.valList) {
+          if (leaf_id !== item.leaf_id) {
+            newProxy.push(item);
+          }
+        }
+        this.proxy.valList = newProxy;
         this.astStore.removeInstance(leaf_id);
       }
     },

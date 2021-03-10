@@ -25,6 +25,7 @@
         <pso-upload
           @close="showUpload = false"
           @confirm="confirm"
+          @success="$emit('success', $event)"
           :api="api"
           :data="data"
           :visible="showUpload"

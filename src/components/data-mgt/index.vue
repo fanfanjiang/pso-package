@@ -354,19 +354,13 @@ export default {
         });
       });
 
-      //提交规则
-      const subCfgData = [];
-      this.subCfg.forEach((item) => {
-        subCfgData.push({ ...item, params: item.param.join(",") });
-      });
-
       const ret = await this.API.updateFormTree({
         data_code: this.curNode.node_name,
         display_columns: JSON.stringify(this.colCfg),
         status_config: JSON.stringify(this.staData),
         pub_config: JSON.stringify(pubdata),
         rule_config: JSON.stringify(rules),
-        submit_config: JSON.stringify(subCfgData),
+        submit_config: JSON.stringify(this.subCfg),
         stage_config: JSON.stringify(this.stageData),
         sub_config: JSON.stringify(this.asstable),
         export_config: JSON.stringify(this.upload),

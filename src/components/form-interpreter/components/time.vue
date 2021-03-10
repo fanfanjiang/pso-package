@@ -61,8 +61,14 @@ export default {
   created() {
     if (!this.cpnt.data._val && this.cpnt.data._defaultType) {
       const defType = _.find(DATE_OPTION[this.cpnt.data._type], { value: this.cpnt.data._defaultType });
-      if (defType && defType.value === "1") {
-        this.cpnt.data._val = dayjs().format(TIME_FORMAT[this.cpnt.data._type].replace("yyyy", "YYYY").replace("dd", "DD"));
+      if (defType) {
+        if (defType.value === "1") {
+          this.cpnt.data._val = dayjs().format(TIME_FORMAT[this.cpnt.data._type].replace("yyyy", "YYYY").replace("dd", "DD"));
+        } else if (defType.value === "99") {
+          if (this.cpnt.data._defaultFormat) {
+            this.cpnt.data._val = dayjs().format(this.cpnt.data._defaultFormat.replace("yyyy", "YYYY").replace("dd", "DD"));
+          }
+        }
       }
     }
     this.makeShowValue();

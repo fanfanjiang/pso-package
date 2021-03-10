@@ -61,7 +61,7 @@
       </el-table-column>
       <el-table-column prop="name" label="转换">
         <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.format"></el-input>
+          <el-input size="mini" v-model="scope.row.format" :disabled="scope.row.type !== 'common_x'"></el-input>
         </template>
       </el-table-column>
       <el-table-column prop="relate_field" label="关联字段" width="180" align="center">

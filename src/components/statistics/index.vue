@@ -143,7 +143,11 @@ export default {
       return this.__isMobile__;
     },
     paginationLayout() {
-      return this.forceclick ? "prev, pager, next" : "total, sizes, prev, pager, next, jumper";
+      return this.params.pageLayout
+        ? this.params.pageLayout
+        : this.forceclick
+        ? "prev, pager, next"
+        : "total, sizes, prev, pager, next, jumper";
     },
     viewClass() {
       return {

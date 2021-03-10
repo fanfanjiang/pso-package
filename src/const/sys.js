@@ -50,7 +50,7 @@ export const TP_NEW_TYPES = [
 ]
 
 export const PLUGIN_PARAMS = {
-    field: "", value: "", picker: "", name: "", saveType: "1", relateParam: ""
+    field: "", value: "", picker: "", name: "", saveType: "1", relateParam: "", tip: '', options: [], order: 99
 }
 
 export const FORM_COLUMN_FIELDS = {

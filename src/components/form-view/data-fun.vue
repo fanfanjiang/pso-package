@@ -43,13 +43,19 @@
         <el-dropdown-item command="downloadFormTp" v-if="opAddable">下载模板</el-dropdown-item>
         <el-dropdown-item v-if="opAddable">
           <el-form>
-            <pso-form-attach :cpnt="uploadAttach" :data="{ data_code: store.formCfg.data_code }" :preview="false" :api="uploadAPI">
+            <pso-form-attach
+              :cpnt="uploadAttach"
+              :data="{ data_code: store.formCfg.data_code }"
+              :preview="false"
+              :api="uploadAPI"
+              @success="uploadedData"
+            >
               <span>导入</span>
             </pso-form-attach>
           </el-form>
         </el-dropdown-item>
         <el-dropdown-item command="exportCurPage" v-if="opExportable">导出EXCEL</el-dropdown-item>
-        <el-dropdown-item v-if="opExportable">全部导出</el-dropdown-item>
+        <!-- <el-dropdown-item v-if="opExportable">全部导出</el-dropdown-item> -->
         <el-dropdown-item command="saveColumn">保存列宽</el-dropdown-item>
         <el-dropdown-item command="saveFiles">下载文件</el-dropdown-item>
       </el-dropdown-menu>
@@ -136,6 +142,9 @@ export default {
     },
     checkAction(action) {
       this.store.checkAction(action);
+    },
+    uploadedData() {
+      this.store.fetchStatus();
     },
   },
 };

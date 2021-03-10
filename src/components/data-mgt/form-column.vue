@@ -25,6 +25,7 @@
                   <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
                 </el-select>
               </el-form-item>
+              <el-divider content-position="left">手机视图配置</el-divider>
               <el-form-item label="标题字段" style="margin-bottom: 10px">
                 <el-select size="mini" filterable clearable v-model="col.fieldTitle">
                   <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
@@ -59,7 +60,7 @@
             border
             :data="col.data"
             style="width: 100%; margin-top: 20px"
-            height="320"
+            height="500"
             :sort-by="['number']"
             @row-dblclick="rowClickHandler($event, col.data)"
           >

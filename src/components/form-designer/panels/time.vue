@@ -19,6 +19,7 @@
             v-if="cpnt.data._type === 'time' && cpnt.data._defaultType === '2'"
             :format="'HH:mm:ss'"
           ></el-time-picker>
+          <el-input v-else-if="cpnt.data._defaultType === '99'" size="mini" v-model="cpnt.data._defaultFormat" clearable></el-input>
         </div>
       </el-form-item>
     </common-panel>

@@ -21,7 +21,13 @@
     </div>
     <div class="lay-vv__b" :style="bottomStyle" v-loading="initializing || initializingAst">
       <template v-if="mainCurRow">
-        <pso-form-view v-bind="assParams" :params="assParams"></pso-form-view>
+        <pso-form-view
+          key="body"
+          v-bind="assParams"
+          :params="assParams"
+          @data-changed="bodyChangeHandler"
+          @actioned="bodyChangeHandler"
+        ></pso-form-view>
       </template>
     </div>
   </div>
@@ -68,6 +74,9 @@ export default {
     async handleInitialized(option) {
       this.mainInitedHandler(option);
       this.initializing = false;
+    }, 
+    bodyChangeHandler() {
+      this.vStore.deReloadInstance(this.mainDataId);
     },
   },
 };

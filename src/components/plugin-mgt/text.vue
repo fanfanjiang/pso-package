@@ -1,9 +1,17 @@
 <template>
   <div style="margin-top: 20px">
-    <div>
-      <pso-title>默认文本</pso-title>
-      <el-button size="mini" type="primary" plain @click="addParam">添加参数</el-button>
-      <el-table :data="defText" style="width: 100%" key="param">
+    <great-panel>
+      <template #header>
+        <span>设置插件中文本的映射</span>
+      </template>
+    </great-panel>
+    <great-panel>
+      <template #header>
+        <i class="el-icon-edit-outline"></i>
+        <span>默认文本</span>
+      </template>
+      <el-button size="mini" type="primary" plain @click="addParam" style="margin-bottom: 10px">添加参数</el-button>
+      <el-table border size="mini" :data="defText" style="width: 100%" key="param">
         <el-table-column label="文本名称">
           <template slot-scope="scope">
             <el-input v-model="scope.row.name" size="mini" placeholder></el-input>
@@ -14,22 +22,25 @@
             <el-input v-model="scope.row.id" size="mini" placeholder></el-input>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作">
+        <el-table-column label="操作" align="center" width="100">
           <template slot-scope="scope">
-            <el-button size="mini" plain @click="delParam(scope.$index)">删除</el-button>
+            <el-button size="mini" type="danger" plain @click="delParam(scope.$index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-    </div>
-    <div>
-      <pso-title>文本</pso-title>
-      <div v-for="(item, index) in data" :key="index">
-        <el-form label-position="left" label-width="80px">
+    </great-panel>
+    <great-panel>
+      <template #header>
+        <i class="el-icon-edit-outline"></i>
+        <span>自定义文本</span>
+      </template>
+      <div style="margin-bottom: 20px" v-for="(item, index) in data" :key="index">
+        <el-form label-position="left" label-width="80px" style="margin-bottom: 10px">
           <el-form-item label="组名称">
             <el-input v-model="item.name" size="mini" placeholder></el-input>
           </el-form-item>
         </el-form>
-        <el-table :data="item.list" style="width: 100%" key="param">
+        <el-table border size="mini" :data="item.list" style="width: 100%" key="param">
           <el-table-column label="文本名称" prop="name"></el-table-column>
           <el-table-column label="文本修正">
             <template slot-scope="scope">
@@ -40,16 +51,19 @@
         <div style="margin-top: 10px">
           <el-button size="mini" type="danger" plain @click="delGroup(index)">删除组</el-button>
         </div>
+        <el-divider></el-divider>
       </div>
-      <div style="margin-top: 20px">
+      <div style="margin-top: 10px">
         <el-button size="mini" type="primary" plain @click="addGroup">添加组</el-button>
       </div>
-    </div>
+    </great-panel>
   </div>
 </template>
 <script>
 import shortid from "shortid";
+import GreatPanel from "../great-panel";
 export default {
+  components: { GreatPanel },
   props: ["data", "defText"],
   data() {
     return {};
