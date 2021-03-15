@@ -128,8 +128,8 @@ const FILTER_TYPE = {
             { ...FILTER_OP.op7, match: 1 },
             { ...FILTER_OP.op8, match: 1 },
             { ...FILTER_OP.op10, match: 5, arraytype: true, defaultVal: [0, 0] },
-            { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
-            { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
     },
     string: {
@@ -146,8 +146,8 @@ const FILTER_TYPE = {
             { ...FILTER_OP.op6, match: 1 },
             { ...FILTER_OP.op7, match: 1 },
             { ...FILTER_OP.op8, match: 1 },
-            { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
-            { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
     },
     select: {
@@ -158,8 +158,8 @@ const FILTER_TYPE = {
             { ...FILTER_OP.op1, match: 2, optional: true },
             { ...FILTER_OP.op7, match: 7, optional: true, arraytype: true },
             { ...FILTER_OP.op2, match: 2 },
-            { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
-            { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
     },
     time: {
@@ -178,8 +178,8 @@ const FILTER_TYPE = {
             { ...FILTER_OP.op14, match: 6 },
             { ...FILTER_OP.op15, match: 6 },
             { ...FILTER_OP.op16, match: 8 },
-            { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
-            { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
     },
     asstable: {
@@ -188,8 +188,8 @@ const FILTER_TYPE = {
         name: '关联表',
         op: [
             { ...FILTER_OP.op1, match: 99 },
-            { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
-            { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
     },
     tag: {
@@ -198,8 +198,8 @@ const FILTER_TYPE = {
         name: '标签',
         op: [
             { ...FILTER_OP.op1, match: 99 },
-            { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
-            { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
     },
     user: {
@@ -209,8 +209,8 @@ const FILTER_TYPE = {
         op: [
             { ...FILTER_OP.op1, match: 99 },
             { ...FILTER_OP.op2, match: 99 },
-            { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
-            { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
     },
     dept: {
@@ -220,8 +220,18 @@ const FILTER_TYPE = {
         op: [
             { ...FILTER_OP.op1, match: 99 },
             { ...FILTER_OP.op2, match: 99 },
-            { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
-            { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
+        ]
+    },
+    cascader: { 
+        id: 'cascader',
+        cid: 'cascader',
+        name: '级联选择',
+        op: [
+            { ...FILTER_OP.op1, match: 99 },
+            // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
+            // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
     }
 }

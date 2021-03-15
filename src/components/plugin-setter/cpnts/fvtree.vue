@@ -36,10 +36,10 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column prop="other" label="其它关系" align="center">
+      <el-table-column prop="other" label="其它关系" align="center" width="400">
         <template slot-scope="scope">
           <div style="display: flex; align-items: center; justify-content: space-between" v-for="(v, k, i) in scope.row.other" :key="i">
-            <span>{{ getFormNameById(k) }}：</span>
+            <span style="white-space: nowrap">{{ getFormNameById(k) }}：</span>
             <el-select v-if="scope.row.fid" v-model="scope.row.other[k].field" size="mini" clearable placeholder="表单字段">
               <el-option v-for="(f, i) in getFormFields(scope.row.fid)" :key="i" :label="f.fieldDisplay" :value="f._fieldValue"></el-option>
             </el-select>
@@ -49,12 +49,26 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="90" align="center">
+      <el-table-column label="操作" width="160" align="center">
         <template slot-scope="scope">
+          <el-button v-if="scope.row.fid" size="mini" plain @click="setCurItem(scope.$index)">设置</el-button>
           <el-button size="mini" type="danger" plain @click="delHandler(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <pso-dialog :visible="showEditor" width="70%" @close="showEditor = false">
+      <template #title>
+        <pso-dialog-header>
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>详细配置</span>
+          </template>
+        </pso-dialog-header>
+      </template>
+      <div class="pso-dialog-content" v-if="curItem">
+        <setter :node="node" :code="code" :data="curItem.opts" @tploaded="tpLoadedHandler"></setter>
+      </div>
+    </pso-dialog>
   </div>
 </template>
 <script>
@@ -62,18 +76,21 @@ import PickerForm from "../../picker/pso-picker-form";
 import { formatJSONList } from "../../../utils/util";
 
 import shortid from "shortid";
-const FIELDS = { id: "", pid: "", fid: "", field: "", pfield: "leaf_id", other: {} };
+const FIELDS = { id: "", pid: "", fid: "", field: "", pfield: "leaf_id", other: {}, opts: [] };
 const OTHER = { field: "", pfield: "leaf_id" };
 export default {
-  components: { PickerForm },
+  components: { PickerForm, Setter: () => import("../setter") },
   props: {
     node: Object,
     data: Array,
   },
   data() {
     return {
+      showEditor: false,
       forms: [],
       fProxy: {},
+      curItem: null,
+      code: "P000000131415923",
     };
   },
   computed: {
@@ -84,7 +101,7 @@ export default {
       }
     },
   },
-  created() {
+  async created() {
     let exist = _.find(this.data, { field: "fvtree" });
     if (!exist) {
       this.data.push({ field: "fvtree", value: [], saveType: "2" });
@@ -145,6 +162,16 @@ export default {
         }
       }
       return ancestor;
+    },
+    setCurItem(index) {
+      this.curItem = this.cfg[index];
+      this.showEditor = true;
+    },
+    tpLoadedHandler() {
+      const exist = _.find(this.curItem.opts, { field: "cfgId" });
+      if (exist) {
+        exist.value = this.curItem.fid;
+      }
     },
   },
 };

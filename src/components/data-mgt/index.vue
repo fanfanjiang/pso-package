@@ -213,7 +213,7 @@ export default {
       if (ret.success) {
         const cfg = ret.data.data;
         if (cfg.pub_config) {
-          this.pubCfg = Object.assign(this.pubCfg, JSON.parse(cfg.pub_config));
+          this.pubCfg = JSON.parse(cfg.pub_config);
         }
 
         if (cfg.status_config) {
@@ -331,34 +331,11 @@ export default {
         rules.push(rule);
       });
 
-      //发布规则
-      const pubdata = {
-        isPublic: this.pubCfg.isPublic,
-        attach: this.pubCfg.attach,
-        name: this.pubCfg.name,
-        subBtnText: this.pubCfg.subBtnText,
-        doneText: this.pubCfg.doneText,
-        qrList: this.pubCfg.qrList,
-        submitable: this.pubCfg.submitable,
-        formLabelPosition: this.pubCfg.formLabelPosition,
-        formLabelWith: this.pubCfg.formLabelWith,
-        rules: [],
-      };
-
-      this.pubCfg.rules.forEach((item) => {
-        pubdata.rules.push({
-          id: item.id,
-          name: item.name,
-          cid: item.cid,
-          val: item.val,
-        });
-      });
-
       const ret = await this.API.updateFormTree({
         data_code: this.curNode.node_name,
         display_columns: JSON.stringify(this.colCfg),
         status_config: JSON.stringify(this.staData),
-        pub_config: JSON.stringify(pubdata),
+        pub_config: JSON.stringify(this.pubCfg),
         rule_config: JSON.stringify(rules),
         submit_config: JSON.stringify(this.subCfg),
         stage_config: JSON.stringify(this.stageData),

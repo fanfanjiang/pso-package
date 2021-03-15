@@ -69,16 +69,20 @@ export default {
       is_sys: "",
       action_config: "",
     };
-    this.ID = "action_id";
-    return {};
+    return {
+      ID: "action_id",
+    };
   },
   created() {},
   methods: {
     async fetch(data) {
-      return await this.API.request("/api/apicfg/type", {
+      const ret = await this.API.request("/api/apicfg/type", {
         data: { ...this.getFetchParams(data), page: data.start },
         method: "get",
       });
+      ret.data.data = ret.data;
+      ret.data.page = ret.count;
+      return ret;
     },
     async addOrUpdate(data) {
       return await this.API.request("/api/apicfg/type", { data, method: "post" });

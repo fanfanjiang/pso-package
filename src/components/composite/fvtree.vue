@@ -71,8 +71,17 @@ export default {
             params.defForm = { [cfg.field]: this.curNode[cfg.pfield] };
           }
         }
-        if (cfg && params.defForm) {
-          Object.assign(params.defForm, this.getRelations(cfg));
+        if (cfg) {
+          if (params.defForm) {
+            Object.assign(params.defForm, this.getRelations(cfg));
+          }
+          if (cfg.opts) {
+            for (let item of cfg.opts) {
+              if (typeof params[item.field] === "undefined") {
+                params[item.field] = item.value;
+              }
+            }
+          }
         }
 
         return { ...this.params, ...params };

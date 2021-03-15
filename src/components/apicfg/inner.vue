@@ -75,9 +75,8 @@ export default {
       inner_return: "",
       return_config: "",
     };
-    this.ID = "inner_id";
-
     return {
+      ID: "inner_id",
       apis: [],
     };
   },
@@ -86,10 +85,13 @@ export default {
   },
   methods: {
     async fetch(data) {
-      return await this.API.request("/api/apicfg/inner", {
+      const ret = await this.API.request("/api/apicfg/inner", {
         data: { ...this.getFetchParams(data), page: data.start },
         method: "get",
       });
+      ret.data.data = ret.data;
+      ret.data.page = ret.count;
+      return ret;
     },
     async addOrUpdate(data) {
       return await this.API.request("/api/apicfg/inner", { data, method: "post" });

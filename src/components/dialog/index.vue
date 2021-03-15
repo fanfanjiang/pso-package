@@ -63,6 +63,7 @@ export default {
     },
     opened() {
       $(".pso-dialog").on("mousedown", this.checkClick);
+      this.$emit('opened');
     },
     closed() {},
   },

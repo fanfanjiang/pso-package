@@ -338,11 +338,13 @@ export default class FormViewStore {
         return _.find(this.fields, { field_name });
     }
 
-    async newInstance(checkScript) {
-        if (this.addAction && this.addAction.beforeScriptable && checkScript) {
-            const ret = await API.doActionScript({ btn_id: 'add', btn_type: '0', data_code: this.store.data_code, data: [] });
-            if (!ret.success) {
-                return;
+    async newInstance(checkAction) {
+        if (checkAction && this.addAction) {
+            if (this.addAction.beforeScriptable) {
+                const ret = await API.doActionScript({ btn_id: 'add', btn_type: '0', data_code: this.store.data_code, data: [] });
+                if (!ret.success) {
+                    return;
+                }
             }
         }
 
@@ -351,6 +353,10 @@ export default class FormViewStore {
         this.curInstance = null;
         this.showExecutor = true;
         this.setActionEmpty();
+
+        if (checkAction && this.addAction) {
+            this.actioning = this.addAction;
+        }
     }
 
     async fetchCuzFastSwtich(source, key, data, vField = 'value') {
@@ -975,9 +981,16 @@ export default class FormViewStore {
                             delete data[0][f.id];
                         }
                     });
-                    await this.batchAddOrUpdate(data[0], _.map(this.selectedList, 'leaf_id'), false, emit);
-                    data = this.selectedList.map((d) => ({ ...d, ...data[0], leaf_id: d.leaf_id }));
+                    const batchData = this.selectedList.map((d) => ({ ...d, ...data[0], leaf_id: d.leaf_id }));
 
+                    //保存前执行脚本
+                    const befSaveSuccess = await this.checkBefActionScript({ op, formData: { dataArr: batchData } });
+                    if (!befSaveSuccess) {
+                        return;
+                    }
+
+                    await this.batchAddOrUpdate(data[0], _.map(this.selectedList, 'leaf_id'), false, emit);
+                    data = batchData;
                 }
                 await this.checkActionScript(this.actioning, data);
                 this.checkActionLink(this.actioning, this.selectedList);
@@ -1090,11 +1103,26 @@ export default class FormViewStore {
     }
 
     async checkActionScript(action, data) {
-        const { scriptable } = action;
-        if (!scriptable) return true;
-        const ret = await API.doActionScript({ btn_id: action.id, btn_type: '1', data_code: this.store.data_code, data });
+        return await this.doActionScript({ action, data });
+    }
+
+    async checkBefActionScript({ op, formData }) {
+        const action = this.actioning;
+        if ((op === 2 || op === 1) && action && action.befSaveScriptable) {
+            console.log(action);
+            return await this.doActionScript({ action, data: formData.dataArr, flag: 'befSaveScriptable', btn_type: '2', evt: "befactioned" });
+        }
+        return true;
+    }
+
+    async doActionScript({ action, data, flag = 'scriptable', btn_type = '1', emit = true, evt = "actioned" }) {
+        if (!action[flag]) return true;
+        const ret = await API.doActionScript({ btn_id: action.id, btn_type, data_code: this.store.data_code, data });
         this.$vue.ResultNotify(ret);
-        this.$vue.$emit('actioned', { data })
+        if (emit) {
+            this.$vue.$emit(evt, { data })
+        }
+        return ret ? ret.success : true;
     }
 
     checkActionLink(action, data) {

@@ -258,6 +258,7 @@ export default {
         addable: this.addable && this.store.opAddable,
         deletable: this.deletable && this.store.instanceEditable && !this.store.actioning,
         extendAuth: this.store.fieldsRule,
+        befSaveFunc: this.store.checkBefActionScript.bind(this.store),
       };
     },
     formAutoSubmit() {
@@ -282,7 +283,6 @@ export default {
   },
   methods: {
     async initialize() {
-
       if (this.watchFun.length) {
         this.watchFun.forEach((f) => f());
         this.watchFun = [];

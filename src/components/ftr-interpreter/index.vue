@@ -1,21 +1,21 @@
 <template>
   <div class="pso-ftr">
     <div class="pso-ftr-wrapper pso-container" v-if="store">
-      <div class="pso-ftr-header">
+      <div class="pso-ftr-header" v-if="inputable">
         <div class="pso-ftr-search">
           <el-input v-model="fetchParams.keywords"></el-input>
           <i class="el-icon-search" @click="fetch"></i>
         </div>
       </div>
-      <div class="pso-ftr-tabs">
+      <div class="pso-ftr-tabs" v-show="store.categories.length > 1">
         <el-tabs v-model="store.activeCate">
           <el-tab-pane v-for="(ct, i) in store.categories" :key="i" :label="ct.solr_name" :name="ct.solr_id"></el-tab-pane>
         </el-tabs>
       </div>
       <div class="pso-ftr-body" v-if="store.instances.length">
         <div class="pso-ftr-item" v-for="(d, i) in store.instances" :key="i">
-          <div class="pso-ftr-item-main" @click="mainClickHandler(d)">
-            <ftr-item :data="d" :fields="store.curCateFields" :store="store"></ftr-item>
+          <div class="pso-ftr-item-main">
+            <ftr-item :data="d" :fields="store.curCateFields" :store="store" @clickfield="mainClickHandler"></ftr-item>
           </div>
           <div class="pso-ftr-sub">
             <el-timeline>
@@ -27,6 +27,7 @@
                     :data="md"
                     :fields="JSON.parse(m.child_content)"
                     :store="store"
+                    @clickfield="subClickHandler($event, m)"
                   ></ftr-item>
                 </template>
                 <span v-else>无</span>
@@ -67,6 +68,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    inputable: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -99,19 +104,33 @@ export default {
       this.store.setActiveView(this.activeView);
       this.deFetch();
     });
+
+    this.$emit("initialized");
   },
   methods: {
+    setKeywords(keywords) {
+      this.fetchParams.keywords = keywords;
+    },
     async fetch() {
       await this.store.fetch(this.fetchParams);
     },
-    mainClickHandler(data) {
+    mainClickHandler({ field, data }) {
       const cate = this.store.getCategory();
-      if (cate.solr_link) {
-        window.open(`${cate.solr_link}?insttogo=${data.id}`);
+      if (field.titled === "1" && cate.solr_link && data.id) {
+        this.goLink(cate.solr_link, data.id);
       }
     },
     getModuleData(mod, data) {
       return this.store.getModuleData(mod, data);
+    },
+    subClickHandler({ field, data }, sub) {
+      const id = data.id || data.leaf_id;
+      if (field.titled === "1" && sub.child_url && id) {
+        this.goLink(sub.child_url, id);
+      }
+    },
+    goLink(link, id) {
+      window.open(`${link}?insttogo=${id}`);
     },
   },
 };

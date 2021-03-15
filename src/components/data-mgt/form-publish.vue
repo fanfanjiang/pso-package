@@ -3,9 +3,34 @@
     <great-panel>
       <template #header>
         <i class="el-icon-edit-outline"></i>
-        <span>是否对外开放</span>
+        <span>开放权限</span>
       </template>
-      <el-switch v-model="data.isPublic"></el-switch>
+      <el-form ref="form" label-width="70px" label-position="left">
+        <div class="form-wrapper">
+          <el-form-item label="开启">
+            <el-switch v-model="data.isPublic"></el-switch>
+          </el-form-item>
+        </div>
+        <div class="form-wrapper" v-if="data.isPublic">
+          <el-form-item label="需要登录">
+            <el-switch v-model="data.authRequired"></el-switch>
+          </el-form-item>
+          <el-form-item label="开启时间">
+            <el-date-picker size="mini" v-model="data.stime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"> </el-date-picker>
+          </el-form-item>
+          <el-form-item label="关闭时间">
+            <el-date-picker size="mini" v-model="data.etime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"> </el-date-picker>
+          </el-form-item>
+          <el-form-item label="模板">
+            <el-select size="mini" v-model="data.layout">
+              <el-option label="默认模板" value="default"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="开启规则">
+            <el-switch v-model="data.ruleable"></el-switch>
+          </el-form-item>
+        </div>
+      </el-form>
     </great-panel>
     <div v-if="data.isPublic" class="pso-dd-public" style="margin-top: 15px">
       <great-panel>
@@ -18,6 +43,9 @@
             <pso-form-attach :cpnt="logo" @value-change="handleLogoChange">
               <el-button icon="el-icon-paperclip" plain size="mini">上传LOGO</el-button>
             </pso-form-attach>
+            <el-form-item label="是否提交">
+              <el-switch v-model="data.submitable"></el-switch>
+            </el-form-item>
           </div>
           <div class="form-wrapper">
             <el-form-item label="标题">
@@ -26,16 +54,14 @@
             <el-form-item label="提交文本">
               <el-input v-model="data.subBtnText" size="mini"></el-input>
             </el-form-item>
-          </div>
-          <div class="form-wrapper">
             <el-form-item label="完成文本">
               <el-input v-model="data.doneText" size="mini"></el-input>
-            </el-form-item>
-            <el-form-item label="是否提交">
-              <el-switch v-model="data.submitable"></el-switch>
-            </el-form-item>
+            </el-form-item> 
           </div>
           <div class="form-wrapper">
+            <el-form-item label="未启用文本">
+              <el-input v-model="data.errorText" size="mini"></el-input>
+            </el-form-item>
             <el-form-item label="表单LABEL宽度">
               <el-input v-model="data.formLabelWith" size="mini"></el-input>
             </el-form-item>
@@ -49,7 +75,7 @@
           </div>
         </el-form>
       </great-panel>
-      <great-panel>
+      <great-panel v-if="data.ruleable">
         <template #header>
           <i class="el-icon-edit-outline"></i>
           <span>发布数据规则</span>
@@ -74,45 +100,46 @@
               <el-form>
                 <pso-form-component
                   :force-show="true"
-                  :cpnt="scope.row.cpnt"
+                  :cpnt="getCpnt(scope.row.id)"
                   @value-change="valueChangeHandler($event, scope.row)"
                 ></pso-form-component>
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="110" fixed="right">
+          <el-table-column label="操作" width="80" align="center">
             <template slot-scope="scope">
               <el-button size="mini" type="danger" @click="delHandler(scope.$index)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <div style="margin: 10px 0 10px 0">
-          <el-row :gutter="10">
-            <el-col :span="4" v-for="q in data.qrList" :key="q.id">
-              <el-card :body-style="{ padding: '0px' }">
-                <img :src="q.qr" />
-                <div style="padding: 0px 10px 10px; display: flex; align-items: center; justify-content: space-between">
-                  <div>规则序号:{{ q.value }}</div>
-                  <el-button size="mini" class="button" @click="updateRule(q)">更新规则</el-button>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </div>
-      </great-panel>
-      <great-panel>
-        <template #header>
-          <i class="el-icon-edit-outline"></i>
-          <span>表单链接</span>
-        </template>
-        <p>{{ host }}/form/{{ node.node_name }}</p>
       </great-panel>
       <great-panel>
         <template #header>
           <i class="el-icon-edit-outline"></i>
           <span>链接二维码</span>
         </template>
-        <img :src="qrsrc" alt />
+        <el-row :gutter="10">
+          <el-col :span="4" key="def">
+            <el-card :body-style="{ padding: '0px' }">
+              <el-popover placement="top-start" trigger="hover" :content="getFullURI()">
+                <img slot="reference" :src="qrsrc" />
+              </el-popover>
+              <div style="padding: 0px 10px 10px; text-align: center">默认二维码</div>
+            </el-card>
+          </el-col>
+          <el-col :span="4" v-for="(q, i) in data.qrList" :key="i">
+            <el-card :body-style="{ padding: '0px' }">
+              <el-popover placement="top-start" trigger="hover" :content="getFullURI({ ruleid: q.id })">
+                <img slot="reference" :src="q.qr" />
+              </el-popover>
+              <div style="padding: 0px 10px 10px; text-align: center">规则:{{ q.value }}</div>
+              <div style="padding: 0px 10px 10px; display: flex; align-items: center; justify-content: space-between">
+                <el-button size="mini" @click="updateRule(q)">更新规则</el-button>
+                <el-button type="danger" size="mini" @click="delRule(i)">删除</el-button>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
       </great-panel>
     </div>
   </div>
@@ -134,6 +161,7 @@ export default {
       selectedList: [],
       init: true,
       logo: { data: {} },
+      mockStore: null,
     };
   },
   watch: {
@@ -153,11 +181,17 @@ export default {
   async created() {
     this.init = true;
     this.qrsrc = await this.genQR();
+
+    //初始化规则参数
+    this.mockStore = new FormStore({ ...this.store.getBaseInfo(), designMode: false });
+    const mockData = {};
     if (this.data.rules) {
       this.data.rules.forEach((f) => {
-        f.cpnt = this.makeCpnt(f, { [f.id]: f.val });
+        mockData[f.id] = f.val;
       });
+      this.mockStore.updateInstance(mockData);
     }
+
     if (typeof this.data.attach === "object") {
       this.data.attach = "";
     }
@@ -169,27 +203,26 @@ export default {
       this.data.attach = value;
     },
     async genQR(params = {}) {
+      return await QRCode.toDataURL(this.getFullURI(params));
+    },
+    getFullURI(params = {}) {
       params.appid = this.$store.state.base.user.appid;
-      return await QRCode.toDataURL(`${this.host}/form/${this.node.node_name}?${Qs.stringify(params)}`);
+      return `${this.host}/form/${this.node.node_name}?${Qs.stringify(params)}`;
     },
     handleFilterAdd(index) {
       const { _fieldValue, _fieldName, componentid } = this.fields[index];
-      const filter = {
-        id: _fieldValue,
-        name: _fieldName,
-        cid: componentid,
-        val: "",
-      };
-      filter.cpnt = this.makeCpnt(filter);
+      const filter = { id: _fieldValue, name: _fieldName, cid: componentid, val: "" };
       this.data.rules.push(filter);
     },
-    makeCpnt(proxy, data) {
-      this.$set(proxy, "store", new FormStore({ ...this.store.getBaseInfo(), designMode: false }));
-      proxy.store.updateInstance(data);
-      const cpnt = proxy.store.search({ options: { fid: proxy.id } });
+    getCpnt(id) {
+      const cpnt = this.mockStore.searchByField(id);
+      cpnt.data._fieldName = "";
       cpnt.data._hideForever = false;
       cpnt.data._hideOnNew = false;
-      delete cpnt.data._fieldName;
+      if (cpnt.componentid === "asstable") {
+        cpnt.data._new = false;
+        cpnt.data._relate = true;
+      }
       return cpnt;
     },
     delHandler(index) {
@@ -199,17 +232,18 @@ export default {
       proxy.val = value;
     },
     handleSelectionChange(val) {
-      this.selectedList = val.map((item) => {
-        return this.data.rules.indexOf(item) + 1;
-      });
+      this.selectedList = val.map((item) => this.data.rules.indexOf(item) + 1);
     },
     async genQRByRule() {
       const data = { id: shortid.generate(), value: this.selectedList.join(",") };
-      data.qr = await this.genQR({ id: data.id });
+      data.qr = await this.genQR({ ruleid: data.id });
       this.data.qrList.push(data);
     },
     async updateRule(rule) {
       rule.value = this.selectedList.join(",");
+    },
+    delRule(i) {
+      this.data.qrList.splice(i, 1);
     },
   },
 };

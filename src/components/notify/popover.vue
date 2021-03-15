@@ -21,9 +21,11 @@
       <notify-view v-if="store" :store="store"></notify-view>
     </div>
     <div class="pso-notify-trigger" slot="reference">
-      <el-badge v-if="store" :value="store.unread" :hidden="!store.unread">
-        <i class="el-icon-bell"></i>
-      </el-badge>
+      <el-tooltip effect="dark" content="消息" placement="bottom-end">
+        <el-badge v-if="store" :value="store.unread" :hidden="!store.unread">
+          <i class="el-icon-bell"></i>
+        </el-badge>
+      </el-tooltip>
     </div>
   </el-popover>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <div class="pso-ftr-fields">
     <template v-for="(f, i) in orderdFields">
-      <div v-if="f.name && data[f.field]" class="pso-ftr-field" :key="i" @click="$emit('clickfield', { [f.field]: data[f.field] })">
+      <div v-if="f.name && data[f.field]" class="pso-ftr-field" :key="i" @click="$emit('clickfield', { field: f, data })">
         <span v-if="f.titled !== '1'">{{ f.name }}：</span>
         <span v-html="filterText(data[f.field])"></span>
       </div>

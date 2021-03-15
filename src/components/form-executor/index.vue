@@ -98,6 +98,7 @@ export default {
       type: Boolean,
       default: true,
     },
+    befSaveFunc: Function,
   },
   data() {
     return {
@@ -219,7 +220,7 @@ export default {
                 }
               }
             } catch (error) {
-              console.log(error)
+              console.log(error);
             }
 
             imitateFormData(formData.dataArr[0], this.store);
@@ -231,6 +232,12 @@ export default {
         if (this.autoSubmit && !this.isTemporary) {
           if (this.saving) return;
           this.saving = true;
+
+          const befRet = await this.beforeSaveHandler({ leaf_id, formData, op });
+          if (!befRet) {
+            return (this.saving = false);
+          }
+
           const ret = await this.API.form({ data: { leaf_id, formData }, method: "put" });
           this.saving = false;
           this.ResultNotify(ret);
@@ -242,6 +249,12 @@ export default {
         }
       }
     },
+    async beforeSaveHandler(data) {
+      if (this.params.befSaveFunc) {
+        return await this.params.befSaveFunc(data);
+      }
+      return true;
+    },
     async remove() {
       const leaf_id = this.dataId;
 
@@ -252,6 +265,7 @@ export default {
 
       if (!this.isTemporary) {
         this.removing = true;
+
         const ret = await this.API.form({
           data: { leaf_id, data_code: this.store.data_code, dataArr: [{ optype: 2, leaf_id }] },
           method: "delete",

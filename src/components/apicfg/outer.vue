@@ -34,20 +34,29 @@
               <el-option v-for="(d, i) in apis" :key="i" :label="d.action_name" :value="d.action_id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="名称" required>
-            <el-input v-model="curInstance.action_name" size="small" autocomplete="off"></el-input>
+          <el-form-item label="编号" required>
+            <el-input v-model="curInstance.outer_code" size="small" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="类型" required>
-            <el-input v-model="curInstance.action_type" size="small" autocomplete="off"></el-input>
+            <el-input v-model="curInstance.outer_type" size="small" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="路径" required>
-            <el-input v-model="curInstance.action_route" size="small" autocomplete="off"></el-input>
+          <el-form-item label="状态" required>
+            <el-input v-model="curInstance.outer_status" size="small" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="系统" required>
-            <el-input v-model="curInstance.is_sys" size="small" autocomplete="off"></el-input>
+          <el-form-item label="数据获取类型" required>
+            <el-input v-model="curInstance.data_type" size="small" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="配置" required>
-            <el-input v-model="curInstance.action_config" size="small" autocomplete="off"></el-input>
+          <el-form-item label="获取配置" required>
+            <el-input v-model="curInstance.data_config" size="small" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="获取配置" required>
+            <el-input v-model="curInstance.outer_params" size="small" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="参数配置" required>
+            <el-input v-model="curInstance.outer_return" size="small" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input v-model="curInstance.outer_note" size="small" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -81,8 +90,8 @@ export default {
       outer_return: "",
       outer_note: "",
     };
-    this.ID = "outer_id";
     return {
+      ID: "outer_id",
       apis: [],
     };
   },
@@ -91,10 +100,13 @@ export default {
   },
   methods: {
     async fetch(data) {
-      return await this.API.request("/api/apicfg/outer", {
+      const ret = await this.API.request("/api/apicfg/outer", {
         data: { ...this.getFetchParams(data), page: data.start },
         method: "get",
       });
+      ret.data.data = ret.data;
+      ret.data.page = ret.count;
+      return ret;
     },
     async addOrUpdate(data) {
       return await this.API.request("/api/apicfg/outer", { data, method: "post" });

@@ -29,7 +29,7 @@
               </draggable>
             </div>
             <template slot="reference">
-              <el-button size="mini" type="primary" icon="el-icon-sort">排序</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-sort">顺序</el-button>
             </template>
           </el-popover>
           <el-checkbox v-model="message">消息</el-checkbox>

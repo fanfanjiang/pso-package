@@ -2,6 +2,10 @@
     background: #fff;
     height: 100%;
 
+    .pso-empty {
+        padding-top: 70px;
+    }
+
     .pso-ftr-wrapper {
         height: 100%;
     }
@@ -85,5 +89,119 @@
         padding: 10px;
         background-color: #F8FAFD;
         margin-top: 10px;
+    }
+}
+
+.pso-search-entry {
+    .pso-search-entry-trigger {
+        font-size: 28px;
+        color: #fff;
+        cursor: pointer;
+        padding-top: 2px;
+
+        &:hover {
+            color: #DDDDDD;
+        }
+    }
+}
+
+.pso-search-entry-panel {
+    .form-executor-title {
+        background: #fff;
+    }
+
+    .pso-search-result {
+        height: 100%;
+
+        .pso-search-result__header {
+            padding: 0 20px;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .el-tabs__header {
+            margin-bottom: 0;
+        }
+
+        .el-tabs__active-bar {
+            height: 4px;
+        }
+
+        .pso-search-result__body {
+            height: calc(100% - 40px);
+            overflow: auto;
+
+            .pso-ftr-body {
+                height: auto;
+                overflow: hidden;
+            }
+        }
+    }
+}
+
+.pso-search-entry-input {
+    input {
+        border: none;
+        padding-left: 40px !important;
+    }
+
+    input::-webkit-input-placeholder {
+        color: #000;
+    }
+
+    input::-moz-placeholder {
+        /* Mozilla Firefox 19+ */
+        color: #000;
+    }
+
+    input:-moz-placeholder {
+        /* Mozilla Firefox 4 to 18 */
+        color: #000;
+    }
+
+    input:-ms-input-placeholder {
+        /* Internet Explorer 10-11 */
+        color: #000;
+    }
+
+    .el-input__prefix {
+        margin-right: 20px;
+        color: #000;
+    }
+}
+
+.pso-search-func {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 10px;
+
+    .pso-search-func-item {
+        width: 25%;
+        padding: 10px;
+
+        .pso-search-func-item-body {
+            border: 3px solid @main-color;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            .hover();
+
+            &:hover {
+                color: @main-color;
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px 3px rgba(0, 0, 0, 0.1);
+
+                span {
+                    color: @main-color;
+                }
+            }
+
+            .pso-search-func-item-type {
+                font-size: 12px;
+                color: #999;
+            }
+        }
     }
 }

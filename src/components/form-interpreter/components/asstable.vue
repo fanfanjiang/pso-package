@@ -230,6 +230,7 @@ export default {
         mockAsstables: this.unsavedSelf,
         parentInstanceId: this.cpnt.store ? this.cpnt.store.instance_id : "",
         extendAuth: this.astStore.fieldsRule,
+        befSaveFunc: this.astStore.checkBefActionScript.bind(this.astStore),
       };
     },
     authCfg() {
@@ -528,7 +529,7 @@ export default {
         this.unsavedSelf = null;
       }
 
-      this.astStore.newInstance();
+      this.astStore.newInstance(true);
     },
     async beforeDataChangeHandler(evt) {
       await this.astStore.checkDataChange(evt, true);

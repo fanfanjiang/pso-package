@@ -171,6 +171,7 @@ export const FetchMixin = {
             this.deleting = false;
         },
         async saveHandler(params) {
+            console.log(params);
             if (this.editing) return;
             this.editing = true;
             let data = {};
@@ -289,4 +290,8 @@ export const AuthViewMixin = {
             this.activeView = this.authViews[0].v + "";
         }
     }
+}
+
+export default {
+    AuthViewMixin
 }

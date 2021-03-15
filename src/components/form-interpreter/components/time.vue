@@ -34,9 +34,9 @@ const TIME_FORMAT = {
   date: "yyyy-MM-dd",
   datetime: "yyyy-MM-dd HH:mm:ss",
   time: "HH:mm:ss",
-  year: "yyyy-MM-dd HH:mm:ss",
-  month: "yyyy-MM-dd HH:mm:ss",
-  week: "yyyy-MM-dd HH:mm:ss",
+  year: "yyyy",
+  month: "MM",
+  week: "yyyy-MM-dd HH:mm:ss"
 };
 
 const TIME_DISPLAY_FORMAT = {
@@ -44,8 +44,8 @@ const TIME_DISPLAY_FORMAT = {
   datetime: "yyyy-MM-dd HH:mm:ss",
   time: "HH:mm:ss",
   year: "yyyy",
-  month: "yyyy-MM",
-  week: "yyyy 第 WW 周",
+  month: "MM",
+  week: "yyyy 第 WW 周"
 };
 
 export default {

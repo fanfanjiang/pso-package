@@ -24,7 +24,6 @@
 <script>
 import { calendar } from "../../utils/lunar"; //农历转换JS 1900-2100
 import dayjs from "dayjs";
-import shortid from "shortid";
 export default {
   props: {
     time: {

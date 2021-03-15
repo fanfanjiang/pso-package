@@ -128,6 +128,7 @@ const CPNT = {
     host_db: false,
     chart: true,
     table_show: true,
+    op: FILTER_TYPE.cascader.op,
     data: [
       { n: '_type', v: '1' },
       { n: '_source', v: '' },

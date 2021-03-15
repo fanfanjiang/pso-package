@@ -149,6 +149,7 @@ import PsoDbmodelMgt from "./components/dbmodel-mgt";
 import PsoApprovalMgt from "./components/approval-mgt";
 
 import PsoCommonView from "./components/common-view";
+import PsoSearchEntry from "./components/search-entry";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -267,6 +268,7 @@ const components = {
     PsoApiType,
     PsoApiOuter,
     PsoApiInner,
+    PsoSearchEntry,
 
     //混合视图
     PsoFvAst,
@@ -343,8 +345,9 @@ Object.keys(formulajs).forEach(key => {
 
 const CONST = require('../share/const');
 import FormMixin from './mixin/form';
+import ViewMixin from './mixin/view';
 
-const Mixin = { FormMixin };
+const Mixin = { FormMixin, ViewMixin };
 
 import Auth from './tool/auth';
 

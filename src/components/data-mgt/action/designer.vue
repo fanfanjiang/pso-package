@@ -82,35 +82,48 @@
             <el-radio label="2">是</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="点击后执行脚本">
-          <el-switch v-model="action.scriptable"> </el-switch>
-          <el-button
-            style="margin-left: 10px"
-            v-if="action.scriptable"
-            type="primary"
-            icon="el-icon-edit"
-            circle
-            @click="openScript('script')"
-          ></el-button>
+      </template>
+      <el-form-item label="点击后保存数据前执行脚本">
+        <el-switch v-model="action.befSaveScriptable"> </el-switch>
+        <el-button
+          style="margin-left: 10px"
+          v-if="action.befSaveScriptable"
+          type="primary"
+          icon="el-icon-edit"
+          circle
+          @click="openScript('befSaveScript')"
+        ></el-button>
+      </el-form-item>
+      <el-form-item label="点击后保存数据后(如果有数据)执行脚本">
+        <el-switch v-model="action.scriptable"> </el-switch>
+        <el-button
+          style="margin-left: 10px"
+          v-if="action.scriptable"
+          type="primary"
+          icon="el-icon-edit"
+          circle
+          @click="openScript('script')"
+        ></el-button>
+      </el-form-item>
+      <el-form-item label="点击后打开页面">
+        <el-switch v-model="action.linkable"> </el-switch>
+      </el-form-item>
+      <div class="form-action-panel" v-if="action.linkable">
+        <el-form-item label="绑定插件">
+          <el-select size="mini" clearable filterable v-model="action.bindPlugin">
+            <el-option v-for="(p, i) in plugins" :key="i" :label="p.node_display" :value="p.node_name"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="点击后打开页面">
-          <el-switch v-model="action.linkable"> </el-switch>
+        <el-form-item label="链接地址">
+          <el-input size="mini" v-model="action.openLink"></el-input>
         </el-form-item>
-        <div class="form-action-panel" v-if="action.linkable">
-          <el-form-item label="绑定插件">
-            <el-select size="mini" clearable filterable v-model="action.bindPlugin">
-              <el-option v-for="(p, i) in plugins" :key="i" :label="p.node_display" :value="p.node_name"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="链接地址">
-            <el-input size="mini" v-model="action.openLink"></el-input>
-          </el-form-item>
-          <el-form-item label="参数">
-            <el-select size="mini" multiple clearable filterable v-model="action.linkParams">
-              <el-option v-for="(o, i) in optionsWithsys" :key="i" :label="o._fieldName" :value="o._fieldValue"></el-option>
-            </el-select>
-          </el-form-item>
-        </div>
+        <el-form-item label="参数">
+          <el-select size="mini" multiple clearable filterable v-model="action.linkParams">
+            <el-option v-for="(o, i) in optionsWithsys" :key="i" :label="o._fieldName" :value="o._fieldValue"></el-option>
+          </el-select>
+        </el-form-item>
+      </div>
+      <template v-if="action.id !== 'add'">
         <el-form-item label="按钮颜色">
           <div class="action-color-picker">
             <span

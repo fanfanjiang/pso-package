@@ -59,6 +59,8 @@ const FIELDS = {
   beforeScript: [],
   scriptable: false,
   script: [],
+  befSaveScriptable: false,
+  befSaveScript: [],
   rule: [],
   ruleType: "1",
   color: "",
