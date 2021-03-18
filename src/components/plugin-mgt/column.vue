@@ -1,6 +1,6 @@
 <template>
   <div class="custom-column" v-loading="initializing">
-    <el-table size="mini" key="list" :data="column" style="width: 100%">
+    <el-table border size="mini" key="list" :data="column" style="width: 100%">
       <el-table-column type="index" :index="1" width="40"></el-table-column>
       <el-table-column label="字段" width="140" prop="field">
         <template slot-scope="scope">
@@ -23,17 +23,17 @@
           <el-input-number size="mini" v-model="scope.row.number" controls-position="right" :min="0"></el-input-number>
         </template>
       </el-table-column>
-      <el-table-column label="显示" width="60">
+      <el-table-column label="显示" width="64" align="center">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.show" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="统计" width="60">
+      <el-table-column label="统计" width="64" align="center">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.cal" active-value="1" inactive-value="0"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="查询" width="60">
+      <el-table-column label="查询" width="64" align="center">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.searchable" active-value="1" inactive-value="0"></el-switch>
         </template>
@@ -72,7 +72,7 @@
           <el-input-number size="mini" v-model="scope.row.defSortOrder" controls-position="right" :min="0"></el-input-number>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="160">
+      <el-table-column fixed="right" label="操作" width="160" align="center">
         <template slot-scope="scope">
           <el-button size="mini" plain @click="handleParams(scope.$index)">参数</el-button>
           <el-button size="mini" plain @click="handleDrill(scope.$index)">钻取</el-button>
@@ -112,7 +112,7 @@
             <el-input size="mini" v-model="curCol.defaultVal"></el-input>
           </el-form-item>
         </el-form>
-        <el-table key="params" :data="curCol.searchList" style="width: 100%" height="400">
+        <el-table border size="mini" key="params" :data="curCol.searchList" style="width: 100%" height="300">
           <el-table-column label="参数名" width="220">
             <template slot-scope="scope">
               <el-input size="mini" v-model="scope.row.n"></el-input>
@@ -123,12 +123,12 @@
               <el-input size="mini" v-model="scope.row.v"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="作为默认" width="120">
+          <el-table-column label="作为默认" width="100" align="center">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.d"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column fixed="right" label="操作" width="90">
+          <el-table-column label="操作" width="90" align="center">
             <template slot-scope="scope">
               <el-button size="mini" plain @click="handleParamsDel(scope.$index)">删除</el-button>
             </template>
@@ -162,7 +162,7 @@
           </el-form-item>
         </el-form>
         <template v-if="curCol && curCol.drillTarget">
-          <el-table key="params" :data="curCol.drillParams" style="width: 100%" height="300">
+          <el-table border size="mini" key="params" :data="curCol.drillParams" style="width: 100%" height="300">
             <el-table-column label="原字段">
               <template slot-scope="scope">
                 <el-select clearable filterable size="mini" v-model="scope.row.s">
@@ -177,7 +177,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="90">
+            <el-table-column label="操作" width="90" align="center">
               <template slot-scope="scope">
                 <el-button size="mini" plain @click="drillDel(scope.$index)">删除</el-button>
               </template>
@@ -222,6 +222,8 @@ export default {
       return m.is_leaf && m.menu_type === MENU_TYPE[0].v && _.find(templetes, { node_name: m.menu_link });
     });
 
+    formatJSONList(this.column, STATIC_COLUMN_FIELDS);
+
     for (let d of this.column) {
       if (d.drillTarget) {
         await this.drillChange(d.drillTarget);
@@ -258,6 +260,7 @@ export default {
       this.showDrillEditor = true;
     },
     drillAdd() {
+      console.log(this.curCol);
       this.curCol.drillParams.push({ s: "", t: "" });
     },
     drillDel(index) {

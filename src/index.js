@@ -100,10 +100,11 @@ import PsoStaScript from "./components/statistics/script";
 
 import PsoAvatar from "./components/avatar";
 import PsoApicfg from "./components/apicfg";
-import PsoApiauth from "./components/apicfg/api-auth";
+import PsoApiauth from "./components/apicfg/auth";
 import PsoApiType from "./components/apicfg/type";
 import PsoApiOuter from "./components/apicfg/outer";
 import PsoApiInner from "./components/apicfg/inner";
+import PsoApiGroup from "./components/apicfg/group";
 
 import PsoPrinterDesigner from "./components/printer-designer";
 import PsoPrinter from "./components/printer";
@@ -268,6 +269,8 @@ const components = {
     PsoApiType,
     PsoApiOuter,
     PsoApiInner,
+    PsoApiGroup,
+    
     PsoSearchEntry,
 
     //混合视图

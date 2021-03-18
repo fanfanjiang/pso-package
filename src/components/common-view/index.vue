@@ -49,6 +49,11 @@
                   <span v-else>{{ scope.row[f.v] }}</span>
                 </template>
               </el-table-column>
+              <el-table-column v-for="(s, i) in slots" :key="i" :label="s.n" :width="s.w">
+                <template slot-scope="scope">
+                  <slot :name="s.v" v-bind:data="{ row: scope.row }"></slot>
+                </template>
+              </el-table-column>
             </template>
             <template #empty>
               <pso-empty></pso-empty>
@@ -104,6 +109,10 @@ export default {
     searchable: {
       type: Boolean,
       default: false,
+    },
+    slots: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {

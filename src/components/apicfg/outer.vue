@@ -46,10 +46,10 @@
           <el-form-item label="数据获取类型" required>
             <el-input v-model="curInstance.data_type" size="small" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="获取配置" required>
+          <el-form-item label="数据配置" required>
             <el-input v-model="curInstance.data_config" size="small" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="获取配置" required>
+          <el-form-item label="参数配置" required>
             <el-input v-model="curInstance.outer_params" size="small" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="参数配置" required>

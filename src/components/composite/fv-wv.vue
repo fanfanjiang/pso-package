@@ -54,9 +54,14 @@ export default {
       let defForm = null;
       if (this.mainCurRow) {
         if (this.params.formSourceField && this.params.wfTargetField) {
-          defForm = {
-            [this.params.wfTargetField]: this.mainCurRow[this.params.formSourceField],
-          };
+          defForm = { [this.params.wfTargetField]: this.mainCurRow[this.params.formSourceField] };
+          if (this.params.fmatchup) {
+            for (let mup of this.params.fmatchup) {
+              if (mup.trg && typeof this.mainCurRow[mup.src] !== "undefined" && this.mainCurRow[mup.src] !== "") {
+                defForm[mup.trg] = this.mainCurRow[mup.src];
+              }
+            }
+          }
         }
       }
       return {

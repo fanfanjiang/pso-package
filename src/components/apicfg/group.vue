@@ -2,7 +2,7 @@
   <div style="height: 100%">
     <pso-common-view
       ref="view"
-      title="API类型"
+      title="API分组"
       icon="el-icon-tickets"
       :fetch-fun="fetch"
       :fields="FIELDS"
@@ -20,7 +20,7 @@
         <pso-dialog-header>
           <template #title>
             <i class="el-icon-edit-outline"></i>
-            <span>API类型</span>
+            <span>API分组</span>
           </template>
           <template #action>
             <el-button type="primary" size="mini" @click="saveHandler()" :disabled="editing" :loading="editing">保存</el-button>
@@ -30,19 +30,13 @@
       <div class="pso-dialog-content">
         <el-form label-position="left" label-width="120px" size="small" v-if="curInstance">
           <el-form-item label="名称" required>
-            <el-input v-model="curInstance.action_name" size="small" autocomplete="off"></el-input>
+            <el-input v-model="curInstance.group_name" size="small" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="类型" required>
-            <el-input v-model="curInstance.action_type" size="small" autocomplete="off"></el-input>
+          <el-form-item label="状态" required>
+            <el-input v-model="curInstance.group_status" size="small" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="路径" required>
-            <el-input v-model="curInstance.action_route" size="small" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="是否系统" required>
-            <el-switch v-model="curInstance.is_sys" size="small" active-value="1" inactive-value="0"></el-switch>
-          </el-form-item>
-          <el-form-item label="配置" required>
-            <el-input v-model="curInstance.action_config" size="small" autocomplete="off"></el-input>
+          <el-form-item label="备注" required>
+            <el-input v-model="curInstance.group_note" size="small" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -51,34 +45,28 @@
 </template>
 <script>
 import { FetchMixin } from "../../mixin/view";
-const TYPE = { 0: "否", 1: "是" };
-
 export default {
   mixins: [FetchMixin],
   data() {
     this.FIELDS = [
-      { v: "action_name", n: "名称", w: 100 },
-      { v: "action_type", n: "类型", w: 140 },
-      { v: "action_route", n: "路径", w: 120 },
-      { v: "is_sys", n: "是否系统", trans: (v) => TYPE[v] },
-      { v: "action_config", n: "配置" },
+      { v: "group_name", n: "名称", w: 100 },
+      { v: "group_status", n: "状态", w: 140 },
+      { v: "group_note", n: "备注" },
     ];
     this.DATA = {
-      action_id: "",
-      action_name: "",
-      action_type: "",
-      action_route: "",
-      is_sys: "",
-      action_config: "",
+      group_id: "",
+      group_name: "",
+      group_status: "",
+      group_note: "",
     };
     return {
-      ID: "action_id",
+      ID: "group_id",
     };
   },
   created() {},
   methods: {
     async fetch(data) {
-      const ret = await this.API.request("/api/apicfg/type", {
+      const ret = await this.API.request("/api/apicfg/group", {
         data: { ...this.getFetchParams(data), page: data.start },
         method: "get",
       });
@@ -87,7 +75,7 @@ export default {
       return ret;
     },
     async addOrUpdate(data) {
-      return await this.API.request("/api/apicfg/type", { data, method: "post" });
+      return await this.API.request("/api/apicfg/group", { data, method: "post" });
     },
   },
 };

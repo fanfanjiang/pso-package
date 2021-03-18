@@ -57,9 +57,14 @@ export default {
       const params = {};
       if (this.mainCurRow) {
         if (this.params.sourceField && this.params.targetField) {
-          defForm = {
-            [this.params.targetField]: this.mainCurRow[this.params.sourceField],
-          };
+          defForm = { [this.params.targetField]: this.mainCurRow[this.params.sourceField] };
+          if (this.params.fmatchup) {
+            for (let mup of this.params.fmatchup) {
+              if (mup.trg && typeof this.mainCurRow[mup.src] !== "undefined" && this.mainCurRow[mup.src] !== "") {
+                defForm[mup.trg] = this.mainCurRow[mup.src];
+              }
+            }
+          }
         }
       }
       for (let key in this.params) {
@@ -74,7 +79,7 @@ export default {
     async handleInitialized(option) {
       this.mainInitedHandler(option);
       this.initializing = false;
-    }, 
+    },
     bodyChangeHandler() {
       this.vStore.deReloadInstance(this.mainDataId);
     },

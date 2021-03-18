@@ -93,7 +93,7 @@ export const STATIC_COLUMN_FIELDS = {
     searchOp: '',
     defaultVal: '',
     drillTarget: '',
-    drillParams: [],
+    drillParams: [], 
     sortable: "0",
     defSort: "", //默认排序类型
     defSortOrder: 0,//默认排序顺序

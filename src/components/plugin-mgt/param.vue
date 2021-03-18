@@ -4,7 +4,7 @@
     <el-button size="mini" type="primary" plain @click="addFormParam">添加表单通用参数</el-button>
     <el-button size="mini" type="primary" plain @click="addFlowParam">添加流程通用参数</el-button>
     <el-button size="mini" type="primary" plain @click="addAssParam">添加关联表通用参数</el-button>
-    <el-table :data="data" style="width: 100%" key="param">
+    <el-table border size="mini" :data="data" style="width: 100%; margin-top: 10px" key="param">
       <el-table-column label="参数名称">
         <template slot-scope="scope">
           <el-input v-model="scope.row.name" size="mini" placeholder></el-input>
@@ -38,9 +38,9 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作">
+      <el-table-column label="操作" align="center" width="100">
         <template slot-scope="scope">
-          <el-button size="mini" plain @click="delParam(scope.$index)">删除</el-button>
+          <el-button size="mini" type="danger" @click="delParam(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

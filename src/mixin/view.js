@@ -171,7 +171,6 @@ export const FetchMixin = {
             this.deleting = false;
         },
         async saveHandler(params) {
-            console.log(params);
             if (this.editing) return;
             this.editing = true;
             let data = {};
@@ -187,6 +186,9 @@ export const FetchMixin = {
             this.editing = false;
             this.$refs.view.fetch();
         },
+        refresh() {
+            this.$refs.view.fetch();
+        }
     }
 }
 
