@@ -35,7 +35,7 @@
             </div>
           </div>
           <div class="pso-sv-view-item__b">
-            <div class="pso-sv-view-actions">
+            <div class="pso-sv-view-actions" v-if="actionable">
               <div class="pso-sv-view-actions-item" v-for="(a, i) in store.actions" :key="i">
                 <el-popconfirm
                   v-if="a.mode === '2'"
@@ -81,6 +81,10 @@ export default {
     checkable: {
       type: Boolean,
       default: false,
+    },
+    actionable: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {

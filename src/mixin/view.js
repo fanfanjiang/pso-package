@@ -224,8 +224,11 @@ export const PagingMixin = {
                     this.$emit('load');
                 }),
                 this.$watch("fetchParams.keywords", () => {
-                    console.log(123)
-                    this.$emit('load');
+                    if (this.fetchParams.start === 1) {
+                        this.$emit('load'); 
+                    } else {
+                        this.fetchParams.start = 1;
+                    }
                 }),
             );
         },

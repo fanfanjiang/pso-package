@@ -1,4 +1,3 @@
-
 import Vue from 'vue';
 import API from "../../service/api.js";
 

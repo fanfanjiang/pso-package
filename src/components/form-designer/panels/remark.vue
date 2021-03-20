@@ -2,19 +2,26 @@
   <div class="act-section-body">
     <panel-header :icon="cpnt.CPNT.icon" :name="cpnt.CPNT.name" info="添加说明文字"></panel-header>
     <el-form label-position="top" label-width="80px">
+      <el-form-item label="颜色">
+        <el-color-picker size="mini" v-model="cpnt.data._color"></el-color-picker>
+      </el-form-item>
+    </el-form>
+    <el-form label-position="top" label-width="80px">
       <el-form-item label="说明">
-        <el-input v-model="cpnt.data._defaultValue" type="textarea" clearable></el-input>
+        <rich-editor :proxy="cpnt.data" vfield="_defaultValue"></rich-editor>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
 import panelHeader from "../common/panel-header";
+import RichEditor from "../../rich-deitor";
 
 export default {
   props: ["cpnt"],
   components: {
-    panelHeader
-  }
+    panelHeader,
+    RichEditor,
+  },
 };
 </script>

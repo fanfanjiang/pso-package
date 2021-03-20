@@ -209,3 +209,88 @@ export function imitateFormData(data, store) {
 export function checkUntransField(id) {
     return (/\S+_s$/.test(id) || /\S+_x$/.test(id));
 }
+
+export function judgeByRules(args) {
+    const { datas, ruleOptions, store } = args;
+    const { rule, ruleType } = ruleOptions;
+
+    for (let data of datas) {
+        const result = [];
+        for (let r of rule) {
+            const cpnt = store.search({ options: { fid: r.field } });
+            let condition = false;
+            if (cpnt) {
+                let tv = r.data;
+                let sv = data[cpnt.data._fieldValue];
+                if (r.type === '2') {
+                    tv = data[r.data];
+                }
+
+                try {
+                    if (['op1', 'op2', 'op3', 'op4', 'op5', 'op6'].includes(r.op)) {
+                        if (cpnt.CPNT.figure || ['d_status', 'd_audit', 'd_stage'].includes(cpnt.data._fieldValue)) {
+                            sv = parseFloat(sv)
+                            tv = parseFloat(tv)
+                        }
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+
+                if (r.op === 'op1') {
+                    condition = sv == tv;
+                } else if (r.op === 'op2') {
+                    condition = sv != tv;
+                } else if (r.op === 'op3') {
+                    condition = sv > tv;
+                } else if (r.op === 'op4') {
+                    condition = sv >= tv;
+                } else if (r.op === 'op5') {
+                    condition = sv < tv;
+                } else if (r.op === 'op6') {
+                    condition = sv <= tv;
+                } else if (r.op === 'op7') {
+                    if (sv && tv && typeof tv === 'string') {
+                        const tList = tv.split(',');
+                        sv = sv + '';
+                        let tempRet = true;
+                        for (let v in sv.split(',')) {
+                            if (tList.indexOf(v) == -1) {
+                                tempRet = false;
+                                break;
+                            }
+                        }
+                        condition = tempRet;
+                    }
+                } else if (r.op === 'op8') {
+                    condition = true;
+                    if (tv && typeof tv === 'string') {
+                        const tList = tv.split(',');
+                        sv = sv + '';
+                        let tempRet = true;
+                        for (let v in sv.split(',')) {
+                            if (tList.indexOf(v) == -1) {
+                                tempRet = false;
+                                break;
+                            }
+                        }
+                        condition = tempRet;
+                    }
+                } else if (r.op === 'op9') {
+                    if (sv && tv && typeof sv === 'string' && typeof tv === 'string') {
+                        condition = sv.search(tv) !== -1;
+                    }
+                } else if (r.op === 'op90') {
+                    condition = (sv === '' || _.isNull(sv));
+                } else if (r.op === 'op91') {
+                    condition = !(sv === '' || _.isNull(sv));
+                }
+            }
+            result.push(condition)
+        }
+        if (!result[ruleType === '1' ? 'every' : "some"](i => i)) {
+            return false;
+        };
+    }
+    return true;
+}

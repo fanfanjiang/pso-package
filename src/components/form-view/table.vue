@@ -61,7 +61,7 @@
         </el-table-column>
       </template>
       <template #empty>
-        <pso-empty></pso-empty>
+        <pso-empty v-if="!store.fetching && !store.starting"></pso-empty>
       </template>
     </el-table>
     <div class="pso-view-table__footer" v-if="pagination">

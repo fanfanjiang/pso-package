@@ -10,6 +10,7 @@ export default class Grid extends Module {
     constructor(options) {
         super(options);
         this.layout = [];
+        this.savingLayout = false;
     }
 
     addCpnt(cpnt = {}, urine = {}) {
@@ -41,5 +42,17 @@ export default class Grid extends Module {
         if (index !== -1) {
             this.layout.splice(index, 1);
         }
+    }
+
+    async saveLayout() {
+        let ret = null
+        this.savingLayout = true;
+        for (let item of this.data) {
+            ret = await this.saveCpnt(item);
+        }
+        if (ret) {
+            this.$vue.ResultNotify(ret);
+        }
+        this.savingLayout = false;
     }
 }

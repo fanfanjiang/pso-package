@@ -46,6 +46,11 @@
         <template slot-scope="scope">
           <el-switch size="mini" v-model="scope.row.enable"></el-switch>
         </template>
+      </el-table-column> 
+      <el-table-column label="条件" width="70" align="center" sortable>
+        <template slot-scope="scope">
+          <el-switch size="mini" v-model="scope.row.is_condition" active-value="1" inactive-value="0"></el-switch>
+        </template>
       </el-table-column>
       <el-table-column prop="type" label="类型" width="120" align="center" sortable>
         <template slot-scope="scope">
@@ -83,7 +88,7 @@ import GreatPanel from "../great-panel";
 const AVAIABLE = ["relate", "common", "common_x", "user", "dept", "tag"];
 export default {
   components: { GreatPanel },
-  props: {
+  props: { 
     data: Object,
     code: String,
     store: Object,

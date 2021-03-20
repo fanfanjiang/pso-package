@@ -1,6 +1,18 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <el-cascader ref="cascader" size="small" v-if="show" v-model="proxy" :props="props" :disabled="!cpntEditable" filterable></el-cascader>
+    <el-cascader
+      ref="cascader"
+      :popper-class="cascaderpopper"
+      size="small"
+      v-if="show"
+      v-model="proxy"
+      :props="props"
+      :disabled="!cpntEditable"
+      filterable
+      clearable
+      @visible-change="visibleHandler"
+      @expand-change="changeHandler"
+    ></el-cascader>
   </pso-label>
 </template>
 <script>
@@ -34,6 +46,11 @@ export default {
       },
     };
   },
+  computed: {
+    cascaderpopper() {
+      return this.__isMobile__ ? "cascaderpopper" : "";
+    },
+  },
   watch: {
     proxy: {
       deep: true,
@@ -50,7 +67,6 @@ export default {
     this.props.multiple = this.cpnt.data._saveType === "checkbox";
     if (this.cpnt.data._val) {
       const data = this.cpnt.data._val.split(",");
-      const proxy = [];
       if (this.props.multiple) {
         this.proxy = data.map((d) => d.split("/"));
       } else {
@@ -58,6 +74,22 @@ export default {
       }
     }
     this.$nextTick(() => (this.show = true));
+  },
+  methods: {
+    changeHandler() {
+      if (this.__isMobile__) {
+        this.$nextTick(() => {
+          $(".cascaderpopper").scrollLeft(500);
+        });
+      }
+    },
+    visibleHandler(visible) {
+      if (visible && this.__isMobile__) {
+        this.$nextTick(() => {
+          $(".cascaderpopper").scrollLeft(0);
+        });
+      }
+    },
   },
 };
 </script>
@@ -71,5 +103,12 @@ export default {
   .el-cascader {
     width: 100%;
   }
+}
+</style>
+<style lang="less">
+.cascaderpopper {
+  max-width: 100%;
+  left: 0 !important;
+  overflow: auto;
 }
 </style>

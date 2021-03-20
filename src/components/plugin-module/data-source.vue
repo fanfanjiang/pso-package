@@ -1,6 +1,6 @@
 <template>
   <div class="data-source">
-    <div style="text-align: right">
+    <div style="text-align: right;padding:0 10px;">
       <el-button size="mini" type="success" @click="showDeisgner.show = true">脚 本</el-button>
       <el-button size="mini" type="success" @click="getColumn" :loading="fetching">生成列表</el-button>
     </div>

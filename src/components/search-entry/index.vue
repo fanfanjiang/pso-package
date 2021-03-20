@@ -8,7 +8,7 @@
         <pso-dialog-header>
           <template #title>
             <div class="pso-search-entry-input">
-              <el-input ref="searchInput" size="medium" clearable v-model="keywords" placeholder="搜索" prefix-icon="el-icon-search"> </el-input>
+              <el-input ref="searchInput" size="medium" clearable v-model="keywords" placeholder="请输入查询条件" prefix-icon="el-icon-search"> </el-input>
             </div>
           </template>
         </pso-dialog-header>
@@ -16,8 +16,8 @@
       <div class="pso-search-result">
         <div class="pso-search-result__header">
           <el-tabs v-model="curTab" @tab-click="makeSearch">
-            <el-tab-pane label="功能" name="func"></el-tab-pane>
             <el-tab-pane label="数据" name="data"></el-tab-pane>
+            <el-tab-pane label="功能" name="func"></el-tab-pane>
           </el-tabs>
         </div>
         <div class="pso-search-result__body">
@@ -36,7 +36,7 @@ export default {
     return {
       show: false,
       keywords: "",
-      curTab: "func",
+      curTab: "data",
     };
   },
   watch: {

@@ -55,28 +55,26 @@ export default class FormStore {
 
         this.ignoreAstColumn = false;
 
+        //扩展配置
+        this.ext_config = {
+            quickInput: { enable: false, reg: '', relation: [] }
+        };
+
         for (let option in options) {
-            if (options.hasOwnProperty(option)) {
+            if (options.hasOwnProperty(option) && !_.isNull(options[option])) {
                 this[option] = options[option];
             }
         }
 
+        //设计配置
         this.data_config = this.data_config || this.data_design;
 
-        if (this.data_config && typeof this.data_config === 'string') {
-            this.data_config = JSON.parse(this.data_config);
-        }
+        ['data_config', 'rule_config', 'sub_config', 'ext_config'].forEach(property => {
+            this.makeJSONPro(property);
+        })
 
         if (this.withSys) {
             this.data_config = this.data_config.concat(makeSysFormFields())
-        }
-
-        if (this.rule_config && typeof this.rule_config === 'string') {
-            this.rule_config = JSON.parse(this.rule_config);
-        }
-
-        if (this.sub_config && typeof this.sub_config === 'string') {
-            this.sub_config = JSON.parse(this.sub_config);
         }
 
         //对原始表单配置进行保存
@@ -128,6 +126,12 @@ export default class FormStore {
 
     get canRedo() {
         return this.undoList.length > 0;
+    }
+
+    makeJSONPro(field) {
+        if (this[field] && typeof this[field] === 'string') {
+            this[field] = JSON.parse(this[field]);
+        }
     }
 
     getBaseInfo() {

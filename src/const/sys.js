@@ -93,7 +93,7 @@ export const STATIC_COLUMN_FIELDS = {
     searchOp: '',
     defaultVal: '',
     drillTarget: '',
-    drillParams: [], 
+    drillParams: [],
     sortable: "0",
     defSort: "", //默认排序类型
     defSortOrder: 0,//默认排序顺序
@@ -104,9 +104,10 @@ export const FORM_UPLOAD_FIELDS = {
     name: "",
     type: "",
     enable: false,
-    format: '',
+    format: '', 
     relate_field: '',
-    relate_target: ''
+    relate_target: '',
+    is_condition: '0'
 }
 
 export const FORM_STATUS_FIELDS = {
@@ -116,7 +117,7 @@ export const FORM_STATUS_FIELDS = {
     display: "",
     uneditable: false,
     script: [],
-    target: []
+    target: [],
 }
 
 //请求接口中keys中的type

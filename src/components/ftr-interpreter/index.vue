@@ -25,7 +25,7 @@
                     v-for="(md, k) in getModuleData(m, d)"
                     :key="k"
                     :data="md"
-                    :fields="JSON.parse(m.child_content)"
+                    :fields="m.child_content"
                     :store="store"
                     @clickfield="subClickHandler($event, m)"
                   ></ftr-item>
@@ -59,6 +59,7 @@ import debounce from "throttle-debounce/debounce";
 import FtrItem from "./ftr-item";
 import FTRStore from "./store";
 import { PagingMixin, AuthViewMixin } from "../../mixin/view";
+import { judgeByRules } from "../../tool/form";
 
 export default {
   components: { FtrItem },
@@ -116,17 +117,36 @@ export default {
     },
     mainClickHandler({ field, data }) {
       const cate = this.store.getCategory();
-      if (field.titled === "1" && cate.solr_link && data.id) {
-        this.goLink(cate.solr_link, data.id);
+      if (field.titled === "1") {
+        this.checkLink({ data, proxy: cate, fields: cate.solr_field, links: cate.solr_link });
+      }
+    },
+    checkLink({ data, proxy, fields, links }) {
+      this.store.makeMockStore(proxy, fields);
+      let link;
+      for (let item of links) {
+        if (judgeByRules({ datas: [data], ruleOptions: item, store: proxy.mockStore })) {
+          link = item;
+          break;
+        }
+      }
+      if (!link) {
+        const defLink = _.find(links, { rule: [] });
+        if (defLink) {
+          link = defLink;
+        }
+      }
+      console.log(link);
+      if (link && data[link.id]) {
+        this.goLink(link.link, data[link.id]);
       }
     },
     getModuleData(mod, data) {
       return this.store.getModuleData(mod, data);
     },
     subClickHandler({ field, data }, sub) {
-      const id = data.id || data.leaf_id;
-      if (field.titled === "1" && sub.child_url && id) {
-        this.goLink(sub.child_url, id);
+      if (field.titled === "1") {
+        this.checkLink({ data, proxy: sub, fields: sub.child_content, links: sub.child_url });
       }
     },
     goLink(link, id) {

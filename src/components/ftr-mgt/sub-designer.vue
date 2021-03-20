@@ -19,13 +19,17 @@
       <el-form-item label="配置字段">
         <el-input v-model="data.child_field" size="mini" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="链接">
-        <el-input v-model="data.child_url" size="mini" autocomplete="off"></el-input>
-      </el-form-item>
       <el-form-item label="排序">
         <el-input-number size="mini" v-model="data.child_order" controls-position="right"></el-input-number>
       </el-form-item>
     </el-form>
+    <great-panel :padding="10">
+      <template #header>
+        <i class="el-icon-s-operation"></i>
+        <span>链接配置</span>
+      </template>
+      <link-designer :links="linksProxy" :fields="columnProxy"></link-designer>
+    </great-panel>
     <great-panel :padding="10">
       <template #header>
         <i class="el-icon-s-operation"></i>
@@ -65,6 +69,7 @@
 import { formatJSONList } from "../../utils/util";
 import SqlDesigner from "../sql-designer";
 import GreatPanel from "../great-panel";
+import LinkDesigner from "./link";
 const BASE = {
   child_id: "",
   solr_id: "",
@@ -78,7 +83,7 @@ const BASE = {
   child_url: "",
 };
 export default {
-  components: { GreatPanel, SqlDesigner },
+  components: { GreatPanel, SqlDesigner, LinkDesigner },
   props: {
     data: Object,
   },
@@ -93,6 +98,7 @@ export default {
       showDeisgner: { show: false },
       proxy: [],
       columnProxy: [],
+      linksProxy: [],
     };
   },
   watch: {
@@ -109,6 +115,12 @@ export default {
         this.data.child_content = JSON.stringify(value);
       },
     },
+    linksProxy: {
+      deep: true,
+      handler(value) {
+        this.data.child_url = JSON.stringify(value);
+      },
+    },
   },
   created() {
     formatJSONList([this.data], BASE);
@@ -118,6 +130,11 @@ export default {
     if (this.data.child_content) {
       this.columnProxy = JSON.parse(this.data.child_content);
     }
+    try {
+      if (this.data.child_url) {
+        this.linksProxy = JSON.parse(this.data.child_url);
+      }
+    } catch (error) {}
   },
   methods: {
     gencolumn(column) {

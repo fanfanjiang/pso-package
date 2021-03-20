@@ -84,7 +84,7 @@
                   </div>
                 </el-form>
               </great-panel>
-              <great-panel v-if="curNode.menu_type === MENU_TYPE[0].v">
+              <great-panel v-if="curNode.menu_type === MENU_TYPE[0].v && curNode.is_leaf">
                 <template #header>
                   <i class="el-icon-edit-outline"></i>
                   <span>插件配置</span>

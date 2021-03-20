@@ -3,7 +3,7 @@
     <div class="pso-form-index__logo">
       <img v-if="logo" :src="logo" alt />
     </div>
-    <div class="pso-form-index__title">{{ formStore.data_name }}</div>
+    <div class="pso-form-index__title">{{ cfg.name || formStore.data_name }}</div>
     <template v-if="editable">
       <div v-if="!submited">
         <pso-form-interpreter
@@ -16,7 +16,7 @@
           @data-loaded="storeReady"
         ></pso-form-interpreter>
         <div class="pso-form-index__footer" v-if="loaded && cfg.submitable">
-          <el-button size="small" type="primary" @click="submit" :disabled="saving" :loading="saving">提交</el-button>
+          <el-button size="medium" type="primary" @click="submit" :disabled="saving" :loading="saving">{{ cfg.subBtnText }}</el-button>
         </div>
       </div>
       <div v-else class="pso-form-index__success">
@@ -60,7 +60,7 @@ export default {
   async created() {
     this.initing = true;
 
-    this.$store.commit("APP_GET_USER");
+    this.$store.commit("APP_CHECKUSER", this.params);
     if (!this.$store.state.base || !this.$store.state.base.user) {
       this.mockSignin = true;
       const success = await this.$store.dispatch("APP_MOCKSIGNIN", { appid: this.params.appid || "" });
@@ -97,6 +97,9 @@ export default {
           this.logo = fileRet.data[0].res_path;
         }
       }
+      if (pubCfg.pageTitle) {
+        $("title").html(pubCfg.pageTitle);
+      }
 
       if (this.params.ruleid) {
         //默认值处理
@@ -131,12 +134,11 @@ export default {
         const formData = await this.$refs.formImage.makeData();
         const ret = await this.API.form({ data: { leaf_id: 1, formData }, method: "put" });
         if (ret.success) {
-          this.$message({ type: "success", message: `成功报名` });
-          this.saving = false;
           this.submited = true;
         } else {
-          this.$message({ type: "warning", message: `报名失败，请稍后再试` });
+          this.ResultNotify(ret);
         }
+        this.saving = false;
       } catch (error) {
         this.saving = false;
         return null;
@@ -150,7 +152,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .pso-form-index {
-  padding: 15px 15px 50px 15px;
+  padding: 15px 15px 60px 15px;
   position: relative;
   width: 100%;
   .pso-form-index__logo {
@@ -176,7 +178,8 @@ export default {
     right: 0;
     padding: 15px;
     background-color: #fff;
-    text-align: right;
+    text-align: center;
+    z-index: 99999;
   }
   .pso-form-index__success {
     text-align: center;

@@ -67,10 +67,10 @@ export default class FTRStore {
     }
 
     async modify(data, publish = false) {
-        const { optype, solr_name, solr_field, solr_id } = data;
+        const { optype, solr_name, solr_field, solr_link, solr_id } = data;
         if (typeof optype === 'undefined' || (optype != 2 && !solr_name)) return this.$vue.$message.warning("请完善信息");
         this.saving = true;
-        const ret = await API.ftrcfg({ data: { ...data, solr_field: JSON.stringify(solr_field) }, method: 'post' });
+        const ret = await API.ftrcfg({ data: { ...data, solr_field: JSON.stringify(solr_field), solr_link: JSON.stringify(solr_link) }, method: 'post' });
         if (publish && solr_id) {
             await this.publish({ solr_id });
         }

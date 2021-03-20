@@ -86,6 +86,7 @@ import PsoUpload from "./components/upload";
 import PsoChartDesigner from "./components/chart-designer";
 import PsoChartInterpreter from "./components/chart-interpreter";
 import PsoGridInterpreter from "./components/grid-interpreter";
+import PsoGridDesigner from "./components/grid-designer";
 
 import PsoPaperInterpreter from "./components/paper-interpreter";
 import PsoPaperView from "./components/paper-view";
@@ -233,9 +234,10 @@ const components = {
     PsoUserComposite,
     PsoUserMgt,
     PsoOrgMgt,
-
+ 
     PsoSiteMgt,
     PsoGridInterpreter,
+    PsoGridDesigner,
     PsoPaperInterpreter,
     PsoPaperView,
 
@@ -270,7 +272,7 @@ const components = {
     PsoApiOuter,
     PsoApiInner,
     PsoApiGroup,
-    
+
     PsoSearchEntry,
 
     //混合视图

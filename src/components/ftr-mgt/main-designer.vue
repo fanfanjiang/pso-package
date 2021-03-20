@@ -14,9 +14,6 @@
       <el-form-item label="配置核心">
         <el-input v-model="data.solr_core" size="mini" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="链接">
-        <el-input v-model="data.solr_link" size="mini" autocomplete="off"></el-input>
-      </el-form-item>
       <el-form-item label="默认查询">
         <el-select size="mini" placeholder="" v-model="data.solr_df" clearable filterable>
           <el-option v-for="(d, i) in data.solr_field" :key="i" :label="d.name" :value="d.field"></el-option>
@@ -26,6 +23,13 @@
         <el-button size="mini" type="success" @click="openSql">设计脚本</el-button>
       </el-form-item>
     </el-form>
+    <great-panel :padding="0" color="#f7f7f7">
+      <template #header>
+        <i class="el-icon-s-operation"></i>
+        <span>链接配置</span>
+      </template>
+      <link-designer :links="data.solr_link" :fields="data.solr_field"></link-designer>
+    </great-panel>
     <great-panel :padding="0" color="#f7f7f7">
       <template #header>
         <i class="el-icon-s-operation"></i>
@@ -120,6 +124,7 @@
 import SqlDesigner from "../sql-designer";
 import GreatPanel from "../great-panel";
 import { formatJSONList } from "../../utils/util";
+import LinkDesigner from "./link";
 const BASE = {
   solr_id: "",
   solr_name: "",
@@ -157,7 +162,7 @@ const FIELD = {
 };
 
 export default {
-  components: { SqlDesigner, GreatPanel },
+  components: { SqlDesigner, GreatPanel, LinkDesigner },
   props: {
     store: Object,
   },
@@ -196,6 +201,14 @@ export default {
       } else if (typeof this.data.solr_field === "string") {
         this.data.solr_field = JSON.parse(this.data.solr_field);
       }
+      try {
+        if (this.data.solr_link) {
+          this.data.solr_link = JSON.parse(this.data.solr_link);
+        }
+      } catch (error) {
+        this.data.solr_link = [];
+      }
+
       formatJSONList(this.data.solr_field, FIELD);
     },
     addHandler() {

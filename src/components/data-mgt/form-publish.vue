@@ -46,20 +46,23 @@
             <el-form-item label="是否提交">
               <el-switch v-model="data.submitable"></el-switch>
             </el-form-item>
+            <el-form-item label="网页标题">
+              <el-input v-model="data.pageTitle" size="mini"></el-input>
+            </el-form-item>
           </div>
           <div class="form-wrapper">
             <el-form-item label="标题">
               <el-input v-model="data.name" size="mini"></el-input>
             </el-form-item>
-            <el-form-item label="提交文本">
+            <el-form-item label="提交按钮文本">
               <el-input v-model="data.subBtnText" size="mini"></el-input>
             </el-form-item>
             <el-form-item label="完成文本">
               <el-input v-model="data.doneText" size="mini"></el-input>
-            </el-form-item> 
+            </el-form-item>
           </div>
           <div class="form-wrapper">
-            <el-form-item label="未启用文本">
+            <el-form-item label="未开启、截止文本">
               <el-input v-model="data.errorText" size="mini"></el-input>
             </el-form-item>
             <el-form-item label="表单LABEL宽度">

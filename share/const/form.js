@@ -475,7 +475,8 @@ const CPNT = {
     icon: "fa fa-file-text",
     class: 'unSubTable',
     name: "备注",
-    componentid: "remark"
+    componentid: "remark",
+    data: [{ n: '_color', v: '#f56c6c' }]
   },
   carousel: {
     icon: "fa fa-font",

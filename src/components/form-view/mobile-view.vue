@@ -1,6 +1,6 @@
 <template>
   <div :style="containerStyle">
-    <mobile-view :store="store" :params="store.mobileField" checkable></mobile-view>
+    <mobile-view :store="store" :params="store.mobileField" checkable :actionable="false"></mobile-view>
   </div>
 </template>
 <script>

@@ -1,4 +1,7 @@
 import API from "../../service/api.js";
+import FormStore from "../form-designer/model/store.js";
+import { genComponentData } from "../form-designer/helper";
+
 export default class FTRStore {
     constructor(options) {
         this.$vue = null;
@@ -28,7 +31,7 @@ export default class FTRStore {
     }
 
     get curCateFields() {
-        return this.getCateFields(this.activeCate);
+        return this.getCategory(this.activeCate).solr_field;
     }
 
     setActiveView(value) {
@@ -46,21 +49,18 @@ export default class FTRStore {
         return _.find(this.categories, { solr_id });
     }
 
-    getCateFields(solr_id) {
-        const cate = this.getCategory(solr_id);
-        if (cate && cate.solr_field) {
-            return JSON.parse(cate.solr_field);
-        }
-        return []
-    }
-
     async initialize() {
         this.initializing = true;
 
         const ret = await API.ftrcfg({ data: {}, method: 'get' });
         if (ret.success) {
             this.categories = ret.data;
+
             if (this.categories.length) {
+                for (let cate of this.categories) {
+                    cate.solr_link = cate.solr_link ? JSON.parse(cate.solr_link) : [];
+                    cate.solr_field = cate.solr_field ? JSON.parse(cate.solr_field) : [];
+                }
                 await this.setActiveCate(this.categories[0].solr_id);
             } else {
                 return this.$vue.$message.warning("请先完善检索配置");
@@ -74,7 +74,7 @@ export default class FTRStore {
         this.fetching = true;
         this.keywords = params.keywords;
         if (this.keywords) {
-            const ret = await API.getFTR({ ...params, solr_id: this.activeCate, dq: this.keywords, leaf_auth: this.activeView || 4 });
+            const ret = await API.getFTR({ ...params, solr_id: this.activeCate, dq: this.keywords, leaf_auth: this.activeView || 4, start: params.start - 1 });
             this.instances = ret.data.data;
             this.dataTotal = ret.data.total;
         } else {
@@ -99,6 +99,10 @@ export default class FTRStore {
         const ret = await API.getFTRModulesCfg({ keys: JSON.stringify({ solr_id: { type: '1', value: this.activeCate } }) });
         if (ret.success) {
             this.modules = ret.data.filter(d => d.child_content);
+            for (let item of this.modules) {
+                    item.child_url = item.child_url ? JSON.parse(item.child_url) : [];
+                    item.child_content = item.child_content ? JSON.parse(item.child_content) : [];
+            }
         }
     }
 
@@ -114,5 +118,14 @@ export default class FTRStore {
             return text.replace(this.keywords, `<span style="color:red">${this.keywords}</span>`);
         }
         return "";
+    }
+
+    makeMockStore(proxy, fields) {
+        if (proxy.mockStore) return;
+        const data_config = [];
+        for (let f of fields) {
+            data_config.push(genComponentData({ componentid: "text", _fieldValue: f.field, _fieldName: f.name }));
+        }
+        proxy.mockStore = new FormStore({ data_config });
     }
 }

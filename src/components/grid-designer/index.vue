@@ -23,6 +23,10 @@
                 <el-button slot="reference" type="text" :loading="store.creating">添加模块</el-button>
               </el-popover>
               <el-button style="margin-left: 10px" type="text" @click="importModule">导入模块</el-button>
+              <el-button style="margin-left: 10px" type="text" @click="saveLayout" :loading="store.savingLayout">保存布局</el-button>
+              <el-tooltip effect="dark" content="全屏模式" placement="bottom-start">
+                <el-button size="mini" icon="el-icon-full-screen" circle @click="goDeisgner"></el-button>
+              </el-tooltip>
             </div>
           </div>
           <div class="grid-designer__stage-body" style="overflow: auto">
@@ -143,6 +147,12 @@ export default {
       this.store.delCpnt(i);
     },
     importModule() {},
+    async saveLayout() {
+      this.store.saveLayout();
+    },
+    goDeisgner() {
+      window.open(`/grid-designer/${this.code}`);
+    },
   },
 };
 </script>

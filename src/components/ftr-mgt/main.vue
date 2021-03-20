@@ -46,7 +46,6 @@
             <el-table-column type="index" label="序号" :index="1" width="50"></el-table-column>
             <el-table-column prop="solr_name" label="配置名称"></el-table-column>
             <el-table-column prop="solr_core" label="配置核心"></el-table-column>
-            <el-table-column prop="solr_link" label="链接"></el-table-column>
           </template>
           <template #empty>
             <pso-empty></pso-empty>

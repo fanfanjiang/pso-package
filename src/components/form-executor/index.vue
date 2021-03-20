@@ -17,6 +17,7 @@
           </div>
           <el-tooltip content="全屏" placement="top-start" :visible-arrow="false" :open-delay="500" :hide-after="2000">
             <el-button
+              v-if="!__isMobile__"
               style="margin-left: 20px"
               @click="fullScreen = !fullScreen"
               size="medium"
@@ -35,19 +36,31 @@
               title="你确定要删除这条数据吗？"
               @confirm="remove"
             >
-              <el-button slot="reference" v-if="deletable" size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+              <el-button slot="reference" v-if="deletable && !__isMobile__" size="mini" type="danger" icon="el-icon-delete">删除</el-button>
             </el-popconfirm>
             <el-dropdown size="small" trigger="click" @command="moreCommandhandler">
               <span class="el-dropdown-link"> <i class="el-icon-more"></i> </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="print" v-if="dataId">打印 </el-dropdown-item>
+                <el-dropdown-item v-if="deletable && __isMobile__">
+                  <el-popconfirm
+                    confirmButtonText="确定"
+                    cancelButtonText="取消"
+                    icon="el-icon-info"
+                    iconColor="red"
+                    title="你确定要删除这条数据吗？"
+                    @confirm="remove"
+                  >
+                    <span slot="reference">删除</span>
+                  </el-popconfirm>
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </div>
       </div>
     </template>
-    <div class="form-executor" v-loading="removing">
+    <div class="form-executor" ref="executor" v-loading="removing">
       <div class="form-executor-body">
         <pso-form-interpreter v-if="showpreter" ref="formImage" v-bind="formParams" @data-loaded="onLoaded"></pso-form-interpreter>
       </div>
@@ -74,8 +87,10 @@
 <script>
 import shortid from "shortid";
 import { imitateFormData } from "../../tool/form";
+import { QuickInput } from "../../mixin/form";
 
 export default {
+  mixins: [QuickInput],
   props: {
     params: {
       type: Object,
@@ -167,6 +182,9 @@ export default {
       this.store = store;
       this.$emit("data-loaded", store);
       this.initializing = false;
+      this.$nextTick(() => {
+        this.initKeyevent(store);
+      });
     },
     async keepSubmitHander() {
       const data = await this.addOrUpdate();
@@ -288,6 +306,7 @@ export default {
       this.initializing = true;
     },
     colseHandler() {
+      this.clearKeyevent();
       this.opener.showExecutor = false;
       this.refresh();
     },

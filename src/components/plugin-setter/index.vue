@@ -7,7 +7,7 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <setter :node="node" :code="node[field]" :data="data"></setter>
+    <setter v-if="node[field]" :node="node" :code="node[field]" :data="data"></setter>
   </div>
 </template>
 <script>

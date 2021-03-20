@@ -158,6 +158,7 @@ export default {
           children: store.root.data.children,
           dataMaps: store.cpntsDataMps,
           permissionEntries: store.permissionEntries,
+          ext_config: JSON.stringify(store.ext_config),
         },
         method: this.params.id ? "put" : "post",
       });

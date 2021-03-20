@@ -1,30 +1,43 @@
 <template>
-  <div class="pso-form-remark">
-    <i class="el-icon-warning"></i>
-    <span>{{ cpnt.data._val || cpnt.data._defaultValue }}</span>
+  <div ref="remark" class="pso-form-remark">
+    <rich-editor :editable="false" :proxy="cpnt.data" vfield="_defaultValue"></rich-editor>
   </div>
 </template>
 <script>
+import RichEditor from "../../rich-deitor";
 export default {
+  components: { RichEditor },
   props: {
     cpnt: {
       type: Object,
       default: () => ({}),
     },
   },
+  mounted() {
+    this.$nextTick(() => {
+      $(this.$refs.remark)
+        .find(".markdown-body")
+        .css({
+          "min-width": "100%",
+          "min-height": "100%",
+          color: this.cpnt.data._color,
+        })
+        .find(".v-show-content")
+        .css({
+          padding: "10px",
+        })
+        .find("p:last-child")
+        .css({
+          margin: "0",
+        });
+    });
+  },
 };
 </script>
 <style lang="less" scoped>
 .pso-form-remark {
-  i {
-    font-size: 16px;
-    margin-right: 5px;
-  }
-  color: #f56c6c;
-  font-weight: bold;
   background: #fff;
   letter-spacing: 1.2px;
-  padding: 10px;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
