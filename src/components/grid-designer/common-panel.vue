@@ -6,6 +6,12 @@
     <el-form-item label="启用">
       <el-switch size="mini" v-model="cpnt.urine.child_status" :active-value="1" :inactive-value="0"></el-switch>
     </el-form-item>
+    <el-form-item label="头部背景色">
+      <el-color-picker size="mini" v-model="cpnt.data.headerBgColor"></el-color-picker>
+    </el-form-item>
+    <el-form-item label="头部字体颜色">
+      <el-color-picker size="mini" v-model="cpnt.data.headerTextColor"></el-color-picker>
+    </el-form-item>
     <el-form-item label="查看更多">
       <el-switch size="mini" v-model="cpnt.data.moreable"></el-switch>
     </el-form-item>

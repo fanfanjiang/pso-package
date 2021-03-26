@@ -45,10 +45,39 @@
         <el-option v-for="(c, i) in curColums" :key="i" :label="c[curFName] || c[curFField]" :value="c[curFField]"></el-option>
       </el-select>
     </el-form-item>
+    <el-form-item label="标题是否可点击">
+      <el-switch size="mini" v-model="cpnt.data.titleClickable"></el-switch>
+    </el-form-item>
+    <template v-if="cpnt.data.titleClickable">
+      <el-form-item label="点击后执行操作">
+        <el-select filterable clearable size="mini" v-model="cpnt.data.titleClickType">
+          <el-option label="打开表单" value="1"></el-option>
+          <el-option label="跳转链接" value="2"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-tooltip effect="dark" content="“:id”代表数据ID,“:pid”代表插件ID,“:fid”代表表单ID,“:mid”代表模块ID" placement="bottom-start">
+        <el-form-item label="链接" v-if="cpnt.data.titleClickType === '2'">
+          <el-input size="mini" v-model.trim="cpnt.data.titleClickVal" clearable></el-input>
+        </el-form-item>
+      </el-tooltip>
+    </template>
+    <el-form-item label="摘要字段" v-if="checkAvailable('fieldAbs')">
+      <el-select filterable clearable size="mini" v-model="cpnt.data.fieldAbs">
+        <el-option v-for="(c, i) in curColums" :key="i" :label="c[curFName] || c[curFField]" :value="c[curFField]"></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="正文字段" v-if="checkAvailable('fieldMain')">
+      <el-select filterable clearable size="mini" v-model="cpnt.data.fieldMain">
+        <el-option v-for="(c, i) in curColums" :key="i" :label="c[curFName] || c[curFField]" :value="c[curFField]"></el-option>
+      </el-select>
+    </el-form-item>
     <el-form-item label="头图字段" v-if="checkAvailable('fieldPic')">
       <el-select filterable clearable size="mini" v-model="cpnt.data.fieldPic">
         <el-option v-for="(c, i) in curColums" :key="i" :label="c[curFName] || c[curFField]" :value="c[curFField]"></el-option>
       </el-select>
+    </el-form-item>
+    <el-form-item label="图片模式">
+      <el-switch size="mini" v-model="cpnt.data.picMode"></el-switch>
     </el-form-item>
     <el-form-item label="时间字段" v-if="checkAvailable('fieldTime')">
       <el-select filterable clearable size="mini" v-model="cpnt.data.fieldTime">
@@ -58,7 +87,7 @@
     <el-form-item label="时间转换（一天前、几小时前...）" v-if="checkAvailable('timeAgo')">
       <el-switch size="mini" v-model="cpnt.data.timeAgo"></el-switch>
     </el-form-item>
-    <el-form-item label="内容字段（可多选）" v-if="checkAvailable('fieldContent')">
+    <el-form-item label="额外信息字段（可多选）" v-if="checkAvailable('fieldContent')">
       <el-select multiple filterable clearable size="mini" v-model="cpnt.data.fieldContent">
         <el-option v-for="(c, i) in curColums" :key="i" :label="c[curFName] || c[curFField]" :value="c[curFField]"></el-option>
       </el-select>

@@ -44,9 +44,6 @@ export default {
     };
   },
   computed: {
-    displayRow() {
-      return false;
-    },
     opable() {
       return !!this.params.opable;
     },
@@ -63,7 +60,7 @@ export default {
             }
           }
         }
-      }
+      } 
       return {
         wfId: this.params.wfId,
         textGroup: this.params.wfTextGroup,

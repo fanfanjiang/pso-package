@@ -7,7 +7,7 @@
         </div>
         <div class="pso-sv-view-item-body">
           <div class="pso-sv-view-item__t">
-            <span class="pso-sv-view-title">
+            <span class="pso-sv-view-title" :class="{ clickable: clickable }">
               <view-field
                 v-if="params.fieldTitle"
                 :field="params.fieldTitle"
@@ -17,25 +17,19 @@
               ></view-field>
             </span>
           </div>
-          <div class="pso-sv-view-item__c">
+          <div class="pso-sv-view-item__c" v-if="params.fieldPic || params.fieldContent.length">
             <div class="pso-sv-view-item__c-l">
               <div class="pso-sv-view-pic" v-if="params.fieldPic">
                 <pso-attachment :ids="d[params.fieldPic]"></pso-attachment>
               </div>
+              <div class="pso-sv-view-abs" v-if="params.fieldAbs" v-html="d[params.fieldAbs]"></div>
               <div class="pso-sv-view-info" v-if="params.fieldContent">
-                <view-field
-                  v-for="(f, i) in params.fieldContent"
-                  :key="i"
-                  :field="f"
-                  :store="store"
-                  :data="d"
-                  :titleable="params.fieldContent.length > 1"
-                ></view-field>
+                <view-field v-for="(f, i) in params.fieldContent" :key="i" :field="f" :store="store" :data="d" titleable></view-field>
               </div>
             </div>
           </div>
-          <div class="pso-sv-view-item__b">
-            <div class="pso-sv-view-actions" v-if="actionable">
+          <div class="pso-sv-view-item__b" v-if="actionabled || params.fieldTime">
+            <div class="pso-sv-view-actions">
               <div class="pso-sv-view-actions-item" v-for="(a, i) in store.actions" :key="i">
                 <el-popconfirm
                   v-if="a.mode === '2'"
@@ -86,10 +80,21 @@ export default {
       type: Boolean,
       default: true,
     },
+    clickable: {
+      type: Boolean,
+      default: true,
+    },
+    clickShow: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     scrollDisabled() {
       return this.store.fetchFinished || this.store.starting || this.store.fetching;
+    },
+    actionabled() {
+      return this.actionable && this.store.actions.length;
     },
   },
   created() {
@@ -121,8 +126,11 @@ export default {
       return shouldTrigger;
     },
     detailHandler(data) {
-      if (this.store.sourceType === "0") {
+      if (!this.clickable) return;
+      if (this.store.sourceType === "0" && this.clickShow) {
         this.store.showInstance(data);
+      } else {
+        this.$emit("click-inst", data);
       }
     },
     checkHandler() {

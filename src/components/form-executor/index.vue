@@ -82,15 +82,16 @@
         </div>
       </div>
     </div>
+    <quick-input ref="quickInput"></quick-input>
   </pso-dialog>
 </template>
 <script>
 import shortid from "shortid";
 import { imitateFormData } from "../../tool/form";
-import { QuickInput } from "../../mixin/form";
+import QuickInput from "./quick-input";
 
 export default {
-  mixins: [QuickInput],
+  components: { QuickInput },
   props: {
     params: {
       type: Object,
@@ -183,7 +184,7 @@ export default {
       this.$emit("data-loaded", store);
       this.initializing = false;
       this.$nextTick(() => {
-        this.initKeyevent(store);
+        this.$refs.quickInput.initKeyevent(store);
       });
     },
     async keepSubmitHander() {
@@ -306,7 +307,7 @@ export default {
       this.initializing = true;
     },
     colseHandler() {
-      this.clearKeyevent();
+      this.$refs.quickInput.clearKeyevent();
       this.opener.showExecutor = false;
       this.refresh();
     },

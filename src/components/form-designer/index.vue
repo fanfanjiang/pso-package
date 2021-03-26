@@ -1,7 +1,7 @@
 <template>
   <div class="pso-form-designer" v-loading="loading">
     <div class="pso-form-designer__header">
-      <pso-header title="表单设计" @back="$emit('back', { params })" v-if="storeReady">
+      <pso-header title="表单设计" @back="backHandler" v-if="storeReady">
         <template v-slot:btn>
           <el-tooltip effect="dark" content="撤销" placement="bottom-end">
             <el-button
@@ -249,6 +249,9 @@ export default {
     },
     newTempFilter(nodes) {
       return nodes.filter((node) => node.is_leaf);
+    },
+    backHandler() {
+      this.$router && this.$router.go(-1);
     },
   },
 };

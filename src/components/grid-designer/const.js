@@ -17,27 +17,43 @@ export const MORETYPES = [
 export const COMMONFIELDS = {
     moreable: false, //显示更多
     moreType: '0',
-    moreTarget: ''
+    moreTarget: '',
+    headerBgColor: '#fff',
+    headerTextColor: '#666',
+    styleType: '0'
 }
 
 export const DATABASE = {
     sourceType: '0', //数据源类型
     source: '', //数据源标记
-    useCloumn: '',//列表
     defKeys: '',
     defComplexity: '',
-    limit: 0,
     viewAuth: '4', //权限
+    useCloumn: '',//列表
+    limit: 0,
 }
 
-export const DATAFIELDS = {
+const DATADETAIL = () => {
+    return {
+        fieldTitle: '',
+        fieldPic: '',
+        fieldTime: '',
+        fieldAbs: '',
+        fieldMain: '',
+        picMode: false,
+        fieldContent: [],
+        timeAgo: true,
+    }
+}
+
+export const DATAFUNC = {
     ...COMMONFIELDS,
     ...DATABASE,
-    fieldTitle: '',
-    fieldPic: '',
-    fieldTime: '',
-    timeAgo: true,
+    ...DATADETAIL(),
     paging: false, //显示分页
+    titleClickable: true,
+    titleClickType: '1',
+    titleClickVal: ''
 }
 
 export const CPNT = {
@@ -62,25 +78,34 @@ export const CPNT = {
         id: "dataview",
         name: "通用图文列表",
         data: {
-            ...DATAFIELDS,
+            ...DATAFUNC,
             w: 8,
             h: 8,
             withCalendar: false,
             calendarTime: '',
-            fieldContent: [],
             actions: [],
+        }
+    },
+    datadetail: {
+        id: "datadetail",
+        name: "数据详情",
+        data: {
+            ...COMMONFIELDS,
+            ...DATABASE,
+            ...DATADETAIL(),
+            w: 8,
+            h: 8,
+            limit: 1,
+            dataId: '' //数据唯一ID
         }
     },
     carousel: {
         id: "carousel",
-        name: "轮播图（走马灯）",
+        name: "轮播图",
         data: {
-            ...DATABASE,
+            ...DATAFUNC,
             w: 24,
             h: 10,
-            fieldTitle: '',
-            fieldPic: '',
-            styleType: '0'
         }
     },
     nav: {
@@ -197,7 +222,7 @@ export const CPNT = {
 export const MENU = [
     {
         name: '通用',
-        children: [CPNT.dataview, CPNT.chart, CPNT.carousel, CPNT.nav, CPNT.text]
+        children: [CPNT.dataview, CPNT.datadetail, CPNT.chart, CPNT.carousel, CPNT.nav, CPNT.text]
     },
     {
         name: '系统功能',

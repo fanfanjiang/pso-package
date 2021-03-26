@@ -27,8 +27,12 @@ export default {
             show: false
         },
         unapproved: false,
-        stores: [],
-        curStore: null
+        quickInput: {
+            stores: [],
+            curStore: null,
+        },
+        designedForm: '',
+        designedWF: ''
     },
     mutations: {
         [APP_SET_USER](state, user) {
@@ -75,13 +79,13 @@ export default {
             }
         },
         ['APP_PUSHSTORE'](state, { store }) {
-            state.stores.push(store);
-            state.curStore = store;
+            state.quickInput.stores.push(store);
+            state.quickInput.curStore = store;
         },
         ['APP_POPSTORE'](state) {
-            state.stores.pop();
-            if (state.stores.length) {
-                state.curStore = state.stores[state.stores.length - 1];
+            state.quickInput.stores.pop();
+            if (state.quickInput.stores.length) {
+                state.quickInput.curStore = state.quickInput.stores[state.quickInput.stores.length - 1];
             }
         }
     },

@@ -56,12 +56,10 @@ export default class FormStore {
         this.ignoreAstColumn = false;
 
         //扩展配置
-        this.ext_config = {
-            quickInput: { enable: false, reg: '', relation: [] }
-        };
+        this.ext_config = null;
 
         for (let option in options) {
-            if (options.hasOwnProperty(option) && !_.isNull(options[option])) {
+            if (options.hasOwnProperty(option)) {
                 this[option] = options[option];
             }
         }
@@ -72,6 +70,12 @@ export default class FormStore {
         ['data_config', 'rule_config', 'sub_config', 'ext_config'].forEach(property => {
             this.makeJSONPro(property);
         })
+
+        if (!this.ext_config) {
+            this.ext_config = {
+                quickInput: { enable: false, reg: '', relation: [] }
+            };
+        }
 
         if (this.withSys) {
             this.data_config = this.data_config.concat(makeSysFormFields())
@@ -126,6 +130,10 @@ export default class FormStore {
 
     get canRedo() {
         return this.undoList.length > 0;
+    }
+
+    get quickInputable() {
+        return this.ext_config && this.ext_config.quickInput.enable && this.ext_config.quickInput.reg
     }
 
     makeJSONPro(field) {
@@ -256,12 +264,14 @@ export default class FormStore {
         return onlyData && cpnt ? cpnt.data : cpnt;
     }
 
-    search({ options, dataOptions, beforePush, onlyData = false, opType = 'and', onlyMain = false }) {
-        const { fid } = options;
+    search({ options, dataOptions, beforePush, onlyData = false, opType = 'and', onlyMain = false } = {}) {
+
+        if (!options || !Object.keys(options).length) options = { db: true };
+
         if (options && options.hasOwnProperty('fid')) {
+            const { fid } = options;
             return onlyData ? (this.cpntsMap[fid] && this.cpntsMap[fid].data) : this.cpntsMap[fid];
         }
-        if (!Object.keys(options).length) return [];
 
         const resault = [];
 
@@ -362,6 +372,38 @@ export default class FormStore {
                 }
             }
         }
+    }
+
+    setQuickInput(input) {
+        if (!this.quickInputable || !input) return;
+        const quickCfg = this.ext_config.quickInput;
+
+        const reg = new RegExp(quickCfg.reg, 'g');
+
+        const matches = []
+        while (true) {
+            const match = reg.exec(input);
+            console.log(match);
+            if (!match) break;
+            matches.push(match[0]);
+        }
+        if (!matches.length) return;
+
+        const inst = {};
+        if (quickCfg.relation.length) {
+            quickCfg.relation.forEach(({ f, i }) => {
+                if (f && matches[i]) {
+                    inst[f] = matches[i];
+                }
+            })
+        } else {
+            const cpnts = this.search();
+            for (let i = 0; i < matches.length; i++) {
+                inst[cpnts[i].data._fieldValue] = matches[i];
+            }
+        }
+
+        this.updateInstanceManually(inst, { clear: true });
     }
 
     undo() {

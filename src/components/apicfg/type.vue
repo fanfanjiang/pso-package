@@ -68,7 +68,7 @@ export default {
       action_name: "",
       action_type: "",
       action_route: "",
-      is_sys: "",
+      is_sys: "", 
       action_config: "",
     };
     return {

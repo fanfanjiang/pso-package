@@ -28,7 +28,7 @@ export default class Module {
         }
     }
 
-    async initialize() {
+    async initialize(args) {
         this.initializing = true;
 
         if (this.beforeInitialize) {
@@ -39,7 +39,13 @@ export default class Module {
         const cfgRet = await API.getTreeNode({ code: this.code });
         this.pluginCfg = cfgRet.data.data;
 
-        const ret = await API.getPluginModules({ keys: JSON.stringify({ tp_code: { type: 1, value: this.code } }) });
+        const defKeys = { tp_code: { type: 1, value: this.code } };
+        if (args) {
+            if (args.keys) {
+                Object.assign(defKeys, args.keys);
+            }
+        }
+        const ret = await API.getPluginModules({ keys: JSON.stringify(defKeys) });
         if (ret.success) {
             ret.data.forEach((d, i) => {
                 const data = d.child_design;

@@ -1,12 +1,12 @@
 <template>
   <div ref="remark" class="pso-form-remark">
-    <rich-editor :editable="false" :proxy="cpnt.data" vfield="_defaultValue"></rich-editor>
+    <markdown-editor :editable="false" :proxy="cpnt.data" vfield="_defaultValue"></markdown-editor>
   </div>
 </template>
 <script>
-import RichEditor from "../../rich-deitor";
+import MarkdownEditor from "../../markdown-editor";
 export default {
-  components: { RichEditor },
+  components: { MarkdownEditor },
   props: {
     cpnt: {
       type: Object,

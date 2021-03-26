@@ -6,6 +6,11 @@
           <el-option v-for="item in options" :key="item.node_name" :label="item.node_display" :value="item.node_name"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="关联流程">
+        <el-select size="mini" v-model="cpnt.data._relatedWF" filterable clearable placeholder="请选择">
+          <el-option v-for="(w, i) in workflows" :key="i" :label="w.node_display" :value="w.node_name"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="关联方式">
         <el-radio v-model="cpnt.data._type" :label="1">单条</el-radio>
         <el-radio v-model="cpnt.data._type" :label="2">多条</el-radio>
@@ -30,7 +35,7 @@
       </el-form-item>
       <el-form-item label="开启按钮功能">
         <el-switch size="mini" v-model="cpnt.data._actionable"></el-switch>
-      </el-form-item>  
+      </el-form-item>
       <el-form-item label="选择打印列表" v-loading="loading">
         <el-select clearable size="mini" v-model="cpnt.data._printFields" placeholder="请选择">
           <el-option v-for="(c, i) in column" :key="i" :label="c.name" :value="c.name"></el-option>
@@ -88,6 +93,7 @@ export default {
       showDialog: false,
       sysFields: [],
       filterFields: [],
+      workflows: [],
     };
   },
   computed: {
@@ -100,10 +106,13 @@ export default {
       this.cpnt.cache.defaultEl._type = type;
     },
   },
-  created() {
+  async created() {
+    this.workflows = await this.API.getWfTree();
+
     this.sysFields = makeSysFormFields();
     this.getFormList();
     this.setCache();
+
     if (this.cpnt.data._option) this.formChangeHandler(this.cpnt.data._option, true);
   },
   beforeUpdate() {

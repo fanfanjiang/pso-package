@@ -17,8 +17,7 @@ import DOMPurify from "dompurify";
 
 import BASEAPI from './service/api';
 import createPDF from './utils/create-pdf';
-import FormStore from './components/form-designer/model/store';
-import WfStore from './components/workflow-executor/store';
+
 
 //store
 import store from './store';
@@ -57,6 +56,7 @@ import PsoFileList from "./components/file-list";
 //表单组件
 import PsoFormView from "./components/form-view";
 import PsoSuperView from "./components/super-view";
+import PsoSuperDetail from "./components/super-view/detail";
 
 import PsoFormDesigner from "./components/form-designer";
 import PsoFormExecutor from "./components/form-executor";
@@ -234,7 +234,7 @@ const components = {
     PsoUserComposite,
     PsoUserMgt,
     PsoOrgMgt,
- 
+
     PsoSiteMgt,
     PsoGridInterpreter,
     PsoGridDesigner,
@@ -266,6 +266,8 @@ const components = {
     PsoScheduleTrigger,
 
     PsoSuperView,
+    PsoSuperDetail,
+    
     PsoApprovalMgt,
     PsoCommonView,
     PsoApiType,
@@ -358,8 +360,11 @@ import Auth from './tool/auth';
 
 const tool = { Auth, genComponentData };
 
-const Store = { WfStore, FormStore };
-
+import FormStore from './components/form-designer/model/store';
+import WfStore from './components/workflow-executor/store';
+import GridStore from './components/grid-designer/store'; 
+const Store = { WfStore, FormStore, GridStore };
+ 
 export { BASEAPI, store, Store, CONST, Mixin, tool };
 
 export default { install };

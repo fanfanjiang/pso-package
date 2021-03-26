@@ -182,6 +182,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
 
                 if (this.checkAfterLoad) {
                     this.$nextTick(() => {
+                        console.log(this.checkedDefaultNodeid);
                         if (this.checkedDefaultNodeid) {
                             this.setCurrentNode([this.$refs[treeRef].getNode(this.checkedDefaultNodeid).data]);
                         } else {

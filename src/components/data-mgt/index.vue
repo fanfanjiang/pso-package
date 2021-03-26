@@ -5,7 +5,7 @@
         ref="tree"
         :request-options="treeOptions"
         :default-node-data="defaultNodeData"
-        :default-nodeid="params.designedFormId"
+        :default-nodeid="$store.state.base.designedForm"
         :auto-edit="false"
         @before-node-new="newSheet"
         @after-node-new="handleAfterNewdNode"
@@ -279,6 +279,7 @@ export default {
       this.setSelect(data, "field");
     },
     handleEditForm() {
+      this.$store.state.base.designedForm = this.curNode.node_name;
       this.goForm({ id: this.curNode.node_name });
     },
     goPrinterDeisgner() {

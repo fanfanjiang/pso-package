@@ -127,6 +127,10 @@ export default class FormViewStore {
             timeAgo: true
         }
 
+        //关联流程
+        this.relatedWF = ''; //关联流程
+        this.showWFExecutor = false;
+
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
                 this[op] = options[op];

@@ -17,30 +17,6 @@ export const Attach = {
     }
 };
 
-export const QuickInput = {
-    data() {
-        return {};
-    },
-    methods: {
-        initKeyevent(store) {
-            this.quickStore = store;
-            $(window).keydown(this.checkKeyevent);
-            this.$store.commit('APP_PUSHSTORE', { store });
-        },
-        clearKeyevent() {
-            this.$store.commit('APP_POPSTORE');
-            $(window).unbind('keydown', this.checkKeyevent);
-        },
-        checkKeyevent(e) {
-            if (e.ctrlKey && e.which == 13) {
-                if (this.$store.state.base.curStore === this.quickStore) {
-                    console.log(e);
-                }
-            }
-        }
-    }
-};
-
 export const Printer = {
     data() {
         return {

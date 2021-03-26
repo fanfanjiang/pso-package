@@ -5,6 +5,7 @@
         ref="tree"
         :request-options="treeOptions"
         :default-node-data="defaultNodeData"
+        :default-nodeid="$store.state.base.designedWF"
         :auto-edit="false"
         @before-node-new="handleNewNode"
         @node-click="nodeClickHandler"
@@ -250,6 +251,7 @@ export default {
       if (this.curNode.data_type === "flowtp") {
         this.goDesigner({ templateId: this.curNode.node_id });
       } else {
+        this.$store.state.base.designedWF = this.curNode.node_name;
         this.goDesigner({ node_id: this.curNode.node_id });
       }
     },

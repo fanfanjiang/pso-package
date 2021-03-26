@@ -8,20 +8,20 @@
     </el-form>
     <el-form label-position="top" label-width="80px">
       <el-form-item label="说明">
-        <rich-editor :proxy="cpnt.data" vfield="_defaultValue"></rich-editor>
+        <markdown-editor :proxy="cpnt.data" vfield="_defaultValue"></markdown-editor>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
 import panelHeader from "../common/panel-header";
-import RichEditor from "../../rich-deitor";
+import MarkdownEditor from "../../markdown-editor";
 
 export default {
   props: ["cpnt"],
   components: {
     panelHeader,
-    RichEditor,
+    MarkdownEditor,
   },
 };
 </script>

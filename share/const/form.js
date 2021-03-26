@@ -278,6 +278,7 @@ const CPNT = {
       { n: '_selectMode', v: '1' },
       { n: '_selectFields', v: [] },
       { n: '_actionable', v: false },
+      { n: '_relatedWF', v: '' },
     ]
   },
   assfield: {
@@ -369,7 +370,7 @@ const CPNT = {
     chart: true,
     table_show: true,
     op: FILTER_TYPE.string.op,
-    data: [{ n: '_fieldType', v: 'text' }],
+    data: [{ n: '_fieldType', v: 'text' }, { n: '_type', v: '1' }],
     fop: [{ ...OP_FILTER.op1, match: 1 }],
   },
   user: {

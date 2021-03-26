@@ -4,7 +4,7 @@
     @shownval-done="formChangeHandler"
     @data-loaded="handleFormDataLoaded"
     ref="formImage"
-    v-if="store.cfg.map_data_code&&!store.configing"
+    v-if="store.cfg.map_data_code && !store.configing"
     :form-id="store.cfg.map_data_code"
     :data-id="instanceId"
     :data-default="store.defForm"
@@ -31,9 +31,8 @@ export default {
       return this.store.data.instanceId || (this.store.copy ? this.store.copyInstanceId : "");
     },
     isFormWriteable() {
-      return this.store.curStep && this.store.curStep.atype === "form";
+      return !!(this.store.curStep && this.store.curStep.atype === "form");
     },
-
   },
   methods: {
     async handleFormDataLoaded(formStore) {

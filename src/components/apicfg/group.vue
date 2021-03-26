@@ -32,6 +32,9 @@
           <el-form-item label="名称" required>
             <el-input v-model="curInstance.group_name" size="small" autocomplete="off"></el-input>
           </el-form-item>
+          <el-form-item label="标记" required>
+            <el-input v-model="curInstance.group_type" size="small" autocomplete="off"></el-input>
+          </el-form-item>
           <el-form-item label="状态" required>
             <el-input v-model="curInstance.group_status" size="small" autocomplete="off"></el-input>
           </el-form-item>
@@ -50,6 +53,7 @@ export default {
   data() {
     this.FIELDS = [
       { v: "group_name", n: "名称", w: 100 },
+      { v: "group_type", n: "标记" },
       { v: "group_status", n: "状态", w: 140 },
       { v: "group_note", n: "备注" },
     ];
@@ -58,6 +62,7 @@ export default {
       group_name: "",
       group_status: "",
       group_note: "",
+      group_type: "",
     };
     return {
       ID: "group_id",

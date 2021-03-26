@@ -1,4 +1,4 @@
-import addEventListener from '../../utils/dom/addEventListener'
+import addEventListener from '../../utils/dom/addEventListener';
 
 export function getTargetRect(target) {
     return target === window ? { top: 0, bottom: window.innerHeight } : target.getBoundingClientRect();

@@ -161,9 +161,9 @@ export default {
 
       //获取表单配置
       const baseEntity = {
-        copyMode: this.copyMode,
+        copyMode: !!this.copyMode,
+        editable: !!this.editable,
         extendAuth: this.extendAuth,
-        editable: this.editable,
         parentInstanceId: this.parentInstanceId,
         ignoreAstColumn: this.ignoreAstColumn,
       };

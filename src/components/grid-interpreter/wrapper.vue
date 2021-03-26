@@ -1,6 +1,6 @@
 <template>
   <div class="pso-grid-cpnt-wrapper">
-    <div class="pso-grid-cpnt-wrapper-header">
+    <div class="pso-grid-cpnt-wrapper-header" :style="headerStyle">
       <div>
         <span>{{ cpnt.urine.child_name }}</span>
       </div>
@@ -15,10 +15,18 @@
   </div>
 </template>
 <script>
-import Qs from 'qs';
+import Qs from "qs";
 export default {
   props: {
     cpnt: Object,
+  },
+  computed: {
+    headerStyle() {
+      return {
+        color: this.cpnt.data.headerTextColor,
+        'background-color': this.cpnt.data.headerBgColor,
+      };
+    },
   },
   methods: {
     checkmore(params = {}) {

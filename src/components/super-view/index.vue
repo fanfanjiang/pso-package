@@ -4,7 +4,13 @@
       <div class="pso-super-view__calendar" v-if="params.withCalendar">
         <pso-calendar @change="dayChangeHandler"></pso-calendar>
       </div>
-      <view-body :store="store" :params="params"></view-body>
+      <view-body
+        :store="store"
+        :params="params"
+        :clickable="params.titleClickable"
+        :click-show="params.titleClickType === '1'"
+        @click-inst="clickInst"
+      ></view-body>
       <div class="pso-super-view__add" v-if="store.checkActionUsable('add') && store.addAction">
         <el-button icon="el-icon-plus" circle @click="addHandler"></el-button>
       </div>
@@ -105,6 +111,18 @@ export default {
     },
     addHandler() {
       this.store.newInstance(true);
+    },
+    clickInst(data) {
+      const { titleClickVal, source } = this.params;
+      const { tp_code, child_id } = this.urine;
+      if (titleClickVal) {
+        const path = titleClickVal
+          .replaceAll(":fid", source)
+          .replaceAll(":mid", child_id)
+          .replaceAll(":pid", tp_code)
+          .replaceAll(":id", data.leaf_id);
+        this.$router.push({ path });
+      }
     },
   },
 };

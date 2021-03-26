@@ -63,14 +63,15 @@
       </div>
       <div class="pso-form-asstable-table">
         <el-tag
-          v-if="justShowOne && !displayTable && instances.length"
+          v-show="justShowOne && !displayTable && instances.length"
           :closable="cpntEditable"
-          @click="astStore.showInstance.call(astStore, instances[0])"
+          @click="$refs.viewTable.rowdbClickHandler(instances[0])"
           @close="handleDelList(instances)"
           >{{ firstInstanceDisplay }}
         </el-tag>
         <view-table
-          v-if="(!justShowOne || displayTable) && instances.length"
+          v-show="(!justShowOne || displayTable) && instances.length"
+          ref="viewTable"
           :store="astStore"
           :params="tableParams"
           :dragable="false"
@@ -445,7 +446,7 @@ export default {
 
       const ret = await this.API.formsCfg({ data: { id: this.cpnt.data._option, auth: 1 }, method: "get" });
 
-      this.astStore = new ASTStore({ $vue: this, limit: 10, disabledFetch: true });
+      this.astStore = new ASTStore({ $vue: this, limit: 10, disabledFetch: true, relatedWF: this.cpnt.data._relatedWF });
       this.cpnt.astStore = this.astStore;
 
       this.astStore.analyzeFormCfg(ret.data, this.cpnt.store && this.cpnt.store.ignoreAstColumn ? "" : this.cpnt.data._showFields);

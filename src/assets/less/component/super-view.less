@@ -51,11 +51,11 @@
     }
 
     .pso-sv-view-item__t {
-        margin-bottom: 6px;
     }
 
     .pso-sv-view-item__c {
         display: flex;
+        margin-top: 6px;
 
         .pso-sv-view-item__c-l {
             flex: 1;
@@ -73,6 +73,15 @@
     .pso-sv-view-title {
         letter-spacing: 1px;
         color: #000;
+        display: block;
+
+        &.clickable {
+            cursor: pointer;
+
+            &:hover {
+                color: @main-color;
+            }
+        }
     }
 
     .pso-sv-view-info {

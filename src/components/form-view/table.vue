@@ -93,6 +93,24 @@
         </div>
       </div>
     </transition>
+    <pso-dialog title="关联流程" :visible="store.showWFExecutor" width="94%" @close="store.showWFExecutor = false">
+      <template #title>
+        <pso-dialog-header>
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>关联流程</span>
+          </template>
+        </pso-dialog-header>
+      </template>
+      <pso-wf-executor ref="wfexecutor" :params="wfExecutorParams"> </pso-wf-executor>
+    </pso-dialog>
+    <el-dialog title="请选择" :visible.sync="showWFSelector" width="30%" center append-to-body>
+      <span>请选择查看这条数据关联的流程还是查看、编辑或删除（如果有权限）数据</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" type="success" @click="makeChoose('wf')">打开关联流程</el-button>
+        <el-button size="small" type="primary" @click="makeChoose('form')">编辑数据</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -101,7 +119,7 @@ import ColumnTag from "./column-tag";
 import ColumnAst from "./column-ast";
 import { FormModifierMixin } from "../../mixin/view";
 export default {
-  components: { PsoAttachment, ColumnTag, ColumnAst },
+  components: { PsoAttachment, ColumnTag, ColumnAst, PsoWfExecutor: () => import("../workflow-executor/index") },
   mixins: [FormModifierMixin],
   props: {
     params: {
@@ -127,6 +145,8 @@ export default {
     this.timer = null;
     return {
       clickCount: 0,
+      showWFSelector: false,
+      waitedData: null,
     };
   },
   computed: {
@@ -163,6 +183,12 @@ export default {
     modifiable() {
       return this.params.modifiable && this.store.opAddable;
     },
+    wfExecutorParams() {
+      return {
+        node_id: this.store.relatedWF,
+        instance: { instanceId: this.waitedData ? this.waitedData.leaf_id : "" },
+      };
+    },
   },
   watch: {
     "store.showFilter"() {
@@ -193,7 +219,7 @@ export default {
   },
   methods: {
     rowdbClickHandler(row) {
-      this.store.showInstance(row);
+      this.makeJudgments(row);
     },
     rowClickHandler(row) {
       if (this.forceclick) {
@@ -207,11 +233,27 @@ export default {
           }, 300);
         } else if (this.clickCount === 2) {
           this.timer && clearTimeout(this.timer);
-          this.store.showInstance(row);
+          this.makeJudgments(row);
           this.clickCount = 0;
         }
       } else if (this.params.tableRowClick) {
         this.setClickedRow(row);
+      }
+    },
+    makeJudgments(row) {
+      if (this.store.relatedWF) {
+        this.waitedData = row;
+        this.showWFSelector = true;
+      } else {
+        this.waitedData = null;
+        this.store.showInstance(row);
+      }
+    },
+    makeChoose(tag) {
+      if (tag === "form") {
+        this.store.showInstance(this.waitedData);
+      } else {
+        this.store.showWFExecutor = true;
       }
     },
     setClickedRow(row) {

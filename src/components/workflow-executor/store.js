@@ -308,7 +308,7 @@ export default class WfStore {
         this.data.name = this.data.name || instance.instanceName;
         this.data.status = instance.instance_status;
 
-        //这里先这样做，最好是在获取已存在的流程时直接不返回这些值
+        //这里先这样做，最好是在获取已存在的流程时直接返回这些值
         if (!this.shouldGetInsTwice || (this.shouldGetInsTwice && this.instanceFlag)) {
             if (reviews) {
                 reviews.forEach(r => r.empties = '');
