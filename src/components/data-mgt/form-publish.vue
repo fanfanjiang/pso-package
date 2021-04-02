@@ -164,7 +164,6 @@ export default {
       selectedList: [],
       init: true,
       logo: { data: {} },
-      mockStore: null,
     };
   },
   watch: {
@@ -184,16 +183,6 @@ export default {
   async created() {
     this.init = true;
     this.qrsrc = await this.genQR();
-
-    //初始化规则参数
-    this.mockStore = new FormStore({ ...this.store.getBaseInfo(), designMode: false });
-    const mockData = {};
-    if (this.data.rules) {
-      this.data.rules.forEach((f) => {
-        mockData[f.id] = f.val;
-      });
-      this.mockStore.updateInstance(mockData);
-    }
 
     if (typeof this.data.attach === "object") {
       this.data.attach = "";
@@ -218,7 +207,17 @@ export default {
       this.data.rules.push(filter);
     },
     getCpnt(id) {
-      const cpnt = this.mockStore.searchByField(id);
+      //初始化规则参数
+      const mockStore = new FormStore({ ...this.store.getBaseInfo(), designMode: false });
+      const mockData = {};
+      if (this.data.rules) {
+        this.data.rules.forEach((f) => {
+          mockData[f.id] = f.val;
+        });
+        mockStore.updateInstance(mockData);
+      }
+
+      const cpnt = mockStore.searchByField(id);
       cpnt.data._fieldName = "";
       cpnt.data._hideForever = false;
       cpnt.data._hideOnNew = false;

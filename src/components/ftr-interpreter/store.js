@@ -98,10 +98,10 @@ export default class FTRStore {
     async fetchModules() {
         const ret = await API.getFTRModulesCfg({ keys: JSON.stringify({ solr_id: { type: '1', value: this.activeCate } }) });
         if (ret.success) {
-            this.modules = ret.data.filter(d => d.child_content);
+            this.modules = _.orderBy(ret.data.filter(d => d.child_content), ['child_order']);
             for (let item of this.modules) {
-                    item.child_url = item.child_url ? JSON.parse(item.child_url) : [];
-                    item.child_content = item.child_content ? JSON.parse(item.child_content) : [];
+                item.child_url = item.child_url ? JSON.parse(item.child_url) : [];
+                item.child_content = item.child_content ? JSON.parse(item.child_content) : [];
             }
         }
     }

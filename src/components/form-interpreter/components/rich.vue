@@ -1,7 +1,12 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <template v-if="cpnt.data._type === '1'"> 
-      <rich-editor v-if="cpntEditable" :proxy="cpnt.data"></rich-editor>
+    <template v-if="cpnt.data._type === '1'">
+      <rich-editor
+        v-if="cpntEditable"
+        :proxy="cpnt.data"
+        @replacing="cpnt.store.storeLoading = true"
+        @replaced="cpnt.store.storeLoading = false"
+      ></rich-editor>
       <div v-else v-html="cpnt.data._val"></div>
     </template>
     <markdown-editor v-else :editable="cpntEditable" :proxy="cpnt.data"></markdown-editor>
@@ -13,6 +18,6 @@ import MarkdownEditor from "../../markdown-editor";
 import RichEditor from "../../rich-editor";
 export default {
   mixins: [cpntMixin],
-  components: { MarkdownEditor, RichEditor },
+  components: { MarkdownEditor, RichEditor }
 };
 </script>

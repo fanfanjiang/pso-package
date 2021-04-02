@@ -52,7 +52,7 @@
           <el-form-item label="参数配置" required>
             <el-input v-model="curInstance.outer_params" size="small" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="参数配置" required>
+          <el-form-item label="返回配置" required>
             <el-input v-model="curInstance.outer_return" size="small" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="备注">

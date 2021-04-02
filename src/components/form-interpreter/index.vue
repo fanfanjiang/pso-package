@@ -208,6 +208,10 @@ export default {
       };
 
       try {
+        if (this.store.storeLoading) {
+          throw new Error(`数据正在处理中，请稍等片刻`);
+        }
+
         for (let cpnt of Object.values(cpnts)) {
           const cpntData = cpnt.data;
           if (cpnt.CPNT.host_db) {
@@ -299,7 +303,7 @@ export default {
           }
         }
       } catch (error) {
-        this.$message({ message: error.message, type: "warning", duration: 30000, showClose: true });
+        this.$message({ message: error.message, type: "warning", duration: 10000, showClose: true });
         throw error;
       }
       return data;

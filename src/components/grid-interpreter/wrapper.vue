@@ -1,15 +1,17 @@
 <template>
   <div class="pso-grid-cpnt-wrapper">
-    <div class="pso-grid-cpnt-wrapper-header" :style="headerStyle">
+    <div class="pso-grid-cpnt-wrapper-header" :style="headerStyle" v-if="!cpnt.data.headerHidden">
       <div>
-        <span>{{ cpnt.urine.child_name }}</span>
+        <slot name="header">
+          <span>{{ cpnt.urine.child_name }}</span>
+        </slot>
       </div>
       <div>
         <i class="el-icon-more" v-if="cpnt.data.moreable" @click="$emit('checkmore')"></i>
         <slot name="action"></slot>
       </div>
     </div>
-    <div class="pso-grid-cpnt-wrapper-body">
+    <div class="pso-grid-cpnt-wrapper-body" :style="bodyStyle">
       <slot></slot>
     </div>
   </div>
@@ -24,7 +26,12 @@ export default {
     headerStyle() {
       return {
         color: this.cpnt.data.headerTextColor,
-        'background-color': this.cpnt.data.headerBgColor,
+        "background-color": this.cpnt.data.headerBgColor,
+      };
+    },
+    bodyStyle() {
+      return {
+        height: !this.cpnt.data.headerHidden ? `calc(100% - 50px)` : "100%",
       };
     },
   },

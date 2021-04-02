@@ -669,11 +669,22 @@ export default class API {
         }
     }
 
+    static async upload({ file, fileName = '', data = {}, api }) {
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+            for (let key in data) {
+                formData.append(key, data[key], fileName);
+            }
+            return await this.request(api, { data: formData, method: 'post', headers: { 'Content-Type': 'multipart/form-data' } });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async uploadTempPdf(file) {
         try {
-            const data = new FormData();
-            data.append("file", file);
-            return await this.request('/api/upload/temppdf', { data, method: 'post', headers: { 'Content-Type': 'multipart/form-data' } });
+            return await this.upload({ file, api: '/api/upload/temppdf' });
         } catch (error) {
             throw error;
         }

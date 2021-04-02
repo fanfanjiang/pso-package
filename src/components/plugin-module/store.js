@@ -45,6 +45,18 @@ export default class Module {
                 Object.assign(defKeys, args.keys);
             }
         }
+
+        await this.fetchPluginModules(defKeys)
+
+        if (this.onInitialized) {
+            const stopInit = await this.onInitialized();
+            if (stopInit) return;
+        }
+
+        this.initializing = false;
+    }
+
+    async fetchPluginModules(defKeys) {
         const ret = await API.getPluginModules({ keys: JSON.stringify(defKeys) });
         if (ret.success) {
             ret.data.forEach((d, i) => {
@@ -56,13 +68,6 @@ export default class Module {
                 }
             })
         }
-
-        if (this.onInitialized) {
-            const stopInit = await this.onInitialized();
-            if (stopInit) return;
-        }
-
-        this.initializing = false;
     }
 
     async delCpnt(i) {
@@ -128,7 +133,7 @@ export default class Module {
             urine.child_content = JSON.parse(urine.child_content);
         }
 
-        const entity = { store: this, __cpnt__, i, data: { ..._.cloneDeep(__cpnt__.data), i, n: __cpnt__.name, ...cpnt, id }, urine };
+        const entity = { store: this, __cpnt__, i, data: { ..._.cloneDeep(__cpnt__.data), i, n: __cpnt__.name, ...cpnt, id }, child_id: urine.child_id, urine };
 
         beforeAdd && beforeAdd(entity);
         this.register(entity);

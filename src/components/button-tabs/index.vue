@@ -1,11 +1,12 @@
 <template>
   <div class="pso-btntabs">
     <div :class="tabsClass(d, i)" v-for="(d, i) in data" :key="i" @click="clickHandler(d, i)">
-      <div class="pso-btntabs-label">
-        <i :class="d.icon" v-if="d.icon"></i>
-        <span>{{ d.label }}</span>
+      <div class="pso-btntabs-label" :style="labelStyle">
+        <i class="pso-btntabs-label__icon" :class="d.icon" v-if="d.icon"></i>
+        <span class="pso-btntabs-label__title">{{ d.label }}</span>
+        <span v-if="checkActive(d, i)" :style="anchorStyle" class="pso-btntabs-label__anchor"></span>
       </div>
-      <span class="el-breadcrumb__separator" v-if="i !== data.length - 1">/</span>
+      <span :style="labelStyle" class="el-breadcrumb__separator" v-if="i !== data.length - 1">/</span>
     </div>
   </div>
 </template>
@@ -18,6 +19,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    color: {
+      type: String,
+      default: "",
+    },
   },
   model: {
     prop: "value",
@@ -28,15 +33,34 @@ export default {
       activeIndex: this.value,
     };
   },
+  computed: {
+    labelStyle() {
+      if (this.color) {
+        return {
+          color: this.color,
+        };
+      }
+    },
+    anchorStyle() {
+      if (this.color) {
+        return {
+          "background-color": this.color,
+        };
+      }
+    },
+  },
   watch: {
     activeIndex(val) {
       this.$emit("change", val);
     },
   },
   methods: {
+    checkActive(tab, index) {
+      return this.getID(tab, index) === this.activeIndex;
+    },
     tabsClass(tab, index) {
       return {
-        "pso-btntabs-item__active": this.getID(tab, index) === this.activeIndex,
+        "pso-btntabs-item__active": this.checkActive(tab, index),
         "pso-btntabs-item": true,
       };
     },

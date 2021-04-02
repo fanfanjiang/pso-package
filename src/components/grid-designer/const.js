@@ -20,7 +20,8 @@ export const COMMONFIELDS = {
     moreTarget: '',
     headerBgColor: '#fff',
     headerTextColor: '#666',
-    styleType: '0'
+    styleType: '0',
+    hidden: false, //隐藏
 }
 
 export const DATABASE = {
@@ -117,6 +118,17 @@ export const CPNT = {
             h: 8,
             style: '',
             menus: [],
+        }
+    },
+    tab: {
+        id: "tab",
+        name: "标签",
+        data: {
+            ...COMMONFIELDS,
+            w: 8,
+            h: 8,
+            style: '',
+            tabs: [],
         }
     },
 
@@ -222,7 +234,7 @@ export const CPNT = {
 export const MENU = [
     {
         name: '通用',
-        children: [CPNT.dataview, CPNT.datadetail, CPNT.chart, CPNT.carousel, CPNT.nav, CPNT.text]
+        children: [CPNT.dataview, CPNT.datadetail, CPNT.chart, CPNT.carousel, CPNT.nav, CPNT.text, CPNT.tab]
     },
     {
         name: '系统功能',

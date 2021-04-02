@@ -37,7 +37,7 @@
           </el-button>
           <transition name="el-zoom-in-center">
             <el-button
-              v-show="cpnt.data._relate && !justShowOne && astStore.selectedList.length"
+              v-show="cpnt.data._relate && (!justShowOne || displayTable) && astStore.selectedList.length"
               type="danger"
               icon="el-icon-delete"
               size="mini"

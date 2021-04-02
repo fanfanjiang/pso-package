@@ -118,9 +118,10 @@ import PsoAttachment from "../attachment";
 import ColumnTag from "./column-tag";
 import ColumnAst from "./column-ast";
 import { FormModifierMixin } from "../../mixin/view";
+import { CustomWf } from "../../mixin/workflow";
 export default {
   components: { PsoAttachment, ColumnTag, ColumnAst, PsoWfExecutor: () => import("../workflow-executor/index") },
-  mixins: [FormModifierMixin],
+  mixins: [FormModifierMixin, CustomWf],
   props: {
     params: {
       type: Object,
@@ -250,9 +251,11 @@ export default {
       }
     },
     makeChoose(tag) {
+      this.showWFSelector = false;
       if (tag === "form") {
         this.store.showInstance(this.waitedData);
       } else {
+        if (this.checkCustomWf(this.store.relatedWF, this.waitedData.leaf_id)) return;
         this.store.showWFExecutor = true;
       }
     },

@@ -165,6 +165,9 @@ export default {
     boxWidth() {
       return this.fullScreen ? "100%" : "70%";
     },
+    saveDisbaled() {
+      return this.saving || (this.store && this.store.storeLoading);
+    },
   },
   watch: {
     "params.dataId"(value) {
