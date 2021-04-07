@@ -71,7 +71,7 @@ export default {
   methods: {
     async initialize() {
       this.initializing = true;
-      const { viewAuth, useCloumn, source, sourceType, paging, limit } = this.params;
+      const { viewAuth, useCloumn, source, sourceType, paging, limit, fetchAPI } = this.params;
 
       if (this.watchFun.length) {
         this.watchFun.forEach((f) => f());
@@ -82,10 +82,13 @@ export default {
         $vue: this,
         sourceType,
         urine: this.urine,
-        fetchMode: !this.params.paging && !limit ? "2" : "1",
+        fetchMode: !paging && !limit ? "2" : "1",
       };
       if (limit) {
         options.limit = limit;
+      }
+      if (fetchAPI) {
+        options.fetchAPI = fetchAPI;
       }
       this.store = new SuperViewStore(options);
       this.store.analyzeAuthView(viewAuth, []);

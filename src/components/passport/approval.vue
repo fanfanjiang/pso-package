@@ -5,7 +5,7 @@
     :show-close="false"
     :close-on-press-escape="false"
     :close-on-click-modal="false"
-    :visible.sync="base.unapproved"
+    :visible.sync="base.user.unapproved"
   >
     <div class="approve-header" slot="title">
       <svg

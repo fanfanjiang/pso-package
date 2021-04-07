@@ -32,6 +32,8 @@ export const DATABASE = {
     viewAuth: '4', //权限
     useCloumn: '',//列表
     limit: 0,
+    fetchManually: false,
+    fetchAPI: ''
 }
 
 const DATADETAIL = () => {

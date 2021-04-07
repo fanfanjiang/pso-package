@@ -26,8 +26,8 @@ export const CaptchaMixin = {
 
 export const SignInMixin = {
     methods: {
-        signIn({ token, user, redirect }, needRedirect = true) {
-            this.$store.commit('APP_SIGNIN', { token, user });
+        signIn({ token, user, refresh_token, redirect }, needRedirect = true) {
+            this.$store.commit('APP_SIGNIN', { token, user, refresh_token });
             if (needRedirect) {
                 if (redirect) {
                     this.$router.replace(redirect);

@@ -549,6 +549,7 @@ const CPNT = {
     ass_db: false,
     data: [
       { n: '_option', v: [] },
+      { n: '_datasource', v: '' },
     ]
   }
 }

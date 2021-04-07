@@ -4,7 +4,6 @@ export const APP_GET_USER = 'APP_GET_USER';
 export const APP_SIGNOUT = 'APP_SIGNOUT';
 export const APP_SIGNIN = 'APP_SIGNIN';
 export const APP_MOCKSIGNIN = 'APP_MOCKSIGNIN';
-export const APP_UNAPPROVED = 'APP_UNAPPROVED';
 
 /* 流程编辑器 */
 export const WF_RESET = 'WF_RESET';
@@ -38,7 +37,6 @@ const MUT_TYPES = {
   APP_SIGNOUT,
   APP_SIGNIN,
   APP_MOCKSIGNIN,
-  APP_UNAPPROVED,
 
   /* 流程编辑器 */
   WF_RESET,

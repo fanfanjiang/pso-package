@@ -131,6 +131,8 @@ export default class FormViewStore {
         this.relatedWF = ''; //关联流程
         this.showWFExecutor = false;
 
+        this.fetchAPI = '/api/form';
+
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
                 this[op] = options[op];
@@ -441,7 +443,7 @@ export default class FormViewStore {
         const data = this.getFetchParams();
         data.data_code = this.formCfg.data_code;
 
-        const ret = await API.form({ data, method: "get" });
+        const ret = await API.request(this.fetchAPI, { data, method: "get" });
 
         if (this.dataPovider) {
             await this.dataPovider(ret.data);

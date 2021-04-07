@@ -161,7 +161,7 @@ export const FetchMixin = {
             this.showEditor = true;
         },
         dbClickHandler(row) {
-            this.curInstance = row;
+            this.curInstance = _.cloneDeep(row);
             this.showEditor = true;
         },
         async delHandler() {
@@ -225,7 +225,7 @@ export const PagingMixin = {
                 }),
                 this.$watch("fetchParams.keywords", () => {
                     if (this.fetchParams.start === 1) {
-                        this.$emit('load'); 
+                        this.$emit('load');
                     } else {
                         this.fetchParams.start = 1;
                     }

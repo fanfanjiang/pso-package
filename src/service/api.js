@@ -11,7 +11,17 @@ export default class API {
 
     static PSODOMPurify = false
 
+    static refreshing = false
+
+    static cachedFun = [];
+
+    static doAuthError() {
+        this.handleAuthError && this.handleAuthError();
+        Message({ showClose: true, message: '登录过期，请重新登录', type: 'warning' });
+    }
+
     static async request(url, { method = 'post', data = {}, headers = {}, showMsg = true }) {
+        const _arguments = arguments;
         url = `${this.URL_PREFIX}${url}`;
         if (this.xssFilter) {
             for (let key in data) {
@@ -24,18 +34,50 @@ export default class API {
             url += `?${Qs.stringify(data)}`;
         }
         try {
+
+            //delete处理
             if (method === 'delete') data = { data: data };
+
             const ret = await axios({ method, url, data, headers });
+
             const message = ret.msg || ret.message;
             if (showMsg && !ret.success && message && ret.tag !== 99) {
                 Message({ showClose: true, message, type: 'warning' });
             }
+
             return ret;
+
         } catch (error) {
+
             if (error.response && error.response.status === 401) {
-                Message({ showClose: true, message: '登录过期，请重新登录', type: 'warning' });
-            } else {
-                // Message({ showClose: true, message: '数据请求失败，请稍后再试', type: 'error' })
+
+                const rft = Auth.getRefreshToken();
+                if (rft) {
+
+                    const oriRequest = new Promise((resolve) => {
+                        this.cachedFun.push(async () => {
+                            resolve(this.request(..._arguments));
+                        });
+                    })
+
+                    if (!this.refreshing) {
+                        this.refreshing = true;
+                        const refreshRet = await this.request('/refresh', { data: { rft } });
+                        if (refreshRet && refreshRet.success) {
+                            Auth.setToken(refreshRet.data.token);
+                            this.refreshing = false;
+                            while (this.cachedFun.length) {
+                                const fun = this.cachedFun.shift();
+                                fun();
+                            }
+                        } else {
+                            this.doAuthError();
+                        }
+                    }
+
+                    return oriRequest;
+                }
+                this.doAuthError();
             }
         }
     }
@@ -1046,9 +1088,6 @@ axios.interceptors.response.use((response) => {
         return Promise.reject(response);
     }
 }, (error) => {
-    if (error.response && error.response.status === 401) {
-        API.handleAuthError && API.handleAuthError();
-    }
     if (error.response && error.response.status === 403) {
         API.handleUnapprovedError && API.handleUnapprovedError();
     }

@@ -33,7 +33,9 @@
             <el-input v-model="curInstance.action_name" size="small" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="类型" required>
-            <el-input v-model="curInstance.action_type" size="small" autocomplete="off"></el-input>
+            <el-select filterable clearable size="small" v-model="curInstance.action_type">
+              <el-option v-for="(d, i) in ACTTYPE" :key="i" :label="d.n" :value="d.v"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="路径" required>
             <el-input v-model="curInstance.action_route" size="small" autocomplete="off"></el-input>
@@ -52,13 +54,25 @@
 <script>
 import { FetchMixin } from "../../mixin/view";
 const TYPE = { 0: "否", 1: "是" };
-
+const ACTTYPE = [
+  { n: "对内", v: "0" },
+  { n: "对外", v: "1" },
+];
 export default {
   mixins: [FetchMixin],
   data() {
+    this.ACTTYPE = ACTTYPE;
     this.FIELDS = [
       { v: "action_name", n: "名称", w: 100 },
-      { v: "action_type", n: "类型", w: 140 },
+      {
+        v: "action_type",
+        n: "类型",
+        w: 140,
+        trans: (v) => {
+          const exist = _.find(ACTTYPE, { v });
+          return exist ? exist.n : "";
+        },
+      },
       { v: "action_route", n: "路径", w: 120 },
       { v: "is_sys", n: "是否系统", trans: (v) => TYPE[v] },
       { v: "action_config", n: "配置" },
@@ -68,7 +82,7 @@ export default {
       action_name: "",
       action_type: "",
       action_route: "",
-      is_sys: "", 
+      is_sys: "",
       action_config: "",
     };
     return {

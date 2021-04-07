@@ -48,12 +48,8 @@ export default {
             Storge.remove('user');
             Auth.removeToken();
         },
-        [APP_SIGNIN](state, { token, user }) {
-            Auth.setToken(token);
-            if (user.unapproved) {
-                delete user.unapproved;
-                this.commit('APP_UNAPPROVED');
-            }
+        [APP_SIGNIN](state, { token, refresh_token, user }) {
+            Auth.setToken(token, refresh_token);
             this.commit(APP_SET_USER, user)
         },
         ['APP_SET_APPCONFIG'](state, data = {}) {
@@ -66,11 +62,9 @@ export default {
                 try { state.appConfig = { ...state.appConfig, ...JSON.parse(data) }; } catch (error) { }
             }
         },
-        ['APP_UNAPPROVED'](state) {
-            state.unapproved = true;
-        },
         ['APP_APPROVED'](state) {
-            state.unapproved = false;
+            state.user.unapproved = false; 
+            this.commit(APP_SET_USER, state.user)
         },
         ['APP_CHECKUSER'](state, { appid = '' } = {}) {
             this.commit('APP_GET_USER');

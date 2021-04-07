@@ -22,6 +22,12 @@
           <el-option v-for="(c, i) in actions" :key="i" :label="c.name" :value="c.id"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="手动设置数据地址" v-if="checkAvailable('fetchManually')">
+        <el-switch size="mini" v-model="cpnt.data.fetchManually"></el-switch>
+      </el-form-item>
+      <el-form-item label="数据地址" v-if="cpnt.data.fetchManually && checkAvailable('fetchAPI')">
+        <el-input size="mini" v-model.trim="cpnt.data.fetchAPI" clearable></el-input>
+      </el-form-item>
     </template>
     <el-form-item label="数据权限" v-if="checkAvailable('viewAuth')">
       <el-select filterable clearable size="mini" v-model="cpnt.data.viewAuth">
