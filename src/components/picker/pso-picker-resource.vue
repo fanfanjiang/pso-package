@@ -11,7 +11,7 @@
   >
     <div class="pso-picker" v-if="opened">
       <div style="height: 330px">
-        <knowl :data_type="data_type" :opable="false" :treeable="false" @select="selectHandler"></knowl>
+        <knowl :params="{ data_type }" :opable="false" :treeable="false" @select="selectHandler"></knowl>
       </div>
       <div class="pso-picker__controller">
         <el-button @click="show = false" size="mini">取 消</el-button>

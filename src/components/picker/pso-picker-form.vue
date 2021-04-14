@@ -1,5 +1,5 @@
 <template>
-  <el-form :label-position="position" label-width="90px">
+  <el-form :label-position="position" label-width="90px" :size="size">
     <template v-if="!initializing">
       <el-form-item :label="fromText" :required="required">
         <el-select size="mini" :clearable="clearable" v-model="data[formField]" filterable placeholder="工作表" @change="changeHandler">
@@ -49,6 +49,10 @@ export default {
     requiredappid: {
       type: String,
       default: "",
+    },
+    size: {
+      type: String,
+      default: "small",
     },
   },
   data() {

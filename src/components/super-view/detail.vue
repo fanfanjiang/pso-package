@@ -11,8 +11,8 @@
       <div class="pso-super-detail-content">
         <div v-html="main"></div>
       </div>
-      <div class="pso-super-detail-info" v-if="fieldContent.length && store">
-        <view-field v-for="(f, i) in fieldContent" :key="i" :field="f" :store="store" :data="data" titleable></view-field>
+      <div class="pso-super-detail-info" v-if="fieldMContent.length && store">
+        <view-field v-for="(f, i) in fieldMContent" :key="i" :field="f" :store="store" :data="data" titleable></view-field>
       </div>
     </template>
     <pso-skeleton v-else :lines="10"></pso-skeleton>
@@ -44,8 +44,8 @@ export default {
     main() {
       return this.data[this.params.fieldMain] || "";
     },
-    fieldContent() {
-      return this.params.fieldContent || [];
+    fieldMContent() {
+      return this.params.fieldMContent || [];
     },
   },
   data() {

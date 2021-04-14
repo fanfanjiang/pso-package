@@ -39,7 +39,7 @@ export default class API {
             if (method === 'delete') data = { data: data };
 
             const ret = await axios({ method, url, data, headers });
-
+    
             const message = ret.msg || ret.message;
             if (showMsg && !ret.success && message && ret.tag !== 99) {
                 Message({ showClose: true, message, type: 'warning' });
@@ -48,7 +48,7 @@ export default class API {
             return ret;
 
         } catch (error) {
-
+      
             if (error.response && error.response.status === 401) {
 
                 const rft = Auth.getRefreshToken();

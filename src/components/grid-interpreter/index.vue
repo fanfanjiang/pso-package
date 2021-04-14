@@ -40,6 +40,7 @@ requireComponent.keys().forEach((fileName) => {
 });
 export default {
   components: { ...componentsMap, GridLayout, GridItem },
+  componentName: "PsoGridInterpreter",
   props: {
     params: Object,
   },
@@ -53,6 +54,10 @@ export default {
     this.initializing = true;
     await this.initialize();
     this.initializing = false;
+
+    this.$on("instance-click", (data) => {
+      this.$emit("cpnt-instance-click", data);
+    });
   },
   methods: {
     async initialize() {

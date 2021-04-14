@@ -4,7 +4,7 @@
       <pso-form-view
         key="main"
         v-bind="params"
-        :params="{ ...params, hideAuthTab: true, hideStatusTab: true, hideTablefun: true, hideViewTitle: true, hideMoreBtn: true }"
+        :params="{ ...params, hideAuthTab: true, hideStatusTab: true, hideViewTitle: true, hideMoreBtn: true }"
         :def-limit="20"
         :table-row-click="mainRowClickHandler"
         :addable="opable"

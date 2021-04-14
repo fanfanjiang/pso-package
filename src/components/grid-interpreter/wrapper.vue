@@ -1,5 +1,5 @@
 <template>
-  <div class="pso-grid-cpnt-wrapper">
+  <div class="pso-grid-cpnt-wrapper" :fid="cpnt.urine.child_id">
     <div class="pso-grid-cpnt-wrapper-header" :style="headerStyle" v-if="!cpnt.data.headerHidden">
       <div>
         <slot name="header">

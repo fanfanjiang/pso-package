@@ -10,6 +10,7 @@
             :condition="store.defCondition"
             :fieldsOptions="store.conditionOptions"
             fixedfield
+            fixed
             defingop
           ></pso-data-filter>
         </transition>
@@ -256,6 +257,7 @@ export default {
           sourceType: "0",
           fetchMode: this.__isMobile__ ? "2" : "1",
           statusesFilter: this.statusesFilter,
+          showFilter: this.expanding,
         });
 
         if (this.params.viewAuth) {
@@ -268,7 +270,6 @@ export default {
 
         this.makeKeys();
         await this.store.initialize(this.params.wfId, this.params.useCloumn);
-        this.store.showFilter = this.expanding;
         this.$emit("initialized", { store: this.store.store, cfg: this.store.formCfg, wvStore: this.store, defForm: this.defForm });
         await this.store.fetchStatus();
 

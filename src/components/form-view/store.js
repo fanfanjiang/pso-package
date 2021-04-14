@@ -190,6 +190,10 @@ export default class FormViewStore {
         return this.opAddable && (this.dataId ? (this.getEditableByStatus(this.curInstance) || this.actionEditable) : true);
     }
 
+    get availableFields() {
+        return this.fields.filter((f) => f.using === "1" && f.show === "1");
+    }
+
     getStatusEntity(d_status) {
         return this.statusesObj[d_status + ''] || {};
     }
@@ -435,6 +439,28 @@ export default class FormViewStore {
         this.deFetch();
     }
 
+    async fetchAllManually(limit = 200) {
+        const data = this.getFetchParams();
+        data.data_code = this.formCfg.data_code;
+        data.limit = limit;
+
+        let dataList = [];
+        let page = 0;
+
+        while (1) {
+            data.page = page;
+            const ret = await API.request(this.fetchAPI, { data, method: "get" });
+            if (ret.success) {
+                dataList = dataList.concat(ret.data);
+            }
+            data.page++;
+            if (!ret.data.length || (typeof ret.total !== 'undefined' && ret.total <= dataList.length)) {
+                break;
+            }
+        }
+        return dataList;
+    }
+
     async fetch() {
         if (this.disabledFetch) return;
 
@@ -455,7 +481,7 @@ export default class FormViewStore {
             } else {
                 this.workInstance(ret.data);
                 this.instances = this.instances.concat(ret.data);
-                if (!ret.data.length) {
+                if (!ret.data.length || (typeof ret.total !== 'undefined' && ret.total <= this.instances.length)) {
                     this.fetchFinished = true;
                 }
             }
@@ -709,6 +735,9 @@ export default class FormViewStore {
 
             this.usedFormCol = exist.name;
             this.usedActionIds = exist.actions;
+            if (!!exist.expanding) {
+                this.showFilter = true;
+            }
 
             if (exist.qsearch) {
                 const qs = _.find(exist.data, { field_name: exist.qsearch });
@@ -765,10 +794,30 @@ export default class FormViewStore {
         }
     }
 
-    exportCurPage(title) {
-        if (this.$tableWrapper) {
+    async exportCurPage(title) {
+        //生成表头
+        title = title ? title : this.formCfg.data_name;
+        if (this.fetchAllManually) {
+            const data = [];
+            let selected = this.selectedList;
+            if (!selected.length) {
+                selected = await this.fetchAllManually();
+            }
+            for (let d of selected) {
+                const td = {};
+                for (let f of this.availableFields) {
+                    td[f.display] = this.formatListVal(d, f);
+                }
+                data.push(td)
+            }
+
+            const book = XLSX.utils.book_new();
+            const sheet = XLSX.utils.json_to_sheet(data, { header: _.map(this.availableFields, 'display') });
+            XLSX.utils.book_append_sheet(book, sheet, title);
+            XLSX.writeFile(book, `${title}.xlsx`);
+        } else if (this.$tableWrapper) {
             const et = XLSX.utils.table_to_book($(this.$tableWrapper)[0]);
-            XLSX.writeFile(et, `${title ? title : this.formCfg.data_name}.xlsx`);
+            XLSX.writeFile(et, `${title}.xlsx`);
         }
     }
 
@@ -981,6 +1030,7 @@ export default class FormViewStore {
             if (op === 2 || op === 1) {
                 let data = formData.dataArr;
                 if (this.actioning.batchable === '2') {
+                    console.log(1)
                     delete data[0]['optype'];
                     this.fieldsRule.forEach(f => {
                         if ((2 & f.value) !== 2) {
@@ -989,7 +1039,7 @@ export default class FormViewStore {
                     });
                     const batchData = this.selectedList.map((d) => ({ ...d, ...data[0], leaf_id: d.leaf_id }));
 
-                    //保存前执行脚本
+                    //保存前执行脚本，新增时
                     const befSaveSuccess = await this.checkBefActionScript({ op, formData: { dataArr: batchData } });
                     if (!befSaveSuccess) {
                         return;

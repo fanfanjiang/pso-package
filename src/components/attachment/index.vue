@@ -1,23 +1,48 @@
 <template>
   <div class="attach-view">
-    <template v-if="!initializing">
-      <pso-file-list v-if="data.length" :files="data" :remove="false"></pso-file-list>
+    <template v-if="!fileDemanding">
+      <pso-file-list
+        v-if="data.length && !picmode"
+        :files="data"
+        :remove="false"
+        :check="check"
+        :downloadable="downloadable"
+      ></pso-file-list>
+      <template v-if="picmode">
+        <img :src="d.url" alt="img" v-for="(d, i) in data" :key="i" />
+      </template>
     </template>
     <pso-skeleton v-else :lines="1"></pso-skeleton>
   </div>
 </template>
 <script>
 import PsoFileList from "../file-list/index.vue";
-import { makeFiles } from "../../tool/file";
+import { Resource } from "../../mixin/resource";
 
 export default {
   components: { PsoFileList },
+  mixins: [Resource],
   props: {
     ids: [Array, String],
+    splitSymbol: {
+      type: String,
+      default: ",",
+    },
+    downloadable: {
+      type: Boolean,
+      default: true,
+    },
+    check: {
+      type: Boolean,
+      default: true,
+    },
+    picmode: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      initializing: false,
       data: [],
     };
   },
@@ -34,12 +59,8 @@ export default {
   },
   methods: {
     async initialize() {
-      const ids = typeof this.ids === "string" ? this.ids : this.ids.join(",");
-      this.initializing = true;
-      const ret = await this.API.file({ data: { ids }, method: "get" });
-      this.initializing = false;
-      makeFiles({ files: ret.data, urlField: "res_path", nameField: "res_name" });
-      this.data = ret.data;
+      //检查是id还是地址
+      this.data = await this.fetchAndMakeAttach(this.ids, this.splitSymbol);
       this.$emit("initialized", this.data);
     },
   },

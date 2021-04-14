@@ -3,12 +3,27 @@
     <el-tooltip effect="dark" content="搜索" placement="bottom-end">
       <i class="pso-search-entry-trigger el-icon-search" @click="show = true"></i>
     </el-tooltip>
-    <pso-dialog customclass="pso-search-entry-panel" :visible="show" width="80%" @close="show = false" @opened="focusInput">
+    <pso-dialog
+      customclass="pso-search-entry-panel"
+      :close-on-modal="true"
+      :visible="show"
+      width="80%"
+      @close="show = false"
+      @opened="focusInput"
+    >
       <template #title>
         <pso-dialog-header>
           <template #title>
             <div class="pso-search-entry-input">
-              <el-input ref="searchInput" size="medium" clearable v-model="keywords" placeholder="请输入查询条件" prefix-icon="el-icon-search"> </el-input>
+              <el-input
+                ref="searchInput"
+                size="medium"
+                clearable
+                v-model="keywords"
+                placeholder="请输入查询条件"
+                prefix-icon="el-icon-search"
+              >
+              </el-input>
             </div>
           </template>
         </pso-dialog-header>

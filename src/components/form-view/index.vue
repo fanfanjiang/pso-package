@@ -10,6 +10,7 @@
             :condition="store.defCondition"
             :fieldsOptions="store.conditionOptions"
             fixedfield
+            fixed
             defingop
           ></pso-data-filter>
         </transition>
@@ -300,6 +301,7 @@ export default {
           sourceType: "0",
           fetchMode: this.__isMobile__ ? "2" : "1",
           statusesFilter: this.statusesFilter,
+          showFilter: this.expanding,
         });
 
         if (this.viewAuth) {
@@ -316,8 +318,6 @@ export default {
           this.$emit("initialized", { vStore: this.store, store: this.store.store, cfg: this.store.formCfg, defForm: this.defForm });
           await this.store.fetchStatus();
         }
-
-        this.store.showFilter = this.expanding;
 
         this.watchFun.push(
           this.$watch("store.limit", () => {

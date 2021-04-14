@@ -43,9 +43,18 @@ const DATADETAIL = () => {
         fieldTime: '',
         fieldAbs: '',
         fieldMain: '',
-        picMode: false,
         fieldContent: [],
+        fieldMContent: [],
+        picMode: false,
         timeAgo: true,
+    }
+}
+
+const DATANEW = () => {
+    return {
+        newable: false,
+        newRuleType: '1',
+        newRule: []
     }
 }
 
@@ -53,10 +62,15 @@ export const DATAFUNC = {
     ...COMMONFIELDS,
     ...DATABASE,
     ...DATADETAIL(),
+    ...DATANEW(),
     paging: false, //显示分页
     titleClickable: true,
     titleClickType: '1',
-    titleClickVal: ''
+    titleLinkType: '1',
+    titleClickVal: '',
+    clickEventable: false,
+    viewVer: false, //垂直排列
+    clickAPI: '',
 }
 
 export const CPNT = {
@@ -107,6 +121,11 @@ export const CPNT = {
         name: "轮播图",
         data: {
             ...DATAFUNC,
+            showBody: false, //是否显示主体
+            carBodyH: 100, //主体高度
+            limit: 5,
+            scrDrt: 'horizontal',
+            timerColor: '#1B9AEE',
             w: 24,
             h: 10,
         }

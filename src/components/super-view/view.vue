@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" class="pso-sv-view" @scroll="scrollHandler">
+  <div ref="container" :class="vewStyle" @scroll="scrollHandler">
     <div v-if="store.instances.length">
       <div class="pso-sv-view-item" v-for="(d, i) in store.instances" :key="i">
         <div v-if="checkable" class="pso-sv-view-item-check">
@@ -13,6 +13,10 @@
                 :field="params.fieldTitle"
                 :store="store"
                 :data="d"
+                :newable="checkNewable(d) && !d.__unnewable__"
+                :downloadable="false"
+                :checkable="false"
+                picmode
                 @click="detailHandler(d)"
               ></view-field>
             </span>
@@ -20,7 +24,7 @@
           <div class="pso-sv-view-item__c" v-if="params.fieldPic || params.fieldContent.length">
             <div class="pso-sv-view-item__c-l">
               <div class="pso-sv-view-pic" v-if="params.fieldPic">
-                <pso-attachment :ids="d[params.fieldPic]"></pso-attachment>
+                <view-field :field="params.fieldPic" :store="store" :data="d"></view-field>
               </div>
               <div class="pso-sv-view-abs" v-if="params.fieldAbs" v-html="d[params.fieldAbs]"></div>
               <div class="pso-sv-view-info" v-if="params.fieldContent">
@@ -63,12 +67,12 @@
   </div>
 </template>
 <script>
-import PsoAttachment from "../attachment";
 import ViewField from "./field";
 import ActionBtn from "../form-view/action-btn";
+import { judgeByRules } from "../../tool/form";
 
 export default {
-  components: { PsoAttachment, ViewField, ActionBtn },
+  components: { ViewField, ActionBtn },
   props: {
     store: Object,
     params: Object,
@@ -88,6 +92,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    vertical: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     scrollDisabled() {
@@ -95,6 +103,12 @@ export default {
     },
     actionabled() {
       return this.actionable && this.store.actions.length;
+    },
+    vewStyle() {
+      return {
+        vertical: !!this.vertical,
+        "pso-sv-view": true,
+      };
     },
   },
   created() {
@@ -129,12 +143,19 @@ export default {
       if (!this.clickable) return;
       if (this.store.sourceType === "0" && this.clickShow) {
         this.store.showInstance(data);
-      } else {
-        this.$emit("click-inst", data);
       }
+      this.$set(data, "__unnewable__", true);
+      this.$emit("click-inst", data);
     },
     checkHandler() {
       this.store.checkSelectByShit();
+    },
+    checkNewable(data) {
+      const { newable, newRuleType, newRule } = this.params;
+      if (!newable) {
+        return false;
+      }
+      return judgeByRules({ datas: [data], ruleOptions: { rule: newRule, ruleType: newRuleType }, store: this.store.store });
     },
   },
 };

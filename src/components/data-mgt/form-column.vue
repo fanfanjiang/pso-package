@@ -11,7 +11,7 @@
             <span>基础配置</span>
           </template>
           <div class="form-column-base">
-            <el-form label-position="left" label-width="100px" :inline="true">
+            <el-form label-position="left" label-width="90px" :inline="true">
               <el-form-item label="列表名称" style="margin-bottom: 10px">
                 <el-input size="mini" v-model="col.name"></el-input>
               </el-form-item>
@@ -24,6 +24,9 @@
                 <el-select size="mini" filterable clearable v-model="col.qsearch">
                   <el-option v-for="(d, i) in col.data" :key="i" :label="d.display || d.field_name" :value="d.field_name"></el-option>
                 </el-select>
+              </el-form-item>
+              <el-form-item label="显示筛选" style="margin-bottom: 10px">
+                <el-switch v-model="col.expanding"></el-switch>
               </el-form-item>
               <el-divider content-position="left">手机视图配置</el-divider>
               <el-form-item label="标题字段" style="margin-bottom: 10px">
@@ -172,6 +175,7 @@ const BASE = {
   fieldTime: "",
   timeAgo: true,
   qsearch: "d_name",
+  expanding: false,
 };
 export default {
   props: ["data", "defCol", "actions"],

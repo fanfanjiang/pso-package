@@ -76,6 +76,11 @@
               </el-select>
             </el-form-item>
           </div>
+          <div class="form-wrapper">
+            <el-form-item label="显示提交结果">
+              <el-switch v-model="data.showReturn"></el-switch>
+            </el-form-item>
+          </div>
         </el-form>
       </great-panel>
       <great-panel v-if="data.ruleable">
@@ -102,6 +107,7 @@
             <template slot-scope="scope">
               <el-form>
                 <pso-form-component
+                  v-if="checkHasCpnt(scope.row.id)"
                   :force-show="true"
                   :cpnt="getCpnt(scope.row.id)"
                   @value-change="valueChangeHandler($event, scope.row)"
@@ -155,10 +161,13 @@ import { genComponentData } from "../form-designer/helper";
 import shortid from "shortid";
 import Qs from "qs";
 import GreatPanel from "../great-panel";
+import { _DATA } from "./const";
+import { formatJSONList } from "../../utils/util";
 export default {
   props: ["data", "node", "store"],
   components: { GreatPanel, PsoFormComponent, PsoFormAttach },
   data() {
+    this.mockStore = null;
     return {
       qrsrc: "",
       selectedList: [],
@@ -184,6 +193,10 @@ export default {
     this.init = true;
     this.qrsrc = await this.genQR();
 
+    formatJSONList([this.data], _DATA.pubCfg);
+
+    this.mockStore = new FormStore({ ...this.store.getBaseInfo(), designMode: false });
+
     if (typeof this.data.attach === "object") {
       this.data.attach = "";
     }
@@ -205,6 +218,9 @@ export default {
       const { _fieldValue, _fieldName, componentid } = this.fields[index];
       const filter = { id: _fieldValue, name: _fieldName, cid: componentid, val: "" };
       this.data.rules.push(filter);
+    },
+    checkHasCpnt(id) {
+      return this.mockStore.searchByField(id);
     },
     getCpnt(id) {
       //初始化规则参数

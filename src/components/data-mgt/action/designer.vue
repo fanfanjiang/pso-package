@@ -6,8 +6,8 @@
       </el-form-item>
       <el-form-item label="启用按钮">
         <el-radio-group :disabled="action.id === 'add'" v-model="action.method" @change="checkMethod">
-          <el-radio label="1">一直</el-radio>
-          <el-radio label="2">满足条件</el-radio>
+          <el-radio label="1">一直（需要选择数据）</el-radio>
+          <el-radio label="2">满足条件（需要选择数据）</el-radio>
           <el-radio label="3">全局（不需要选择数据）</el-radio>
         </el-radio-group>
       </el-form-item>
@@ -48,9 +48,7 @@
         <div class="form-action-panel" v-if="action.mode === '3'">
           <div class="form-action-panel__info">
             <div>设置填写内容</div>
-            <div>
-              用户点击按钮后，立即弹出表单并填写指定的内容，如果设置可批量执行，则数据不会自动提交修改，需要在后续脚本中处理数据并保存；如果为非批量提交，则会修改表单数据后再完成后续步骤。
-            </div>
+            <div>用户点击按钮后，立即弹出表单并填写指定的内容。</div>
           </div>
           <el-form-item>
             <el-radio-group v-model="action.modeTarget">
@@ -195,6 +193,9 @@ export default {
     this.curScript = this.action.script;
     for (let key in this.action.fields) {
       this.checkedFields.push(key);
+    }
+    if (this.action.id === "add") {
+      this.action.method = "3";
     }
   },
   methods: {

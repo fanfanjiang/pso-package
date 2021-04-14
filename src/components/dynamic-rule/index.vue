@@ -1,5 +1,5 @@
 <template>
-  <div class="dynamic-rule">
+  <div class="dynamic-rule" v-if="!initializing">
     <div class="dynamic-rule-item" v-for="(r, i) in rules" :key="i">
       <div class="dynamic-rule-item-body">
         <dynamic-filter :pick="r" :fields-options="fields" fixedfield :cpntable="false" @del="delHandler(i)"></dynamic-filter>
@@ -41,6 +41,7 @@ export default {
       { n: "或", v: "2" },
     ];
     return {
+      initializing: true,
       ruleType: this.type,
       fields: [],
     };
@@ -49,12 +50,21 @@ export default {
     ruleType(value) {
       this.$emit("typechange", value);
     },
-  },
-  created() {
-    this.fields = _.cloneDeep(this.options);
-    if (this.sysable) {
-      this.fields.push(...makeSysFormFields());
-    }
+    options: {
+      immediate: true,
+      handler(data) {
+        if (data.length) {
+          this.initializing = true;
+          this.$nextTick(() => {
+            this.fields = _.cloneDeep(this.options);
+            if (this.sysable) {
+              this.fields.push(...makeSysFormFields());
+            }
+            this.initializing = false;
+          });
+        }
+      },
+    },
   },
   methods: {
     addHandler(index) {

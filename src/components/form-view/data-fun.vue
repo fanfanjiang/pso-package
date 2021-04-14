@@ -55,7 +55,6 @@
           </el-form>
         </el-dropdown-item>
         <el-dropdown-item command="exportCurPage" v-if="opExportable">导出EXCEL</el-dropdown-item>
-        <!-- <el-dropdown-item v-if="opExportable">全部导出</el-dropdown-item> -->
         <el-dropdown-item command="saveColumn">保存列宽</el-dropdown-item>
         <el-dropdown-item command="saveFiles">下载文件</el-dropdown-item>
       </el-dropdown-menu>

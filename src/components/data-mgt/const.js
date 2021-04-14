@@ -13,6 +13,7 @@ export const _DATA = {
         isPublic: false,
         authRequired: false,
         ruleable: false,
+        showReturn: false,
         layout: '',
         stime: '',
         etime: '',

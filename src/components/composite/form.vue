@@ -21,7 +21,9 @@
       </div>
       <div v-else class="pso-form-index__success">
         <div class="pso-form-index__success-info">
-          {{ cfg.doneText }}
+          <i class="success-icon el-icon-success"></i>
+          <div class="success-text">{{ cfg.doneText }}</div>
+          <div class="success-msg" v-if="returnMsg">{{ returnMsg }}</div>
         </div>
         <el-button type="primary" round @click="reload">返回</el-button>
       </div>
@@ -55,6 +57,7 @@ export default {
       finished: false,
       logo: "",
       mockSignin: false,
+      returnMsg: "",
     };
   },
   async created() {
@@ -132,11 +135,14 @@ export default {
       try {
         this.saving = true;
         const formData = await this.$refs.formImage.makeData();
-        const ret = await this.API.form({ data: { leaf_id: 1, formData }, method: "put" });
+        const ret = await this.API.form({ data: { leaf_id: 1, formData }, method: "put", showMsg: false });
         if (ret.success) {
           this.submited = true;
+          if (this.cfg.showReturn && ret.message) {
+            this.returnMsg = ret.message;
+          }
         } else {
-          this.ResultNotify(ret);
+          this.$message({ message: ret.message || "失败", type: "warning", duration: 20000, showClose: true });
         }
         this.saving = false;
       } catch (error) {
@@ -187,8 +193,20 @@ export default {
       margin: 20px 0;
       color: #999;
     }
-    svg {
-      width: 80%;
+    .success-icon {
+      color: #67c23a;
+      font-size: 50px;
+    }
+    .success-text {
+      box-sizing: border-box;
+      font-size: 14px;
+      padding: 5px 0;
+    }
+    .success-msg {
+      padding: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      text-align: left;
     }
   }
 }

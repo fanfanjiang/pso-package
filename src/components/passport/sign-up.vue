@@ -66,6 +66,10 @@ export default {
     appid: String,
     appName: String,
     platform: String,
+    captchable: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     const checkPhone = (rule, value, callback) => {
@@ -193,7 +197,7 @@ export default {
           data.user_phone = this.passport.phone;
           data.name = this.passport.name;
         }
-        
+
         this.submiting = true;
         let ret = await this.API.reg(data);
         this.submiting = false;

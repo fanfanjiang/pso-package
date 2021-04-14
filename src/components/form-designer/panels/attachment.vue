@@ -16,6 +16,9 @@
       <el-form-item label="图片宽度">
         <el-input size="small" v-model="cpnt.data._showwidth"></el-input>
       </el-form-item>
+      <el-form-item label="分隔符">
+        <el-input size="small" v-model="cpnt.data._splitSymbol"></el-input>
+      </el-form-item>
       <pso-form-attach :cpnt="img" @value-change="handleImgChange">
         <el-button icon="el-icon-paperclip" plain size="mini">上传默认图片</el-button>
       </pso-form-attach>

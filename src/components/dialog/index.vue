@@ -1,12 +1,14 @@
 <template>
   <el-dialog
-    :class="['pso-dialog', customclass]"
+    :class="['pso-dialog', customclass, cid]"
     :title="title"
     :visible="visible"
     :width="width"
     append-to-body
     :destroy-on-close="destroy"
     :before-close="checkClose"
+    :close-on-press-escape="false"
+    :close-on-click-modal="closeOnModal"
     :top="top"
     @open="$emit('open')"
     @close="$emit('close')"
@@ -22,6 +24,7 @@
   </el-dialog>
 </template>
 <script>
+import shortid from "shortid";
 export default {
   props: {
     title: String,
@@ -42,11 +45,16 @@ export default {
       type: String,
       default: "4vh",
     },
+    closeOnModal: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       rendered: false,
       startMask: false,
+      cid: shortid.generate(),
     };
   },
   watch: {
@@ -59,13 +67,15 @@ export default {
       this.startMask && done();
     },
     checkClick(e) {
-      this.startMask = !$(e.target).parents(".pso-dialog-body").length;
+      this.startMask = !$(e.target).parents(".pso-dialog-body").length && !$(e.target).is("input");
     },
     opened() {
-      $(".pso-dialog").on("mousedown", this.checkClick);
-      this.$emit('opened');
+      $(`.${this.cid}`).on("mousedown", this.checkClick);
+      this.$emit("opened");
     },
-    closed() {},
+    closed() {
+      $(`.${this.cid}`).unbind("mousedown", this.checkClick);
+    },
   },
 };
 </script>

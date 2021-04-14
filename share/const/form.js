@@ -217,7 +217,13 @@ const CPNT = {
     chart: true,
     table_show: true,
     value_format_id: 'leaf_id',
-    data: [{ n: '_limit', v: 10 }, { n: '_showwidth', v: '' }, { n: '_showheight', v: '' }, { n: '_source', v: [1, 2] }]
+    data: [
+      { n: '_limit', v: 10 },
+      { n: '_showwidth', v: '' },
+      { n: '_showheight', v: '' },
+      { n: '_splitSymbol', v: ',' },
+      { n: '_source', v: [1, 2] }
+    ]
   },
   row: {
     icon: "el-icon-crop",

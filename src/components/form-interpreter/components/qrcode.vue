@@ -1,7 +1,6 @@
 <template>
   <pso-label :cpnt="cpnt">
     <img v-if="cpnt.data.__showVal__" :src="cpnt.data.__showVal__" alt="二维码" />
-    <span>{{ QRtext }}</span>
   </pso-label>
 </template>
 <script>

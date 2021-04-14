@@ -109,7 +109,7 @@ export default {
     this.plugins = (await this.API.trees({ data: { dimen: 4 } })).data.tagtree.filter((t) => t.is_leaf);
   },
   methods: {
-    addAction(showEditor) {
+    addAction() {
       const id = shortid.generate();
       const action = { ..._.cloneDeep(FIELDS), id };
       this.actions.push(action);

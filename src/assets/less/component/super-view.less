@@ -29,6 +29,20 @@
     height: 100%;
     overflow: auto;
 
+    &.vertical {
+        >div {
+            display: flex;
+            flex-direction: row;
+
+            .pso-sv-view-item {
+
+                .pso-sv-view-item-body {
+                    border-top: none;
+                }
+            }
+        }
+    }
+
     .pso-sv-view-item {
         padding: 0 15px;
         display: flex;
@@ -50,8 +64,7 @@
         }
     }
 
-    .pso-sv-view-item__t {
-    }
+    .pso-sv-view-item__t {}
 
     .pso-sv-view-item__c {
         display: flex;

@@ -86,6 +86,7 @@
         custom-class="form-table-dialog"
         title="选择关联数据"
         @close="showTable = false"
+        :close-on-modal="true"
         :visible="showTable"
       >
         <pso-form-view

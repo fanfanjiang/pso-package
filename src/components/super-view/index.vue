@@ -9,6 +9,7 @@
         :params="params"
         :clickable="params.titleClickable"
         :click-show="params.titleClickType === '1'"
+        :vertical="params.viewVer"
         @click-inst="clickInst"
       ></view-body>
       <div class="pso-super-view__add" v-if="store.checkActionUsable('add') && store.addAction">
@@ -26,6 +27,19 @@
         @prev="store.showPrev.call(store, $event)"
         @next="store.showNext.call(store, $event)"
       ></pso-form-executor>
+      <pso-dialog :visible="showDetail" width="60%" @close="showDetail = false">
+        <template #title>
+          <pso-dialog-header>
+            <template #title>
+              <i class="el-icon-edit-outline"></i>
+              <span>详情</span>
+            </template>
+          </pso-dialog-header>
+        </template>
+        <div class="pso-dialog-content">
+          <pso-super-detail :instance="detail" :fv-store="store" :params="params"></pso-super-detail>
+        </div>
+      </pso-dialog>
     </div>
   </div>
 </template>
@@ -49,6 +63,8 @@ export default {
       store: null,
       watchFun: [],
       time: new Date(),
+      showDetail: false,
+      detail: {},
     };
   },
   created() {
@@ -116,16 +132,26 @@ export default {
       this.store.newInstance(true);
     },
     clickInst(data) {
-      const { titleClickVal, source } = this.params;
+      const { titleClickType, titleClickVal, source, titleLinkType } = this.params;
       const { tp_code, child_id } = this.urine;
-      if (titleClickVal) {
-        const path = titleClickVal
-          .replaceAll(":fid", source)
-          .replaceAll(":mid", child_id)
-          .replaceAll(":pid", tp_code)
-          .replaceAll(":id", data.leaf_id);
-        this.$router.push({ path });
+      if (titleClickType === "2") {
+        if (titleClickVal) {
+          if (titleLinkType === "1") {
+            const path = titleClickVal
+              .replaceAll(":fid", source)
+              .replaceAll(":mid", child_id)
+              .replaceAll(":pid", tp_code)
+              .replaceAll(":id", data.leaf_id);
+            this.$router.push({ path });
+          } else if (titleLinkType === "2") {
+            window.open(data[titleClickVal]);
+          }
+        }
+      } else if (titleClickType === "3") {
+        this.detail = data;
+        this.showDetail = true;
       }
+      this.$emit("instance-click", data);
     },
   },
 };

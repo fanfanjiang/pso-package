@@ -31,7 +31,7 @@
             <el-input placeholder="请输入密码" v-model="passport.password" show-password></el-input>
           </el-form-item>
         </template>
-        <el-form-item prop="captcha" class="captcha">
+        <el-form-item prop="captcha" class="captcha" v-if="captchable">
           <el-input placeholder="请输入图片验证码" v-model="passport.captcha">
             <img :src="captchaUrl" alt="图片验证码" @click="reloadCaptcha" slot="append" />
           </el-input>
@@ -67,6 +67,10 @@ export default {
     appName: String,
     platform: String,
     redirect: String,
+    captchable: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     this.orgUsers = [];
