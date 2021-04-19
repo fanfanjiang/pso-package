@@ -17,7 +17,7 @@
       </div>
       <div class="pso-notify-item__tail" v-else>
         <span v-if="data.msg_time">{{ formatTime(data.msg_time) }}</span>
-        <div style="margin-left:20px;">
+        <div style="margin-left: 20px">
           <el-button v-if="data.msg_status === 0" size="mini" round @click="updateNoti">已读</el-button>
           <el-button v-if="data.data_id || data.msg_url" size="mini" type="primary" round @click="checkAction"> 执行 </el-button>
         </div>
@@ -50,12 +50,13 @@ export default {
       await this.store.update(this.data);
       this.$emit("read", this.data);
       this.updating = false;
+      this.$store.state.base.notify.unread--;
     },
     async checkAction() {
       if (this.acting) return;
       this.acting = true;
       if (this.data.msg_status === 0) {
-        await this.store.update(this.data);
+        await this.updateNoti(this.data);
       }
       await this.store.checkAction(this.data);
       this.acting = false;

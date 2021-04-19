@@ -2,16 +2,20 @@ import { judgeByRules } from '../../tool/form';
 import API from '../../service/api'
 import Action from './action';
 import FormStore from "../form-designer/model/store.js";
+import Qs from 'qs';
 
 //动作
 export default class ActionMGR {
 
     constructor(options) {
 
+        this.$vue = null;
         this.actions = [];
         this.actionsMap = {};
+
         this.actioning = null;
         this.fieldsRule = [];
+        this.editable = false;
 
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
@@ -20,13 +24,17 @@ export default class ActionMGR {
         }
     }
 
+    getActions(l = '1') {
+        return this.actions.filter(({ location = '1' }) => location === (l || '1'))
+    }
+
     async addActions({ code, actionIds, actions, formStore, trans }) {
         if (code && !formStore) {
             const ret = await API.formsCfg({ data: { id: code }, method: "get" });
             if (!ret.success) return;
             formStore = new FormStore({ ...ret.data, options: { designMode: false } });
 
-            if (!data) {
+            if (!actions) {
                 const { data_button } = ret.data;
                 if (!data_button) {
                     return;
@@ -40,7 +48,7 @@ export default class ActionMGR {
         }
 
         if (actionIds) {
-            actions = actions.filter(act => actionIds.includes(act.id));
+            actions = actions.filter(act => actionIds.indexOf(act.id) !== -1);
         }
 
         for (let act of actions) {
@@ -49,12 +57,11 @@ export default class ActionMGR {
         }
     }
 
-    setActionEmpty() {
+    clear() {
         this.fieldsRule = [];
         this.actioning = null;
-        this.emptyAction && this.emptyAction();
+        this.editable = false;
     }
-
 
     checkActionable(action, data) {
         const { method, batchable, rule } = action;
@@ -67,8 +74,7 @@ export default class ActionMGR {
             }
         }
         if (method === '2' && rule.length) {
-            action.transform(data);
-            return this.checkActionableByRule({ action, data });
+            return this.checkActionableByRule({ action, data: action.transform(data) });
         }
         return true;
     }
@@ -122,14 +128,38 @@ export default class ActionMGR {
         }
     }
 
+    async beforeBatchSave({ op, selected, data }) {
+        delete data[0]['optype'];
+        this.fieldsRule.forEach(f => {
+            if ((2 & f.value) !== 2) {
+                delete data[0][f.id];
+            }
+        });
+        //请求脚本接口时是所有数据，包括不能修改的字段,注意要替换leaf_id
+        const batchData = selected.map((d) => ({ ...d, ...data[0], leaf_id: d.leaf_id }));
+
+        //保存前执行脚本，新增时
+        const befSaveSuccess = await this.checkBefActionScript({ op, formData: { dataArr: batchData } });
+        if (!befSaveSuccess) {
+            return;
+        }
+
+        return batchData;
+    }
+
+    async afterFormSave({ action, data }) {
+        await this.checkActionScript(action, data);
+        this.checkActionLink(action, data);
+    }
+
     async checkAction({ action, data = [] }) {
 
         const { mode, method, fields = {}, beforeScriptable, batchable } = action;
 
         action.doing = true;
-        action.transform(data);
+        data = action.transform(data);
 
-        this.setActionEmpty();
+        this.clear();
 
         //查看是否满足使用条件
         if (!this.checkActionableByRule({ action, data })) {
@@ -146,32 +176,30 @@ export default class ActionMGR {
 
         if (mode === '3') {
             //填写表单
-            this.actioning = action;
-
             if (batchable === '1') {
                 if (method === '3') {
                     //不需要选择数据
                     this.onNewInst();
                 } else {
                     this.onShowInst(data[0]);
+                    this.editable = true;
                 }
             } else {
                 this.onBatchNewInst();
             }
 
-            if (fields.length) {
+            if (fields && !_.isEmpty(fields)) {
                 action.formStore._forEach(cpnt => {
                     if (cpnt.data._fieldValue) {
                         this.fieldsRule.push({ id: cpnt.data._fieldValue, value: fields[cpnt.data._fieldValue] || 0.1 });
                     }
                 });
             }
-
+            this.actioning = action;
         } else {
             //不需要填写表单
-            await this.checkActionScript(action, data);
-            this.checkActionLink(action, data);
-            this.onDone();
+            await this.afterFormSave({ action, data });
+            await this.onDone();
         }
         action.doing = false;
     }

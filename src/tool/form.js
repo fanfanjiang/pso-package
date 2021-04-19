@@ -2,6 +2,7 @@ import { CPNT, SUMMARY_OP } from "../const/form";
 import { FILTER_OP, FILTER_TYPE } from "../../share/const/filter";
 import { genComponentData } from '../components/form-designer/helper'
 import API from "../service/api.js";
+import MATH from "../utils/math";
 import Vue from 'vue';
 
 /**
@@ -136,6 +137,18 @@ export function filterByDecimal(cpnt, value) {
         }
 
         return value;
+    } catch (e) {
+        console.log(e);
+        return value;
+    }
+}
+
+export function filterByPercent(cpnt, value) {
+    try {
+        const { _usePercent } = cpnt;
+        if (typeof _usePercent === 'undefined') return value;
+        if (_.isNaN(value) || _.isNull(value) || typeof value === 'undefined' || value === 'undefined' || value === '') value = 0;
+        return _usePercent ? MATH.multiply(value, 100) : value;
     } catch (e) {
         console.log(e);
         return value;

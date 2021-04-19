@@ -79,7 +79,7 @@
               @header-dragend="dragHandler"
             >
               <template #default>
-                <el-table-column v-if="params.checkbox" type="selection" width="40" header-align="center" align="center"></el-table-column>
+                <el-table-column v-if="checkable" type="selection" width="40" header-align="center" align="center"></el-table-column>
                 <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
                 <template v-if="store.header">
                   <custom-column v-for="(h, i) of store.header" :key="i" :col="h"></custom-column>
@@ -100,6 +100,11 @@
                     :sortable="f.sortable === '1' ? 'custom' : false"
                   >
                     <template slot-scope="scope">{{ scope.row[`${f.field}_x`] || scope.row[f.field] }}</template>
+                  </el-table-column>
+                  <el-table-column v-if="optable" label="操作" :width="optWidth" fixed="right" align="center" header-align="center">
+                    <template slot-scope="scope">
+                      <action-group :store="store" :data="[scope.row]" :actions="tableActions"></action-group>
+                    </template>
                   </el-table-column>
                 </template>
               </template>
@@ -125,12 +130,23 @@
           </div>
         </div>
       </div>
+      <pso-form-executor
+        :params="executorParams"
+        :title="executorTitle"
+        :opener="store"
+        :auto-submit="store.autoSubmit"
+        :switchable="false"
+        :keepable="false"
+        @data-changed="dataChangeHandler"
+      ></pso-form-executor>
     </template>
   </div>
 </template>
 <script>
+import ActionGroup from "../form-view/action-group";
 import { StaMixin } from "./mixin";
 export default {
+  components: { ActionGroup },
   mixins: [StaMixin],
   data() {
     return {};
@@ -168,6 +184,34 @@ export default {
         params.height = this.store.tableHeight;
       }
       return params;
+    },
+    checkable() {
+      return this.params.checkbox || !!this.store.actionMGR.actions.length;
+    },
+    actioning() {
+      return this.store.actionMGR.actioning;
+    },
+    executorTitle() {
+      return this.actioning ? this.actioning.formStore.data_name : "";
+    },
+    executorParams() {
+      return {
+        formId: this.actioning ? this.actioning.formStore.data_code : "",
+        dataId: this.store.dataId,
+        editable: true,
+        deletable: false,
+        extendAuth: this.store.actionMGR.fieldsRule,
+        befSaveFunc: this.store.actionMGR.checkBefActionScript.bind(this.store.actionMGR),
+      };
+    },
+    tableActions() {
+      return this.store.actionMGR.getActions("2");
+    },
+    optable() {
+      return !!this.tableActions.length;
+    },
+    optWidth() {
+      return this.store.figureBtnWidth({ btns: this.tableActions });
     },
   },
   watch: {
@@ -234,6 +278,11 @@ export default {
           },
         });
       }
+    },
+    async dataChangeHandler(data) {
+      await this.store.checkDataChange(data);
+      await this.store.fetchStatus();
+      this.$emit("data-changed", data);
     },
   },
 };

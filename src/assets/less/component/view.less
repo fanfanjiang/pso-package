@@ -236,17 +236,15 @@
     display: flex;
     align-items: center;
 
-
     .view-data-fun__actions,
     .el-dropdown,
     button {
-
+        &+.view-data-fun__actions,
         &+.el-dropdown,
         &+button {
             margin-left: 10px;
         }
     }
-
 
     .el-dropdown,
     >span,

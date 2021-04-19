@@ -50,6 +50,9 @@ export default {
     },
   },
   watch: {
+    value(value) {
+      this.activeIndex = value;
+    },
     activeIndex(val) {
       this.$emit("change", val);
     },

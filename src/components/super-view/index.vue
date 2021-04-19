@@ -129,7 +129,7 @@ export default {
       this.store.fetch();
     },
     addHandler() {
-      this.store.newInstance(true);
+      this.store.newInstance();
     },
     clickInst(data) {
       const { titleClickType, titleClickVal, source, titleLinkType } = this.params;

@@ -65,6 +65,7 @@ const FIELDS = {
   ruleType: "1",
   color: "",
   icon: "",
+  location: "1",
 
   linkable: false,
   openLink: "",

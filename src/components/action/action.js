@@ -2,7 +2,7 @@
 //动作
 export default class Action {
     constructor(options) {
-
+        this.doing = false;
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
                 this[op] = options[op];
@@ -15,9 +15,11 @@ export default class Action {
     }
 
     transform(data) {
-        if (Array.isArray(data)) {
-            data.forEach(d => this.transSingle(d));
+        if (!this.trans || !this.trans.length) {
             return data;
+        }
+        if (Array.isArray(data)) {
+            return data.map(d => this.transSingle(d));
         }
         return this.transSingle(data);
     }
@@ -26,11 +28,12 @@ export default class Action {
         if (!this.trans || !this.trans.length) {
             return data;
         }
+        const cloneData = _.cloneDeep(data);
         for (let t of this.trans) {
             if (t.tf && t.sf) {
-                data[t.tf] = data[t.sf] || ''
+                cloneData[t.tf] = data[t.sf] || ''
             }
         }
-        return data;
+        return cloneData;
     }
 }

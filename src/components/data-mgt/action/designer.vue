@@ -2,13 +2,19 @@
   <div style="padding: 0 0 0 15px">
     <el-form label-position="top" size="mini">
       <el-form-item label="按钮名称">
-        <el-input size="small" v-model="action.name" :readonly="action.id === 'add'"></el-input>
+        <el-input size="small" v-model="action.name"></el-input>
       </el-form-item>
       <el-form-item label="启用按钮">
         <el-radio-group :disabled="action.id === 'add'" v-model="action.method" @change="checkMethod">
           <el-radio label="1">一直（需要选择数据）</el-radio>
           <el-radio label="2">满足条件（需要选择数据）</el-radio>
           <el-radio label="3">全局（不需要选择数据）</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="按钮放置位置">
+        <el-radio-group v-model="action.location">
+          <el-radio label="1">数据表格上方</el-radio>
+          <el-radio label="2">每行数据中</el-radio>
         </el-radio-group>
       </el-form-item>
       <div class="form-action-panel" v-if="action.method === '2'">
@@ -39,7 +45,7 @@
       </el-form-item>
       <template v-if="action.id !== 'add'">
         <el-form-item label="点击后">
-          <el-radio-group v-model="action.mode" @change="checkMode">
+          <el-radio-group :disabled="action.id === 'add'" v-model="action.mode" @change="checkMode">
             <el-radio label="1">立即执行</el-radio>
             <el-radio label="2">需要二次确认</el-radio>
             <el-radio label="3">填写指定内容</el-radio>
@@ -121,27 +127,25 @@
           </el-select>
         </el-form-item>
       </div>
-      <template v-if="action.id !== 'add'">
-        <el-form-item label="按钮颜色">
-          <div class="action-color-picker">
-            <span
-              v-for="(c, i) in COLORS"
-              :key="i"
-              :class="{ active: c === action.color }"
-              :style="getColorStyle(c)"
-              @click="action.color = c"
-            >
-              <i class="el-icon-check"></i>
-            </span>
-          </div>
-        </el-form-item>
-        <el-form-item label="按钮图标">
-          <el-button type="primary" icon="el-icon-edit" circle @click="showIcon = true"></el-button>
-        </el-form-item>
-        <el-form-item label="按钮说明">
-          <el-input type="textarea" :rows="2" v-model="action.remark"> </el-input>
-        </el-form-item>
-      </template>
+      <el-form-item label="按钮颜色">
+        <div class="action-color-picker">
+          <span
+            v-for="(c, i) in COLORS"
+            :key="i"
+            :class="{ active: c === action.color }"
+            :style="getColorStyle(c)"
+            @click="action.color = c"
+          >
+            <i class="el-icon-check"></i>
+          </span>
+        </div>
+      </el-form-item>
+      <el-form-item label="按钮图标">
+        <el-button type="primary" icon="el-icon-edit" circle @click="showIcon = true"></el-button>
+      </el-form-item>
+      <el-form-item label="按钮说明">
+        <el-input type="textarea" :rows="2" v-model="action.remark"> </el-input>
+      </el-form-item>
     </el-form>
     <sql-designer ref="designer" :opener="sqlOpener" :sql="curScript" :scode="code"></sql-designer>
     <el-dialog title="选择图标" append-to-body :visible.sync="showIcon" width="80%">
@@ -194,8 +198,10 @@ export default {
     for (let key in this.action.fields) {
       this.checkedFields.push(key);
     }
+    this.action.color = this.action.color || COLORS[0];
     if (this.action.id === "add") {
       this.action.method = "3";
+      this.action.mode = "3";
     }
   },
   methods: {

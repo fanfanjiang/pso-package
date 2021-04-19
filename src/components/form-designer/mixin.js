@@ -105,8 +105,8 @@ export const formOp = {
                     d.is_sys = noSys ? "0" : "1";
                     d._fieldValue = d.field_name;
                     d.fieldDisplay = noSys
-                        ? `${f.data._fieldName}@${d.field_name}@${f.CPNT.name}`
-                        : `系统@${d.field_name}@${mixedBlood ? f.data._fieldName : ""}`;
+                        ? `${f.data._fieldName}[${d.field_name}]${f.CPNT.name}`
+                        : `${mixedBlood ? f.data._fieldName : ""}[${d.field_name}]系统`;
 
                     if (source === "3") {
                         if (!/\S+_s$/.test(d.field_name) && !/\S+_x$/.test(d.field_name)) {

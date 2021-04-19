@@ -81,10 +81,13 @@ export default function (stage = "stage", target = "target") {
 
         $(this.$refs[target]).css("left", `${this.stageTrans.x - this.stageTrans.initX + this.stageTrans.left}px`);
         $(this.$refs[target]).css("top", `${this.stageTrans.y - this.stageTrans.initY + this.stageTrans.top}px`);
+
+        this.$emit('drag-move');
       },
       onDrop() {
         this.stageTrans.draging = false;
         off(this.$refs[stage], this.mousemove, this.dragover);
+        this.$emit('drag-stop');
       }
     }
   }

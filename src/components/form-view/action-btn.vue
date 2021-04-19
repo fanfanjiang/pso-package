@@ -19,10 +19,11 @@ export default {
   props: {
     action: Object,
     store: Object,
+    data: Array,
     checkable: {
       type: Boolean,
       default: true,
-    },
+    }
   },
   methods: {
     checkAction(action) {
@@ -30,7 +31,7 @@ export default {
       this.$emit("click", action);
     },
     checkActionable(action) {
-      return this.store.checkActionable(action);
+      return this.store.actionMGR.checkActionable(action, this.data || this.store.selectedList);
     },
   },
 };
@@ -42,10 +43,9 @@ export default {
   &.is-disabled {
     opacity: 0.5;
   }
-
   .el-icon-question {
     position: absolute;
-    top: -10px;
+    top: -2px;
     right: -10px;
     color: #000;
     opacity: 1;

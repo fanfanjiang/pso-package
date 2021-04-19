@@ -77,6 +77,11 @@
                   <el-switch size="mini" v-model="scope.row.is_need" active-value="1" inactive-value="0"></el-switch>
                 </template>
               </el-table-column>
+              <el-table-column label="查询类型">
+                <template slot-scope="scope">
+                  <el-input v-model="scope.row.type" size="mini" autocomplete="off"></el-input>
+                </template>
+              </el-table-column>
               <el-table-column label="操作" width="110" align="center">
                 <template slot-scope="scope">
                   <el-button size="mini" type="danger" @click="delParams(scope.$index)">删除</el-button>
@@ -201,7 +206,7 @@ export default {
       this.options = fields;
     },
     addParams() {
-      this.paramsProxy.push({ t_field: "", s_field: "", is_need: "0" });
+      this.paramsProxy.push({ t_field: "", s_field: "", is_need: "0", type: "" });
     },
     delParams(index) {
       this.paramsProxy.splice(index, 1);

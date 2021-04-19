@@ -100,6 +100,7 @@
         :switchable="store.switchable"
         :keepable="store.keepable"
         @data-changed="dataChangeHandler"
+        @data-loaded="formLoadedhandler"
         @prev="store.showPrev.call(store, $event)"
         @next="store.showNext.call(store, $event)"
       ></pso-form-executor>
@@ -257,9 +258,9 @@ export default {
         dataDefault: this.defForm,
         editable: (this.store.dataId ? this.detailEditable : this.addable) && this.store.instanceEditable,
         addable: this.addable && this.store.opAddable,
-        deletable: this.deletable && this.store.instanceEditable && !this.store.actioning,
-        extendAuth: this.store.fieldsRule,
-        befSaveFunc: this.store.checkBefActionScript.bind(this.store),
+        deletable: this.deletable && this.store.instanceEditable && !this.store.actionMGR.actioning,
+        extendAuth: this.store.actionMGR.fieldsRule,
+        befSaveFunc: this.store.actionMGR.checkBefActionScript.bind(this.store.actionMGR),
       };
     },
     formAutoSubmit() {
@@ -364,10 +365,13 @@ export default {
       return this.$refs.viewBody;
     },
     async newInstance() {
-      await this.store.newInstance(true);
+      await this.store.newInstance();
     },
     wipeHandler() {
       this.store.showWiper();
+    },
+    formLoadedhandler(data) {
+      this.$emit("form-loaded", data);
     },
   },
 };

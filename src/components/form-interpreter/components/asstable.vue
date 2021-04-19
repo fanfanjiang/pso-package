@@ -32,9 +32,12 @@
               选择{{ cpnt.data._fieldName }}
             </el-button>
           </template>
-          <el-button v-if="showAddBtn" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd">
-            添加{{ cpnt.data._fieldName }}
-          </el-button>
+          <template v-if="showAddBtn">
+            <el-button v-if="!addActAble" type="primary" plain icon="el-icon-plus" size="mini" @click="handleClickAdd">
+              添加{{ cpnt.data._fieldName }}
+            </el-button>
+            <action-btn v-else :action="astStore.addAction" :store="astStore" @click="handleClickAdd"></action-btn>
+          </template>
           <transition name="el-zoom-in-center">
             <el-button
               v-show="cpnt.data._relate && (!justShowOne || displayTable) && astStore.selectedList.length"
@@ -47,7 +50,7 @@
             </el-button>
           </transition>
         </div>
-        <div class="pso-ip__ast-r" style="padding-top: 5px">
+        <div v-if="cpnt.data._actionable" class="pso-ip__ast-r" style="padding-top: 5px">
           <data-fun
             :store="astStore"
             :addable="false"
@@ -129,9 +132,10 @@ import ASTStore from "../astStore";
 import ViewTable from "../../form-view/table";
 import DataFun from "../../form-view/data-fun";
 import debounce from "throttle-debounce/debounce";
+import ActionBtn from "../../form-view/action-btn";
 
 export default {
-  components: { PsoFormInterpreter: () => import("../index"), ViewTable, DataFun },
+  components: { PsoFormInterpreter: () => import("../index"), ViewTable, DataFun, ActionBtn },
   mixins: [
     cpntMixin,
     pickerMixin({
@@ -231,8 +235,8 @@ export default {
         deletable: this.editable && !this.cpnt.data._relate && !this.astStore.actioning,
         mockAsstables: this.unsavedSelf,
         parentInstanceId: this.cpnt.store ? this.cpnt.store.instance_id : "",
-        extendAuth: this.astStore.fieldsRule,
-        befSaveFunc: this.astStore.checkBefActionScript.bind(this.astStore),
+        extendAuth: this.astStore.actionMGR.fieldsRule,
+        befSaveFunc: this.astStore.actionMGR.checkBefActionScript.bind(this.astStore.actionMGR),
       };
     },
     authCfg() {
@@ -281,6 +285,9 @@ export default {
     },
     showResult() {
       return this.focusing && this.searchRet.length;
+    },
+    addActAble() {
+      return !!(this.cpnt.data._actionable && this.astStore.addAction);
     },
   },
   watch: {
@@ -531,7 +538,11 @@ export default {
         this.unsavedSelf = null;
       }
 
-      this.astStore.newInstance(true);
+      if (!this.addActAble) {
+        this.astStore.newInstance();
+      } else {
+        this.astStore.checkAction(this.astStore.addAction);
+      }
     },
     async beforeDataChangeHandler(evt) {
       await this.astStore.checkDataChange(evt, true);

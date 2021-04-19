@@ -45,7 +45,18 @@ export default class STAVStore extends FVStore {
 
             this.staCfg = ret.data.data;
 
-            const { tp_content } = this.staCfg;
+            const { tp_content, tp_config } = this.staCfg;
+
+            //动作配置
+            if (tp_config) {
+                const { actions } = JSON.parse(tp_config);
+                if (actions) {
+                    for (let act of actions) {
+                        const { code, actionIds, trans } = act;
+                        await this.actionMGR.addActions({ code, actionIds, trans });
+                    }
+                }
+            }
 
             this.oriColData = JSON.parse(tp_content);
             this.fields = _.orderBy(JSON.parse(tp_content), ["number"], ["asc"]);

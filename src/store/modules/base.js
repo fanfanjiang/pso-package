@@ -24,7 +24,8 @@ export default {
         },
         notify: {
             initialized: false,
-            show: false
+            show: false,
+            unread: 0
         },
         unapproved: false,
         quickInput: {
@@ -63,7 +64,7 @@ export default {
             }
         },
         ['APP_APPROVED'](state) {
-            state.user.unapproved = false; 
+            state.user.unapproved = false;
             this.commit(APP_SET_USER, state.user)
         },
         ['APP_CHECKUSER'](state, { appid = '' } = {}) {

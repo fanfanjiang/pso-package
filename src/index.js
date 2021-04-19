@@ -153,6 +153,8 @@ import PsoApprovalMgt from "./components/approval-mgt";
 import PsoCommonView from "./components/common-view";
 import PsoSearchEntry from "./components/search-entry";
 
+import PsoButtonTabs from "./components/button-tabs";
+
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
 import PsoFvWv from "./components/composite/fv-wv";
@@ -267,7 +269,7 @@ const components = {
 
     PsoSuperView,
     PsoSuperDetail,
-    
+
     PsoApprovalMgt,
     PsoCommonView,
     PsoApiType,
@@ -276,6 +278,8 @@ const components = {
     PsoApiGroup,
 
     PsoSearchEntry,
+
+    PsoButtonTabs,
 
     //混合视图
     PsoFvAst,
@@ -350,11 +354,15 @@ Object.keys(formulajs).forEach(key => {
     window[key] = formulajs[key];
 });
 
+import jqueryMousewheel from './utils/mousewheel';
+jqueryMousewheel(jQuery);
+
 const CONST = require('../share/const');
 import FormMixin from './mixin/form';
 import ViewMixin from './mixin/view';
+import FreeDrag from './mixin/free-drag';
 
-const Mixin = { FormMixin, ViewMixin };
+const Mixin = { FormMixin, ViewMixin, FreeDrag };
 
 import Auth from './tool/auth';
 
@@ -362,9 +370,9 @@ const tool = { Auth, genComponentData };
 
 import FormStore from './components/form-designer/model/store';
 import WfStore from './components/workflow-executor/store';
-import GridStore from './components/grid-designer/store'; 
+import GridStore from './components/grid-designer/store';
 const Store = { WfStore, FormStore, GridStore };
- 
+
 export { BASEAPI, store, Store, CONST, Mixin, tool };
 
 export default { install };

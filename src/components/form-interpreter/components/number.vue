@@ -1,12 +1,12 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <div class="pso-number">
+    <div class="pso-number" v-if="show">
       <el-input v-if="shouldDesen" size="small" :disabled="true" :value="desensitized"></el-input>
       <el-input-number
         v-else
         ref="cpnt"
         size="small"
-        v-model="cpnt.data._val"
+        v-model="proxy"
         :disabled="!cpntEditable"
         :controls="false"
         :precision="precisionVal"
@@ -19,7 +19,8 @@
 </template>
 <script>
 import cpntMixin from "../mixin";
-import Big from "big.js/big.mjs";
+import MATH from "../../../utils/math";
+
 export default {
   mixins: [cpntMixin],
   props: {
@@ -39,6 +40,7 @@ export default {
   data() {
     return {
       emitSilent: true,
+      show: false,
     };
   },
   computed: {
@@ -51,6 +53,16 @@ export default {
     precisionVal() {
       return typeof this.cpnt.data._decimalPlaces === "undefined" ? this.precision : this.cpnt.data._decimalPlaces;
     },
+    proxy: {
+      get() {
+        const { _usePercent } = this.cpnt.data;
+        return _usePercent ? MATH.multiply(this.cpnt.data._val, 100) : this.cpnt.data._val;
+      },
+      set(val) {
+        const { _usePercent } = this.cpnt.data;
+        this.cpnt.data._val = _usePercent ? MATH.divide(val, 100) : val;
+      },
+    },
   },
   watch: {
     minNum(num, onum) {
@@ -62,6 +74,7 @@ export default {
   },
   created() {
     this.cpnt.data._val = parseFloat(this.cpnt.data._val || 0);
+    this.show = true;
     this.watchCpntVal();
   },
   mounted() {

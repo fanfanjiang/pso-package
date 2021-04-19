@@ -64,9 +64,10 @@ export default {
     });
   },
   methods: {
-    fetch() {
+    async fetch() {
       this.store.pagination = this.getFetchParams();
-      this.store.fetch();
+      await this.store.fetch();
+      this.$store.state.base.notify.unread = this.store.unread;
     },
     handleExcuted() {},
   },

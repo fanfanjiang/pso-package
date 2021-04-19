@@ -6,9 +6,10 @@
         <el-checkbox v-model="config.stats" true-label="1" false-label="0">统计</el-checkbox>
       </div>
       <div class="stats-mgt-header__r">
-        <el-button size="mini" type="primary" plain @click="goDesigner">设计脚本</el-button>
-        <el-button size="mini" type="primary" plain @click="checkColumn">发布列表</el-button>
-        <el-button size="mini" type="primary" plain @click="makeHeader">发布表头</el-button>
+        <el-button size="mini" type="primary" @click="goDesigner">设计脚本</el-button>
+        <el-button size="mini" type="primary" @click="showEditor = true">设置动作</el-button>
+        <el-button size="mini" type="primary" @click="checkColumn">发布列表</el-button>
+        <el-button size="mini" type="primary" @click="makeHeader">发布表头</el-button>
       </div>
     </div>
     <div class="stats-mgt-body">
@@ -18,17 +19,32 @@
       </div>
     </div>
     <sql-designer ref="designer" :opener="showDeisgner" :sql="sql" :names="['DATA']"></sql-designer>
+    <pso-dialog :visible="showEditor" width="60%" @close="showEditor = false">
+      <template #title>
+        <pso-dialog-header>
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>动作设置</span>
+          </template>
+        </pso-dialog-header>
+      </template>
+      <div class="pso-dialog-content">
+        <action-setter :data="config.actions" :column="column"></action-setter>
+      </div>
+    </pso-dialog>
   </div>
 </template>
 <script>
-import { TP_NEW_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
+import { TP_NEW_TYPES, STATIC_COLUMN_FIELDS, STATIC_CONFIG_FIELDS } from "../../const/sys";
 import SqlDesigner from "../sql-designer";
 import StatsColumn from "./column";
 import StatsHeader from "./header";
 import { assignList } from "../../utils/util";
+import ActionSetter from "./action";
+import { formatJSONList } from "../../utils/util";
 
 export default {
-  components: { SqlDesigner, StatsColumn, StatsHeader },
+  components: { SqlDesigner, StatsColumn, StatsHeader, ActionSetter },
   props: {
     column: Array,
     config: Object,
@@ -45,9 +61,12 @@ export default {
       showDeisgner: { show: false },
       sql: [],
       oldSql: "",
+      showEditor: false,
     };
   },
   created() {
+    formatJSONList([this.config], STATIC_CONFIG_FIELDS);
+
     if (this.node.tp_type === TP_NEW_TYPES[1].value) {
       if (this.node.data_list) {
         try {
@@ -102,10 +121,8 @@ export default {
     padding: 10px;
     background-color: #ecf5ff;
     margin: 10px 0;
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
-    .stats-mgt-header__l {
-    }
   }
 }
 </style>

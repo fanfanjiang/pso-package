@@ -99,12 +99,25 @@ export const STATIC_COLUMN_FIELDS = {
     defSortOrder: 0,//默认排序顺序
 }
 
+
+export const STATIC_CONFIG_FIELDS = {
+    paging: "0",
+    stats: "0",
+    actions: []
+}
+
+export const STATIC_ACTION_FIELDS = {
+    code: '', //表单code
+    actionIds: [], //包含的动作
+    trans: [] //字段转换
+}
+
 export const FORM_UPLOAD_FIELDS = {
     field: "",
     name: "",
     type: "",
     enable: false,
-    format: '', 
+    format: '',
     relate_field: '',
     relate_target: '',
     is_condition: '0'

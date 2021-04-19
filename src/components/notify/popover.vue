@@ -22,7 +22,7 @@
     </div>
     <div class="pso-notify-trigger" slot="reference">
       <el-tooltip effect="dark" content="消息" placement="bottom-end">
-        <el-badge v-if="store" :value="store.unread" :hidden="!store.unread">
+        <el-badge v-if="store" :value="unread" :hidden="!unread">
           <i class="el-icon-bell"></i>
         </el-badge>
       </el-tooltip>
@@ -45,6 +45,9 @@ export default {
   computed: {
     width() {
       return this.__isMobile__ ? "100%" : "440";
+    },
+    unread() {
+      return this.$store.state.base.notify.unread;
     },
   },
   created() {

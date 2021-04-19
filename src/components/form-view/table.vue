@@ -54,9 +54,10 @@
             <pso-skeleton v-else :lines="1"></pso-skeleton>
           </template>
         </el-table-column>
-        <el-table-column v-if="params.operate" label="操作" :width="params.operateWidth" fixed="right" align="center" header-align="center">
+        <el-table-column v-if="finalOptable" label="操作" :width="finalOptWidth" fixed="right" align="center" header-align="center">
           <template slot-scope="scope">
             <slot name="column" v-bind:data="{ row: scope.row }"></slot>
+            <action-group :store="store" :data="[scope.row]" :actions="tableActions"></action-group>
           </template>
         </el-table-column>
       </template>
@@ -119,8 +120,9 @@ import ColumnTag from "./column-tag";
 import ColumnAst from "./column-ast";
 import { FormModifierMixin } from "../../mixin/view";
 import { CustomWf } from "../../mixin/workflow";
+import ActionGroup from "./action-group";
 export default {
-  components: { PsoAttachment, ColumnTag, ColumnAst, PsoWfExecutor: () => import("../workflow-executor/index") },
+  components: { PsoAttachment, ColumnTag, ColumnAst, ActionGroup, PsoWfExecutor: () => import("../workflow-executor/index") },
   mixins: [FormModifierMixin, CustomWf],
   props: {
     params: {
@@ -189,6 +191,15 @@ export default {
         node_id: this.store.relatedWF,
         instance: { instanceId: this.waitedData ? this.waitedData.leaf_id : "" },
       };
+    },
+    tableActions() {
+      return this.store.actionMGR.getActions("2");
+    },
+    finalOptable() {
+      return this.params.operate || !!this.tableActions.length;
+    },
+    finalOptWidth() {
+      return (this.params.operateWidth || 0) + this.store.figureBtnWidth({ btns: this.tableActions });
     },
   },
   watch: {

@@ -7,7 +7,8 @@ import CPNT from "../../../share/const/form";
 import Vue from "vue";
 import XLSX from "xlsx";
 import { desensitize } from "../../utils/util";
-import Qs from 'qs';
+import ActionMGR from '../action/manager';
+import { filterByDecimal, filterByPercent } from "../../tool/form";
 
 export default class FormViewStore {
 
@@ -84,16 +85,13 @@ export default class FormViewStore {
             stage: "更改阶段",
         };
 
-        //动作
+
         this.addAction = null;
-        this.actions = [];
-        this.usedActionIds = [];
-        this.actioning = null;
         this.fieldsRule = [];
+        this.usedActionIds = [];
         this.switchable = true;
         this.autoSubmit = true;
         this.keepable = true;
-        this.actionEditable = false; //在执行动作的时候强制表单可编辑
 
         //列表原始配置
         this.usedFormCol = '';
@@ -138,6 +136,15 @@ export default class FormViewStore {
                 this[op] = options[op];
             }
         }
+
+        //动作
+        this.actionMGR = new ActionMGR({
+            $vue: this.$vue,
+            onNewInst: this.newActInst.bind(this),
+            onShowInst: this.showActInst.bind(this),
+            onBatchNewInst: this.batchNewActInst.bind(this),
+            onDone: this.doneAction.bind(this),
+        });
 
         this.fetchFinished = this.fetchMode === '1';
 
@@ -187,7 +194,7 @@ export default class FormViewStore {
     }
 
     get instanceEditable() {
-        return this.opAddable && (this.dataId ? (this.getEditableByStatus(this.curInstance) || this.actionEditable) : true);
+        return this.opAddable && (this.dataId ? (this.getEditableByStatus(this.curInstance) || this.actionMGR.editable) : true);
     }
 
     get availableFields() {
@@ -312,16 +319,14 @@ export default class FormViewStore {
         this.dataId = row.leaf_id;
         this.instance = null;
         this.showExecutor = true;
-        this.setActionEmpty();
+        this.clearShit();
     }
 
-    setActionEmpty() {
-        this.fieldsRule = [];
-        this.actioning = null;
+    clearShit() {
         this.switchable = true;
         this.autoSubmit = true;
         this.keepable = true;
-        this.actionEditable = false;
+        this.actionMGR.clear();
     }
 
     showPrev(id) {
@@ -348,25 +353,12 @@ export default class FormViewStore {
         return _.find(this.fields, { field_name });
     }
 
-    async newInstance(checkAction) {
-        if (checkAction && this.addAction) {
-            if (this.addAction.beforeScriptable) {
-                const ret = await API.doActionScript({ btn_id: 'add', btn_type: '0', data_code: this.store.data_code, data: [] });
-                if (!ret.success) {
-                    return;
-                }
-            }
-        }
-
+    async newInstance() {
         this.dataId = "";
         this.instance = null;
         this.curInstance = null;
         this.showExecutor = true;
-        this.setActionEmpty();
-
-        if (checkAction && this.addAction) {
-            this.actioning = this.addAction;
-        }
+        this.clearShit();
     }
 
     async fetchCuzFastSwtich(source, key, data, vField = 'value') {
@@ -644,16 +636,12 @@ export default class FormViewStore {
         }
 
         if (data_button && this.usedActionIds && this.usedActionIds.length) {
-            const actions = JSON.parse(data_button);
-            const index = _.findIndex(actions, { id: 'add' });
+            this.actionMGR.addActions({ formStore: this.store, actions: JSON.parse(data_button), actionIds: this.usedActionIds });
+            const index = _.findIndex(this.actionMGR.actions, { id: 'add' });
             if (index !== -1) {
-                this.addAction = actions[index];
-                actions.splice(index, 1);
+                this.addAction = this.actionMGR.actions[index];
+                this.actionMGR.actions.splice(index, 1);
             }
-            this.actions = actions.filter(act => {
-                this.$vue.$set(act, 'doing', false);
-                return this.usedActionIds.indexOf(act.id) !== -1;
-            })
         }
 
         const fields = this.store.search({
@@ -895,6 +883,7 @@ export default class FormViewStore {
         if (this.summary) {
             for (let key in this.summary) {
                 const index = _.findIndex(columns, { property: key });
+                // const filed = this.getField(key);
                 if (index !== -1) {
                     // indexs[index] = parseFloat(this.summary[key]).toFixed(2);
                     indexs[index] = this.summary[key];
@@ -977,7 +966,7 @@ export default class FormViewStore {
         } catch (error) {
 
         }
-        return this.filterBadVal(_val) + (f._unit ? f._unit : '');
+        return filterByDecimal(f, filterByPercent(f, this.filterBadVal(_val))) + (f._unit ? f._unit : '');
     }
 
     getColorTagEl(flagColor) {
@@ -1026,225 +1015,48 @@ export default class FormViewStore {
     }
 
     async checkDataChange({ op, formData }, emit = true) {
-        if (this.actioning) {
+        const action = this.actionMGR.actioning;
+        if (action) {
             if (op === 2 || op === 1) {
                 let data = formData.dataArr;
-                if (this.actioning.batchable === '2') {
-                    console.log(1)
-                    delete data[0]['optype'];
-                    this.fieldsRule.forEach(f => {
-                        if ((2 & f.value) !== 2) {
-                            delete data[0][f.id];
-                        }
-                    });
-                    const batchData = this.selectedList.map((d) => ({ ...d, ...data[0], leaf_id: d.leaf_id }));
-
-                    //保存前执行脚本，新增时
-                    const befSaveSuccess = await this.checkBefActionScript({ op, formData: { dataArr: batchData } });
-                    if (!befSaveSuccess) {
+                if (action.batchable === '2') {
+                    const batchData = await this.actionMGR.beforeBatchSave({ op, selected: this.selectedList, data });
+                    if (!batchData) {
                         return;
                     }
-
-                    await this.batchAddOrUpdate(data[0], _.map(this.selectedList, 'leaf_id'), false, emit);
+                    await this.batchAddOrUpdate(data[0], null, false, emit);
                     data = batchData;
                 }
-                await this.checkActionScript(this.actioning, data);
-                this.checkActionLink(this.actioning, this.selectedList);
-                this.setActionEmpty();
+                await this.actionMGR.afterFormSave({ action, data: this.selectedList });
+                this.clearShit();
                 this.showExecutor = false;
             }
         }
     }
 
-    checkActionable(action) {
-        const { method, batchable, rule } = action;
-        const data = this.selectedList;
-        if (method !== '3') {
-            if (batchable === '1' && data.length !== 1) {
-                return false;
-            }
-            if (batchable === '2' && !data.length) {
-                return false;
-            }
-        }
-        if (method === '2' && rule.length) {
-            return this.checkActionableByRule(action);
-        }
-        return true;
+    newActInst() {
+        this.newInstance();
+        this.switchable = false;
     }
 
-    checkActionableByRule(action) {
-        const { rule, ruleType } = action;
-
-        for (let data of this.selectedList) {
-            const result = [];
-            for (let r of rule) {
-                const cpnt = this.store.search({ options: { fid: r.field } });
-                let condition = false;
-                if (cpnt) {
-                    let tv = r.data;
-                    let sv = data[cpnt.data._fieldValue];
-                    if (r.type === '2') {
-                        tv = data[r.data];
-                    }
-
-                    try {
-                        if (['op1', 'op2', 'op3', 'op4', 'op5', 'op6'].includes(r.op)) {
-                            if (cpnt.CPNT.figure || ['d_status', 'd_audit', 'd_stage'].includes(cpnt.data._fieldValue)) {
-                                sv = parseFloat(sv)
-                                tv = parseFloat(tv)
-                            }
-                        }
-                    } catch (error) {
-                        console.log(error);
-                    }
-
-                    if (r.op === 'op1') {
-                        condition = sv == tv;
-                    } else if (r.op === 'op2') {
-                        condition = sv != tv;
-                    } else if (r.op === 'op3') {
-                        condition = sv > tv;
-                    } else if (r.op === 'op4') {
-                        condition = sv >= tv;
-                    } else if (r.op === 'op5') {
-                        condition = sv < tv;
-                    } else if (r.op === 'op6') {
-                        condition = sv <= tv;
-                    } else if (r.op === 'op7') {
-                        if (sv && tv && typeof tv === 'string') {
-                            const tList = tv.split(',');
-                            sv = sv + '';
-                            let tempRet = true;
-                            for (let v in sv.split(',')) {
-                                if (tList.indexOf(v) == -1) {
-                                    tempRet = false;
-                                    break;
-                                }
-                            }
-                            condition = tempRet;
-                        }
-                    } else if (r.op === 'op8') {
-                        condition = true;
-                        if (tv && typeof tv === 'string') {
-                            const tList = tv.split(',');
-                            sv = sv + '';
-                            let tempRet = true;
-                            for (let v in sv.split(',')) {
-                                if (tList.indexOf(v) == -1) {
-                                    tempRet = false;
-                                    break;
-                                }
-                            }
-                            condition = tempRet;
-                        }
-                    } else if (r.op === 'op9') {
-                        if (sv && tv && typeof sv === 'string' && typeof tv === 'string') {
-                            condition = sv.search(tv) !== -1;
-                        }
-                    } else if (r.op === 'op90') {
-                        condition = (sv === '' || _.isNull(sv));
-                    } else if (r.op === 'op91') {
-                        condition = !(sv === '' || _.isNull(sv));
-                    }
-                }
-                result.push(condition)
-            }
-            console.log(result, ruleType);
-            if (!result[ruleType === '1' ? 'every' : "some"](i => i)) {
-                return false;
-            };
-        }
-        return true;
+    showActInst(data) {
+        this.showInstance(data);
+        this.switchable = false;
     }
 
-    async checkActionScript(action, data) {
-        return await this.doActionScript({ action, data });
+    batchNewActInst() {
+        this.newInstance();
+        this.autoSubmit = false;
+        this.keepable = false;
+        this.switchable = false;
     }
 
-    async checkBefActionScript({ op, formData }) {
-        const action = this.actioning;
-        if ((op === 2 || op === 1) && action && action.befSaveScriptable) {
-            console.log(action);
-            return await this.doActionScript({ action, data: formData.dataArr, flag: 'befSaveScriptable', btn_type: '2', evt: "befactioned" });
-        }
-        return true;
+    async doneAction() {
+        return await this.fetchStatus();
     }
 
-    async doActionScript({ action, data, flag = 'scriptable', btn_type = '1', emit = true, evt = "actioned" }) {
-        if (!action[flag]) return true;
-        const ret = await API.doActionScript({ btn_id: action.id, btn_type, data_code: this.store.data_code, data });
-        this.$vue.ResultNotify(ret);
-        if (emit) {
-            this.$vue.$emit(evt, { data })
-        }
-        return ret ? ret.success : true;
-    }
-
-    checkActionLink(action, data) {
-        const { linkable, openLink, bindPlugin, linkParams } = action;
-        if (linkable && openLink) {
-            let link = openLink;
-            if (bindPlugin) {
-                link = link.replace(':plug_code', bindPlugin);
-            }
-            if (linkParams && linkParams.length) {
-                for (let d of data) {
-                    let itemLink = link;
-                    const params = {};
-                    for (let field of linkParams) {
-                        itemLink = itemLink.replace(`:${field}`, d[field]);
-                        params[field] = d[field];
-                    }
-                    window.open(`${itemLink}?${Qs.stringify(params)}`);
-                }
-            } else {
-                window.open(link);
-            }
-        }
-    }
-
-    async checkAction(action) {
-        const { mode, method, fields = {}, beforeScriptable, batchable } = action;
-        const data = this.selectedList;
-        action.doing = true;
-        this.setActionEmpty();
-
-        //查看是否满足使用条件
-        if (!this.checkActionableByRule(action)) {
-            return this.$vue.$message({ message: '不满足执行条件', type: 'warning' });
-        }
-
-        //查看脚本
-        if (beforeScriptable) {
-            const ret = await API.doActionScript({ btn_id: action.id, btn_type: '0', data_code: this.store.data_code, data });
-            if (!ret.success) {
-                return action.doing = false;
-            }
-        }
-
-        if (mode === '3' && method !== '3') {
-            if (batchable === '1') {
-                this.showInstance(data[0]);
-                this.actionEditable = true;
-            } else {
-                this.newInstance();
-                this.autoSubmit = false;
-                this.keepable = false;
-            }
-            this.store._forEach(cpnt => {
-                if (cpnt.data._fieldValue) {
-                    this.fieldsRule.push({ id: cpnt.data._fieldValue, value: fields[cpnt.data._fieldValue] || 0.1 });
-                }
-            });
-            this.actioning = action;
-            this.switchable = false;
-        } else {
-            await this.checkActionScript(action, data);
-            this.checkActionLink(action, data);
-            await this.fetchStatus();
-        }
-        action.doing = false;
+    async checkAction(action, data) {
+        return this.actionMGR.checkAction({ action, data: data || this.selectedList });
     }
 
     async addOrUpdate({ leaf_id = "", formData }, refresh = true, emit = true) {
@@ -1268,7 +1080,7 @@ export default class FormViewStore {
         if (!list.length) return;
         const { data_name, node_id, data_code } = this.store;
         for (let leaf_id of list) {
-            await this.addOrUpdate({ leaf_id, formData: { data_name, node_id, data_code, dataArr: [{ leaf_id, optype: 1, ...data }] } }, false, emit);
+            await this.addOrUpdate({ leaf_id, formData: { data_name, node_id, data_code, dataArr: [{ ...data, leaf_id, optype: 1 }] } }, false, emit);
         }
         if (refresh) {
             this.fetchStatus();
@@ -1327,5 +1139,21 @@ export default class FormViewStore {
                 }
             }
         }
+    }
+
+    figureBtnWidth({ btns, size = 'mini', name = 'name' }) {
+        if (!btns || !btns.length) return 0;
+        const baseWidth = 40;
+        const textWidth = 12;
+        const figure = (text) => {
+            return baseWidth + (text ? text.length : 4) * textWidth
+        }
+        return btns.reduce(function (a, b) {
+            if (typeof a === 'object') {
+                a = a[name];
+                b = b[name];
+            }
+            return figure(a) + figure(b);
+        }) + (btns.length - 1) * 10
     }
 }

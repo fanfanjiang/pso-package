@@ -1,7 +1,10 @@
 <template>
   <div class="view-data-fun">
     <template v-if="!hidden">
-      <el-button v-if="opAddable" type="primary" size="mini" @click="$emit('new')">{{ store.cpntText.add }}</el-button>
+      <template v-if="opAddable">
+        <el-button v-if="!store.addAction" type="primary" size="mini" @click="$emit('new')">{{ store.cpntText.add }}</el-button>
+        <action-group v-else :store="store" :actions="[store.addAction]"></action-group>
+      </template>
       <el-button v-if="selectable" type="primary" size="mini" @click="$emit('select')">选择</el-button>
       <el-button v-if="wipeable" type="danger" size="mini" @click="$emit('wipe')">清除数据</el-button>
       <slot name="op" v-bind:data="store"></slot>
@@ -9,20 +12,7 @@
         {{ store.cpntText.copy }}
       </el-button>
     </template>
-    <div class="view-data-fun__actions" v-for="(a, i) in store.actions" :key="i">
-      <el-popconfirm
-        v-if="a.mode === '2'"
-        confirmButtonText="确定"
-        cancelButtonText="取消"
-        icon="el-icon-info"
-        iconColor="red"
-        title="你确认要执行吗？"
-        @confirm="checkAction(a)"
-      >
-        <action-btn slot="reference" :action="a" :store="store"></action-btn>
-      </el-popconfirm>
-      <action-btn v-else :action="a" :store="store" @click="checkAction(a)"></action-btn>
-    </div>
+    <action-group :store="store"></action-group>
     <dropdown
       v-if="opChangable"
       :text="store.cpntText.change"
@@ -65,10 +55,10 @@
 import Dropdown from "./dropdown";
 import PsoFormAttach from "../form-interpreter/components/attachment";
 import { genComponentData } from "../form-designer/helper";
-import ActionBtn from "./action-btn";
+import ActionGroup from "./action-group";
 
 export default {
-  components: { Dropdown, PsoFormAttach, ActionBtn },
+  components: { Dropdown, PsoFormAttach, ActionGroup },
   props: {
     store: Object,
     addable: {
@@ -138,9 +128,6 @@ export default {
   methods: {
     operateMore(fun) {
       this.store[fun] && this.store[fun]();
-    },
-    checkAction(action) {
-      this.store.checkAction(action);
     },
     uploadedData() {
       this.store.fetchStatus();
