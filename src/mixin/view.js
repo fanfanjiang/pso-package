@@ -172,7 +172,6 @@ export const FetchMixin = {
         },
         async saveHandler(params) {
             if (this.editing) return;
-            this.editing = true;
             let data = {};
             if (params) {
                 data = { ...params, optype: 2 };
@@ -180,6 +179,11 @@ export const FetchMixin = {
                 const IDNotEmpty = this.curInstance[this.ID];
                 data = { ...this.curInstance, optype: IDNotEmpty ? 1 : 0 };
             }
+            if (this.checkValidity) {
+                const checkFalse = this.checkValidity(data);
+                if (!checkFalse) return;
+            }
+            this.editing = true;
             const ret = await this.addOrUpdate(data);
             this.ResultNotify(ret);
             this.showEditor = false;

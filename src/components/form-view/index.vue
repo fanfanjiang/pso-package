@@ -70,6 +70,8 @@
                 :exportable="!params.hideExport"
                 :wipeable="wipeable"
                 :hidden="!!params.hideTablefun"
+                :tempdownadable="!params.hideTempdown"
+                :importable="!params.hideImport"
                 @new="newInstance"
                 @select="$emit('selection-confirm', store.selectedList)"
                 @wipe="wipeHandler"

@@ -94,6 +94,13 @@ export default {
                 return false;
             }
         },
+        async ['APP_FORCESIGN']({ state, getters, commit, dispatch }, params = {}) {
+            commit('APP_CHECKUSER', params);
+            if (!state.user) {
+                return await dispatch("APP_MOCKSIGNIN", { appid: params.appid || "" });
+            }
+            return true;
+        },
         async ['APP_ANALYZEMENU']({ state, getters, commit }, params = {}) {
             const { auth = true, callback } = params;
             const ret = await API.getAllMenu({});

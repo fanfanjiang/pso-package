@@ -102,7 +102,7 @@ export const formOp = {
                     const mixedBlood = d.field_name === "d_tag" || d.field_name === "d_name";
                     const noSys = f && !mixedBlood;
 
-                    d.is_sys = noSys ? "0" : "1";
+                    d.__sys__ = d.is_sys = noSys ? "0" : "1";
                     d._fieldValue = d.field_name;
                     d.fieldDisplay = noSys
                         ? `${f.data._fieldName}[${d.field_name}]${f.CPNT.name}`

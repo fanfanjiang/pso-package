@@ -785,7 +785,7 @@ export default class FormViewStore {
     async exportCurPage(title) {
         //生成表头
         title = title ? title : this.formCfg.data_name;
-        if (this.fetchAllManually) {
+        if (this.fetchAllManually && this.formCfg) {
             const data = [];
             let selected = this.selectedList;
             if (!selected.length) {
@@ -1027,7 +1027,7 @@ export default class FormViewStore {
                     await this.batchAddOrUpdate(data[0], null, false, emit);
                     data = batchData;
                 }
-                await this.actionMGR.afterFormSave({ action, data: this.selectedList });
+                await this.actionMGR.afterFormSave({ action, data });
                 this.clearShit();
                 this.showExecutor = false;
             }
@@ -1112,31 +1112,58 @@ export default class FormViewStore {
         }
     }
 
-    async saveFiles() {
-        if (!this.selectedList.length) {
-            return this.$message({ message: '请选择数据', type: 'warning' });
+    async searchFiles({ id, store, data, ids }, files) {
+        if (!store && id) {
+            const ret = await API.formsCfg({ data: { id, auth: 1 }, method: "get" });
+            store = new FormStore({ ...ret.data, designMode: false, withSys: true });
         }
-        const files = [];
-        const fileCpnts = this.store.search({ options: { componentid: 'attachment' }, onlyData: true });
+        if (!data && ids) {
+            const ret = await API.searchForm({ form_code: id, leaf_auth: 4, keys: { leaf_id: { type: 4, value: ids } } });
+            data = ret.data;
+        }
+        if (!store) return;
+        const fileCpnts = store.search({ options: { componentid: 'attachment' }, onlyData: true });
         fileCpnts.forEach(cpnt => {
-            for (let d of this.selectedList) {
+            for (let d of data) {
                 if (d[cpnt._fieldValue]) {
-                    files.push(...d[cpnt._fieldValue].split(','))
+                    d[cpnt._fieldValue].split(',').forEach(ath => files[ath] = '')
                 }
             }
         })
-        if (files.length) {
-            const ret = await API.downloadZipFiles({ res_id: files.join(',') });
-            if (ret.success) {
-                const { zip = '', remark = '' } = ret.data;
-                if (zip) {
-                    window.open(zip);
+        return store.search({ options: { componentid: 'asstable' }, onlyData: true });
+    }
+
+    async saveFiles() {
+        if (!this.selectedList.length) {
+            return this.$vue.$message({ message: '请选择数据', type: 'warning' });
+        }
+        //只下载两层，先不递归
+        const files = {};
+        const assCpnts = await this.searchFiles({ store: this.store, data: this.selectedList }, files);
+        for (let cpnt of assCpnts) {
+            if (cpnt._option) {
+                for (let d of this.selectedList) {
+                    if (d[cpnt._fieldValue]) {
+                        await this.searchFiles({ id: cpnt._option, ids: d[cpnt._fieldValue] }, files);
+                    }
                 }
-                if (remark) {
-                    setTimeout(() => {
-                        window.open(remark);
-                    }, 1000)
-                }
+            }
+        }
+
+        if (_.isEmpty(files)) {
+            return this.$vue.$message({ message: '没有可下载文件', type: 'warning' });
+        }
+
+        const ret = await API.downloadZipFiles({ res_id: Object.keys(files).join(',') });
+        if (ret.success) {
+            const { zip = '', remark = '' } = ret.data;
+            if (zip) {
+                window.open(zip);
+            }
+            if (remark) {
+                setTimeout(() => {
+                    window.open(remark);
+                }, 1000)
             }
         }
     }

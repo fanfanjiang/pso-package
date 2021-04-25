@@ -154,6 +154,8 @@ import PsoCommonView from "./components/common-view";
 import PsoSearchEntry from "./components/search-entry";
 
 import PsoButtonTabs from "./components/button-tabs";
+import PsoCenterModule from "./components/module-mgt";
+import PsoPrintGod from "./components/print-god";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -281,6 +283,9 @@ const components = {
 
     PsoButtonTabs,
 
+    PsoCenterModule,
+    PsoPrintGod,
+    
     //混合视图
     PsoFvAst,
     PsoFvWv,

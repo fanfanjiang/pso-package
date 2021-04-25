@@ -18,6 +18,14 @@ export default class SuperViewStore extends FVStore {
     async initialize(id, usedColumn) {
         if (this.sourceType === '0') {
             await super.initialize(id, usedColumn);
+
+            //动作清除
+            for (let act of this.actionMGR.actions) {
+                const index = this.checkActionUsable(act.id);
+                if (index === -1) {
+                    this.actionMGR.actions.splice(index, 1);
+                }
+            }
         }
         if (this.sourceType === '1') {
             if (this.urine) {

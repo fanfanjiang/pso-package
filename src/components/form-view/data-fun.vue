@@ -30,8 +30,8 @@
     <el-dropdown size="small" @command="operateMore" v-if="moreable">
       <el-button class="el-dropdown-link" size="mini" type="text">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="downloadFormTp" v-if="opAddable">下载模板</el-dropdown-item>
-        <el-dropdown-item v-if="opAddable">
+        <el-dropdown-item command="downloadFormTp" v-if="opAddable && tempdownadable">下载模板</el-dropdown-item>
+        <el-dropdown-item v-if="opAddable && importable">
           <el-form>
             <pso-form-attach
               :cpnt="uploadAttach"
@@ -94,6 +94,14 @@ export default {
       default: false,
     },
     hidden: {
+      type: Boolean,
+      default: false,
+    },
+    tempdownadable: {
+      type: Boolean,
+      default: false,
+    },
+    importable: {
       type: Boolean,
       default: false,
     },

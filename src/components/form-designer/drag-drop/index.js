@@ -223,6 +223,8 @@ class DragAndDrop {
         toggleClass(this.dragEl, options.ghostClass, false);
 
         this._appendGhost();
+
+        this._dispatchEvent({ name: 'start' });
     }
 
     static _appendGhost() {
@@ -640,6 +642,8 @@ class DragAndDrop {
                         }
                     }
                 }
+
+                this._dispatchEvent({ name: 'drop' });
             }
             this.ghostEl && this.ghostEl.parentNode && this.ghostEl.parentNode.removeChild(this.ghostEl);
         }

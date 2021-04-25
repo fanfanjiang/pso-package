@@ -4,6 +4,7 @@ import { CPNT } from "../../../const/form";
 import Vue from 'vue';
 import shortid from 'shortid';
 import { makeSysFormFields } from "../../../tool/form";
+import API from '../../../service/api'
 
 export default class FormStore {
     constructor(options) {
@@ -213,6 +214,19 @@ export default class FormStore {
         }
 
         this.setShowByRules();
+    }
+
+    async getAsstable() {
+        const asstables = this.search({ options: { componentid: 'asstable' } });
+        const stores = [];
+        for (let ast of asstables) {
+            if (ast.data._option) {
+                const ret = await API.formsCfg({ data: { id: ast.data._option, auth: 1 }, method: "get" });
+                const store = new FormStore({ ...ret.data, designMode: false, withSys: true });
+                stores.push(store);
+            }
+        }
+        return stores;
     }
 
     //手动更新控件值

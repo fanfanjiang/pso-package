@@ -32,22 +32,9 @@
               </div>
             </div>
           </div>
-          <div class="pso-sv-view-item__b" v-if="actionabled || params.fieldTime">
-            <div class="pso-sv-view-actions">
-              <div class="pso-sv-view-actions-item" v-for="(a, i) in store.actions" :key="i">
-                <el-popconfirm
-                  v-if="a.mode === '2'"
-                  confirmButtonText="确定"
-                  cancelButtonText="取消"
-                  icon="el-icon-info"
-                  iconColor="red"
-                  title="你确认要执行吗？"
-                  @confirm="checkAction(a, d)"
-                >
-                  <action-btn slot="reference" :action="a" :store="store" :checkable="false"></action-btn>
-                </el-popconfirm>
-                <action-btn v-else :action="a" :store="store" :checkable="false" @click="checkAction(a, d)"></action-btn>
-              </div>
+          <div class="pso-sv-view-item__b" v-if="actionable || params.fieldTime">
+            <div class="pso-sv-view-actions" v-if="actionable">
+              <action-group :store="store" :data="[d]" location="2"></action-group>
             </div>
             <span class="pso-sv-view-time">
               <view-field
@@ -68,11 +55,11 @@
 </template>
 <script>
 import ViewField from "./field";
-import ActionBtn from "../form-view/action-btn";
+import ActionGroup from "../form-view/action-group";
 import { judgeByRules } from "../../tool/form";
 
 export default {
-  components: { ViewField, ActionBtn },
+  components: { ViewField, ActionGroup },
   props: {
     store: Object,
     params: Object,
@@ -101,9 +88,6 @@ export default {
     scrollDisabled() {
       return this.store.fetchFinished || this.store.starting || this.store.fetching;
     },
-    actionabled() {
-      return this.actionable && this.store.actions.length;
-    },
     vewStyle() {
       return {
         vertical: !!this.vertical,
@@ -117,10 +101,6 @@ export default {
     });
   },
   methods: {
-    checkAction(action, data) {
-      this.store.selectedList = [data];
-      this.store.checkAction(action);
-    },
     checkLoading() {
       return this.store.fetchFinished || this.store.starting || this.store.fetching;
     },

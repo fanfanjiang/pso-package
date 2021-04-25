@@ -74,6 +74,8 @@
                 :copyable="!params.hideCopyBtn"
                 :moreable="!params.hideMoreBtn"
                 :exportable="!params.hideExport"
+                :tempdownadable="false"
+                :importable="false"
                 @new="store.showInstance.call(store, null)"
               >
                 <template #op>

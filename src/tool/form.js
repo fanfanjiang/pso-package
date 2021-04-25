@@ -103,15 +103,17 @@ export function makeFormByOther(data, onEach) {
  */
 export function makeSysFormFields({ allString = true } = {}) {
     const sysFields = [
-        { _fieldValue: 'leaf_id', _fieldName: 'LEAF_ID(系统)', componentid: 'text' },
-        { _fieldValue: 'd_status', _fieldName: '表单状态(系统)', componentid: 'text' },
-        { _fieldValue: 'd_audit', _fieldName: '审核状态(系统)', componentid: 'text' },
-        { _fieldValue: 'd_stage', _fieldName: '阶段(系统)', componentid: 'text' },
-        { _fieldValue: 'creator', _fieldName: '表单创建人(系统)', componentid: 'text' },
+        { _fieldValue: 'leaf_id', _fieldName: '数据ID', componentid: 'text' },
+        { _fieldValue: 'd_status', _fieldName: '表单状态', componentid: 'text' },
+        { _fieldValue: 'd_audit', _fieldName: '审核状态', componentid: 'text' },
+        { _fieldValue: 'd_stage', _fieldName: '审核阶段', componentid: 'text' },
+        { _fieldValue: 'creator', _fieldName: '表单创建人', componentid: 'text' },
     ];
     const fields = [];
     sysFields.forEach(f => {
-        fields.push(genComponentData(f))
+        const field = genComponentData(f);
+        field.__sys__ = '1';
+        fields.push(field)
     })
     return fields;
 }

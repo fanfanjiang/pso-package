@@ -12,7 +12,7 @@
         :vertical="params.viewVer"
         @click-inst="clickInst"
       ></view-body>
-      <div class="pso-super-view__add" v-if="store.checkActionUsable('add') && store.addAction">
+      <div class="pso-super-view__add" v-if="store.checkActionUsable('add') !== -1 && store.addAction">
         <el-button icon="el-icon-plus" circle @click="addHandler"></el-button>
       </div>
       <pso-form-executor
@@ -87,7 +87,7 @@ export default {
   methods: {
     async initialize() {
       this.initializing = true;
-      const { viewAuth, useCloumn, source, sourceType, paging, limit, fetchAPI } = this.params;
+      const { actions: outerActions, viewAuth, useCloumn, source, sourceType, paging, limit, fetchAPI } = this.params;
 
       if (this.watchFun.length) {
         this.watchFun.forEach((f) => f());
@@ -98,6 +98,7 @@ export default {
         $vue: this,
         sourceType,
         urine: this.urine,
+        outerActions,
         fetchMode: !paging && !limit ? "2" : "1",
       };
       if (limit) {
