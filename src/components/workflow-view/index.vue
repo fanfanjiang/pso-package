@@ -224,7 +224,7 @@ export default {
         instance: { instanceId: this.store.curInstance ? this.store.curInstance.leaf_id : "" },
         copy: this.store.copying,
         displayMode: this.displayMode,
-        defForm: this.params.defForm,
+        defForm: this.store.dataDefault,
       };
     },
   },
@@ -310,7 +310,12 @@ export default {
       }
     },
     makeKeys() {
-      this.store.makeDefkeys({ defKeys: this.params.defKeys, defForm: this.params.defForm });
+      this.store.makeDefkeys({
+        defKeys: this.params.defKeys,
+        defForm: this.params.defForm,
+        defComplexity: this.params.defComplexity,
+        defFormValue: this.params.defFormValue,
+      });
     },
     executorInitedHandler(evt) {
       this.store.WFStore = evt;

@@ -1,11 +1,11 @@
 <template>
-  <pso-dialog :title="title" :visible="opener.showExecutor" :width="boxWidth" @close="colseHandler">
+  <pso-dialog :visible="opener.showExecutor" :width="boxWidth" @close="colseHandler">
     <template #title>
       <div class="form-executor-header" v-loading="initializing">
         <div class="form-executor-header__l">
           <div class="form-executor-title">
             <i class="el-icon-edit-outline"></i>
-            <span>{{ title }}</span>
+            <span>{{ excutorTitle }}</span>
           </div>
           <div class="form-executor-switch" v-if="showSwitch">
             <el-tooltip content="上一条记录" placement="top-start" :visible-arrow="false" :open-delay="500" :hide-after="2000">
@@ -130,6 +130,9 @@ export default {
     };
   },
   computed: {
+    excutorTitle() {
+      return this.title || (this.store && this.store.data_name) || "";
+    },
     formParams() {
       return { ...this.params, ...this.data, editable: this.addable || this.editable };
     },

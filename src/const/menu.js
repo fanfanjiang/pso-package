@@ -74,6 +74,10 @@ export const TP_CTL_TYPE = [
     {
         n: '统计关联器',
         v: 'picker-stats'
+    },
+    {
+        n: '字段过滤器',
+        v: 'picker-dfilter'
     }
 ];
 

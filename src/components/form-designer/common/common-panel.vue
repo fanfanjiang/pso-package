@@ -96,6 +96,12 @@
       <el-form-item label="字段说明">
         <el-input size="mini" type="textarea" :rows="2" v-model="cpnt.data._fieldInfo" clearable></el-input>
       </el-form-item>
+      <el-form-item label="内容编码格式">
+        <el-select size="mini" v-model="cpnt.data._fieldCoding" placeholder="请选择">
+          <el-option label="uth8" value="uth8"></el-option>
+          <el-option label="utf8mb4" value="utf8mb4"></el-option>
+        </el-select>
+      </el-form-item>
     </el-form>
   </div>
 </template>

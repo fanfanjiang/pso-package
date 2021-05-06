@@ -92,6 +92,7 @@ export const MSG_FIELDS = [
     { fieldDisplay: "到期时间", field_name: "到期时间", _fieldValue: "msg_expire", is_sys: "1", efield: '' },
     { fieldDisplay: "到期处理方式", field_name: "到期处理方式", _fieldValue: "msg_expire_act", is_sys: "1", efield: '' },
     { fieldDisplay: "消息目标", field_name: "消息目标", _fieldValue: "msg_goal", is_sys: "1", efield: '' },
+    { fieldDisplay: "消息模板", field_name: "消息模板", _fieldValue: "msg_other", is_sys: "1", efield: '' },
 ];
 
 export default {

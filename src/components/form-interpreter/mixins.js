@@ -27,7 +27,7 @@ export const formulaMixin = {
                 //如果是人员或者部门，做特殊处理
                 if ((item.componentid === 'user' || item.componentid === 'department')) {
                     if (item._proxy && item._proxy.list.length) {
-                        val = item._proxy.list[0][item.componentid === 'user' ? 'user_name' : 'node_display'];
+                        val = item._proxy.list[0][item.componentid === 'user' ? (item._sourceType === "2" ? `${item._bindFormField}_x` : "user_name") : 'node_display'];
                     }
                 }
                 datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), val);
@@ -63,7 +63,7 @@ export const cpntFix = {
     methods: {
         startWatch() {
             this.$watch("numProxy", {
-                deep: true, 
+                deep: true,
                 immediate: true,
                 handler() {
                     this.mainCpnts = this.numProxy;

@@ -5,7 +5,8 @@ export const PAGE = [
     { n: '自定义', v: 'custom', w: 210, h: 297 },
 ];
 
-export const PAGE_MARGIN = [19.1, 17.8, 19.1, 17.8];
+// export const PAGE_MARGIN = [19.1, 17.8, 19.1, 17.8];
+export const PAGE_MARGIN = [0, 0, 0, 0];
 
 export const PAGE_DIRECT = [
     { n: '纵向', v: 'portrait' },
@@ -21,10 +22,38 @@ export const FONT_FAMILY = [
     { n: '楷体', v: 'KaiTi' },
 ];
 
+export const FONT_ALIGN_H = [
+    { n: '水平居中', v: 'center' },
+    { n: '左对齐', v: 'left' },
+    { n: '右对齐', v: 'right' },
+];
+
+export const FONT_ALIGN_V = [
+    { n: '垂直居中', v: 'middle' },
+    { n: '顶部对齐', v: 'top' },
+    { n: '底部对齐', v: 'bottom' },
+];
+
 export const BORDER_WIDTH = [1, 2, 3, 4, 5];
 
 export const BORDER_TYPE = ['left', 'top', 'bottom', 'right', 'none', 'outer', 'all'];
 
 export const COLOR = ['000000', 'F5222D', 'FA8C16', '52C41A', '1890FF', '722ED1', '5E6D82'];
 
-export default { PAGE, PAGE_MARGIN, PAGE_DIRECT, FONT_SIZE, FONT_FAMILY, BORDER_WIDTH, BORDER_TYPE, COLOR }
+export const STYLES = {
+    'font-family': { prefix: 'font-family', type: '' },
+    'font-size': { prefix: 'font-size', type: 'number' },
+    'border-width': { prefix: 'border-width', type: 'number' },
+    'color': { prefix: 'color', type: '', apd: '#' },
+    'text-align': { prefix: 'text-align', type: '' },
+    'vertical-align': { prefix: 'vertical-align', type: '' },
+    'font-weight': { prefix: 'font-weight', type: '', },
+    'font-style': { prefix: 'font-style', type: '', },
+    'text-decoration': { prefix: 'text-decoration', type: 'array', },
+};
+
+export default {
+    PAGE, PAGE_MARGIN, PAGE_DIRECT,
+    FONT_SIZE, FONT_FAMILY, BORDER_WIDTH, BORDER_TYPE,
+    COLOR, FONT_ALIGN_H, FONT_ALIGN_V, STYLES
+}

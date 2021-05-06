@@ -8,7 +8,7 @@ import debounce from "throttle-debounce/debounce";
 import './assets/theme/index.css';
 
 import Vuebar from 'vuebar';
-import 'muse-ui/lib/styles/base.less';
+import 'muse-ui/lib/styles/base.less'; 
 import 'muse-ui/lib/styles/theme.less';
 import { TextField } from 'muse-ui';
 import VCharts from 'v-charts';
@@ -17,7 +17,6 @@ import DOMPurify from "dompurify";
 
 import BASEAPI from './service/api';
 import createPDF from './utils/create-pdf';
-
 
 //store
 import store from './store';

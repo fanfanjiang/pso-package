@@ -93,6 +93,8 @@ export default class FormViewStore {
         this.autoSubmit = true;
         this.keepable = true;
 
+        this.dataDefault = null;
+
         //列表原始配置
         this.usedFormCol = '';
         this.oriColData = null;
@@ -130,6 +132,9 @@ export default class FormViewStore {
         this.showWFExecutor = false;
 
         this.fetchAPI = '/api/form';
+
+        this.notifyCfg = null;
+        this.notifyType = "formcopy";
 
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
@@ -183,6 +188,14 @@ export default class FormViewStore {
 
     get opExportable() {
         return (this.opAuth & 4) === 4;
+    }
+
+    get opCopy() {
+        return (this.opAuth & 32) === 32;
+    }
+
+    get opDownFiles() {
+        return (this.opAuth & 64) === 64;
     }
 
     get operableSotrs() {
@@ -544,9 +557,12 @@ export default class FormViewStore {
         }
     }
 
-    makeDefkeys({ where, defKeys, defForm, defComplexity }) {
+    makeDefkeys({ where, defKeys, defForm, defComplexity, defFormValue }) {
         //外部传入的请求参数
         try {
+
+            this.dataDefault = null;
+
             if (where) {
                 for (let key in where) {
                     this.defaultKeys[key] = { value: this.where[key], type: 1 };
@@ -569,6 +585,19 @@ export default class FormViewStore {
                 });
             }
 
+            if (defFormValue) {
+                let keyList = defFormValue.split(";");
+                keyList.forEach((item) => {
+                    const key = item.split("#");
+                    let value = key[1];
+                    if (value === '$user_id') {
+                        value = this.$vue.$store.state.base.user.user_id;
+                    }
+                    this.defaultKeys[key[0]] = { value, type: key[2] };
+                    this.setDefaultData(key[0], value);
+                });
+            }
+
             //默认参数
             if (defForm) {
                 for (let key in defForm) {
@@ -581,11 +610,19 @@ export default class FormViewStore {
                     }
                     //20201205 为了查leaf_id
                     this.defaultKeys[key] = { value: defForm[key], type };
+                    this.setDefaultData(key, defForm[key]);
                 }
             }
         } catch (error) {
             console.log(error);
         }
+    }
+
+    setDefaultData(key, value) {
+        if (!this.dataDefault) {
+            this.dataDefault = {}
+        }
+        this.$vue.$set(this.dataDefault, key, value)
     }
 
     analyzeAuthView(curAuth, cfg) {
@@ -607,7 +644,7 @@ export default class FormViewStore {
     analyzeFormCfg(data, usedColumn) {
         this.formCfg = data;
 
-        const { opAuth, display_columns, stage_config, status_config, data_button } = this.formCfg;
+        const { opAuth, display_columns, stage_config, status_config, data_button, ext_config } = this.formCfg;
 
         this.store = new FormStore({ ...data, designMode: false, withSys: true });
 
@@ -641,6 +678,15 @@ export default class FormViewStore {
             if (index !== -1) {
                 this.addAction = this.actionMGR.actions[index];
                 this.actionMGR.actions.splice(index, 1);
+            }
+        }
+
+        if (ext_config) {
+            try {
+                const extCfg = JSON.parse(ext_config);
+                this.notifyCfg = extCfg.notify;
+            } catch (error) {
+
             }
         }
 
@@ -798,7 +844,6 @@ export default class FormViewStore {
                 }
                 data.push(td)
             }
-
             const book = XLSX.utils.book_new();
             const sheet = XLSX.utils.json_to_sheet(data, { header: _.map(this.availableFields, 'display') });
             XLSX.utils.book_append_sheet(book, sheet, title);
@@ -1131,6 +1176,32 @@ export default class FormViewStore {
             }
         })
         return store.search({ options: { componentid: 'asstable' }, onlyData: true });
+    }
+
+    async makeCarbonCopy(usersList) {
+        if (!this.selectedList.length) {
+            return this.$vue.$message({ message: '请选择数据', type: 'warning' });
+        }
+        if (!usersList || !usersList.length) {
+            return this.$vue.$message({ message: '请选择抄送用户', type: 'warning' });
+        }
+        let ret;
+        const users = usersList.map(d => d.user_id).join(',')
+        const msgBodyField = this.notifyCfg && this.notifyCfg.content || 'd_name';
+        for (let item of this.selectedList) {
+            const msg_body = item[msgBodyField] || this.store.data_name;
+            ret = await API.request("/api/notification/copy",
+                {
+                    data: {
+                        data_code: this.formCfg.data_code, leaf_id: item.leaf_id, users, msg_body,
+                        msg_type: 'copy', msg_sub_type: this.notifyType
+                    }
+                }
+            );
+        }
+        if (ret) {
+            this.$vue.ResultNotify(ret);
+        }
     }
 
     async saveFiles() {

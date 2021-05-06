@@ -2,8 +2,15 @@ import { Message } from 'element-ui';
 import Qs from 'qs';
 import axios from 'axios';
 import Auth from '../tool/auth';
+import { sm2 } from '../../lib/sm';
+
+const excluded = [];
+const publicKey = '04c20130e6b102e5f61c7a95236e1be87df7352d7994448211572c6124577d124d11fefb311a990586fdece1b9ceb76621f4cee23cf933ec8a88a63ab0e784e7f9';
+const privateKey = 'c915c4e26ccbb156271b2f56cfd3e589b7fd388253033380b0027f5f39cc4cdf';
 
 export default class API {
+
+    static encryptRequired = false
 
     static URL_PREFIX = ''
 
@@ -20,9 +27,20 @@ export default class API {
         Message({ showClose: true, message: '登录过期，请重新登录', type: 'warning' });
     }
 
+    static doEncrypt(data) {
+        try {
+            if (typeof data !== 'string') {
+                data = JSON.stringify(data);
+            }
+            return sm2.doEncrypt(data, publicKey, 1);
+        } catch (error) { }
+        return data;
+    }
+
     static async request(url, { method = 'post', data = {}, headers = {}, showMsg = true }) {
         const _arguments = arguments;
         url = `${this.URL_PREFIX}${url}`;
+
         if (this.xssFilter) {
             for (let key in data) {
                 if (data[key] && typeof data[key] === 'string') {
@@ -30,16 +48,30 @@ export default class API {
                 }
             }
         }
+
         if (method === 'get') {
-            url += `?${Qs.stringify(data)}`;
+            data = Qs.stringify(data);
         }
+
+        if (this.encryptRequired) {
+            headers['encrypt-required'] = true;
+            data = { data: this.doEncrypt(data) };
+        }
+
+        if (method === 'get') {
+            if (typeof data !== 'string') {
+                data = Qs.stringify(data);
+            }
+            url += `?${data}`;
+        }
+
         try {
 
             //delete处理
             if (method === 'delete') data = { data: data };
 
             const ret = await axios({ method, url, data, headers });
-    
+
             const message = ret.msg || ret.message;
             if (showMsg && !ret.success && message && ret.tag !== 99) {
                 Message({ showClose: true, message, type: 'warning' });
@@ -48,7 +80,7 @@ export default class API {
             return ret;
 
         } catch (error) {
-      
+
             if (error.response && error.response.status === 401) {
 
                 const rft = Auth.getRefreshToken();
@@ -1083,6 +1115,11 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use((response) => {
     if (response.status === 200) {
+        // if (response.headers['encrypt-required'] === 'required' && response.data.data) {
+        //     console.log(response.data.data);
+        //     const decrypted = sm2.doDecrypt(response.data.data, privateKey, 1);
+        //     response.data = JSON.parse(decrypted);
+        // }
         return Promise.resolve(response.data);
     } else {
         return Promise.reject(response);

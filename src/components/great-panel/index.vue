@@ -30,3 +30,25 @@ export default {
   },
 };
 </script>
+<style lang="less">
+.great-panel {
+  border-radius: 5px;
+
+  & + .great-panel {
+    margin-top: 15px;
+  }
+
+  .great-panel-header {
+    margin-bottom: 10px;
+    font-size: 14px;
+    letter-spacing: 1.6px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    > i {
+      margin-right: 5px;
+    }
+  }
+}
+</style>

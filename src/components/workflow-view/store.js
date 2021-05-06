@@ -24,6 +24,7 @@ export default class WFVStore extends FVStore {
 
         this.copying = false;
         this.lastOp = '';
+        this.notifyType = "wfcopy";
     }
 
     get backoutable() {

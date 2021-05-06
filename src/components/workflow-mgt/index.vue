@@ -69,7 +69,7 @@ import PsoWfAutoid from "./autoid";
 import PsoWfScript from "./script";
 
 import ButtonTabs from "../button-tabs";
-
+import { ATUH_LEAF_WF } from "../../const/sys";
 import { REVIEW_STATUS } from "../../const/workflow";
 import { MgtMixin } from "../../mixin/view";
 const TABS = [
@@ -164,13 +164,7 @@ export default {
       wfCfg: {},
       curTab: "preview",
       formFields: [],
-      leafAuthcfg: [
-        { n: "新增", v: 1 },
-        { n: "更改", v: 2 },
-        { n: "导出", v: 4 },
-        { n: "撤销", v: 8 },
-        { n: "归档", v: 16 },
-      ],
+      leafAuthcfg: ATUH_LEAF_WF,
       ..._DATA,
     };
   },

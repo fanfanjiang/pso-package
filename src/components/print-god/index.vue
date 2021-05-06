@@ -1,11 +1,15 @@
 <template>
   <div class="printgod" v-loading="initializing">
     <div class="printgod-header">
-      <pso-header title="打印设计"></pso-header>
+      <pso-header title="打印设计">
+        <template #btn v-if="!initializing">
+          <el-button type="primary" size="mini" @click="save">保存</el-button>
+        </template>
+      </pso-header>
     </div>
     <div class="printgod-body">
       <div class="printgod-body-l">
-        <div class="printgod-body-aside" v-if="print && print.store">
+        <div class="printgod-body-aside" v-if="!initializing">
           <div class="printgod-body-aside-tab">
             <el-tabs v-model="curTab">
               <el-tab-pane label="数据字段" name="biz"></el-tab-pane>
@@ -48,10 +52,16 @@
       <div class="printgod-body-r">
         <div class="printgod-designer">
           <div class="printgod-designer-menu">
-            <print-menu :print="print"></print-menu>
+            <print-menu v-if="!initializing" :print="print"></print-menu>
           </div>
           <div class="printgod-designer-sheet">
-            <div ref="sheet"></div>
+            <div ref="sheet" class="printgod-designer-sheet-body"></div>
+            <sheet-tab :print="print"></sheet-tab>
+            <template v-if="print.sheet">
+              <paper-h :print="print"></paper-h>
+              <paper-v :print="print"></paper-v>
+              <backimg :print="print"></backimg>
+            </template>
           </div>
         </div>
       </div>
@@ -66,16 +76,20 @@ import FormStore from "../form-designer/model/store";
 import Print from "./print";
 import PrintMenu from "./menu";
 import { makeFormByPluginModule } from "../../tool/form";
+import PaperH from "./paper-h";
+import PaperV from "./paper-v";
+import Backimg from "./backimg";
+import SheetTab from "./sheet-tab";
 
 export default {
-  components: { PsoHeader, PrintMenu },
+  components: { PsoHeader, PrintMenu, PaperH, PaperV, Backimg, SheetTab },
   props: {
     code: String,
   },
   data() {
     return {
       initializing: true,
-      print: null,
+      print: {},
       curTab: "biz",
     };
   },
@@ -88,6 +102,7 @@ export default {
       //初始化表单或脚本配置
       if (!this.code) return;
       this.initializing = true;
+
       let ret = await this.API.formsCfg({ data: { id: this.code, auth: 1 }, method: "get" });
       if (!ret.success) {
         ret = await makeFormByPluginModule({ code: this.chartCfg.formId });
@@ -95,73 +110,34 @@ export default {
       const store = new FormStore({ ...ret.data, designMode: false, withSys: true });
       const assStores = await store.getAsstable();
 
+      this.print = new Print({ $sheet: this.$refs.sheet, store, assStores, $vue: this });
+
       this.initializing = false;
 
       this.$nextTick(() => {
-        this.print = new Print({ $sheet: this.$refs.sheet, store, assStores });
-
         this.dragAndDrop = DragAndDrop.init({
           onStart: (evt) => {
-            this.print.addDragField(evt.item);
+            this.print.sheet.addDragField(evt.item);
           },
           onDrop: (evt) => {
-            this.print.checkDragField(evt.item);
+            this.print.sheet.checkDragField(evt.item);
           },
         });
       });
     },
+    async save() {
+      const children = {};
+      const data = await this.print.save();
+      const asstables = this.print.store.search({ options: { componentid: "asstable" } });
+      asstables.forEach((d) => {
+        children[d.data._fieldValue] = d.data._option;
+      });
+
+      const ret = await this.API.request("/api/form/data/print", { data: { ...data, code: this.code, children } });
+      if (ret.success) {
+        window.open(`http://127.0.0.1:9002/pdf?url=/static/temp/${ret.data.name}.pdf`);
+      }
+    },
   },
 };
 </script>
-<style lang="less">
-.printgod {
-  height: 100%;
-  .printgod-header {
-    height: 50px;
-  }
-  .printgod-body {
-    display: flex;
-    height: calc(100% - 50px);
-    .printgod-body-l {
-      width: 200px;
-      height: 100%;
-    }
-    .printgod-body-r {
-      flex: 1;
-      height: 100%;
-    }
-  }
-  .printgod-body-aside-tab {
-    .el-tabs__nav-scroll {
-      text-align: center;
-      .el-tabs__nav {
-        float: none;
-        display: inline-block;
-      }
-    }
-    .el-tabs__header {
-      margin-bottom: 0;
-    }
-  }
-  .printgod-body-aside {
-    height: 100%;
-  }
-  .printgod-fields {
-    overflow: auto;
-    height: calc(100% - 40px);
-  }
-  .printgod-designer {
-    height: 100%;
-    .printgod-designer-menu {
-      height: 39px;
-      border-left: 1px solid #cccccc;
-      border-right: 1px solid #cccccc;
-      padding: 0 10px;
-    }
-    .printgod-designer-sheet {
-      height: calc(100% - 39px);
-      overflow: auto;
-    }
-  }
-}
-</style>

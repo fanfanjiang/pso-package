@@ -19,7 +19,7 @@
           <div class="view-data-fun">
             <slot name="fun" :selected="selected"></slot>
             <el-button v-if="nodeId" size="mini" type="primary" @click="addHandler()">新增用户</el-button>
-            <pso-picker-dept v-else pattern="radio" @confirm="addHandler" @cancel="addHandler" text="新增用户"></pso-picker-dept>
+            <pso-picker-dept v-else pattern="radio" @confirm="addHandler" text="新增用户"></pso-picker-dept>
             <el-popconfirm title="你确定要重置吗？" @confirm="resetPass">
               <el-button size="mini" type="warning" plain slot="reference" :disabled="!selected.length">重置密码</el-button>
             </el-popconfirm>
@@ -82,26 +82,26 @@
         </div>
       </div>
     </div>
-    <el-dialog title="编辑用户" append-to-body :visible.sync="showEditor" :width="'420px'">
+    <el-dialog title="新增/编辑用户" append-to-body :visible.sync="showEditor" :width="'420px'">
       <el-form label-width="80px" v-if="showEditor">
-        <el-form-item label="用户ID">
+        <el-form-item label="用户ID" required>
           <el-input v-if="data.user_id" size="small" :disabled="true" v-model="data.user_id" autocomplete="off"></el-input>
           <el-input v-else size="small" v-model="data.user" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="用户名">
+        <el-form-item label="用户名" required>
           <el-input size="small" v-model="data.user_name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="性别">
-          <el-select size="mini" clearable v-model="data.user_sex">
+        <el-form-item label="性别" required>
+          <el-select size="small" clearable v-model="data.user_sex">
             <el-option v-for="(f, i) in SEX" :key="i" :label="f.name" :value="f.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="角色">
-          <el-select size="mini" clearable v-model="data.user_type">
+        <el-form-item label="角色" required>
+          <el-select size="small" clearable v-model="data.user_type">
             <el-option v-for="(r, i) in roles" :key="i" :label="r.type_name" :value="r.user_type"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="密码" v-if="!data.user_id">
+        <el-form-item label="密码" v-if="!data.user_id" required>
           <el-input size="small" v-model="data.user_pwd" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -273,7 +273,12 @@ export default {
       } else {
         delete data.user_pwd;
       }
-      if (!data.node_id) delete data.node_id;
+      if (!data.user_type) {
+        return this.$message("请完善角色信息");
+      }
+      if (!data.node_id) {
+        return this.$message("请完善部门信息");
+      }
 
       this.operating = true;
       const ret = await this.API.addUser(data);

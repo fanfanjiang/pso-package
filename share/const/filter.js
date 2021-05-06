@@ -34,12 +34,14 @@ const FILTER_OP = {
     op7: {
         id: 'op7',
         name: '在其中',
-        op: OP_TYPE.op7
+        op: OP_TYPE.op7,
+        savearray: true,
     },
     op8: {
         id: 'op8',
         name: '不在其中',
-        op: OP_TYPE.op8
+        op: OP_TYPE.op8,
+        savearray: true,
     },
     op9: {
         id: 'op9',

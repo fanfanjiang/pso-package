@@ -20,7 +20,7 @@
         @next-click="nextClickHandler"
       ></el-pagination>
     </div>
-    <pso-dialog :visible="store.showExecutor" width="94%" @close="store.showExecutor = false">
+    <pso-dialog :visible="store.showWFExecutor" width="94%" @close="store.showWFExecutor = false">
       <template #title>
         <div class="form-executor-header">
           <div class="form-executor-header__l">
@@ -33,6 +33,7 @@
       </template>
       <pso-wf-executor ref="executor" :params="executorParams" @excuted="handleExcuted"></pso-wf-executor>
     </pso-dialog>
+    <pso-form-executor :params="formExecutorParams" :opener="store"></pso-form-executor>
   </div>
 </template>
 <script>
@@ -53,6 +54,15 @@ export default {
       return {
         node_id: this.store.curInstance.code,
         instance: { instanceId: this.store.curInstance.instance_id },
+      };
+    },
+    formExecutorParams() {
+      return {
+        formId: this.store.curInstance.code,
+        dataId: this.store.curInstance.instance_id,
+        editable: false,
+        addable: false,
+        deletable: false,
       };
     },
   },

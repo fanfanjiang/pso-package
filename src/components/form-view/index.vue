@@ -191,7 +191,7 @@ export default {
     textGroup: String,
     plug_code: String,
     defKeys: String,
-    defForm: Object,
+    defForm: [Object, String],
     bindUserpicker: Object,
     tableRowClick: Function,
     defLimit: Number,
@@ -257,7 +257,7 @@ export default {
         formEntity: this.store.formCfg,
         dataId: this.store.dataId,
         dataInstance: this.store.instance,
-        dataDefault: this.defForm,
+        dataDefault: this.store.dataDefault,
         editable: (this.store.dataId ? this.detailEditable : this.addable) && this.store.instanceEditable,
         addable: this.addable && this.store.opAddable,
         deletable: this.deletable && this.store.instanceEditable && !this.store.actionMGR.actioning,
@@ -356,7 +356,13 @@ export default {
       }
     },
     makeKeys() {
-      this.store.makeDefkeys({ where: this.where, defKeys: this.defKeys, defForm: this.defForm, defComplexity: this.defComplexity });
+      this.store.makeDefkeys({
+        where: this.where,
+        defKeys: this.defKeys,
+        defForm: this.defForm,
+        defComplexity: this.defComplexity,
+        defFormValue: this.defFormValue,
+      });
     },
     async dataChangeHandler(data) {
       await this.store.checkDataChange(data);

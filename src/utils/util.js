@@ -68,6 +68,13 @@ export async function checkUniq(data, field) {
     return (_.uniq(fieldNames).length !== fieldNames.length) ? false : true;
 }
 
+export function assignJSONDB(orgDB, baseDB, compare = true) {
+    formatJSONList([orgDB], baseDB, compare);
+    for (let k in orgDB) {
+        formatJSONList([orgDB[k]], baseDB[k], compare);
+    }
+}
+
 export function formatJSONList(list, fieldObj, compare = true) {
     let data = list;
     if (typeof list === 'string') {
@@ -162,4 +169,15 @@ export function makeTimeAgo(time) {
         }
     }
     return time;
+}
+
+export function matchRegExp(input, regStr) {
+    const reg = new RegExp(regStr, 'g');
+    const matches = []
+    while (true) {
+        const match = reg.exec(input);
+        if (!match) break;
+        matches.push(match[0]);
+    }
+    return matches;
 }

@@ -63,6 +63,7 @@
             <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
             <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
             <form-apicfg v-if="curTab === 'api'" :data="inner_api" :fields="tableData" :code="formStore.data_code"></form-apicfg>
+            <form-msg v-if="curTab === 'message'" :data="ext_config" :fields="tableData"></form-msg>
           </template>
           <div v-if="curTab === 'auth'" style="padding-top: 20px">
             <pso-nodeauth :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
@@ -98,14 +99,17 @@ import FormAsstable from "./form-asstable";
 import FormUpload from "./form-upload";
 import FormApicfg from "./form-apicfg";
 import FormAction from "./action";
+import FormMsg from "./form-msg";
 
 import ButtonTabs from "../button-tabs";
 import GreatPanel from "../great-panel";
 
+import { ATUH_LEAF_FORM } from "../../const/sys";
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
-import { formatJSONList } from "../../utils/util";
+import { formatJSONList, assignJSONDB } from "../../utils/util";
 import { MgtMixin } from "../../mixin/view";
 import { _DATA } from "./const";
+
 const TABS = [
   { label: "数据", id: "preview", icon: "el-icon-coin" },
   { label: "视图", id: "list", icon: "el-icon-picture" },
@@ -116,10 +120,13 @@ const TABS = [
   { label: "导入", id: "upload", icon: "el-icon-upload" },
   { label: "字段", id: "field", icon: "el-icon-cpu" },
   { label: "子表", id: "asstable", icon: "el-icon-connection" },
-  { label: "API", id: "api", icon: "el-icon-share" },
+  // { label: "API", id: "api", icon: "el-icon-share" },
+  { label: "消息", id: "message", icon: "el-icon-message-solid" },
   { label: "权限", id: "auth", icon: "el-icon-key" },
 ];
+
 const TABS_FOLDER = [{ label: "权限", id: "auth", icon: "el-icon-key" }];
+
 export default {
   mixins: [formOp, MgtMixin],
   components: {
@@ -137,6 +144,7 @@ export default {
     FormAction,
     ButtonTabs,
     GreatPanel,
+    FormMsg,
   },
   props: {
     params: {
@@ -161,12 +169,7 @@ export default {
       curTab: "preview",
       saving: false,
       formStore: null,
-      leafAuthcfg: [
-        { n: "新增", v: 1 },
-        { n: "更改", v: 2 },
-        { n: "导出", v: 4 },
-        { n: "更改阶段", v: 8 },
-      ],
+      leafAuthcfg: ATUH_LEAF_FORM,
       showCodeEditor: false,
       code: "",
       ..._.cloneDeep(_DATA),
@@ -270,6 +273,11 @@ export default {
         if (cfg.data_button) {
           this.actions = JSON.parse(cfg.data_button);
         }
+
+        if (cfg.ext_config) {
+          this.ext_config = JSON.parse(cfg.ext_config);
+          assignJSONDB(this.ext_config, _DATA.ext_config);
+        }
       }
     },
     nodeClickHandler(data) {
@@ -344,6 +352,7 @@ export default {
         export_config: JSON.stringify(this.upload),
         inner_api: JSON.stringify(this.inner_api),
         data_button: JSON.stringify(this.actions),
+        ext_config: JSON.stringify(this.ext_config),
       });
 
       this.saving = false;

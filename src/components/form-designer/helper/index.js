@@ -27,6 +27,7 @@ const defalutCpntData = [
     { n: '_height', v: '' },
     { n: '_autofocus', v: false },
     { n: '_encry', v: '0' },
+    { n: '_fieldCoding', v: 'uth8' },
 ]
 
 export function transferCpnt(target, componentid) {

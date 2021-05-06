@@ -75,8 +75,6 @@
   </div>
 </template>
 <script>
-import shortid from "shortid";
-
 import { REVIEW_OP_TYPE, REVIEW_STATUS } from "../../const/workflow";
 
 import PsoWfMainform from "./form-main";

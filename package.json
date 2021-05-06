@@ -8,10 +8,9 @@
     "build:exam": "vue-cli-service build example/main.js",
     "test:unit": "vue-cli-service test:unit"
   },
-  "dependencies": {
-    "@tinymce/tinymce-vue": "^3"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@tinymce/tinymce-vue": "^3",
     "@vue/cli-plugin-babel": "~4.3.0",
     "@vue/cli-plugin-unit-mocha": "~4.3.0",
     "@vue/cli-plugin-vuex": "~4.3.0",
@@ -37,6 +36,7 @@
     "hot-formula-parser": "^3.0.2",
     "html2canvas": "^1.0.0-rc.5",
     "js-beautify": "^1.10.2",
+    "jsbn": "^1.1.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "mathjs": "^9.3.2",

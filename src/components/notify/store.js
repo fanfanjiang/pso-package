@@ -8,6 +8,7 @@ export default class Notify {
         this.$vue = {};
         this.fetching = false;
         this.updating = false;
+        this.showWFExecutor = false;
         this.showExecutor = false;
 
         this.curInstance = {
@@ -134,16 +135,21 @@ export default class Notify {
         }
 
         const ret = await API.getDataRelation({ data_id });
-        if (ret.success && ret.data && ret.data.wf_code) {
-            const code = ret.data.wf_code;
-            const customWf = (await API.getSysConfig({ keys: JSON.stringify({ config_type: { value: 14, type: 1 } }) })).data;
-            const exist = _.find(customWf, { map_key1: code });
-            if (exist && exist.map_key2) {
-                return window.open(`${exist.map_key2}?insttogo=${data_id}`);
-            }
+        if (ret.success && ret.data) {
+            if (ret.data.wf_code) {
+                const code = ret.data.wf_code;
+                const customWf = (await API.getSysConfig({ keys: JSON.stringify({ config_type: { value: 14, type: 1 } }) })).data;
+                const exist = _.find(customWf, { map_key1: code });
+                if (exist && exist.map_key2) {
+                    return window.open(`${exist.map_key2}?insttogo=${data_id}`);
+                }
 
-            this.curInstance = { code, name: '流程审核', instance_id: data_id };
-            this.showExecutor = true;
+                this.curInstance = { code, name: '流程审核', instance_id: data_id };
+                this.showWFExecutor = true;
+            } else if (ret.data.data_code) {
+                this.curInstance = { code: ret.data.data_code, instance_id: data_id };
+                this.showExecutor = true;
+            }
         }
     }
 }

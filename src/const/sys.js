@@ -197,8 +197,23 @@ export const KEYS_TYPE = [
 
 //权限
 export const ATUH_FOLDER = [{ n: "无", v: 0 }, { n: "查看", v: 1 }, { n: "完全控制", v: 2 }];
-export const ATUH_LEAF_FORM = [{ n: "新增", v: 1 }, { n: "更改", v: 2 }, { n: "导出", v: 4 }, { n: "更改阶段", v: 8 }];
-export const ATUH_LEAF_WF = [{ n: "新增", v: 1 }, { n: "编辑", v: 2 }, { n: "删除", v: 4 }, { n: "发布", v: 8 }, { n: "审核", v: 16 }];
+export const ATUH_LEAF_FORM = [
+    { n: "新增", v: 1 },
+    { n: "更改", v: 2 },
+    { n: "导出", v: 4 },
+    { n: "阶段", v: 8 },
+    { n: "抄送", v: 32 },
+    { n: "下载", v: 64 }
+];
+export const ATUH_LEAF_WF = [
+    { n: "新增", v: 1 },
+    { n: "更改", v: 2 },
+    { n: "导出", v: 4 },
+    { n: "撤销", v: 8 },
+    { n: "归档", v: 16 },
+    { n: "抄送", v: 32 },
+    { n: "下载", v: 64 }
+];
 
 export const SQL_FEILDS = {
     id: "",
@@ -239,5 +254,6 @@ export const SQL_FEILDS = {
         data_id: "",
         data_is_field: "0",
         msg_call: "",
+        msg_other: ''
     }
 }

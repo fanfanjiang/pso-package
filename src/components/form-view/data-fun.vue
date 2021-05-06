@@ -46,7 +46,13 @@
         </el-dropdown-item>
         <el-dropdown-item command="exportCurPage" v-if="opExportable">导出EXCEL</el-dropdown-item>
         <el-dropdown-item command="saveColumn">保存列宽</el-dropdown-item>
-        <el-dropdown-item command="saveFiles">下载文件</el-dropdown-item>
+        <el-dropdown-item command="makeCarbonCopy">
+          <pso-picker-user v-if="store.selectedList.length" pattern="checkbox" @confirm="makeCarbonCopy">
+            <span style="display: block">抄送</span>
+          </pso-picker-user>
+          <template v-else> 抄送 </template>
+        </el-dropdown-item>
+        <el-dropdown-item command="saveFiles" v-if="store.opDownFiles">下载文件</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -139,6 +145,9 @@ export default {
     },
     uploadedData() {
       this.store.fetchStatus();
+    },
+    makeCarbonCopy(users) {
+      this.store.makeCarbonCopy(users);
     },
   },
 };

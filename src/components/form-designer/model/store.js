@@ -5,6 +5,8 @@ import Vue from 'vue';
 import shortid from 'shortid';
 import { makeSysFormFields } from "../../../tool/form";
 import API from '../../../service/api'
+import { assignJSONDB } from "../../../utils/util";
+import { _DATA } from "../../data-mgt/const";
 
 export default class FormStore {
     constructor(options) {
@@ -73,9 +75,7 @@ export default class FormStore {
         })
 
         if (!this.ext_config) {
-            this.ext_config = {
-                quickInput: { enable: false, reg: '', relation: [] }
-            };
+            this.ext_config = _.cloneDeep(_DATA.ext_config)
         }
 
         if (this.withSys) {
@@ -397,7 +397,6 @@ export default class FormStore {
         const matches = []
         while (true) {
             const match = reg.exec(input);
-            console.log(match);
             if (!match) break;
             matches.push(match[0]);
         }

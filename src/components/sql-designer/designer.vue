@@ -169,6 +169,11 @@
                 <el-date-picker v-model="block.msgData.msg_call" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"> </el-date-picker>
               </el-form-item>
             </div>
+            <div class="form-wrapper">
+              <el-form-item label="消息模板" required>
+                <el-input size="mini" v-model="block.msgData.msg_other"></el-input>
+              </el-form-item>
+            </div>
           </el-form>
         </el-collapse-item>
         <el-collapse-item title="脚本生成" name="generate">

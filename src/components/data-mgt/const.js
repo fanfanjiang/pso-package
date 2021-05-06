@@ -56,4 +56,8 @@ export const _DATA = {
         incre_field: "",
     },
     outer_api: {},
+    ext_config: {
+        quickInput: { enable: false, reg: '', relation: [] },
+        notify: { content: '' }
+    }
 };

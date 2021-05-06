@@ -22,6 +22,7 @@ export function transCMapToCondition(map) {
                 const dataType = CPNT[conditionAnd.cpnt.componentid].type === 'number' ? '@' : '#';
                 const datas = [];
                 if (conditionAnd.op) {
+                    const filter = FILTER_OP[conditionAnd.op];
                     const FilterOp = FILTER_OP[conditionAnd.op].op;
                     if (Array.isArray(FilterOp)) {
                         FilterOp.forEach((op, i) => {
@@ -30,9 +31,13 @@ export function transCMapToCondition(map) {
                             }
                         })
                     } else {
-                        if (Array.isArray(conditionAnd.data)) {
-                            if (conditionAnd.data.length) {
-                                datas.push({ op: FilterOp.value, data: conditionAnd.data.map(dv => `[${dataType}${dv}]`).join(',') });
+                        if (Array.isArray(conditionAnd.data) || filter.savearray) {
+                            let _data = conditionAnd.data;
+                            if (typeof _data === 'string') {
+                                _data = _data.split('|')
+                            }
+                            if (_data.length) {
+                                datas.push({ op: FilterOp.value, data: _data.map(dv => `[${dataType}${dv}]`).join(',') });
                             }
                         } else if (conditionAnd.data || conditionAnd.data === 0) {
                             datas.push({ op: FilterOp.value, data: `[${dataType}${conditionAnd.data}]` });
