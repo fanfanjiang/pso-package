@@ -53,7 +53,7 @@ export default class API {
             data = Qs.stringify(data);
         }
 
-        if (this.encryptRequired) {
+        if (window.__APPCONFIG__ && window.__APPCONFIG__.encryptRequired) {
             headers['encrypt-required'] = true;
             data = { data: this.doEncrypt(data) };
         }
@@ -66,7 +66,6 @@ export default class API {
         }
 
         try {
-
             //delete处理
             if (method === 'delete') data = { data: data };
 

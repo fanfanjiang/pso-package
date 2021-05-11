@@ -1,155 +1,137 @@
 <template>
-  <div class="printer-designer" v-loading="initializing">
-    <template v-if="!initializing">
-      <div class="printer-designer-header">
-        <pso-header title="打印模板" :backable="false">
-          <template v-slot:btn>
-            <el-button type="primary" size="mini" @click="newTemplate"> 新建模板 </el-button>
-            <el-button v-if="curTemplate" type="danger" size="mini" @click="delTemplate"> 删除模板 </el-button>
-            <el-button size="mini" icon="fa fa-floppy-o" :loading="saving" :disabled="saving" @click="saveHandler"> 保存 </el-button>
+  <div style="padding: 10px">
+    <el-row :gutter="10">
+      <el-col :xs="8" :sm="8" :md="6" v-for="(t, i) in templates" :key="i">
+        <p-template @click="showTemplate" @command="commandHandler($event, i)" :data="t"></p-template>
+      </el-col>
+      <el-col :xs="8" :sm="8" :md="6">
+        <p-template @click="addTemplate">
+          <template #top>
+            <i class="el-icon-plus" style="font-size: 20px"></i>
           </template>
-        </pso-header>
+          <div>添加模板</div>
+        </p-template>
+      </el-col>
+    </el-row>
+    <pso-dialog :visible="showEditor" width="50%" @close="showEditor = false">
+      <template #title>
+        <pso-dialog-header>
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>新增模板</span>
+          </template>
+          <template #action>
+            <el-button type="primary" size="mini" @click="saveHandler()">保存</el-button>
+          </template>
+        </pso-dialog-header>
+      </template>
+      <div class="pso-dialog-content">
+        <el-form label-position="left" label-width="100px" size="small">
+          <el-form-item label="模板名称" required>
+            <el-input size="small" v-model="curInstance.name"></el-input>
+          </el-form-item>
+          <el-form-item label="数据源类型" required>
+            <el-select filterable clearable size="small" v-model="curInstance.source">
+              <el-option label="表单" value="1"></el-option>
+              <el-option label="统计数据" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="统计插件" required v-if="curInstance.source === '2'">
+            <el-select filterable clearable size="small" v-model="curInstance.code">
+              <el-option v-for="(t, i) in statsList" :key="i" :label="t.node_display" :value="t.node_name"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="模板类型" required>
+            <el-select filterable clearable size="small" v-model="curInstance.type">
+              <el-option label="通用模板" value="1"></el-option>
+              <el-option label="富文本模板" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
       </div>
-      <div class="printer-designer-body" v-if="curTemplate">
-        <div class="printer-designer-l">
-          <div class="printer-designer-menu">
-            <el-form size="small" label-position="top">
-              <el-form-item label="选择模板">
-                <el-select size="mini" v-model="curTemplateId">
-                  <el-option v-for="(t, i) in templates" :key="i" :label="t.name" :value="t.id"></el-option>
-                </el-select>
-              </el-form-item>
-              <template v-if="curTemplate">
-                <el-form-item label="模板名称">
-                  <el-input size="mini" v-model="curTemplate.name"></el-input>
-                </el-form-item>
-                <el-form-item label="模板类型">
-                  <el-select size="mini" v-model="curTemplate.type">
-                    <el-option label="富文本" value="1"></el-option>
-                    <el-option label="列表" value="2"></el-option>
-                  </el-select>
-                </el-form-item>
-              </template>
-            </el-form>
-          </div>
-        </div>
-        <div class="printer-designer-c">
-          <rich-designer
-            v-if="curTemplate.type === '1'"
-            ref="rich"
-            :options="options"
-            :content="curTemplate.content"
-            :saveButton="false"
-          ></rich-designer>
-          <list-designer v-if="curTemplate.type === '2'" :config="curTemplate.config" :fields="options"></list-designer>
-        </div>
-      </div>
-    </template>
+    </pso-dialog>
+    <pso-dialog :visible="showEditor" width="50%" @close="showEditor = false">
+      <template #title>
+        <pso-dialog-header>
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>新增模板</span>
+          </template>
+          <template #action>
+            <el-button type="primary" size="mini" @click="saveHandler()">保存</el-button>
+          </template>
+        </pso-dialog-header>
+      </template>
+      <div class="pso-dialog-content"></div>
+    </pso-dialog>
   </div>
 </template>
 <script>
-import PsoHeader from "../header";
-import RichDesigner from "../rich-designer";
-import { formOp } from "../form-designer/mixin";
-import { makeSysFormFields } from "../../tool/form";
 import { formatJSONList } from "../../utils/util";
+import PTemplate from "./template";
 import shortid from "shortid";
-import ListDesigner from "./list";
+import RichDesigner from "../rich-designer";
+import PrintGod from "../print-god";
 
 const PRINTER_FIELDS = {
   id: "",
-  source: "1",
-  code: "",
-  type: "1",
-  name: "",
-  content: "",
-  img: "",
-  config: {},
+  source: "1", //数据源类型
+  code: "", //数据源ID
+  type: "1", //模板类型
+  name: "", //名称
+  content: "", //模板内容
+  config: {}, //模板配置
 };
 
 export default {
-  mixins: [formOp],
-  props: ["params"],
-  components: { PsoHeader, RichDesigner, ListDesigner },
+  components: { PTemplate, RichDesigner, PrintGod },
+  props: {
+    formId: String,
+  },
   data() {
     return {
-      initializing: true,
-      saving: false,
-      options: [],
+      showEditor: false,
       templates: [],
-      curTemplateId: "",
-      curTemplate: null,
+      statsList: [],
+      statsCache: {},
+      curInstance: {},
     };
   },
-  computed: {
-    code() {
-      return this.params.code;
-    },
-    asstables() {
-      return this.options.filter((d) => d.componentid === "asstable");
-    },
-  },
-  watch: {
-    curTemplateId() {
-      this.setCurTemplate();
-    },
-  },
-  async created() {
-    await this.makeFormStore(this.code);
-    if (this.formStore) {
-      this.options = this.formStore.search({ onlyData: true, options: { db: true } }).concat(makeSysFormFields());
-      await this.loadTemplate();
-    }
-    this.initializing = false;
+  created() {
+    this.fetchTemplate(this.formId);
+    this.fetchStats();
   },
   methods: {
-    async loadTemplate() {
-      const ret = await this.API.getTreeNode({ code: this.code });
+    async fetchTemplate(code) {
+      const ret = await this.API.getTreeNode({ code });
       if (ret.success) {
         const { printer_config } = ret.data.data;
         if (printer_config) {
           this.templates = formatJSONList(printer_config, PRINTER_FIELDS);
-          this.setCurTemplateId();
-        } else {
-          this.newTemplate();
         }
       }
     },
-    newTemplate() {
-      this.templates.push({ ..._.cloneDeep(PRINTER_FIELDS), code: this.code, name: "新建模板", id: shortid.generate() });
-      this.setCurTemplateId();
+    async fetchStats() {
+      //获取所有统计插件
+      this.statsList = await this.API.getTempleteTree([1]);
     },
-    delTemplate() {
-      const index = this.templates.indexOf(this.curTemplate);
-      if (index !== -1) {
-        this.templates.splice(index, 1);
+    addTemplate() {
+      this.curInstance = _.cloneDeep(PRINTER_FIELDS);
+      this.curInstance.id = shortid.generate();
+      this.showEditor = true;
+    },
+    removeTemplate(index) {
+      this.templates.splice(index, 1);
+    },
+    showTemplate(index) {},
+    saveHandler() {
+      this.templates.push(this.curInstance);
+      this.showEditor = false;
+    },
+    commandHandler(command, i) {
+      if (command === "remove") {
+        this.removeTemplate(i);
       }
-      this.setCurTemplateId();
-    },
-    setCurTemplateId() {
-      if (this.templates.length) {
-        this.curTemplateId = this.templates[this.templates.length - 1].id;
-      } else {
-        this.curTemplateId = "";
-      }
-    },
-    setCurTemplate() {
-      this.curTemplate = null;
-      this.$nextTick(() => {
-        this.curTemplate = this.curTemplateId ? _.find(this.templates, { id: this.curTemplateId }) : null;
-      });
-    },
-    async saveHandler() {
-      this.saving = true;
-      if (this.curTemplate.type === "1") {
-        this.curTemplate.content = this.$refs.rich.exportHtml();
-      }
-      const ret = await this.API.updateFormTree({
-        data_code: this.code,
-        printer_config: JSON.stringify(this.templates),
-      });
-      this.ResultNotify(ret);
-      this.saving = false;
     },
   },
 };

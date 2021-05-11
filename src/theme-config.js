@@ -7,24 +7,25 @@ const themes = [
       '@nav-text-color': '#ffffff',
       '@nav-text-color-hover': '#F2F2F2',
       '@nav-text-Invert-color': '#1B9AEE',
-    }
+    } 
   },
   {
-    name: '782ca8',
-    variables: {
-      '@main-color': '#782ca8',
-      '@nav-bg-color': '#782ca8',
-      '@nav-text-color': '#ffffff',
-      '@nav-text-Invert-color': '#782ca8',
-    }
-  },
-  {
-    name: 'EC5D2E',
+    name: 'EC5D2E', 
     variables: {
       '@main-color': '#EC5D2E',
       '@nav-bg-color': '#ffffff',
       '@nav-text-color': '#EC5D2E',
       '@nav-text-Invert-color': '#ffffff',
+    }
+  },
+   {
+    name: '9C3238',
+    variables: {
+      '@main-color': '#9C3238',
+      '@nav-bg-color': '#9C3238',
+      '@nav-text-color': '#ffffff',
+      '@nav-text-color-hover': '#F2F2F2',
+      '@nav-text-Invert-color': '#9C3238',
     }
   }
 ]

@@ -1,7 +1,8 @@
 <template>
   <div class="pso-notify-item__body" @mouseenter="hovered = true" @mouseleave="hovered = ''">
     <span v-if="data.msg_status === 0" class="pso-notify-item__dot"></span>
-    <pso-avatar size="small" :nick="data.msg_sender === '1' ? '系统' : data.sender_name"></pso-avatar>
+    <pso-avatar v-if="!store.mine" size="small" :nick="data.msg_sender === 'system' ? '系统' : data.sender_name || '系统'"></pso-avatar>
+    <pso-avatar v-else size="small" :nick="data.user_name"></pso-avatar>
     <div class="pso-notify-item__r">
       <div class="pso-notify-item__content">
         {{ data.msg_body || "" }}
@@ -10,16 +11,16 @@
         <transition name="el-fade-in-linear" mode="out-in">
           <span v-if="data.msg_time && !hovered">{{ formatTime(data.msg_time) }}</span>
           <div v-if="hovered">
-            <el-button v-if="data.msg_status === 0" size="mini" round @click="updateNoti">已读</el-button>
-            <el-button v-if="data.data_id || data.msg_url" size="mini" type="primary" round @click="checkAction"> 执行 </el-button>
+            <el-button v-if="data.msg_status === 0 && !store.mine" size="mini" round @click="updateNoti">已读</el-button>
+            <el-button v-if="data.data_id || data.msg_url" size="mini" type="primary" round @click="checkAction"> 详情 </el-button>
           </div>
         </transition>
       </div>
       <div class="pso-notify-item__tail" v-else>
         <span v-if="data.msg_time">{{ formatTime(data.msg_time) }}</span>
         <div style="margin-left: 20px">
-          <el-button v-if="data.msg_status === 0" size="mini" round @click="updateNoti">已读</el-button>
-          <el-button v-if="data.data_id || data.msg_url" size="mini" type="primary" round @click="checkAction"> 执行 </el-button>
+          <el-button v-if="data.msg_status === 0 && !store.mine" size="mini" round @click="updateNoti">已读</el-button>
+          <el-button v-if="data.data_id || data.msg_url" size="mini" type="primary" round @click="checkAction"> 详情 </el-button>
         </div>
       </div>
     </div>
@@ -50,15 +51,15 @@ export default {
       await this.store.update(this.data);
       this.$emit("read", this.data);
       this.updating = false;
-      this.$store.state.base.notify.unread--;
     },
     async checkAction() {
       if (this.acting) return;
       this.acting = true;
-      if (this.data.msg_status === 0) {
-        await this.updateNoti(this.data);
+      if (this.data.msg_status === 0 && !this.store.mine) {
+        await this.updateNoti();
       }
       await this.store.checkAction(this.data);
+      this.$emit("execute", this.data);
       this.acting = false;
     },
   },

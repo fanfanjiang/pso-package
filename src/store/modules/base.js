@@ -33,7 +33,8 @@ export default {
             curStore: null,
         },
         designedForm: '',
-        designedWF: ''
+        designedWF: '',
+        userGenFun: '0'
     },
     mutations: {
         [APP_SET_USER](state, user) {

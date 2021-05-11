@@ -86,7 +86,7 @@
       <el-form label-width="80px" v-if="showEditor">
         <el-form-item label="用户ID" required>
           <el-input v-if="data.user_id" size="small" :disabled="true" v-model="data.user_id" autocomplete="off"></el-input>
-          <el-input v-else size="small" v-model="data.user" autocomplete="off"></el-input>
+          <el-input v-else-if="base.userGenFun !== '1'" size="small" v-model="data.user" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="用户名" required>
           <el-input size="small" v-model="data.user_name" autocomplete="off"></el-input>
@@ -115,6 +115,7 @@
 <script>
 import { md5 } from "../../utils/md5";
 import { PagingMixin } from "../../mixin/view";
+import { mapState } from "vuex";
 
 const SEX = [
   { name: "男", value: "1" },
@@ -178,6 +179,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(["base"]),
     defWhere() {
       return {
         duty_id: this.dutyId,
@@ -266,8 +268,15 @@ export default {
       }
       const data = { ...this.data };
       if (!this.data.user_id) {
-        if (!this.data.user_pwd || !this.data.user) {
+        if (!this.data.user_pwd) {
           return this.$message("请完善信息");
+        }
+        if (this.base.userGenFun !== "1") {
+          if (!data.user) {
+            return this.$message("请完善信息");
+          }
+        } else {
+          // delete data.user;
         }
         data.user_pwd = md5(this.data.user_pwd);
       } else {

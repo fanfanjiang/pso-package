@@ -1,6 +1,14 @@
 import shortid from 'shortid';
 const prefix = "/static/app/img/icon";
 
+export function getFileext(fileName) {
+    const temp = fileName.split('.')
+    if (temp.length > 1) {
+        return temp[temp.length - 1];
+    }
+    return ''
+}
+
 export function isImages(fileName) {
     return !!/\S+\.(png|PNG|jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP)$/.test(fileName);
 }

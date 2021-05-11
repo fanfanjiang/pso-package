@@ -109,7 +109,7 @@
       <span>请选择查看这条数据关联的流程还是查看、编辑或删除（如果有权限）数据</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" type="success" @click="makeChoose('wf')">打开关联流程</el-button>
-        <el-button size="small" type="primary" @click="makeChoose('form')">编辑数据</el-button>
+        <el-button size="small" type="primary" @click="makeChoose('form')">查看(编辑)数据</el-button>
       </span>
     </el-dialog>
   </div>

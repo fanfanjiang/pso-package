@@ -22,6 +22,12 @@
           <el-option label="导入子表" value="2"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item v-if="cpnt.data._copyType === '1'" label="赋值时清空数据" required>
+        <el-radio-group size="mini" v-model="cpnt.data._clearCopy">
+          <el-radio label="0">否</el-radio>
+          <el-radio label="1">是</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <template v-if="cpnt.data._copyType === '2'">
         <el-form-item label="在数据未改变时保存数据（选择是则无论数据是否改变都会保存）" required>
           <el-switch v-model="cpnt.data._copyNotDump" size="mini"></el-switch>

@@ -63,9 +63,6 @@ export const ConfigMixin = {
         },
         appName() {
             return this.curApp ? this.curApp.site_name : "";
-        },
-        appisproject() {
-            return window.__APPCONFIG__ && window.__APPCONFIG__.appisproject;
         }
     },
     methods: {

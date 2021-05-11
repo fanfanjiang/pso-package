@@ -222,6 +222,9 @@ export default {
               value = value.filter((v) => v).join(",");
             }
             if (cpnt.__setDataByIds) {
+              if (this.cpnt.data._clearCopy === "1") {
+                this.cpnt.store.clearCpntValue(cpnt);
+              }
               cpnt.__setDataByIds(value);
             } else {
               cpnt.data._val = value;

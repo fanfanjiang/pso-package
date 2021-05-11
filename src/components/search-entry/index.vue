@@ -22,7 +22,9 @@
                 v-model="keywords"
                 placeholder="请输入查询条件"
                 prefix-icon="el-icon-search"
+                @change="makeSearch"
               >
+                <el-button slot="append" icon="el-icon-search" @click="makeSearch"></el-button>
               </el-input>
             </div>
           </template>
@@ -55,8 +57,8 @@ export default {
     };
   },
   watch: {
-    keywords() {
-      this.makeSearch();
+    keywords(value) {
+
     },
   },
   methods: {

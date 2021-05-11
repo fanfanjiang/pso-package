@@ -8,7 +8,7 @@ import debounce from "throttle-debounce/debounce";
 import './assets/theme/index.css';
 
 import Vuebar from 'vuebar';
-import 'muse-ui/lib/styles/base.less'; 
+import 'muse-ui/lib/styles/base.less';
 import 'muse-ui/lib/styles/theme.less';
 import { TextField } from 'muse-ui';
 import VCharts from 'v-charts';
@@ -106,7 +106,6 @@ import PsoApiOuter from "./components/apicfg/outer";
 import PsoApiInner from "./components/apicfg/inner";
 import PsoApiGroup from "./components/apicfg/group";
 
-import PsoPrinterDesigner from "./components/printer-designer";
 import PsoPrinter from "./components/printer";
 
 //用户
@@ -154,7 +153,6 @@ import PsoSearchEntry from "./components/search-entry";
 
 import PsoButtonTabs from "./components/button-tabs";
 import PsoCenterModule from "./components/module-mgt";
-import PsoPrintGod from "./components/print-god";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -231,7 +229,6 @@ const components = {
     PsoApicfg,
     PsoApiauth,
     PsoPluginMgt,
-    PsoPrinterDesigner,
     PsoPrinter,
 
     PsoUserComposite,
@@ -283,8 +280,7 @@ const components = {
     PsoButtonTabs,
 
     PsoCenterModule,
-    PsoPrintGod,
-    
+
     //混合视图
     PsoFvAst,
     PsoFvWv,
@@ -341,6 +337,10 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     });
 
     const parser = new UAParser();
+
+    if (window.__APPCONFIG__) {
+        Vue.prototype.__APPCONFIG__ = window.__APPCONFIG__;
+    }
 
     Vue.prototype.PSODOMPurify = DOMPurify;
     Vue.prototype.__device__ = parser.getResult();

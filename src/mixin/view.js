@@ -179,7 +179,7 @@ export const FetchMixin = {
                 const IDNotEmpty = this.curInstance[this.ID];
                 data = { ...this.curInstance, optype: IDNotEmpty ? 1 : 0 };
             }
-            if (this.checkValidity) {
+            if (!params && this.checkValidity) {
                 const checkFalse = this.checkValidity(data);
                 if (!checkFalse) return;
             }
@@ -302,5 +302,6 @@ export const AuthViewMixin = {
 }
 
 export default {
-    AuthViewMixin
+    AuthViewMixin,
+    FetchMixin
 }

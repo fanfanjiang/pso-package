@@ -287,6 +287,7 @@ const CPNT = {
       { n: '_selectFields', v: [] },
       { n: '_actionable', v: false },
       { n: '_relatedWF', v: '' },
+      { n: '_clearCopy', v: '0' },
     ]
   },
   assfield: {

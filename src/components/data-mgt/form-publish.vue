@@ -89,30 +89,28 @@
           <span>发布数据规则</span>
         </template>
         <div style="margin-bottom: 10px; text-align: right">
-          <el-dropdown trigger="click" @command="handleFilterAdd">
+          <el-dropdown trigger="click" @command="ruleAddHandler">
             <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus">添加规则</el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(f, index) in fields" :key="index" :command="index">{{ f._fieldName }}</el-dropdown-item>
+              <el-dropdown-item v-for="(f, i) in fields" :key="i" :command="i">{{ f._fieldName }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <span style="margin-left: 10px">
             <el-button :disabled="!selectedList.length" type="primary" size="mini" @click="genQRByRule">生成二维码</el-button>
           </span>
         </div>
-        <el-table border size="mini" :data="data.rules" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table border size="mini" :data="data.rules" style="width: 100%" @selection-change="selectedRuleChange">
           <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
           <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
           <el-table-column label="字段" width="140" prop="name"></el-table-column>
           <el-table-column label="值">
             <template slot-scope="scope">
-              <el-form>
-                <pso-form-component
-                  v-if="checkHasCpnt(scope.row.id)"
-                  :force-show="true"
-                  :cpnt="getCpnt(scope.row.id)"
-                  @value-change="valueChangeHandler($event, scope.row)"
-                ></pso-form-component>
-              </el-form>
+              <pub-item
+                v-if="checkHasCpnt(scope.row.id)"
+                :data="scope.row"
+                :store="store"
+                @value-change="valChangeHandler($event, scope.row)"
+              ></pub-item>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="80" align="center">
@@ -155,7 +153,6 @@
 </template>
 <script>
 import PsoFormAttach from "../form-interpreter/components/attachment";
-import PsoFormComponent from "../form-interpreter/cpnt";
 import FormStore from "../form-designer/model/store.js";
 import { genComponentData } from "../form-designer/helper";
 import shortid from "shortid";
@@ -163,9 +160,10 @@ import Qs from "qs";
 import GreatPanel from "../great-panel";
 import { _DATA } from "./const";
 import { formatJSONList } from "../../utils/util";
+import PubItem from "./publish-item";
 export default {
   props: ["data", "node", "store"],
-  components: { GreatPanel, PsoFormComponent, PsoFormAttach },
+  components: { GreatPanel, PsoFormAttach, PubItem },
   data() {
     this.mockStore = null;
     return {
@@ -173,6 +171,7 @@ export default {
       selectedList: [],
       init: true,
       logo: { data: {} },
+      setProxy: null,
     };
   },
   watch: {
@@ -214,7 +213,7 @@ export default {
       params.appid = this.$store.state.base.user.appid;
       return `${this.host}/form/${this.node.node_name}?${Qs.stringify(params)}`;
     },
-    handleFilterAdd(index) {
+    ruleAddHandler(index) {
       const { _fieldValue, _fieldName, componentid } = this.fields[index];
       const filter = { id: _fieldValue, name: _fieldName, cid: componentid, val: "" };
       this.data.rules.push(filter);
@@ -222,35 +221,14 @@ export default {
     checkHasCpnt(id) {
       return this.mockStore.searchByField(id);
     },
-    getCpnt(id) {
-      //初始化规则参数
-      const mockStore = new FormStore({ ...this.store.getBaseInfo(), designMode: false });
-      const mockData = {};
-      if (this.data.rules) {
-        this.data.rules.forEach((f) => {
-          mockData[f.id] = f.val;
-        });
-        mockStore.updateInstance(mockData);
-      }
-
-      const cpnt = mockStore.searchByField(id);
-      cpnt.data._fieldName = "";
-      cpnt.data._hideForever = false;
-      cpnt.data._hideOnNew = false;
-      if (cpnt.componentid === "asstable") {
-        cpnt.data._new = false;
-        cpnt.data._relate = true;
-      }
-      return cpnt;
-    },
     delHandler(index) {
       this.data.rules.splice(index, 1);
     },
-    valueChangeHandler({ value }, proxy) {
+    valChangeHandler({ value }, proxy) {
       proxy.val = value;
     },
-    handleSelectionChange(val) {
-      this.selectedList = val.map((item) => this.data.rules.indexOf(item) + 1);
+    selectedRuleChange(list) {
+      this.selectedList = list.map((item) => this.data.rules.indexOf(item) + 1);
     },
     async genQRByRule() {
       const data = { id: shortid.generate(), value: this.selectedList.join(",") };

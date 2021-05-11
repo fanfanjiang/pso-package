@@ -63,7 +63,7 @@
 <script>
 import Auth from "../../tool/auth";
 import PsoFileList from "../file-list";
-import { makeFiles } from "../../tool/file";
+import { makeFiles, getFileext } from "../../tool/file";
 import { Resource } from "../../mixin/resource";
 
 export default {
@@ -156,6 +156,18 @@ export default {
       return _[method](this.upFileList, { fid });
     },
     beforeUpload(file) {
+      if (this.__APPCONFIG__) {
+        const { fileSizeLimit, fileExtensions } = this.__APPCONFIG__;
+        if (fileSizeLimit && fileSizeLimit * 1024 < file.size) {
+          this.$message.warning(`文件大小不能大于 ${fileSizeLimit}KB`);
+          return false;
+        }
+        const fileext = getFileext(file.name);
+        if (fileExtensions && !fileExtensions.includes(fileext)) {
+          this.$message.warning(`不能上传扩展名为 ${fileExtensions.join("  ")} 以外的文件`);
+          return false;
+        }
+      }
       this.upFileList.push({ fid: file.uid, name: file.name, percentage: 0 });
     },
     deleteFile(file) {

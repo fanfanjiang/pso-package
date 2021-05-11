@@ -5,7 +5,6 @@ import Vue from 'vue';
 import shortid from 'shortid';
 import { makeSysFormFields } from "../../../tool/form";
 import API from '../../../service/api'
-import { assignJSONDB } from "../../../utils/util";
 import { _DATA } from "../../data-mgt/const";
 
 export default class FormStore {
@@ -245,19 +244,23 @@ export default class FormStore {
         if (cpnt) {
             if (cpnt.__setDataByIds) {
                 if (clear) {
-                    try {
-                        if (cpnt.data._proxy) {
-                            const list = cpnt.data._proxy.list || cpnt.data._proxy.valList;
-                            if (list && list.length) list.splice(0);
-                        }
-                    } catch (error) {
-
-                    }
+                    this.clearCpntValue(cpnt);
                 }
                 await cpnt.__setDataByIds(data, options);
             } else {
                 cpnt.data._val = data;
             }
+        }
+    }
+
+    clearCpntValue(cpnt) {
+        try {
+            if (cpnt.data._proxy) {
+                const list = cpnt.data._proxy.list || cpnt.data._proxy.valList;
+                if (list && list.length) list.splice(0);
+            }
+        } catch (error) {
+
         }
     }
 

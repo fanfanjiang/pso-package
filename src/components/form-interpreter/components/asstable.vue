@@ -249,7 +249,7 @@ export default {
       if (this.authCfg.authable) {
         return this.cpnt.data.__auth__ || 0;
       } else {
-        return 4;
+        return 7;
       }
     },
     devKeysCfg() {

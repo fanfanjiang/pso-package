@@ -10,10 +10,10 @@
       :visible.sync="base.notify.show"
     >
       <div class="pso-notify-item" v-if="curNotify">
-        <view-item :data="curNotify" :store="store" @read="checkNextNotify"></view-item>
+        <view-item :data="curNotify" :store="store" @read="checkNextNotify" @execute="checkNextNotify"></view-item>
       </div>
     </el-dialog>
-    <pso-dialog :visible="store.showExecutor" width="94%" @close="store.showExecutor = false">
+    <pso-dialog :visible="store.showWFExecutor" width="94%" @close="store.showWFExecutor = false">
       <template #title>
         <div class="form-executor-header">
           <div class="form-executor-header__l">
@@ -24,8 +24,9 @@
           </div>
         </div>
       </template>
-      <pso-wf-executor ref="executor" :params="executorParams" @excuted="checkNextNotify(curNotify)"></pso-wf-executor>
+      <pso-wf-executor ref="executor" :params="executorParams"></pso-wf-executor>
     </pso-dialog>
+    <pso-form-executor :params="formExecutorParams" :opener="store"></pso-form-executor>
   </div>
 </template>
 <script>
@@ -48,6 +49,15 @@ export default {
         instance: { instanceId: this.store.curInstance.instance_id },
       };
     },
+    formExecutorParams() {
+      return {
+        formId: this.store.curInstance.code,
+        dataId: this.store.curInstance.instance_id,
+        editable: false,
+        addable: false,
+        deletable: false,
+      };
+    },
   },
   created() {
     if (!this.base.notify.initialized) {
@@ -58,11 +68,13 @@ export default {
     async initialize() {
       this.base.notify.initialized = true;
       this.store = new Store({ $vue: this });
-      this.pagination = { limit: 999, start: 0 };
+      this.store.pagination = { limit: 999, start: 0 };
       this.store.unreadable = true;
-      const params = { msg_notice: { value: "1", type: 1 } };
-      await this.store.fetch(params);
+      await this.store.fetch();
+      this.$store.state.base.notify.unread = this.store.unread;
 
+      this.store.instances = this.store.instances.filter((d) => d.msg_notice === "1");
+      
       if (this.store.instances.length) {
         this.curNotify = this.store.instances[0];
         this.base.notify.show = true;

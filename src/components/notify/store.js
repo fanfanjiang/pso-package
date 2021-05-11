@@ -23,6 +23,7 @@ export default class Notify {
         this.curCat = null;
         this.pagination = { limit: 20, start: 0 };
         this.unreadable = false;
+        this.mine = false;
 
         for (let option in options) {
             if (options.hasOwnProperty(option)) {
@@ -33,10 +34,6 @@ export default class Notify {
 
     get unread() {
         return this.instances.filter(d => d.msg_status === 0).length;
-    }
-
-    setCurCat(data) {
-        this.curCat = data;
     }
 
     async getCategory() {
@@ -52,15 +49,12 @@ export default class Notify {
         });
     }
 
-    async fetchByCat(data) {
-        this.setCurCat(data);
-        this.unreadable = false;
-        await this.refresh();
-    }
-
-    async fetchUnread() {
-        this.setCurCat(null);
-        this.unreadable = true;
+    async fetchCommon(options) {
+        for (let key in options) {
+            if (typeof options[key] !== 'undefined') {
+                this[key] = options[key];
+            }
+        }
         await this.refresh();
     }
 
@@ -81,6 +75,9 @@ export default class Notify {
         if (this.unreadable) {
             params.keys['msg_status'] = { value: 0, type: 1 };
         }
+
+        params.keys[this.mine ? 'msg_sender' : 'msg_receiver'] = { value: this.$vue.$store.state.base.user.user_id, type: 1 };
+
         if (params.keys) {
             params.keys = JSON.stringify(params.keys);
         }
@@ -94,14 +91,26 @@ export default class Notify {
         this.fetching = false;
     }
 
-    async update(data) {
+    async updateList(data) {
+        data = data || this.instances;
         this.updating = true;
+        for (let item of data) {
+            if (item.msg_status === 0) {
+                await this.update(item);
+            }
+        }
+        this.updating = false;
+    }
+
+    async update(data) {
         const { msg_id, rec_id } = data;
         const ret = await API.notification({ data: { msg_id, rec_id, rec_type: 1, act_time: dayjs().format('YYYY-MM-DD HH:mm:ss') }, method: 'put' });
         if (ret.success) {
             data.msg_status = 1;
+            if (this.$vue.$store.state.base.notify.unread > 0) {
+                this.$vue.$store.state.base.notify.unread--;
+            }
         }
-        this.updating = false;
     }
 
     async checkAction(data) {

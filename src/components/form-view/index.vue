@@ -2,7 +2,7 @@
   <div class="pso-view pso-view-form" ref="view" :class="viewClass" v-loading="!store || store.initializing">
     <template v-if="store && !store.initializing">
       <!-- 过滤器 -->
-      <div class="pso-view-extend">
+      <div class="pso-view-extend" v-loading="store.fetching">
         <transition name="el-fade-in">
           <pso-data-filter
             v-show="store.showFilter"
@@ -17,7 +17,7 @@
       </div>
       <div class="pso-view-body" ref="viewBody">
         <!-- 标题和权限视图过滤 -->
-        <div ref="header">
+        <div ref="header" v-loading="store.fetching">
           <div class="pso-view-header">
             <div class="pso-view-header__l" v-if="!params.hideViewTitle">
               <div class="pso-view-title">

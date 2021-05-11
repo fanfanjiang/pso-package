@@ -24,7 +24,6 @@
           <div class="pso-view-header__r">
             <el-button size="mini" type="primary" @click="saveConfig">保存设置</el-button>
             <el-button size="mini" type="primary" plain @click="showCodeEditor = true">修改CODE</el-button>
-            <el-button size="mini" type="primary" plain @click="goPrinterDeisgner">打印设计</el-button>
             <el-button size="mini" type="primary" plain @click="handleEditForm">表单设计</el-button>
           </div>
         </div>
@@ -64,6 +63,7 @@
             <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
             <form-apicfg v-if="curTab === 'api'" :data="inner_api" :fields="tableData" :code="formStore.data_code"></form-apicfg>
             <form-msg v-if="curTab === 'message'" :data="ext_config" :fields="tableData"></form-msg>
+            <printer-designer v-if="curTab === 'print'" :form-id="curNode.node_name"></printer-designer>
           </template>
           <div v-if="curTab === 'auth'" style="padding-top: 20px">
             <pso-nodeauth :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
@@ -100,9 +100,10 @@ import FormUpload from "./form-upload";
 import FormApicfg from "./form-apicfg";
 import FormAction from "./action";
 import FormMsg from "./form-msg";
+import GreatPanel from "../great-panel";
 
 import ButtonTabs from "../button-tabs";
-import GreatPanel from "../great-panel";
+import PrinterDesigner from "../printer-designer";
 
 import { ATUH_LEAF_FORM } from "../../const/sys";
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
@@ -122,6 +123,7 @@ const TABS = [
   { label: "子表", id: "asstable", icon: "el-icon-connection" },
   // { label: "API", id: "api", icon: "el-icon-share" },
   { label: "消息", id: "message", icon: "el-icon-message-solid" },
+  { label: "打印", id: "print", icon: "el-icon-printer" },
   { label: "权限", id: "auth", icon: "el-icon-key" },
 ];
 
@@ -145,6 +147,7 @@ export default {
     ButtonTabs,
     GreatPanel,
     FormMsg,
+    PrinterDesigner,
   },
   props: {
     params: {
@@ -289,9 +292,6 @@ export default {
     handleEditForm() {
       this.$store.state.base.designedForm = this.curNode.node_name;
       this.goForm({ id: this.curNode.node_name });
-    },
-    goPrinterDeisgner() {
-      window.open(`/printer-designer/${this.curNode.node_name}`, "_blank");
     },
     goForm({ pid = "", id = "" }) {
       this.$router.push({ name: "formDesigner", query: { pid, id } });

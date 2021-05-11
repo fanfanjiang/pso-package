@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     initialize() {
-      this.store = new Store({ $vue: this });
+      this.store = new Store({ $vue: this, unreadable: false });
     },
     checkMore() {
       this.$router.push({ name: "notify" });

@@ -135,7 +135,7 @@ export default {
 
       const ret = await this.API.request("/api/form/data/print", { data: { ...data, code: this.code, children } });
       if (ret.success) {
-        window.open(`http://127.0.0.1:9002/pdf?url=/static/temp/${ret.data.name}.pdf`);
+        window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
       }
     },
   },

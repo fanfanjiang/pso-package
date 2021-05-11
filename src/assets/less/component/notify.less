@@ -156,12 +156,26 @@
 
 @media (max-width: @screen-md-min) {
     .pso-notify-index {
-        padding: 10px 0;
-        flex-direction: column;
-    }
+        padding: 10px 0 !important;
 
-    .pso-notify-index__aside {
-        width: 100% !important;
+        .pso-notify-index__aside {
+            padding: 0 5px !important;
+            width: 100px !important;
+            font-size: 12px;
+
+            .pso-notify-index__aside-header {
+                font-size: 14px;
+            }
+
+            .pso-notify__aside-item-subitem {
+                padding: 5px !important;
+            }
+        }
+
+        .pso-notify-index__body {
+            padding: 5px !important;
+            font-size: 12px;
+        }
     }
 }
 
@@ -232,7 +246,7 @@
 
     .pso-notify-index__body {
         flex: 1;
-        padding: 20px;
+        padding: 10px 20px;
         border-radius: 8px;
         box-shadow: 0 0 5px 0 rgba(0, 0, 0, .1);
         height: 100%;

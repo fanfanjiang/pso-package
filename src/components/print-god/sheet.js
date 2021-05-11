@@ -529,6 +529,8 @@ export default class Sheet {
         this.hot.render();
     }
 
+
+
     async export() {
         const rows = this.hot.countRows();
         const cols = this.hot.countCols();
@@ -546,9 +548,11 @@ export default class Sheet {
             background: this.background
         }
 
+        const $table = $('.ht_master .htCore tbody tr');
+
         for (let row = 0; row < rows; row++) {
             //行高
-            data.rows.push(this.hot.getRowHeight(row) || this.def.rowHeight);
+            data.rows.push($($table[row]).height());
 
             for (let col = 0; col < cols; col++) {
                 //列宽

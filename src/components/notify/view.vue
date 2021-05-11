@@ -9,7 +9,7 @@
     <pso-empty v-if="!store.fetching && !store.instances.length" title="暂无消息"></pso-empty>
     <div class="pso-notify-view__footer" v-if="store.dataTotal && pagination && !store.fetching">
       <el-pagination
-        layout="prev, pager, next"
+        layout="total, prev, pager, next"
         :page-sizes="[20, 30, 50, 100]"
         :total="store.dataTotal"
         :page-size="fetchParams.limit"
@@ -77,7 +77,6 @@ export default {
     async fetch() {
       this.store.pagination = this.getFetchParams();
       await this.store.fetch();
-      this.$store.state.base.notify.unread = this.store.unread;
     },
     handleExcuted() {},
   },

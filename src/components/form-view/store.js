@@ -448,19 +448,30 @@ export default class FormViewStore {
         const data = this.getFetchParams();
         data.data_code = this.formCfg.data_code;
         data.limit = limit;
+        data.page = 0;
 
         let dataList = [];
-        let page = 0;
-
         while (1) {
-            data.page = page;
             const ret = await API.request(this.fetchAPI, { data, method: "get" });
-            if (ret.success) {
-                dataList = dataList.concat(ret.data);
-            }
-            data.page++;
-            if (!ret.data.length || (typeof ret.total !== 'undefined' && ret.total <= dataList.length)) {
+            if (!ret.success) {
                 break;
+            } else {
+                let instances = [];
+                let total = 0;
+                if (Array.isArray(ret.data)) {
+                    instances = ret.data;
+                    total = ret.total;
+                } else if (ret.data.data) {
+                    instances = ret.data.data;
+                    total = ret.data.page;
+                }
+
+                data.page++;
+                dataList = dataList.concat(instances);
+
+                if (!total || (total <= dataList.length)) {
+                    break;
+                }
             }
         }
         return dataList;
@@ -536,7 +547,7 @@ export default class FormViewStore {
             if (this.instances.length && this.insttogo === this.instances[0].leaf_id) {
                 this.showInstance(this.instances[0]);
             } else {
-                this.$vue.$message.warning("未找到数据");
+                this.$vue.$message.warning("未找到数据或你无权限查看");
             }
         }
         this.insttogo = '';
