@@ -511,13 +511,18 @@ export default class Sheet {
             if (className) {
                 props.push({ row, col, prop: { className } })
             }
-            this.analyzeSheetData(row, col, cell.content, sheetData, endCell);
+
+            // this.analyzeSheetData(row, col, cell.content, sheetData, endCell);
+
+            //这里直接跟新数据，不整体设置data
+            this.addHotCellData(row, col, cell.content);  
         }
 
-        if (!_.isEmpty(sheetData)) {
-            this.hot.updateSettings({ data: sheetData });
-        }
-
+        //
+        // if (!_.isEmpty(sheetData)) {
+        //     this.hot.updateSettings({ data: sheetData }, true);
+        // }
+ 
         const merged = this.getMergedCells();
         data.merge.forEach(m => {
             merged.add(m)
@@ -528,8 +533,6 @@ export default class Sheet {
 
         this.hot.render();
     }
-
-
 
     async export() {
         const rows = this.hot.countRows();

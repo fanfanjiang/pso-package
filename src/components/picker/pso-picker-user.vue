@@ -150,6 +150,10 @@ export default {
             type: "2",
             value: "",
           },
+          d_status: {
+            type: "1",
+            value: "1",
+          },
         },
         type: "UserPage",
       },

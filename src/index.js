@@ -1,6 +1,7 @@
 // import 'babel-polyfill';
 
 const formulajs = require("@handsontable/formulajs");
+// const formulajs = require("@formulajs/formulajs");
 const UAParser = require('../share/util/u-agent');
 
 import debounce from "throttle-debounce/debounce";
@@ -369,8 +370,9 @@ import FreeDrag from './mixin/free-drag';
 const Mixin = { FormMixin, ViewMixin, FreeDrag };
 
 import Auth from './tool/auth';
+import randomColor from './utils/randomcolor';
 
-const tool = { Auth, genComponentData };
+const tool = { Auth, genComponentData, randomColor };
 
 import FormStore from './components/form-designer/model/store';
 import WfStore from './components/workflow-executor/store';

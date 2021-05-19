@@ -30,7 +30,13 @@
     <el-dropdown size="small" @command="operateMore" v-if="moreable">
       <el-button class="el-dropdown-link" size="mini" type="text">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="downloadFormTp" v-if="opAddable && tempdownadable">下载模板</el-dropdown-item>
+        <el-dropdown-item command="exportCurPage" v-if="opExportable">导出EXCEL</el-dropdown-item>
+        <el-dropdown-item command="makeCarbonCopy">
+          <pso-picker-user v-if="store.selectedList.length" pattern="checkbox" @confirm="makeCarbonCopy">
+            <span style="display: block">抄送</span>
+          </pso-picker-user>
+          <template v-else> 抄送 </template>
+        </el-dropdown-item>
         <el-dropdown-item v-if="opAddable && importable">
           <el-form>
             <pso-form-attach
@@ -44,17 +50,21 @@
             </pso-form-attach>
           </el-form>
         </el-dropdown-item>
-        <el-dropdown-item command="exportCurPage" v-if="opExportable">导出EXCEL</el-dropdown-item>
-        <el-dropdown-item command="saveColumn">保存列宽</el-dropdown-item>
-        <el-dropdown-item command="makeCarbonCopy">
-          <pso-picker-user v-if="store.selectedList.length" pattern="checkbox" @confirm="makeCarbonCopy">
-            <span style="display: block">抄送</span>
-          </pso-picker-user>
-          <template v-else> 抄送 </template>
-        </el-dropdown-item>
+        <el-dropdown-item command="print" v-if="opExportable && store.printTemplates.length">批量打印</el-dropdown-item>
         <el-dropdown-item command="saveFiles" v-if="store.opDownFiles">下载文件</el-dropdown-item>
+        <el-dropdown-item command="downloadFormTp" v-if="opAddable && tempdownadable">下载模板</el-dropdown-item>
+        <el-dropdown-item command="saveColumn">保存列宽</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+    <el-dialog v-loading="printing" title="选择打印模板" append-to-body :visible.sync="showPrint" :width="'420px'">
+      <el-select size="small" v-model="template">
+        <el-option v-for="(t, i) in store.printTemplates" :key="i" :label="t.name" :value="t.id"></el-option>
+      </el-select>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="showPrint = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="print()">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -116,6 +126,9 @@ export default {
     this.uploadAPI = "/api/upload/data";
     return {
       uploadAttach: { data: {} },
+      showPrint: false,
+      printing: false,
+      template: "",
     };
   },
   computed: {
@@ -141,7 +154,24 @@ export default {
   },
   methods: {
     operateMore(fun) {
-      this.store[fun] && this.store[fun]();
+      if (fun === "print") {
+        this.showPrint = true;
+      } else {
+        this.store[fun] && this.store[fun]();
+      }
+    },
+    print() {
+      if (!this.template) {
+        return this.$message("请先选择模板");
+      }
+      this.printing = true;
+      this.store.printInBatches({
+        id: this.template,
+        callback: () => {
+          this.printing = false;
+          this.showPrint = false;
+        },
+      });
     },
     uploadedData() {
       this.store.fetchStatus();

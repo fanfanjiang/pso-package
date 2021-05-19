@@ -31,6 +31,10 @@
           </el-select>
         </el-form-item>
       </template>
+      <el-form-item label="选择任意一级选项">
+        <el-radio v-model="cpnt.data._checkStrictly" label="0">否</el-radio>
+        <el-radio v-model="cpnt.data._checkStrictly" label="1">是</el-radio>
+      </el-form-item>
       <el-form-item class="tree-option" label="选项设置" v-if="cpnt.data._type === '2'">
         <el-button type="text" size="mini" icon="el-icon-plus" @click="showEditDialog(null)">添加一级选项</el-button>
         <el-tree

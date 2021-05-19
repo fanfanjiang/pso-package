@@ -231,7 +231,7 @@ const FILTER_TYPE = {
         cid: 'cascader',
         name: '级联选择',
         op: [
-            { ...FILTER_OP.op1, match: 99 },
+            { ...FILTER_OP.op9, match: 99 },
             // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
             // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]

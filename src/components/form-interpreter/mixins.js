@@ -1,4 +1,5 @@
 const formulajs = require("@handsontable/formulajs");
+// const formulajs = require("@formulajs/formulajs");
 
 export const formulaMixin = {
     computed: {
@@ -21,6 +22,7 @@ export const formulaMixin = {
     },
     methods: {
         figure(data) {
+            console.log(datasource);
             let datasource = this.cpnt.data[this.sourceField || '_datasource'];
             data.forEach(item => {
                 let val = item._val;
@@ -30,13 +32,17 @@ export const formulaMixin = {
                         val = item._proxy.list[0][item.componentid === 'user' ? (item._sourceType === "2" ? `${item._bindFormField}_x` : "user_name") : 'node_display'];
                     }
                 }
+                console.log(val);
                 datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), val);
             });
+            console.log(datasource);
             try {
-                console.log(datasource);
-                return eval(datasource);
+                const value = eval(datasource);
+                if (typeof value !== 'object') {
+                    return value;
+                }
             } catch (error) {
-                console.log(error);
+                console.log('@error', error);
             }
         }
     }
@@ -79,6 +85,7 @@ export const cpntFix = {
             });
         },
         setFixValue(fix) {
+            console.log(1, fix);
             if (typeof fix === 'undefined') return;
             this.fixValue = fix;
         }

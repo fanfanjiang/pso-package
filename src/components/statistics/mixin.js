@@ -51,7 +51,7 @@ export const StaMixin = {
                 if (this.params.viewAuth) {
                     this.store.analyzeAuthView(this.params.viewAuth, this.params.auth_config);
                 }
-
+ 
                 this.makeKeys();
                 await this.store.initialize(this.params.plug_code, this.$router.currentRoute.query);
                 this.$emit("initialized", { store: this.store });

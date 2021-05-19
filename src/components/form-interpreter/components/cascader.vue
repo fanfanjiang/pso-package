@@ -44,6 +44,9 @@ export default {
     bname() {
       return this.cpnt.data._name;
     },
+    checkStrictly() {
+      return this.cpnt.data._checkStrictly === "1";
+    },
     props() {
       if (this.fromForm) {
         return {
@@ -51,6 +54,7 @@ export default {
           label: "_optionValue",
           children: "_option",
           leaf: "_leaf",
+          checkStrictly: this.checkStrictly,
         };
       } else {
         return {
@@ -58,6 +62,7 @@ export default {
           value: this.bid,
           label: this.bname,
           lazy: true,
+          checkStrictly: this.checkStrictly,
           lazyLoad: async (node, resolve) => {
             const { level } = node;
             const parent_id = level === 0 ? this.cpnt.data._initParentVal : node.data[this.bid];

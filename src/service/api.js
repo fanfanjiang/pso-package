@@ -79,7 +79,7 @@ export default class API {
             return ret;
 
         } catch (error) {
-
+            console.log(error);
             if (error.response && error.response.status === 401) {
 
                 const rft = Auth.getRefreshToken();

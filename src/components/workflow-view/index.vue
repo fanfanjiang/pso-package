@@ -172,8 +172,8 @@ export default {
       default: "操作",
     },
     operateWidth: {
-      type: String,
-      default: "100",
+      type: Number,
+      default: 0,
     },
     tableSize: {
       type: String,

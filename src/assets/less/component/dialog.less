@@ -3,6 +3,12 @@
         height: 100% !important;
     }
 
+    &.dialog-noheader {
+        .el-dialog__header {
+            display: none;
+        }
+    }
+
     .el-dialog {
         @media (max-width: @screen-md-min) {
             width: 100% !important;
@@ -50,7 +56,7 @@
                     font-weight: bold;
                 }
             }
-        }
+        }  
 
         .el-dialog__body {
             background-color: #fff;

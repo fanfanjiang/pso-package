@@ -5,8 +5,8 @@ export const PAGE = [
     { n: '自定义', v: 'custom', w: 210, h: 297 },
 ];
 
-// export const PAGE_MARGIN = [19.1, 17.8, 19.1, 17.8];
-export const PAGE_MARGIN = [0, 0, 0, 0];
+export const PAGE_MARGIN = [19.1, 17.8, 19.1, 17.8];
+// export const PAGE_MARGIN = [0, 0, 0, 0];
 
 export const PAGE_DIRECT = [
     { n: '纵向', v: 'portrait' },

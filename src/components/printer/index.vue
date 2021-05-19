@@ -20,10 +20,9 @@
             </el-form>
           </div>
         </div>
-        <div class="printer-designer-c" v-if="curTemplate">
+        <div class="printer-designer-c" v-if="curTemplate && curTemplate.type === '2' && curTemplate.source === '1'">
           <div class="printer-content">
-            <div v-if="curTemplate.type === '1'" ref="printer" v-html="curTemplate.content"></div>
-            <list-printer v-if="curTemplate.type === '2'" ref="printer" :config="curTemplate.config"></list-printer>
+            <div ref="printer" v-html="curTemplate.content"></div>
           </div>
           <pso-form-interpreter
             ref="formImage"
@@ -42,14 +41,13 @@
 </template>
 <script>
 import PsoHeader from "../header";
-import { formOp } from "../form-designer/mixin";
 import { Printer } from "../../mixin/form";
-import ListPrinter from "./list";
+import FormProxy from "../printer-designer/formProxy";
 
 export default {
-  mixins: [formOp, Printer],
+  mixins: [Printer],
   props: ["params"],
-  components: { PsoHeader, ListPrinter },
+  components: { PsoHeader },
   data() {
     return {
       initializing: true,
@@ -57,6 +55,7 @@ export default {
       templates: [],
       curTemplateId: "",
       curTemplate: null,
+      formProxy: null,
     };
   },
   computed: {
@@ -73,10 +72,7 @@ export default {
     },
   },
   async created() {
-    await this.makeFormStore(this.code);
-    if (this.formStore) {
-      await this.loadTemplate();
-    }
+    await this.loadTemplate();
     this.initializing = false;
   },
   methods: {
@@ -99,32 +95,39 @@ export default {
     },
     setCurTemplate() {
       this.curTemplate = null;
-      this.$nextTick(() => {
+      this.$nextTick(async () => {
         this.curTemplate = this.curTemplateId ? _.find(this.templates, { id: this.curTemplateId }) : null;
+        if (this.curTemplate.type === "1" || (this.curTemplate.type === "2" && this.curTemplate.source === "2")) {
+          this.formProxy = new FormProxy({ code: this.code, source: this.curTemplate.source });
+          await this.formProxy.analyze({ asstable: true });
+        }
       });
     },
-    print() {
-      if (this.curTemplate.type === "1") {
-        this.createPDF(this.$refs.printer, this.formStore.data_name, true);
-      } else if (this.curTemplate.type === "2") {
-        this.$refs.printer.print();
-      }
-    },
     formChangeHandler(data) {
-      if (this.curTemplate.type === "1") {
-        this.setPrinterValue(data);
-      } else if (this.curTemplate.type === "2") {
-        this.$refs.printer.analyze(data);
-      }
+      this.setPrinterValue(data);
     },
-    async formLoadedHandler(store) {
+    formLoadedHandler(store) {
       this.printRef = this.$refs.printer;
       $(this.printRef).children("div table").addClass("bald");
       for (let key in store.instance) {
         if (store.cpntsMap[key]) {
-          await this.formChangeHandler({ cpnt: store.cpntsMap[key], value: store.cpntsMap[key].data._val });
+          this.setPrinterValue({ cpnt: store.cpntsMap[key], value: store.cpntsMap[key].data._val });
         } else {
-          await this.formChangeHandler({ cpnt: { data: { _fieldValue: key } }, value: store.instance[key] });
+          this.setPrinterValue({ cpnt: { data: { _fieldValue: key } }, value: store.instance[key] });
+        }
+      }
+    },
+    async print() {
+      if (this.curTemplate.type === "2") {
+        this.createPDF(this.$refs.printer, this.formStore.data_name, true);
+      } else if (this.curTemplate.type === "1") {
+        const data = await this.formProxy.fetch({ ids: this.instanceId });
+        const ret = await this.API.request("/api/form/data/print", {
+          data: { ...this.curTemplate, data, mainCode: this.formProxy.store.data_code, map: this.formProxy.getCpntMap() },
+        });
+        if (ret.success) {
+          // window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
+          window.open(`/pdf?url=/static/temp/${ret.data.name}.pdf`);
         }
       }
     },

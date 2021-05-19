@@ -10,6 +10,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@formulajs/formulajs": "^2.6.9",
     "@tinymce/tinymce-vue": "^3",
     "@vue/cli-plugin-babel": "~4.3.0",
     "@vue/cli-plugin-unit-mocha": "~4.3.0",

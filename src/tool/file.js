@@ -39,8 +39,8 @@ export function makeFiles({ files, urlField = "url", nameField = "name" }) {
         file.name = file[nameField] || file['filename'];
         file.url = file[urlField];
         file.percentage = 100;
-        file.isImg = isImages(file.url);
-        file.icon = encodeURI(getFileIcon(file.url, file.url));
+        file.isImg = file.isSrcImg || isImages(file.url);
+        file.icon = file.isSrcImg ? file.url : encodeURI(getFileIcon(file.url, file.url));
         if (file.res_id) file.leaf_id = file.res_id;
         file.style = {
             "background-image": `url(${file.icon})`

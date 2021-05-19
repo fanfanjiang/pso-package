@@ -158,6 +158,7 @@ import PermissionEntries from "./permission-entries";
 import EditorMenuItem from "./menu-item";
 import FormulaDesigner from "../form-designer/formula-designer";
 import { formOp } from "../form-designer/mixin";
+import FormProxy from "../printer-designer/formProxy";
 
 export default {
   components: { EditorMenuItem, EditorContent, EditorMenuBar, EditorFloatingMenu, FormulaDesigner },
@@ -172,13 +173,15 @@ export default {
       type: Array,
       default: [],
     },
-    options: {
-      type: Array,
-      default: [],
-    },
+    options: Array,
     saveButton: {
       type: Boolean,
       default: true,
+    },
+    code: String,
+    source: {
+      type: String,
+      default: "1",
     },
   },
   data() {
@@ -369,7 +372,13 @@ export default {
       content: this.content,
     });
   },
-  created() {
+  async created() {
+    if (!this.options && this.code) {
+      const formProxy = new FormProxy({ code: this.code, source: this.source });
+      await formProxy.analyze({ asstable: false });
+      this.options = formProxy.store.search({ onlyData: true, options: { db: true } });
+    }
+
     this.$on("field-click", async (node) => {
       this.curNode = node;
       let reviewNode;
@@ -488,6 +497,7 @@ export default {
 .wf-table-editor {
   position: relative;
   height: 100%;
+  overflow: auto;
   .wf-table-editor__save {
     position: absolute;
     left: 20px;

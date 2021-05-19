@@ -71,6 +71,7 @@ const FIELDS = {
   openLink: "",
   bindPlugin: "",
   linkParams: [],
+  diseditable: false,
 };
 
 const DEFAULT = [{ id: "add", name: "新增", deleteable: false }];

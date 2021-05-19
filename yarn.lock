@@ -828,6 +828,14 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@formulajs/formulajs@^2.6.9":
+  version "2.6.9"
+  resolved "https://registry.npmjs.org/@formulajs/formulajs/-/formulajs-2.6.9.tgz#7b8b2711c15ed18d8afa9ee043323969828de4be"
+  integrity sha512-9PF56t8h2OqjAAxw66EL5Qt9zgugMzzLBfsyQANV15TIZnwHBL4jHRVuvBUpLa9TeAtmvVA2UlMZ+6RDSin8oQ==
+  dependencies:
+    bessel "^1.0.2"
+    jstat "^1.9.2"
+
 "@handsontable/formulajs@^2.0.2":
   version "2.0.2"
   resolved "https://registry.npmjs.org/@handsontable/formulajs/-/formulajs-2.0.2.tgz#5be4b9226cc47811f646ae46b1b985230cd82995"

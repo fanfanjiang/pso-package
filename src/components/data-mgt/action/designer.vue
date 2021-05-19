@@ -12,7 +12,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="按钮放置位置">
-        <el-radio-group v-model="action.location">
+        <el-radio-group :disabled="action.id === 'add'" v-model="action.location">
           <el-radio label="1">数据表格上方</el-radio>
           <el-radio label="2">每行数据中</el-radio>
         </el-radio-group>
@@ -80,6 +80,9 @@
             </div>
           </div>
         </div>
+        <el-form-item label="禁止编辑">
+          <el-switch v-model="action.diseditable"> </el-switch>
+        </el-form-item>
         <el-form-item label="是否可批量执行">
           <el-radio-group v-model="action.batchable">
             <el-radio label="1">否</el-radio>

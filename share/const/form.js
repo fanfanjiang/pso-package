@@ -141,7 +141,8 @@ const CPNT = {
       { n: '_level', v: 1 },
       { n: '_bindTarget', v: '' },
       { n: '_bindField', v: { 1: '' } },
-      { n: '_option', v: [] }
+      { n: '_option', v: [] },
+      { n: '_checkStrictly', v: '0' },
     ]
   },
   time: {

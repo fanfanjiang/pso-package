@@ -119,6 +119,7 @@ import ViewTable from "./table";
 import Icon from "./icon";
 import WipeDialog from "./wipe-dialog";
 import MobileView from "./mobile-view";
+import { number } from "../../../share/const/form";
 
 export default {
   components: { FastSwitch, TableFun, DataFun, ViewTable, Icon, WipeDialog, MobileView },
@@ -138,8 +139,8 @@ export default {
       default: false,
     },
     operateWidth: {
-      type: String,
-      default: "100",
+      type: Number,
+      default: 0,
     },
     addable: {
       type: Boolean,
@@ -340,7 +341,6 @@ export default {
             this.makeKeys();
             this.store.fetchStatus();
           }),
-
           this.$watch("defKeys", () => {
             this.makeKeys();
             this.store.fetchStatus();

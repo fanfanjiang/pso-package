@@ -1,4 +1,4 @@
-import { CPNT, SUMMARY_OP } from "../const/form";
+import { CPNT, SUMMARY_OP, SYS_FIELDS } from "../const/form";
 import { FILTER_OP, FILTER_TYPE } from "../../share/const/filter";
 import { genComponentData } from '../components/form-designer/helper'
 import API from "../service/api.js";
@@ -107,15 +107,8 @@ export function makeFormByOther(data, onEach) {
  * @returns
  */
 export function makeSysFormFields({ allString = true } = {}) {
-    const sysFields = [
-        { _fieldValue: 'leaf_id', _fieldName: '数据ID', componentid: 'text' },
-        { _fieldValue: 'd_status', _fieldName: '表单状态', componentid: 'text' },
-        { _fieldValue: 'd_audit', _fieldName: '审核状态', componentid: 'text' },
-        { _fieldValue: 'd_stage', _fieldName: '审核阶段', componentid: 'text' },
-        { _fieldValue: 'creator', _fieldName: '表单创建人', componentid: 'text' },
-    ];
     const fields = [];
-    sysFields.forEach(f => {
+    SYS_FIELDS.forEach(f => {
         const field = genComponentData(f);
         field.__sys__ = '1';
         fields.push(field)

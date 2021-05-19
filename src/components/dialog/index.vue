@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :class="['pso-dialog', customclass, cid]"
+    :class="['pso-dialog', customclass, innerclass, cid]"
     :title="title"
     :visible="visible"
     :width="width"
@@ -18,7 +18,7 @@
     <template #title>
       <slot name="title"></slot>
     </template>
-    <div class="pso-dialog-body">
+    <div class="pso-dialog-body" :style="bodyStyle">
       <slot v-if="rendered"></slot>
     </div>
   </el-dialog>
@@ -49,13 +49,30 @@ export default {
       type: Boolean,
       default: false,
     },
+    noheader: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       rendered: false,
       startMask: false,
       cid: shortid.generate(),
+      innerclass: "",
     };
+  },
+  computed: {
+    bodyStyle() {
+      return {
+        height: `calc(100vh - ${this.noheader ? "0px" : "54px"} - ${this.top})`,
+      };
+    },
+  },
+  created() {
+    if (this.noheader) {
+      this.innerclass = "dialog-noheader";
+    }
   },
   watch: {
     visible(val) {

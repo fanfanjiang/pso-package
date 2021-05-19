@@ -94,13 +94,19 @@
               <el-option v-for="item in dimens" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="扩展字段1">
+            <el-input size="small" v-model="nodePayload.node.data.node_ext1" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="扩展字段2">
+            <el-input size="small" v-model="nodePayload.node.data.node_ext2" autocomplete="off"></el-input>
+          </el-form-item>
           <slot v-bind:node="nodePayload.node.data"></slot>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="nodePayload.showForm = false" size="small">取 消</el-button>
-          <el-button size="small" type="primary" @click="editNode" :loading="nodePayload.loading" :disabled="nodePayload.loading"
-            >确 定</el-button
-          >
+          <el-button size="small" type="primary" @click="editNode" :loading="nodePayload.loading" :disabled="nodePayload.loading">
+            确 定
+          </el-button>
         </div>
       </el-dialog>
     </div>

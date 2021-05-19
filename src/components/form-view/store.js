@@ -9,6 +9,7 @@ import XLSX from "xlsx";
 import { desensitize } from "../../utils/util";
 import ActionMGR from '../action/manager';
 import { filterByDecimal, filterByPercent } from "../../tool/form";
+import FormProxy from '../printer-designer/formProxy';
 
 export default class FormViewStore {
 
@@ -85,7 +86,6 @@ export default class FormViewStore {
             stage: "更改阶段",
         };
 
-
         this.addAction = null;
         this.fieldsRule = [];
         this.usedActionIds = [];
@@ -135,6 +135,7 @@ export default class FormViewStore {
 
         this.notifyCfg = null;
         this.notifyType = "formcopy";
+        this.printTemplates = [];
 
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
@@ -655,9 +656,13 @@ export default class FormViewStore {
     analyzeFormCfg(data, usedColumn) {
         this.formCfg = data;
 
-        const { opAuth, display_columns, stage_config, status_config, data_button, ext_config } = this.formCfg;
+        const { opAuth, display_columns, stage_config, status_config, data_button, ext_config, printer_config } = this.formCfg;
 
         this.store = new FormStore({ ...data, designMode: false, withSys: true });
+
+        if (printer_config) {
+            this.printTemplates = JSON.parse(printer_config);
+        }
 
         if (opAuth) {
             this.opAuth = opAuth.leaf_auth;
@@ -750,7 +755,12 @@ export default class FormViewStore {
         } else {
             this.fields = fields;
         }
-        this.fields = _.orderBy(this.fields, ["show", "number"], ["asc", "asc"]);
+
+        this.fields = this.makeFieldsOrder(this.fields);
+    }
+
+    makeFieldsOrder(fields) {
+        return _.orderBy(fields, ["show", "number"], ["asc", "asc"])
     }
 
     analyzeColumn(cfg, defKey) {
@@ -782,6 +792,10 @@ export default class FormViewStore {
             this.usedActionIds = exist.actions;
             if (!!exist.expanding) {
                 this.showFilter = true;
+            }
+
+            if (exist.limit) {
+                this.limit = exist.limit;
             }
 
             if (exist.qsearch) {
@@ -882,7 +896,7 @@ export default class FormViewStore {
         const { display_columns } = this.formCfg;
         const config = JSON.parse(display_columns);
         const index = _.findIndex(config.column, { name });
-        const column = index !== -1 ? config.column[index].data : null;
+        const column = index !== -1 ? this.makeFieldsOrder(config.column[index].data) : null;
         return withIndex ? { column, index } : column;
     }
 
@@ -1168,27 +1182,6 @@ export default class FormViewStore {
         }
     }
 
-    async searchFiles({ id, store, data, ids }, files) {
-        if (!store && id) {
-            const ret = await API.formsCfg({ data: { id, auth: 1 }, method: "get" });
-            store = new FormStore({ ...ret.data, designMode: false, withSys: true });
-        }
-        if (!data && ids) {
-            const ret = await API.searchForm({ form_code: id, leaf_auth: 4, keys: { leaf_id: { type: 4, value: ids } } });
-            data = ret.data;
-        }
-        if (!store) return;
-        const fileCpnts = store.search({ options: { componentid: 'attachment' }, onlyData: true });
-        fileCpnts.forEach(cpnt => {
-            for (let d of data) {
-                if (d[cpnt._fieldValue]) {
-                    d[cpnt._fieldValue].split(',').forEach(ath => files[ath] = '')
-                }
-            }
-        })
-        return store.search({ options: { componentid: 'asstable' }, onlyData: true });
-    }
-
     async makeCarbonCopy(usersList) {
         if (!this.selectedList.length) {
             return this.$vue.$message({ message: '请选择数据', type: 'warning' });
@@ -1213,6 +1206,27 @@ export default class FormViewStore {
         if (ret) {
             this.$vue.ResultNotify(ret);
         }
+    }
+
+    async searchFiles({ id, store, data, ids }, files) {
+        if (!store && id) {
+            const ret = await API.formsCfg({ data: { id, auth: 1 }, method: "get" });
+            store = new FormStore({ ...ret.data, designMode: false, withSys: true });
+        }
+        if (!data && ids) {
+            const ret = await API.searchForm({ form_code: id, leaf_auth: 4, keys: { leaf_id: { type: 4, value: ids } } });
+            data = ret.data;
+        }
+        if (!store) return;
+        const fileCpnts = store.search({ options: { componentid: 'attachment' }, onlyData: true });
+        fileCpnts.forEach(cpnt => {
+            for (let d of data) {
+                if (d[cpnt._fieldValue]) {
+                    d[cpnt._fieldValue].split(',').forEach(ath => files[ath] = '')
+                }
+            }
+        })
+        return store.search({ options: { componentid: 'asstable' }, onlyData: true });
     }
 
     async saveFiles() {
@@ -1255,14 +1269,43 @@ export default class FormViewStore {
         const baseWidth = 40;
         const textWidth = 12;
         const figure = (text) => {
-            return baseWidth + (text ? text.length : 4) * textWidth
+            return baseWidth + (text ? text.length : 4) * textWidth;
         }
-        return btns.reduce(function (a, b) {
+        const width = btns.reduce(function (a, b) {
             if (typeof a === 'object') {
                 a = a[name];
                 b = b[name];
             }
             return figure(a) + figure(b);
-        }) + (btns.length - 1) * 10
+        }) + (btns.length - 1) * 10;
+        return width;
+    }
+
+    async printInBatches({ id, callback }) {
+
+        const template = _.find(this.printTemplates, { id });
+
+        if (template) {
+            let ids = this.selectedList;
+            if (!ids.length) {
+                ids = await this.fetchAllManually();
+            }
+
+            const { mode } = template;
+
+            if (!this.formProxy) {
+                this.formProxy = new FormProxy({ store: this.store });
+                await this.formProxy.analyzeAsstable(this.store);
+                this.formProxyMap = this.formProxy.getCpntMap();
+            }
+
+            const data = await this.formProxy.fetch({ ids, mode });
+            const ret = await API.request("/api/form/data/print", { data: { ...template, data, mainCode: this.store.data_code, map: this.formProxyMap } });
+            if (ret.success) {
+                // window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
+                window.open(`/pdf?url=/static/temp/${ret.data.name}.pdf`);
+            }
+            callback && callback();
+        }
     }
 }

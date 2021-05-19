@@ -28,6 +28,9 @@
               <el-form-item label="显示筛选" style="margin-bottom: 10px">
                 <el-switch v-model="col.expanding"></el-switch>
               </el-form-item>
+              <el-form-item label="每页数量" style="margin-bottom: 10px">
+                <el-input-number size="mini" v-model="col.limit" controls-position="right" :min="5"></el-input-number>
+              </el-form-item>
               <el-divider content-position="left">手机视图配置</el-divider>
               <el-form-item label="标题字段" style="margin-bottom: 10px">
                 <el-select size="mini" filterable clearable v-model="col.fieldTitle">
@@ -176,6 +179,7 @@ const BASE = {
   timeAgo: true,
   qsearch: "d_name",
   expanding: false,
+  limit: 20,
 };
 export default {
   props: ["data", "defCol", "actions"],

@@ -287,4 +287,17 @@ export default class STAVStore extends FVStore {
             super.exportCurPage('数据')
         }
     }
+
+    showActInst(data) {
+        this.dataDefault = null;
+        if (data.leaf_id) {
+            this.showInstance(data);
+            this.switchable = false;
+        } else {
+            for (let key in data) {
+                this.setDefaultData(key, data[key]);
+            }
+            this.newActInst();
+        }
+    }
 }

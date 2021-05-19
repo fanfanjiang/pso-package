@@ -150,6 +150,7 @@ export default {
       clickCount: 0,
       showWFSelector: false,
       waitedData: null,
+      operateWidth: 0,
     };
   },
   computed: {
@@ -199,7 +200,7 @@ export default {
       return this.params.operate || !!this.tableActions.length;
     },
     finalOptWidth() {
-      return (this.params.operateWidth || 0) + this.store.figureBtnWidth({ btns: this.tableActions });
+      return this.operateWidth + this.store.figureBtnWidth({ btns: this.tableActions });
     },
   },
   watch: {
@@ -223,6 +224,9 @@ export default {
           this.store.$vue.$emit("data-changed", { leaf_id, op: 2, formData });
         }
       });
+    }
+    if (this.params.operate) {
+      this.operateWidth = parseInt(this.params.operateWidth || 0);
     }
   },
   mounted() {

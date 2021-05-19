@@ -121,6 +121,7 @@ export const formOp = {
             fields = _.orderBy(fields, ["is_sys"], ["asc"]);
 
             return fields;
-        }
+        },
+
     }
 };

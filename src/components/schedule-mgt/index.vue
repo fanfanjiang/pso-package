@@ -43,7 +43,6 @@
             <el-table-column prop="job_group" label="分组"></el-table-column>
             <el-table-column prop="job_name" label="名称"></el-table-column>
             <el-table-column prop="job_trigger" label="触发器"></el-table-column>
-            <el-table-column prop="job_config" label="脚本"></el-table-column>
             <el-table-column prop="job_key" label="执行类名"></el-table-column>
             <el-table-column prop="job_map" label="配置参数"></el-table-column>
             <el-table-column prop="job_note" label="说明"></el-table-column>

@@ -198,6 +198,16 @@ export default {
 
       mainData.leaf_id = this.store.instance_id || this.store.beInstanceId;
 
+      //是否需要将一些系统字段放进去？？？
+      // if (this.store.instance_id) {
+      //   ["d_status", "d_audit", "d_stage"].forEach((field) => {
+      //     console.log(field, typeof this.store.instance[field] !== "undefined");
+      //     if (typeof this.store.instance[field] !== "undefined") {
+      //       mainData[field] = this.store.instance[field];
+      //     }
+      //   });
+      // }
+
       //最终组合的数据
       const data = {
         data_name: this.store.data_name,

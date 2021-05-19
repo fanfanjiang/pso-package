@@ -180,7 +180,7 @@ export default {
 .fvtree-set {
   margin-bottom: 20px;
   .el-form-item {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
   }
 }
 </style>

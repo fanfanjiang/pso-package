@@ -162,9 +162,15 @@ export default class FormStore {
     _forEach(fun) {
         for (let key in this.cpntsMap) {
             if (!this.cpntsMap[key].CPNT.layout) {
-                fun && fun(this.cpntsMap[key]);
+                fun && fun(this.cpntsMap[key], key);
             }
         }
+    }
+
+    getCpntDataMap() {
+        const map = {};
+        this._forEach((cpnt, key) => map[key] = cpnt.data);
+        return map;
     }
 
     //获取所有表单字段值，系统和非系统的

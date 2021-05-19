@@ -4,7 +4,7 @@
       <pso-tree-common
         ref="tree"
         :rootable="true"
-        :edit-mode="false"
+        :edit-mode="!!mgtable"
         :request-options="treeOptions"
         :check-auth="!mgtable"
         @node-click="nodeClickHandler"

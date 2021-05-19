@@ -1,16 +1,19 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <img v-if="cpnt.data.__showVal__" :src="cpnt.data.__showVal__" alt="二维码" />
+    <pso-file-list :files="fileProxy" :remove="false" :downloadable="false"></pso-file-list>
   </pso-label>
 </template>
 <script>
 import cpntMixin from "../mixin";
 import { cpntFix } from "../mixins";
+import { makeFiles } from "../../../tool/file";
+
 export default {
   mixins: [cpntMixin, cpntFix],
   data() {
     return {
       QRtext: "",
+      fileProxy: [],
     };
   },
   created() {
@@ -29,8 +32,9 @@ export default {
     async genQRcode() {
       if (this.QRtext) {
         this.cpnt.data.__showVal__ = await QRCode.toDataURL(this.QRtext);
-        console.log(JSON.parse(this.QRtext))
-        this.cpnt.data._val = !this.cpnt.data._val;
+        this.cpnt.data._val = this.QRtext;
+        this.fileProxy = [{ res_path: this.cpnt.data.__showVal__, res_name: this.cpnt.data._fieldName, isSrcImg: true }];
+        makeFiles({ files: this.fileProxy, urlField: "res_path", nameField: "res_name" });
       }
     },
   },

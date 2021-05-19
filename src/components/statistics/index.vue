@@ -81,7 +81,7 @@
               <template #default>
                 <el-table-column v-if="checkable" type="selection" width="40" header-align="center" align="center"></el-table-column>
                 <el-table-column type="index" label="序号" :index="1" width="50" header-align="center" align="center"></el-table-column>
-                <template v-if="store.header">
+                <template v-if="store.header && store.header.length">
                   <custom-column v-for="(h, i) of store.header" :key="i" :col="h"></custom-column>
                 </template>
                 <template v-else>
@@ -198,8 +198,9 @@ export default {
       return {
         formId: this.actioning ? this.actioning.formStore.data_code : "",
         dataId: this.store.dataId,
-        editable: true,
+        editable: this.actioning ? !this.actioning.diseditable : true,
         deletable: false,
+        dataDefault: this.store.dataDefault,
         extendAuth: this.store.actionMGR.fieldsRule,
         befSaveFunc: this.store.actionMGR.checkBefActionScript.bind(this.store.actionMGR),
       };
