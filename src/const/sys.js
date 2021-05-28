@@ -75,6 +75,7 @@ export const FORM_COLUMN_FIELDS = {
     relatedShowField: "",
     widthAuto: true, //自动
     fillRemain: false, //不换行
+    searchop: ''
 }
 
 export const STATIC_COLUMN_FIELDS = {

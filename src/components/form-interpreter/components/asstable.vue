@@ -281,6 +281,7 @@ export default {
       return {
         searchType: this.authCfg.searchType,
         auth_config: this.authCfg.authCfg,
+        useCloumn: this.cpnt.data._chooseFields,
       };
     },
     showResult() {

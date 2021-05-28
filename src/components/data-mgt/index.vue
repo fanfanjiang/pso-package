@@ -35,7 +35,7 @@
           <template v-if="!!curNode.is_leaf">
             <pso-form-view v-show="curTab === 'preview'" :cfg-id="curNode.node_name" :view-auth="4" wipeable wipeallable> </pso-form-view>
             <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
-            <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData" :actions="actions"></form-column>
+            <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData" :actions="actions" :store="formStore"></form-column>
             <form-action v-if="curTab === 'action' && formStore" :actions="actions" :store="formStore"></form-action>
             <form-status
               v-if="curTab === 'status' && formStore"

@@ -66,6 +66,14 @@ const FILTER_OP = {
         type: 'daterange',
         format: 'yyyy-MM-dd'
     },
+    op17: {
+        id: 'op17',
+        name: '在日期时间围内',
+        op: [OP_TYPE.op4, OP_TYPE.op6],
+        arraytype: true,
+        type: 'datetimerange',
+        format: 'yyyy-MM-dd HH:mm:ss'
+    },
     op13: {
         id: 'op13',
         name: '在月范围内',
@@ -170,6 +178,7 @@ const FILTER_TYPE = {
         name: '时间',
         op: [
             { ...FILTER_OP.op1, match: 4 },
+            { ...FILTER_OP.op9, match: 4 },
             { ...FILTER_OP.op2, match: 4 },
             { ...FILTER_OP.op3, match: 4 },
             { ...FILTER_OP.op4, match: 4 },
@@ -179,6 +188,7 @@ const FILTER_TYPE = {
             { ...FILTER_OP.op13, match: 6 },
             { ...FILTER_OP.op14, match: 6 },
             { ...FILTER_OP.op15, match: 6 },
+            { ...FILTER_OP.op17, match: 6 },
             { ...FILTER_OP.op16, match: 8 },
             // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
             // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },

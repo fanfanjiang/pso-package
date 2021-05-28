@@ -275,8 +275,6 @@ export default {
           if (!data.user) {
             return this.$message("请完善信息");
           }
-        } else {
-          // delete data.user;
         }
         data.user_pwd = md5(this.data.user_pwd);
       } else {
@@ -293,7 +291,9 @@ export default {
       const ret = await this.API.addUser(data);
       this.ResultNotify(ret);
       if (ret.success) {
-        this.$emit("adduser", [{ user_id: this.data.user }]);
+        if (data.user) {
+          this.$emit("adduser", [{ user_id: data.user }]);
+        }
       }
       this.fetch();
       this.showEditor = false;

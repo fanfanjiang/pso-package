@@ -66,9 +66,6 @@ export default class API {
         }
 
         try {
-            //delete处理
-            if (method === 'delete') data = { data: data };
-
             const ret = await axios({ method, url, data, headers });
 
             const message = ret.msg || ret.message;
@@ -79,36 +76,40 @@ export default class API {
             return ret;
 
         } catch (error) {
-            console.log(error);
-            if (error.response && error.response.status === 401) {
+            if (error.response) {
+                if (error.response.status === 401) {
+                    const rft = Auth.getRefreshToken();
+                    if (rft) {
 
-                const rft = Auth.getRefreshToken();
-                if (rft) {
+                        const oriRequest = new Promise((resolve) => {
+                            this.cachedFun.push(async () => {
+                                resolve(this.request(..._arguments));
+                            });
+                        })
 
-                    const oriRequest = new Promise((resolve) => {
-                        this.cachedFun.push(async () => {
-                            resolve(this.request(..._arguments));
-                        });
-                    })
-
-                    if (!this.refreshing) {
-                        this.refreshing = true;
-                        const refreshRet = await this.request('/refresh', { data: { rft } });
-                        if (refreshRet && refreshRet.success) {
-                            Auth.setToken(refreshRet.data.token);
-                            this.refreshing = false;
-                            while (this.cachedFun.length) {
-                                const fun = this.cachedFun.shift();
-                                fun();
+                        if (!this.refreshing) {
+                            this.refreshing = true;
+                            const refreshRet = await this.request('/refresh', { data: { rft } });
+                            if (refreshRet && refreshRet.success) {
+                                Auth.setToken(refreshRet.data.token);
+                                this.refreshing = false;
+                                while (this.cachedFun.length) {
+                                    const fun = this.cachedFun.shift();
+                                    fun();
+                                }
+                            } else {
+                                this.doAuthError();
                             }
-                        } else {
-                            this.doAuthError();
                         }
-                    }
 
-                    return oriRequest;
+                        return oriRequest;
+                    }
+                    this.doAuthError();
                 }
-                this.doAuthError();
+
+                if (error.response.status === 404) {
+                    Message({ showClose: true, message: "网络繁忙，请稍后再试", type: 'warning' });
+                }
             }
         }
     }
@@ -268,6 +269,14 @@ export default class API {
     static async ftrcfg(params) {
         try {
             return await this.RESTful('/api/ftrcfg', Object.assign({ idField: 'solr_id' }, params));
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async tagtree(params) {
+        try {
+            return await this.RESTful('/api/tagtree', Object.assign({ idField: 'tag_no' }, params));
         } catch (error) {
             throw error;
         }
@@ -1119,13 +1128,13 @@ axios.interceptors.response.use((response) => {
         //     const decrypted = sm2.doDecrypt(response.data.data, privateKey, 1);
         //     response.data = JSON.parse(decrypted);
         // }
+        if (response.data && response.data['__auth__']) {
+            API.handleAppAuth && API.handleAppAuth(response.data['__auth__']);
+        }
         return Promise.resolve(response.data);
     } else {
         return Promise.reject(response);
     }
 }, (error) => {
-    if (error.response && error.response.status === 403) {
-        API.handleUnapprovedError && API.handleUnapprovedError();
-    }
     return Promise.reject(error);
 });

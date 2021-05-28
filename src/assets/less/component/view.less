@@ -95,6 +95,8 @@
 
             .pso-view-header__l {
                 margin-bottom: 10px;
+                display: flex;
+                align-items: center;
             }
 
             .pso-view-header__r {
@@ -106,15 +108,23 @@
                 align-items: center;
                 color: #666;
 
-                i {
+                >i {
                     font-size: 18px;
                 }
 
-                span {
+                >span {
                     font-weight: bold;
                     font-size: 17px;
                     margin-left: 5px;
                     .show-a-line();
+                }
+
+                .pso-view-header-tip {
+                    display: flex;
+                    align-items: center;
+                    font-size: 12px;
+                    color: #999;
+                    margin-left: 10px;
                 }
             }
 
@@ -239,6 +249,7 @@
     .view-data-fun__actions,
     .el-dropdown,
     button {
+
         &+.view-data-fun__actions,
         &+.el-dropdown,
         &+button {

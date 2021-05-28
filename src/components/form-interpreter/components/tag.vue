@@ -17,6 +17,7 @@
         :tree-option="cpnt.data._treeOptions"
         :pattern="cpnt.data._type"
         :source="cpnt.data._source"
+        :soul="cpnt.data._soul"
         @confirm="handleTagAdd"
         :filter="filter"
       >
@@ -47,11 +48,14 @@ export default {
     treeMode() {
       return this.cpnt.data._source === "tree" || this.cpnt.data._source === "folder";
     },
+    shitMode() {
+      return this.cpnt.data._soul === "2";
+    },
     tagIdName() {
-      return this.treeMode ? "node_id" : "tag_no";
+      return this.treeMode && !this.shitMode ? "node_id" : "tag_no";
     },
     tagDisplayName() {
-      return this.treeMode ? "node_display" : "tag_name";
+      return this.treeMode && !this.shitMode ? "node_display" : "tag_name";
     },
     filter() {
       return Object.values(this.filterCache).filter((d) => d);
@@ -92,27 +96,24 @@ export default {
         this.$set(this.filterCache, cpnt.data._fieldValue, cpnt.data._val);
       }
     },
-    async setDataByIds(tagData) {
-      if (tagData && typeof tagData === "string") {
-        tagData = tagData.split(",");
+    async setDataByIds(data) {
+      if (data && typeof data === "string") {
+        data = data.split(",");
       }
       this.loading = true;
       let source = [];
-      let idName = "";
       if (!this.tagTrees.length || !this.tagCollection.length) {
         await this.prepareData();
       }
-      if (this.treeMode) {
+      if (this.treeMode && !this.shitMode) {
         source = this.tagTrees;
-        idName = "node_id";
-        tagData = tagData.map((val) => parseInt(val));
+        data = data.map((val) => parseInt(val));
       } else {
         source = this.tagCollection;
-        idName = "tag_no";
       }
       const list = [];
-      tagData.forEach((id) => {
-        const exist = _.find(source, { [idName]: id });
+      data.forEach((id) => {
+        const exist = _.find(source, { [this.tagIdName]: id });
         if (exist) {
           list.push(exist);
         }
@@ -121,8 +122,13 @@ export default {
       this.loading = false;
     },
     async prepareData() {
-      this.tagTrees = (await this.API.trees({ data: { dimen: 5 } })).data.tagtree;
-      this.tagCollection = (await this.API.tag({ data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } })).data;
+      const options = { data: { keys: JSON.stringify({}), page: 0, limit: 9999999 } };
+      if (!this.shitMode) {
+        this.tagTrees = (await this.API.trees({ data: { dimen: 5 } })).data.tagtree;
+        this.tagCollection = (await this.API.tag(options)).data;
+      } else {
+        this.tagCollection = (await this.API.tagtree(options)).data;
+      }
     },
     handleTagAdd(data) {
       this.handleAddSelection(data);

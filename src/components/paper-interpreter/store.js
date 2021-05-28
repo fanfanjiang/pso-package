@@ -213,7 +213,9 @@ export default class Interpreter extends Designer {
 
     addCpnt(cpnt = {}, urine = {}) {
         const entity = super.addCpnt(cpnt, urine);
-        Vue.set(entity, 'questions', []);
+        if (entity) {
+            Vue.set(entity, 'questions', []);
+        }
         return entity;
     }
 

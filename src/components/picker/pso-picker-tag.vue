@@ -14,6 +14,7 @@
           <div v-bar>
             <div>
               <pso-tree-common
+                v-if="soul === '1'"
                 ref="tree"
                 :rootable="false"
                 :edit-mode="false"
@@ -25,6 +26,19 @@
                 :node-data-filter="treeFilterHandler"
                 :tree-style="{ 'box-shadow': 'none', 'padding-right': '15px' }"
               ></pso-tree-common>
+              <pso-tagtree
+                v-else
+                ref="tree"
+                :rootable="true"
+                :edit-mode="false"
+                :request-options="treeOptions"
+                :check-after-load="autoNodeClick"
+                :node-data-filter="treeFilterHandler"
+                :tree-style="{ 'box-shadow': 'none', 'padding-right': '15px' }"
+                :show-checkbox="showCheckbox"
+                @node-click="nodeClickHandler"
+                @node-checked="nodeCheckHandler"
+              ></pso-tagtree>
             </div>
           </div>
         </div>
@@ -104,6 +118,10 @@ export default {
     treeOption: {
       type: String,
       default: "",
+    },
+    soul: {
+      type: String,
+      default: "1",
     },
     filter: [Array, String],
   },
@@ -218,7 +236,6 @@ export default {
       if (this.showCenter) {
         ret = await this.API.getTagLeafData({ tag_no });
       } else {
-        console.log(this.options.keys);
         ret = await this.API.tag({
           data: { ...this.options, keys: JSON.stringify(this.options.keys), page: this.options.start - 1 },
         });
@@ -257,7 +274,7 @@ export default {
       this.show = false;
     },
     checkSelectedNodes(list) {
-      this.selected = list.filter((node) => (this.source === "tree" ? node.is_leaf : !node.is_leaf));
+      this.selected = this.soul === "1" ? list.filter((node) => (this.source === "tree" ? node.is_leaf : !node.is_leaf)) : list;
     },
     async nodeClickHandler(node) {
       if (this.treeMode) {

@@ -1,17 +1,24 @@
 <template>
   <common-panel :cpnt="cpnt" info="可以选择标签插入表单" :needPlaceholder="true" :needDefaultValue="false">
-    <el-form-item label="源类型">
-      <el-radio-group size="small" v-model="cpnt.data._source" @change="handleSourceChange">
-        <el-radio label="tree">树节点</el-radio>
-        <el-radio label="folder">文件夹</el-radio>
-        <el-radio label="table">列表</el-radio>
-        <!-- <el-radio label="data">数据</el-radio> -->
+    <el-form-item label="标签类型">
+      <el-radio-group size="small" v-model="cpnt.data._soul" @change="soulChange">
+        <el-radio label="1">普通标签</el-radio>
+        <el-radio label="2">维度标签</el-radio>
       </el-radio-group>
     </el-form-item>
     <el-form-item label="单选多选">
       <el-radio v-model="cpnt.data._type" label="radio">单选</el-radio>
       <el-radio v-model="cpnt.data._type" label="checkbox">多选</el-radio>
     </el-form-item>
+    <template v-if="cpnt.data._soul === '1'">
+      <el-form-item label="源类型">
+        <el-radio-group size="small" v-model="cpnt.data._source" @change="handleSourceChange">
+          <el-radio label="tree">树节点</el-radio>
+          <el-radio label="folder">文件夹</el-radio>
+          <el-radio label="table">列表</el-radio>
+        </el-radio-group>
+      </el-form-item>
+    </template>
     <el-form-item label="值类型">
       <el-select size="small" v-model="dataType" clearable>
         <el-option v-for="item in treeTypes" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
@@ -135,6 +142,11 @@ export default {
     },
     handleSourceChange() {
       this.resetPicker({ idName: this.tagIdName });
+    },
+    soulChange() {
+      if (this.cpnt.data._soul === "2") {
+        this.cpnt.data._source = "tree";
+      }
     },
   },
 };

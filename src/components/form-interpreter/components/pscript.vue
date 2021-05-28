@@ -68,6 +68,7 @@ import { pickerMixin } from "../../../mixin/picker";
 import debounce from "throttle-debounce/debounce";
 import shortid from "shortid";
 import { FILTER_TYPE } from "../../../../share/const/filter";
+import { nanoid } from "nanoid";
 
 export default {
   mixins: [
@@ -244,7 +245,7 @@ export default {
           }
 
           data.forEach((d) => {
-            d.leaf_id = shortid.generate();
+            d.leaf_id = nanoid(20);
             d.__temporary__ = true;
             if (autoGen) {
               let limit = Infinity;

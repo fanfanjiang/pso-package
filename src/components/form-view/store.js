@@ -102,6 +102,7 @@ export default class FormViewStore {
 
         //加载后立即打开的实例
         this.insttogo = '';
+        this.insttogofield = 'leaf_id';
 
         //操作控制
         this.autoChange = true; //是否自动修改数据状态
@@ -425,7 +426,7 @@ export default class FormViewStore {
         }
 
         if (this.insttogo) {
-            params.keys.leaf_id = { value: this.insttogo, type: 1 };
+            params.keys[this.insttogofield] = { value: this.insttogo, type: 1 };
         }
 
         console.log(params.keys);
@@ -545,7 +546,7 @@ export default class FormViewStore {
 
     checkInstToGO() {
         if (this.insttogo) {
-            if (this.instances.length && this.insttogo === this.instances[0].leaf_id) {
+            if (this.instances.length && this.insttogo === this.instances[0][this.insttogofield]) {
                 this.showInstance(this.instances[0]);
             } else {
                 this.$vue.$message.warning("未找到数据或你无权限查看");
@@ -574,6 +575,7 @@ export default class FormViewStore {
         try {
 
             this.dataDefault = null;
+            this.defaultKeys = {};
 
             if (where) {
                 for (let key in where) {
@@ -733,7 +735,15 @@ export default class FormViewStore {
                 if (exist) {
                     Object.assign(f, exist, { display: f.display, field_name: f.field_name, show: f.show });
                     if (f.searchable && CPNT[exist.componentid].op) {
-                        conditions.push({ cpnt: exist, field: exist.fid, op: "", data: "", match: "" });
+                        const cdt = { cpnt: exist, field: exist.fid, op: "", data: "", match: "" }
+                        if (f.searchop) {
+                            const opExist = _.find(CPNT[exist.componentid].op, { id: f.searchop });
+                            if (opExist) {
+                                cdt.op = opExist.id;
+                                cdt.match = opExist.match;
+                            }
+                        }
+                        conditions.push(cdt);
                     }
                 } else {
                     f.fid = f.fid || f.field_name;
@@ -1302,8 +1312,8 @@ export default class FormViewStore {
             const data = await this.formProxy.fetch({ ids, mode });
             const ret = await API.request("/api/form/data/print", { data: { ...template, data, mainCode: this.store.data_code, map: this.formProxyMap } });
             if (ret.success) {
-                // window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
-                window.open(`/pdf?url=/static/temp/${ret.data.name}.pdf`);
+                window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
+                // window.open(`/pdf?url=/static/temp/${ret.data.name}.pdf`);
             }
             callback && callback();
         }

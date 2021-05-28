@@ -24,6 +24,7 @@
                 <i class="el-icon-document"></i>
                 <span>{{ pageTitle }}</span>
               </div>
+              <slot name="info"></slot>
             </div>
             <div class="pso-view-header__r" v-show="store.authViews.length > 1 && !params.hideAuthTab">
               <div class="pso-view-authtab">
@@ -119,7 +120,6 @@ import ViewTable from "./table";
 import Icon from "./icon";
 import WipeDialog from "./wipe-dialog";
 import MobileView from "./mobile-view";
-import { number } from "../../../share/const/form";
 
 export default {
   components: { FastSwitch, TableFun, DataFun, ViewTable, Icon, WipeDialog, MobileView },
@@ -301,6 +301,7 @@ export default {
           defSearchType: this.params.searchType,
           autoChange: this.autoChange,
           insttogo: this.params.insttogo,
+          insttogofield: this.params.insttogofield || "leaf_id",
           wipeallable: this.wipeallable,
           sourceType: "0",
           fetchMode: this.__isMobile__ ? "2" : "1",

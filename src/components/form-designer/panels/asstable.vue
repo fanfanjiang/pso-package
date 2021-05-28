@@ -33,6 +33,11 @@
           <el-option v-for="(c, i) in column" :key="i" :label="c.name" :value="c.name"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="选择筛选列表" v-loading="loading">
+        <el-select clearable size="mini" v-model="cpnt.data._chooseFields" placeholder="请选择">
+          <el-option v-for="(c, i) in column" :key="i" :label="c.name" :value="c.name"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="开启按钮功能">
         <el-switch size="mini" v-model="cpnt.data._actionable"></el-switch>
       </el-form-item>

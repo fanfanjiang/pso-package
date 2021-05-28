@@ -71,6 +71,7 @@ export default {
       this.store.pagination = { limit: 999, start: 0 };
       this.store.unreadable = true;
       await this.store.fetch();
+
       this.$store.state.base.notify.unread = this.store.unread;
 
       this.store.instances = this.store.instances.filter((d) => d.msg_notice === "1");

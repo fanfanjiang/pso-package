@@ -131,7 +131,8 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 selectedTrash: [],
                 trashCfg: null,
                 treeList: [],
-                checkedDefaultNodeid: ''
+                checkedDefaultNodeid: '',
+                extendConfig: null
             }
         },
         computed: {
@@ -156,16 +157,16 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             if (!this.staticMode) {
                 this.requestOptionHandler(this.requestOptions);
 
+                const ret = await this.API.getTreeDimen();
+                if (ret.success) {
+                    this.dimens = ret.data;
+                }
+
                 if (!this.lazyLoad) {
                     this.loadWholeTree();
                 } else {
                     //懒加载时关闭自动展开全部
                     this.defaultExpendAll = false;
-                }
-
-                const ret = await this.API.getTreeDimen();
-                if (ret.success) {
-                    this.dimens = ret.data;
                 }
             }
         },
@@ -182,11 +183,10 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
 
                 if (this.checkAfterLoad) {
                     this.$nextTick(() => {
-                        console.log(this.checkedDefaultNodeid);
                         if (this.checkedDefaultNodeid) {
                             this.setCurrentNode([this.$refs[treeRef].getNode(this.checkedDefaultNodeid).data]);
                         } else {
-                            this.setCurrentNode(this.treeData, 3);
+                            this.setCurrentNode(this.treeData, 4);
                         }
                     });
                 }
@@ -211,6 +211,10 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             async getNodeData(node, resolve) {
                 const options = { ...this.where, rootable: this.rootable, lazy: this.lazy };
 
+                if (!this.dimens.length) {
+                    options.extend = '1';
+                }
+
                 if (this.checkAuth) {
                     options.authtype = ''
                 }
@@ -218,9 +222,14 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 if (node) {
                     options.node_level = node.level
                 }
+
                 options.appid = this.appid;
 
                 const ret = await this.API.trees({ data: options });
+
+                if (ret.data.dimens) {
+                    this.dimens = ret.data.dimens;
+                }
 
                 let treeList = ret.data.tagtree;
 
@@ -352,11 +361,31 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 typeof data.is_pass === 'undefined' && (data.is_pass = 0);
                 return { data };
             },
+            getDimenConfig() {
+                const { dimen: node_dimen, data_type: dimen_tag } = this.where;
+                const exist = _.find(this.dimens, { node_dimen, dimen_tag });
+                if (exist) {
+                    return exist;
+                }
+            },
             setNodePayload({ parent, node }) {
                 this.nodePayload.parent = parent;
                 this.nodePayload.node = _.cloneDeep(node);
                 this.nodePayload.nodeRef = node;
                 this.nodePayload.formTitle = node.node_id ? '编辑' : '新增';
+
+                this.extendConfig = [];
+
+                const dimenConfig = this.getDimenConfig();
+                if (dimenConfig && dimenConfig.dimen_config) {
+                    const data = this.nodePayload.node.data;
+                    this.extendConfig = JSON.parse(dimenConfig.dimen_config).filter(d => d.enable);
+                    this.extendConfig.forEach(d => {
+                        if (typeof data[d.value] === 'undefined') {
+                            this.$set(data, d.value, '')
+                        }
+                    })
+                }
             },
             async deleteNode(data) {
                 return this.moveToTrash(data);
@@ -517,4 +546,4 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
             }
         },
     }
-} 
+}

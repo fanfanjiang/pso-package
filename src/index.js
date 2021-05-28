@@ -155,6 +155,9 @@ import PsoSearchEntry from "./components/search-entry";
 import PsoButtonTabs from "./components/button-tabs";
 import PsoCenterModule from "./components/module-mgt";
 
+import PsoTagtreeMgt from "./components/tag-tree/mgt";
+import PsoTagtree from "./components/tag-tree/index";
+
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
 import PsoFvWv from "./components/composite/fv-wv";
@@ -281,7 +284,9 @@ const components = {
     PsoButtonTabs,
 
     PsoCenterModule,
-
+    PsoTagtreeMgt,
+    PsoTagtree,
+    
     //混合视图
     PsoFvAst,
     PsoFvWv,
@@ -324,8 +329,8 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     if (API && API.handleAuthError) {
         BASEAPI.handleAuthError = API.handleAuthError;
     }
-    if (API && API.handleUnapprovedError) {
-        BASEAPI.handleUnapprovedError = API.handleUnapprovedError;
+    if (API && API.handleAppAuth) {
+        BASEAPI.handleAppAuth = API.handleAppAuth;
     }
 
     Vue.prototype.API = API || BASEAPI;

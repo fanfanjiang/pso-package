@@ -1,5 +1,5 @@
 <template>
-  <pso-grid-wrapper :cpnt="cpnt">
+  <pso-grid-wrapper ref="wrapper" :cpnt="cpnt" @checkmore="checkmore">
     <pso-super-view ref="view" v-show="false" :params="cpnt.data" :urine="cpnt.urine" @data-loaded="loadHandler"></pso-super-view>
     <pso-super-detail v-if="data" :instance="data" :fv-store="store" :params="cpnt.data"></pso-super-detail>
   </pso-grid-wrapper>

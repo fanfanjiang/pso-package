@@ -7,7 +7,7 @@
         </slot>
       </div>
       <div>
-        <i class="el-icon-more" v-if="cpnt.data.moreable" @click="$emit('checkmore')"></i>
+        <i style="color: inherit;" class="el-icon-more" v-if="cpnt.data.moreable" @click="$emit('checkmore')"></i>
         <slot name="action"></slot>
       </div>
     </div>

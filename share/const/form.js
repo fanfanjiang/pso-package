@@ -289,6 +289,7 @@ const CPNT = {
       { n: '_actionable', v: false },
       { n: '_relatedWF', v: '' },
       { n: '_clearCopy', v: '0' },
+      { n: '_chooseFields', v: '' },
     ]
   },
   assfield: {
@@ -438,6 +439,7 @@ const CPNT = {
       { n: '_source', v: 'tree' },
       { n: '_treeOptions', v: '' },
       { n: '_filterOptions', v: [] },
+      { n: '_soul', v: '1' },
     ],
     op: FILTER_TYPE.tag.op,
     fop: [{ ...OP_FILTER.op1 }],

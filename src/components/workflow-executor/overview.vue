@@ -35,7 +35,7 @@
         <i class="el-icon-s-check"></i>
         <span>当前审核人</span>
       </div>
-      <span>{{ store.data.curUsernames }}</span>
+      <span style="overflow: auto" :text="store.data.curUsernames">{{ store.data.curUsernames }}</span>
     </div>
   </div>
 </template>

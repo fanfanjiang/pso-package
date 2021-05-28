@@ -57,7 +57,7 @@
         </div>
       </div>
     </div>
-    <el-dialog width="30%" :append-to-body="true" title="维度编辑" :visible.sync="showEditor">
+    <el-dialog width="40%" :append-to-body="true" title="维度编辑" :visible.sync="showEditor">
       <el-form :model="curDimen" label-width="100px">
         <el-form-item label="维度标签名">
           <el-input size="small" v-model="curDimen.tag_name" autocomplete="off"></el-input>
@@ -68,11 +68,37 @@
           </el-select>
         </el-form-item>
       </el-form>
+      <div class="pso-table-controller">
+        <el-button size="mini" type="primary" plain @click="addHandler">添加扩展配置</el-button>
+      </div>
+      <el-table key="status" size="mini" border :data="proxy" style="width: 100%">
+        <el-table-column label="扩展字段" width="160">
+          <template slot-scope="scope">
+            <el-select size="mini" v-model="scope.row.value">
+              <el-option label="node_ext1" value="node_ext1"></el-option>
+              <el-option label="node_ext2" value="node_ext2"></el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="显示名称">
+          <template slot-scope="scope">
+            <el-input size="mini" v-model="scope.row.name" placeholder></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="启用" width="100">
+          <template slot-scope="scope">
+            <el-switch size="mini" v-model="scope.row.enable"></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="110" align="center">
+          <template slot-scope="scope">
+            <el-button size="mini" type="danger" @click="delHandler(scope.$index)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showEditor = false" size="mini">取 消</el-button>
-        <el-button size="mini" type="primary" @click="updateDimen(curDimen.dimen_tag ? 1 : 0)" :loading="saveing" :disabled="saveing"
-          >确 定</el-button
-        >
+        <el-button size="mini" type="primary" @click="updateDimen(curDimen.dimen_tag ? 1 : 0)" :loading="saveing">保 存</el-button>
       </div>
     </el-dialog>
   </div>
@@ -80,6 +106,11 @@
 <script>
 import { PagingMixin } from "../../mixin/view";
 import { DIMEN_TYPE } from "../../const/tree.js";
+const CONFIG = {
+  name: "",
+  value: "",
+  enable: true,
+};
 export default {
   mixins: [PagingMixin],
   data() {
@@ -95,6 +126,7 @@ export default {
       },
       saveing: false,
       DIMEN_TYPE: DIMEN_TYPE,
+      proxy: [],
     };
   },
   created() {
@@ -117,11 +149,12 @@ export default {
     },
     async updateDimen(optype) {
       this.saving = true;
+      this.curDimen.dimen_config = JSON.stringify(this.proxy);
       const ret = await this.API.updateTreeDimen({ ...this.curDimen, optype });
       this.saving = false;
       this.showEditor = false;
       this.checkRet(ret);
-      this.getData();
+      this.fetch();
     },
     newDimen() {
       this.curDimen = { tag_name: "", dimen_tag: "", node_dimen: "" };
@@ -129,6 +162,11 @@ export default {
     },
     editDimen(data) {
       this.curDimen = { ...data };
+      if (this.curDimen.dimen_config) {
+        this.proxy = JSON.parse(this.curDimen.dimen_config);
+      } else {
+        this.proxy = [];
+      }
       this.showEditor = true;
     },
     delDimen(data) {
@@ -140,6 +178,12 @@ export default {
     },
     getDname(v) {
       return _.find(DIMEN_TYPE, { v }).n;
+    },
+    addHandler() {
+      this.proxy.push(_.cloneDeep(CONFIG));
+    },
+    delHandler(index) {
+      this.proxy.splice(index, 1);
     },
   },
 };

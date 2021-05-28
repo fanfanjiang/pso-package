@@ -94,11 +94,8 @@
               <el-option v-for="item in dimens" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="扩展字段1">
-            <el-input size="small" v-model="nodePayload.node.data.node_ext1" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="扩展字段2">
-            <el-input size="small" v-model="nodePayload.node.data.node_ext2" autocomplete="off"></el-input>
+          <el-form-item :label="ext.name" v-for="(ext, i) in extendConfig" :key="i">
+            <el-input size="small" v-model="nodePayload.node.data[ext.value]" autocomplete="off"></el-input>
           </el-form-item>
           <slot v-bind:node="nodePayload.node.data"></slot>
         </el-form>

@@ -32,6 +32,7 @@ export default {
             stores: [],
             curStore: null,
         },
+        appAuth: { unapproved: false },
         designedForm: '',
         designedWF: '',
         userGenFun: '0'
@@ -83,7 +84,10 @@ export default {
             if (state.quickInput.stores.length) {
                 state.quickInput.curStore = state.quickInput.stores[state.quickInput.stores.length - 1];
             }
-        }
+        },
+        ['APP_AUTH'](state, data) {
+            state.appAuth = data;
+        },
     },
     actions: {
         async [APP_MOCKSIGNIN]({ state, getters, commit }, params = {}) {

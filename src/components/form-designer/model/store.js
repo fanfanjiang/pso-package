@@ -2,10 +2,10 @@ import Component from './cpnt'
 import { setSelectedActor } from "../helper/dom.js";
 import { CPNT } from "../../../const/form";
 import Vue from 'vue';
-import shortid from 'shortid';
 import { makeSysFormFields } from "../../../tool/form";
 import API from '../../../service/api'
 import { _DATA } from "../../data-mgt/const";
+import { nanoid } from 'nanoid';
 
 export default class FormStore {
     constructor(options) {
@@ -23,7 +23,7 @@ export default class FormStore {
         this.data_code = ""; //表单配置code
         this.templateId = ''; //模板node_id
 
-        this.beInstanceId = shortid.generate();
+        this.beInstanceId = nanoid(20);
         this.instance_id = "";  //数据实例id
         this.parentInstanceId = "";  //数据父级实例id
 

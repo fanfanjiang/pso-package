@@ -125,6 +125,11 @@
         <el-form-item label="筛选">
           <el-switch size="mini" v-model="curRow.searchable"></el-switch>
         </el-form-item>
+        <el-form-item label="筛选默认操作" v-if="curRow.searchable">
+          <el-select size="mini" clearable v-model="curRow.searchop">
+            <el-option v-for="(f, i) in curOp" :key="i" :label="f.name" :value="f.id"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="编辑">
           <el-switch size="mini" v-model="curRow.editable"></el-switch>
         </el-form-item>
@@ -182,7 +187,7 @@ const BASE = {
   limit: 20,
 };
 export default {
-  props: ["data", "defCol", "actions"],
+  props: ["data", "defCol", "actions", "store"],
   components: { GreatPanel },
   mixins: [formOp],
   data() {
@@ -194,6 +199,16 @@ export default {
       curColumn: [],
       opener: { show: false },
     };
+  },
+  computed: {
+    curOp() {
+      if (!this.curRow) return [];
+      const cpnt = this.store.searchByField(this.curRow.field_name);
+      if (cpnt && cpnt.CPNT.op) {
+        return cpnt.CPNT.op;
+      }
+      return [];
+    },
   },
   async created() {
     this.forms = await this.API.getFormTree();

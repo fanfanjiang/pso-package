@@ -23,13 +23,10 @@
               <div class="pso-view-title">
                 <icon></icon>
                 <span>{{ pageTitle }}</span>
-                <el-tooltip effect="dark" placement="right" v-model="showTip" :hide-after="2000">
-                  <div
-                    slot="content"
-                    v-html="'请不要重复提交相同内容的申请,如需修改请先撤回申请，双击点击撤回或暂存的申请可修改数据并再次提交'"
-                  ></div>
-                  <i class="tip el-icon-question"></i>
-                </el-tooltip>
+                <div class="pso-view-header-tip">
+                  <span class="el-icon-warning"></span>
+                  <span>不要重复提交相同内容的申请，如需修改请先撤回申请，双击点击撤回或暂存的申请可修改数据并再次提交</span>
+                </div>
               </div>
             </div>
             <div class="pso-view-header__r">

@@ -112,7 +112,7 @@ export default {
     async fetch() {
       this.loadingTable = true;
       const ret = await this.API.tag({
-        data: { tag_code: this.node.node_id, ...this.where },
+        data: { keys: JSON.stringify({ node_id: { type: 1, value: this.node.node_id } }), ...this.where },
         method: "get",
       });
       if (ret.success) {

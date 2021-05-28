@@ -192,6 +192,7 @@ export default {
       curInst: {},
       relationing: false,
       relations: [],
+      watchFun: [],
     };
   },
   async created() {

@@ -1,11 +1,11 @@
 <template>
   <el-dialog
-    width="400px"
+    width="500px"
     append-to-body
     :show-close="false"
     :close-on-press-escape="false"
     :close-on-click-modal="false"
-    :visible.sync="base.user.unapproved"
+    :visible.sync="base.appAuth.unapproved"
   >
     <div class="approve-header" slot="title">
       <svg
@@ -32,10 +32,34 @@
       <span>认证</span>
     </div>
     <div>
+      <div class="approve-waring" v-if="base.appAuth._expire">
+        <i class="el-icon-warning"></i>
+        <span>系统已过有效使用时间：{{ base.appAuth.expire_time }}</span>
+      </div>
+      <div class="approve-waring" v-if="overRes">
+        <i class="el-icon-warning"></i>
+        <span
+          >系统容量不足： <span>{{ figur(base.appAuth.ressize) }}</span> / {{ figur(base.appAuth.res_limit) }} MB</span
+        >
+      </div>
+      <div class="approve-waring" v-if="overUser">
+        <i class="el-icon-warning"></i>
+        <span
+          >超过最大用户数：<span>{{ base.appAuth.usernum }}</span> / {{ base.appAuth.user_num }} 个</span
+        >
+      </div>
+      <div class="approve-waring" v-if="overSite">
+        <i class="el-icon-warning"></i>
+        <span
+          >超过最大建站数：<span>{{ base.appAuth.sitenum }}</span> / {{ base.appAuth.plat_num }} 个</span
+        >
+      </div>
+    </div>
+    <div>
       <el-input type="textarea" :rows="3" v-model="password" size="normal" placeholder="请输入认证码"></el-input>
     </div>
-    <div slot="footer" class="dialog-footer">
-      <el-button size="mini" type="primary" @click="approve" :disabled="approving" :loading="approving">确 定</el-button>
+    <div slot="footer" class="dialog-footer" style="text-align: center">
+      <el-button size="small" type="primary" @click="approve" :disabled="approving" :loading="approving">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -50,18 +74,34 @@ export default {
   },
   computed: {
     ...mapState(["base"]),
+    overRes() {
+      return this.checkOver(this.base.appAuth.res_limit, this.base.appAuth.ressize);
+    },
+    overSite() {
+      return this.checkOver(this.base.appAuth.plat_num, this.base.appAuth.sitenum);
+    },
+    overUser() {
+      return this.checkOver(this.base.appAuth.user_num, this.base.appAuth.usernum);
+    },
   },
   methods: {
     async approve() {
       if (!this.password) return;
       this.approving = true;
-      const ret = await this.API.approve({ key: this.password });
-      this.ResultNotify(ret);
+      const ret = await this.API.request("/api/approval/approve/center", { data: { key: this.password } });
       if (ret.success) {
-        this.$store.commit("APP_APPROVED");
-        window.location.reload();
+        this.ResultNotify(ret);
+        this.base.appAuth.unapproved = false;
       }
       this.approving = false;
+    },
+    checkOver(limit, num) {
+      if (typeof limit !== "undefined" && typeof num !== "undefined") {
+        return parseInt(limit || 0) < parseInt(num || 0);
+      }
+    },
+    figur(num) {
+      return (parseFloat(num || 0) / 1024 / 1024).toFixed(2);
     },
   },
 };
@@ -75,6 +115,20 @@ export default {
   font-size: 20px;
   span {
     margin-left: 10px;
+  }
+}
+.approve-waring {
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  color: #999;
+  i {
+    color: red;
+    margin-right: 6px;
+  }
+  span {
+    span {
+      color: red;
+    }
   }
 }
 </style>

@@ -62,7 +62,7 @@ export default class Module {
             ret.data.forEach((d, i) => {
                 const data = d.child_design;
                 delete d.child_design;
-                const entity = this.addCpnt(data ? JSON.parse(data) : {}, d);
+                const entity = this.addCpnt(data ? JSON.parse(data) : {id:'singlechoice'}, d);
                 if (entity && i === 0) {
                     this.setCurCpnt(entity);
                 }
@@ -113,6 +113,7 @@ export default class Module {
         let { id = 'chart', i } = cpnt;
 
         const __cpnt__ = this.constructor.CPNT[id];
+        console.log(1, id, __cpnt__);
         if (!__cpnt__) {
             return;
         }

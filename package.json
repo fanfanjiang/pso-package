@@ -1,7 +1,7 @@
 {
   "name": "pbpm",
   "version": "0.2.83",
-  "main": "dist/pbpm.umd.js",
+  "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
     "build": "vue-cli-service build --target lib --name pbpm src/index.js",
@@ -43,6 +43,7 @@
     "mathjs": "^9.3.2",
     "monaco-editor-webpack-plugin": "^1.9.0",
     "muse-ui": "^3.0.2",
+    "nanoid": "^3.1.23",
     "node-sass": "^4.13.0",
     "normalize.css": "^8.0.1",
     "qs": "^6.9.1",
