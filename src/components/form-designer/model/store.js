@@ -5,7 +5,6 @@ import Vue from 'vue';
 import { makeSysFormFields } from "../../../tool/form";
 import API from '../../../service/api'
 import { _DATA } from "../../data-mgt/const";
-import { nanoid } from 'nanoid';
 
 export default class FormStore {
     constructor(options) {
@@ -23,7 +22,7 @@ export default class FormStore {
         this.data_code = ""; //表单配置code
         this.templateId = ''; //模板node_id
 
-        this.beInstanceId = nanoid(20);
+        this.beInstanceId = psodataid();  
         this.instance_id = "";  //数据实例id
         this.parentInstanceId = "";  //数据父级实例id
 

@@ -55,6 +55,7 @@ const FIELDS = {
   fields: {},
   remark: "",
   beforeScriptable: false,
+  showBefMsg: true, //显示成功提示
   deleteable: true,
   beforeScript: [],
   scriptable: false,
@@ -72,6 +73,10 @@ const FIELDS = {
   bindPlugin: "",
   linkParams: [],
   diseditable: false,
+
+  linkFormView: false,
+  FormViewId: "",
+  formViewField: [],
 };
 
 const DEFAULT = [{ id: "add", name: "新增", deleteable: false }];

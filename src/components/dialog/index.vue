@@ -53,7 +53,7 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
+  }, 
   data() {
     return {
       rendered: false,

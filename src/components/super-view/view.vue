@@ -32,7 +32,7 @@
               </div>
             </div>
           </div>
-          <div class="pso-sv-view-item__b" v-if="actionable || params.fieldTime">
+          <div class="pso-sv-view-item__b" v-if="store.actionMGR.actions.length || params.fieldTime">
             <div class="pso-sv-view-actions" v-if="actionable">
               <action-group :store="store" :data="[d]" location="2"></action-group>
             </div>

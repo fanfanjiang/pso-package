@@ -85,7 +85,7 @@ export default {
     },
     async fetchTags() {
       this.loading = true;
-      const ret = await this.API.tag({ data: { tag_code: this.curNode.node_id } });
+      const ret = await this.API.tag({ data: { keys: JSON.stringify({ node_id: { type: 1, value: this.curNode.node_id } }) } });
       if (ret.success) {
         this.tags = ret.data;
         await this.handleTagClick({ name: this.tags[0].tag_no });

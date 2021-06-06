@@ -16,6 +16,7 @@ export default class ActionMGR {
         this.actioning = null;
         this.fieldsRule = [];
         this.editable = false;
+        this.actExtParam = null;
 
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
@@ -83,10 +84,22 @@ export default class ActionMGR {
         return judgeByRules({ datas, ruleOptions, store: ruleOptions.formStore });
     }
 
-    async doActionScript({ action, data, flag = 'scriptable', btn_type = '1', emit = true, evt = "actioned" }) {
+    async doActionScript({ action, data, flag = 'scriptable', btn_type = '1', emit = true, evt = "actioned", showMsg = true }) {
         if (!action[flag]) return true;
-        const ret = await API.doActionScript({ btn_id: action.id, btn_type, data_code: action._code, data });
-        this.$vue.ResultNotify(ret);
+
+        //添加扩展参数
+        let actData = data;
+        if (this.actExtParam) {
+            actData = [];
+            data.forEach(d => {
+                actData.push({ ...this.actExtParam, ...d })
+            })
+        }
+
+        const ret = await API.doActionScript({ btn_id: action.id, btn_type, data_code: action._code, data: actData });
+        if (ret && ret.success && showMsg) {
+            this.$vue.ResultNotify(ret);
+        }
         if (emit) {
             this.$vue.$emit(evt, { data })
         }
@@ -100,7 +113,7 @@ export default class ActionMGR {
     async checkBefActionScript({ op, formData }) {
         const action = this.actioning;
         if ((op === 2 || op === 1) && action && action.befSaveScriptable) {
-            return await this.doActionScript({ action, data: formData.dataArr, flag: 'befSaveScriptable', btn_type: '2', evt: "befactioned" });
+            return await this.doActionScript({ action, data: formData.dataArr, flag: 'befSaveScriptable', btn_type: '2', evt: "befsaveactioned" });
         }
         return true;
     }
@@ -147,14 +160,48 @@ export default class ActionMGR {
         return batchData;
     }
 
+    async checkActionView(action, data) {
+        const { linkFormView, FormViewId, formViewField } = action;
+        if (typeof this.onShowFormView !== 'function' || !linkFormView || !FormViewId) return;
+
+        const ret = await API.getMenuInfo({ menu_code: FormViewId });
+        if (ret.data) {
+            const { menu_link: plug_code, menu_name, leaf_auth, auth_config, param_value } = ret.data;
+            const params = { plug_code, menu_name, viewAuth: parseInt(leaf_auth || 0) };
+
+            if (auth_config) params.auth_config = JSON.parse(auth_config);
+
+            if (param_value) {
+                const pluginParams = JSON.parse(param_value);
+                this.$vue.$set(params, 'pluginParams', {});
+                pluginParams.forEach(item => {
+                    this.$vue.$set(params, item.field, item.value);
+                    this.$vue.$set(params.pluginParams, item.field, item.value);
+                })
+            }
+
+            if (data.length && formViewField.length) {
+                params.actExtParam = {};
+                formViewField.forEach(({ t, s }) => {
+                    if (t && s) {
+                        params.actExtParam[t] = data[0][s]
+                    }
+                })
+            }
+
+            this.onShowFormView(params);
+        }
+    }
+
     async afterFormSave({ action, data }) {
         await this.checkActionScript(action, data);
+        this.checkActionView(action, data);
         this.checkActionLink(action, data);
     }
 
     async checkAction({ action, data = [] }) {
 
-        const { mode, method, fields = {}, beforeScriptable, batchable } = action;
+        const { mode, method, fields = {}, batchable } = action;
 
         action.doing = true;
         data = action.transform(data);
@@ -167,11 +214,9 @@ export default class ActionMGR {
         }
 
         //查看脚本
-        if (beforeScriptable) {
-            const ret = await API.doActionScript({ btn_id: action.id, btn_type: '0', data_code: action._code, data });
-            if (!ret.success) {
-                return action.doing = false;
-            }
+        const success = await this.doActionScript({ action, showMsg: action.showBefMsg, btn_type: '0', flag: 'beforeScriptable', evt: "befactioned", data });
+        if (!success) {
+            return action.doing = false;
         }
 
         if (mode === '3') {

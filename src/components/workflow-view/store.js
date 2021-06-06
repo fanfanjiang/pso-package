@@ -47,7 +47,9 @@ export default class WFVStore extends FVStore {
         this.initializing = true;
 
         const ret = await API.workflowcfg({ data: { node_id: id, auth: 1, extendForm: 1 } });
-        if (!ret.success) return this.$vue.ResultNotify(ret);
+        if (!ret.success) {
+            return;
+        }
 
         const { formCfg } = ret.data;
         delete ret.data.formCfg;

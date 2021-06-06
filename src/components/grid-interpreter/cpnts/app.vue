@@ -26,6 +26,8 @@ export default {
     const cfgRet = await this.API.getSysConfig({ keys: JSON.stringify({ config_type: { type: 1, value: "31" } }) });
     for (let item of cfgRet.data) {
       if (item.map_key1) {
+        item.map_key2 = item.map_key2.replace(/@uid@/g, this.$store.state.base.user.user_id);
+        item.map_key2 = item.map_key2.replace(/@pwd@/g, this.$store.state.base.user.user_pwd);
         const ret = await this.API.file({ data: { ids: item.map_key1 }, method: "get" });
         this.$set(item, "url", ret.data[0].res_path);
       }

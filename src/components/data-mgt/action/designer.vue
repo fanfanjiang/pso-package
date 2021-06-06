@@ -43,6 +43,11 @@
           @click="openScript('beforeScript')"
         ></el-button>
       </el-form-item>
+      <div class="form-action-panel" v-if="action.beforeScriptable">
+        <el-form-item label="显示提示信息">
+          <el-switch v-model="action.showBefMsg"> </el-switch>
+        </el-form-item>
+      </div>
       <template v-if="action.id !== 'add'">
         <el-form-item label="点击后">
           <el-radio-group :disabled="action.id === 'add'" v-model="action.mode" @change="checkMode">
@@ -90,7 +95,7 @@
           </el-radio-group>
         </el-form-item>
       </template>
-      <el-form-item label="点击后保存数据前执行脚本">
+      <el-form-item label="点击后保存数据前执行脚本(暂不可用)">
         <el-switch v-model="action.befSaveScriptable"> </el-switch>
         <el-button
           style="margin-left: 10px"
@@ -112,6 +117,41 @@
           @click="openScript('script')"
         ></el-button>
       </el-form-item>
+      <el-form-item label="点击后打开表单视图">
+        <el-switch v-model="action.linkFormView"> </el-switch>
+      </el-form-item>
+      <div class="form-action-panel" v-if="action.linkFormView">
+        <el-form-item label="选择表单视图">
+          <pso-picker-tree :request-options="{ dimen: '1' }" pattern="radio" rootable @confirm="confirmFormView">
+            <el-button size="mini" type="primary" plain>选择视图</el-button>
+          </pso-picker-tree>
+        </el-form-item>
+        <el-form-item label="已选">
+          <span>{{ action.FormViewId }}</span>
+        </el-form-item>
+        <div class="pso-table-controller">
+          <el-button size="mini" type="primary" plain @click="addHandler">添加动作参数</el-button>
+        </div>
+        <el-table key="status" size="mini" border :data="action.formViewField" style="width: 100%">
+          <el-table-column label="原字段" width="160">
+            <template slot-scope="scope">
+              <el-select size="mini" clearable v-model="scope.row.s">
+                <el-option v-for="(o, i) in optionsWithsys" :label="o._fieldName" :key="i" :value="o._fieldValue"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="目标字段" width="160">
+            <template slot-scope="scope">
+              <el-input size="mini" v-model="scope.row.t" placeholder></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="90" align="center">
+            <template slot-scope="scope">
+              <el-button size="mini" type="danger" @click="delHandler(scope.$index)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
       <el-form-item label="点击后打开页面">
         <el-switch v-model="action.linkable"> </el-switch>
       </el-form-item>
@@ -250,6 +290,17 @@ export default {
     },
     rtChangeHandler(type) {
       this.action.ruleType = type;
+    },
+    confirmFormView(data) {
+      if (data.length && data[0].node_name) {
+        this.action.FormViewId = data[0].node_name;
+      }
+    },
+    addHandler() {
+      this.action.formViewField.push({ t: "", s: "" });
+    },
+    delHandler(index) {
+      this.action.formViewField.splice(index, 1);
     },
   },
 };

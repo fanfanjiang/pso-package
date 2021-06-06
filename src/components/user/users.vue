@@ -24,8 +24,11 @@
               <el-button size="mini" type="warning" plain slot="reference" :disabled="!selected.length">重置密码</el-button>
             </el-popconfirm>
             <!-- <el-button size="mini" type="plain" :disabled="!selected.length" @click="setHandler">配置</el-button> -->
-            <el-popconfirm title="你确定要删除吗？" @confirm="delHandler">
-              <el-button size="mini" type="danger" plain slot="reference" :disabled="!selected.length">删除</el-button>
+            <el-popconfirm title="你确定要删除吗？？？？" @confirm="delHandler">
+              <el-button size="mini" type="danger" plain slot="reference" :disabled="!selected.length">物理删除</el-button>
+            </el-popconfirm>
+            <el-popconfirm title="你确定要冻结吗？" @confirm="shitHandler">
+              <el-button size="mini" type="danger" plain slot="reference" :disabled="!selected.length">冻结</el-button>
             </el-popconfirm>
             <el-button v-if="syncable" size="mini" type="primary" @click="syncSys" :disabled="syncing" :loading="syncing">同步</el-button>
           </div>
@@ -101,6 +104,11 @@
             <el-option v-for="(r, i) in roles" :key="i" :label="r.type_name" :value="r.user_type"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="状态" required>
+          <el-select size="small" clearable v-model="data.d_status">
+            <el-option v-for="(f, i) in STATUS" :key="i" :label="f.name" :value="f.value"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="密码" v-if="!data.user_id" required>
           <el-input size="small" v-model="data.user_pwd" autocomplete="off"></el-input>
         </el-form-item>
@@ -123,7 +131,12 @@ const SEX = [
   { name: "未知", value: "0" },
 ];
 
-const USER = { user_id: "", user: "", user_name: "", user_pwd: "", user_sex: "", user_type: "", node_id: "", is_sys: "" };
+const STATUS = [
+  { name: "激活", value: 1 },
+  { name: "冻结", value: 0 },
+];
+
+const USER = { user_id: "", user: "", user_name: "", user_pwd: "", user_sex: "", user_type: "", node_id: "", is_sys: "", d_status: 1 };
 export default {
   mixins: [PagingMixin],
   props: {
@@ -162,6 +175,7 @@ export default {
   },
   data() {
     this.SEX = SEX;
+    this.STATUS = STATUS;
     return {
       syncing: false,
       initializing: false,
@@ -333,6 +347,16 @@ export default {
       const ret = await this.API.syncUsers();
       this.ResultNotify(ret);
       this.syncing = false;
+    },
+    async shitHandler() {
+      this.operating = true;
+      const ret = await this.API.request("/api/user/freeze", {
+        data: { users: this.selected.map((item) => item.user_id).join(",") },
+        method: "put",
+      });
+      this.ResultNotify(ret);
+      this.fetch();
+      this.operating = false;
     },
   },
 };

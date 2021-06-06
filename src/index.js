@@ -286,7 +286,7 @@ const components = {
     PsoCenterModule,
     PsoTagtreeMgt,
     PsoTagtree,
-    
+
     //混合视图
     PsoFvAst,
     PsoFvWv,
@@ -363,6 +363,11 @@ if (typeof window !== 'undefined' && window.Vue) {
 Object.keys(formulajs).forEach(key => {
     window[key] = formulajs[key];
 });
+
+import shortid from "shortid";
+import { customAlphabet } from 'nanoid';
+window.psodataid = window.crypto ? customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 16) : shortid.generate;
+
 
 import jqueryMousewheel from './utils/mousewheel';
 jqueryMousewheel(jQuery);

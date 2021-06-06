@@ -287,7 +287,7 @@ export default {
         this.options.tag_code = node.node_id;
         if (this.showCenter) {
           const ret = await this.API.tag({
-            data: { tag_code: node.node_id, start: 0, limit: 999 },
+            data: { keys: JSON.stringify({ node_id: { type: 1, value: node.node_id } }), start: 0, limit: 999 },
           });
           if (ret.success) {
             this.tagList = ret.data;

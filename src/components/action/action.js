@@ -27,7 +27,6 @@ export default class Action {
         if (!this.trans || !this.trans.length) {
             return data;
         }
-        // const cloneData = _.cloneDeep(data);
         const cloneData = {};
         for (let t of this.trans) {
             if (t.tf && t.sf) {

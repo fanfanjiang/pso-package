@@ -37,7 +37,7 @@ export default class API {
         return data;
     }
 
-    static async request(url, { method = 'post', data = {}, headers = {}, showMsg = true }) {
+    static async request(url, { method = 'post', data = {}, headers = {}, showMsg = false }) {
         const _arguments = arguments;
         url = `${this.URL_PREFIX}${url}`;
 

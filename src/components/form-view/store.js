@@ -138,6 +138,12 @@ export default class FormViewStore {
         this.notifyType = "formcopy";
         this.printTemplates = [];
 
+
+        this.formView = {
+            show: false,
+            options: null
+        }
+
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
                 this[op] = options[op];
@@ -147,10 +153,12 @@ export default class FormViewStore {
         //动作
         this.actionMGR = new ActionMGR({
             $vue: this.$vue,
+            actExtParam: this.actExtParam,
             onNewInst: this.newActInst.bind(this),
             onShowInst: this.showActInst.bind(this),
             onBatchNewInst: this.batchNewActInst.bind(this),
             onDone: this.doneAction.bind(this),
+            onShowFormView: this.openFormView.bind(this)
         });
 
         this.fetchFinished = this.fetchMode === '1';
@@ -1281,12 +1289,11 @@ export default class FormViewStore {
         const figure = (text) => {
             return baseWidth + (text ? text.length : 4) * textWidth;
         }
-        const width = btns.reduce(function (a, b) {
+        const width = _.sumBy(btns, (a) => {
             if (typeof a === 'object') {
                 a = a[name];
-                b = b[name];
             }
-            return figure(a) + figure(b);
+            return figure(a);
         }) + (btns.length - 1) * 10;
         return width;
     }
@@ -1317,5 +1324,13 @@ export default class FormViewStore {
             }
             callback && callback();
         }
+    }
+
+    openFormView(options) {
+        this.formView.options = null;
+        this.$vue.$nextTick(() => {
+            this.formView.options = options;
+            this.formView.show = true;
+        })
     }
 }

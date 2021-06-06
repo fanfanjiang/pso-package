@@ -3,7 +3,7 @@
     <multiple-users
       :users="store.data.reviews"
       ufield="empties"
-      title="选择审核人"
+      title="请选择该步骤的审核人"
       item-title="step_name"
       @close="closeHandler"
       @select="selectHandler"

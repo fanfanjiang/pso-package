@@ -66,9 +66,7 @@ import cpntMixin from "../mixin";
 import PscriptTable from "../../pscript-table";
 import { pickerMixin } from "../../../mixin/picker";
 import debounce from "throttle-debounce/debounce";
-import shortid from "shortid";
 import { FILTER_TYPE } from "../../../../share/const/filter";
-import { nanoid } from "nanoid";
 
 export default {
   mixins: [
@@ -245,7 +243,7 @@ export default {
           }
 
           data.forEach((d) => {
-            d.leaf_id = nanoid(20);
+            d.leaf_id = psodataid();
             d.__temporary__ = true;
             if (autoGen) {
               let limit = Infinity;

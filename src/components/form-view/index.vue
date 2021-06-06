@@ -107,6 +107,9 @@
         @prev="store.showPrev.call(store, $event)"
         @next="store.showNext.call(store, $event)"
       ></pso-form-executor>
+      <pso-dialog :visible="store.formView.show" width="90%" @close="store.formView.show = false">
+        <pso-form-view v-bind="store.formView.options" :params="store.formView.options" v-if="store.formView.options"></pso-form-view>
+      </pso-dialog>
       <wipe-dialog :store="store"></wipe-dialog>
     </template>
   </div>
@@ -123,6 +126,7 @@ import MobileView from "./mobile-view";
 
 export default {
   components: { FastSwitch, TableFun, DataFun, ViewTable, Icon, WipeDialog, MobileView },
+  name: "pso-form-vew",
   props: {
     params: {
       type: Object,
@@ -236,6 +240,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    actExtParam: Object, //动作扩展参数，目前用于打开子视图时传入参数
   },
   data() {
     return {
@@ -307,6 +312,7 @@ export default {
           fetchMode: this.__isMobile__ ? "2" : "1",
           statusesFilter: this.statusesFilter,
           showFilter: this.expanding,
+          actExtParam: this.actExtParam,
         });
 
         if (this.viewAuth) {

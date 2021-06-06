@@ -88,7 +88,6 @@
 <script>
 import { imitateFormData } from "../../tool/form";
 import QuickInput from "./quick-input";
-import { nanoid } from "nanoid";
 
 export default {
   components: { QuickInput },
@@ -224,7 +223,7 @@ export default {
     async addOrUpdate() {
       const formData = await this.makeData();
       if (formData) {
-        const leaf_id = this.dataId || nanoid(20);
+        const leaf_id = this.dataId || formData.dataArr[0].leaf_id || psodataid();
         const op = this.dataId ? 2 : 1;
 
         const afterChange = (trueId = "") => {
