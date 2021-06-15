@@ -38,8 +38,9 @@
 <script>
 import { SignInMixin } from "../../mixin/passport";
 import { formatJSONList } from "../../utils/util";
-import { _DATA } from "../data-mgt/const";
+import { _DATA } from "../form-mgt/const";
 import dayjs from "dayjs";
+const SYSPARAMS = ["code", "appid", "ruleid"];
 
 export default {
   mixins: [SignInMixin],
@@ -73,6 +74,7 @@ export default {
     }
 
     const cfgRet = await this.API.getTreeNode({ code: this.params.code });
+
     if (cfgRet.data.data.pub_config) {
       this.cfg = JSON.parse(cfgRet.data.data.pub_config);
       formatJSONList([this.cfg], _DATA.pubCfg);
@@ -93,7 +95,7 @@ export default {
       ) {
         this.editable = true;
       }
-
+ 
       if (pubCfg.attach) {
         const fileRet = await this.API.file({ data: { ids: pubCfg.attach }, method: "get" });
         if (fileRet.success && fileRet.data.length) {
@@ -118,6 +120,13 @@ export default {
           }
         }
       }
+
+      for (let key in this.params) {
+        if (!SYSPARAMS.includes(key)) {
+          this.instance[key] = this.params[key];
+        }
+      }
+
       this.initing = false;
     }
   },

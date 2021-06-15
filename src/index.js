@@ -63,7 +63,7 @@ import PsoFormExecutor from "./components/form-executor";
 import PsoFormInterpreter from "./components/form-interpreter";
 import PsoCpntAst from "./components/form-interpreter/components/asstable";
 
-import PsoDataMgt from "./components/data-mgt";
+import PsoDataMgt from "./components/form-mgt";
 
 import PsoSriptDesigner from "./components/script-designer";
 
@@ -77,7 +77,7 @@ import PsoWfTodo from "./components/workflow-todo";
 import PsoTempleteMgt from "./components/templete-mgt";
 import PsoPluginMgt from "./components/plugin-mgt";
 
-import PsoViewDesigner from "./components/view-designer";
+import PsoViewDesigner from "./components/formv-designer";
 
 import PsoScriptOut from "./components/script-designer/output";
 

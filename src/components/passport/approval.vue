@@ -38,9 +38,7 @@
       </div>
       <div class="approve-waring" v-if="overRes">
         <i class="el-icon-warning"></i>
-        <span
-          >系统容量不足： <span>{{ figur(base.appAuth.ressize) }}</span> / {{ figur(base.appAuth.res_limit) }} MB</span
-        >
+        <span>系统容量不足： <span>{{ figur(base.appAuth.ressize) }}</span> / {{ figur(base.appAuth.res_limit) }} MB</span>
       </div>
       <div class="approve-waring" v-if="overUser">
         <i class="el-icon-warning"></i>

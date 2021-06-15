@@ -878,6 +878,7 @@ export default class FormViewStore {
             const data = [];
             let selected = this.selectedList;
             if (!selected.length) {
+                this.$vue.$message.warning("正在生成，请耐心等待...");
                 selected = await this.fetchAllManually();
             }
             for (let d of selected) {

@@ -16,6 +16,11 @@ export default {
       fileProxy: [],
     };
   },
+  computed: {
+    host() {
+      return `http://${window.location.host}`;
+    },
+  },
   created() {
     this.$set(this.cpnt.data, "__showVal__", "");
     this.genQRcode();
@@ -31,6 +36,10 @@ export default {
   methods: {
     async genQRcode() {
       if (this.QRtext) {
+
+        this.QRtext = this.QRtext.replace(/__HOST__/g, this.host);
+        this.QRtext = this.QRtext.replace(/__APPID__/g, this.$store.state.base.user.appid);
+
         this.cpnt.data.__showVal__ = await QRCode.toDataURL(this.QRtext);
         this.cpnt.data._val = this.QRtext;
         this.fileProxy = [{ res_path: this.cpnt.data.__showVal__, res_name: this.cpnt.data._fieldName, isSrcImg: true }];

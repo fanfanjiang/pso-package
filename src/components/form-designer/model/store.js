@@ -4,7 +4,7 @@ import { CPNT } from "../../../const/form";
 import Vue from 'vue';
 import { makeSysFormFields } from "../../../tool/form";
 import API from '../../../service/api'
-import { _DATA } from "../../data-mgt/const";
+import { _DATA } from "../../form-mgt/const";
 
 export default class FormStore {
     constructor(options) {
