@@ -2,6 +2,18 @@
   <div class="pso-chart" ref="chart">
     <div class="pso-chart-wrapper" v-loading="!loaded">
       <div class="pso-chart-name">{{ chartCfg.chartName }}</div>
+      <div class="pso-chart-filter">
+        <pso-datafilter
+          v-if="defCondition.length"
+          v-model="condition"
+          :condition="defCondition"
+          :fieldsOptions="conditionOptions"
+          fixedfield
+          fixed
+          :auto-trans="false"
+          defingop
+        ></pso-datafilter>
+      </div>
       <div class="pso-chart-body">
         <component
           v-if="loaded"
@@ -30,6 +42,7 @@ import shortid from "shortid";
 import FormStore from "../form-designer/model/store.js";
 import debounce from "throttle-debounce/debounce";
 import { makeFormByScript, makeFormByPluginModule } from "../../tool/form";
+import PsoDatafilter from "../data-filter/index";
 
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
@@ -40,7 +53,7 @@ dayjs.extend(weekOfYear);
 dayjs.extend(advancedFormat);
 
 export default {
-  components: { VeTable, VeCard },
+  components: { VeTable, VeCard, PsoDatafilter },
   props: {
     chartId: String,
     chartConfig: Object,
@@ -64,13 +77,17 @@ export default {
         chartName: "",
         chartRemark: "",
         dataLimit: {},
-        filter: [],
+        condition: [],
       },
       group: {},
       fields: [],
       chartHeight: "400px",
       conflict: [],
       colors: ["#065279", "#ffc773", "#f47983", "#426666", "#E69D87", "#DD6B66", "#493131"],
+      conditionOptions: [],
+      condition: [],
+      defCondition: [],
+      watchFun: [],
     };
   },
   computed: {
@@ -174,6 +191,11 @@ export default {
       if (!this.chartCfg.dimension || !this.chartCfg.metrics) return;
       this.loaded = false;
 
+      if (this.watchFun.length) {
+        this.watchFun.forEach((f) => f());
+        this.watchFun = [];
+      }
+
       if (this.chartCfg.sourceType === "1") {
         const ret = await this.API.formsCfg({ data: { id: this.chartCfg.formId }, method: "get" });
         const store = new FormStore(ret.data);
@@ -191,7 +213,21 @@ export default {
         this.formCfg = { data_config };
       }
 
+      if (this.chartCfg.condition) {
+        this.defCondition = this.chartCfg.condition;
+      }
+
+      this.conditionOptions = this.formCfg.data_config;
       this.chartData.columns = _.map(this.formCfg.data_config, "_fieldValue");
+
+      this.watchFun.push(
+        this.$watch("condition", {
+          deep: true,
+          handler() {
+            this.loadFormData();
+          },
+        })
+      );
 
       await this.loadFormData();
     },
@@ -199,8 +235,13 @@ export default {
       //加载表单数据
       this.loaded = false;
       const data = { leaf_auth: 4 };
-      if (this.chartCfg.filter.length) {
-        data.condition = transCMapToCondition(this.chartCfg.filter);
+
+      const condition = [].concat(this.chartCfg.filter, this.condition);
+      if (condition.length) {
+        const trans = transCMapToCondition(condition);
+        if (trans && trans !== "【】") {
+          data.condition = trans;
+        }
       }
       const formData = await this.fetchAllData(data);
       this.makeData(formData);

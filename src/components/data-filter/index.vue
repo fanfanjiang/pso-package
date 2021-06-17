@@ -34,7 +34,7 @@
         <el-button @click="addCondition(orIndex)" size="mini" icon="el-icon-plus" type="success" plain>且</el-button>
       </div>
     </div>
-    <div class="data-filter__orbtn" v-if="!(extensive || fixedfield)">
+    <div class="data-filter__orbtn" v-if="!(extensive || fixedfield || (conditionMap.length && onlyand))">
       <el-button @click="addCondition()" size="mini" icon="el-icon-plus" type="success" plain>{{
         conditionMap.length ? "或" : "添加筛选条件"
       }}</el-button>
@@ -75,6 +75,10 @@ export default {
       default: false,
     },
     defingop: {
+      type: Boolean,
+      default: false,
+    },
+    onlyand: {
       type: Boolean,
       default: false,
     },

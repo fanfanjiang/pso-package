@@ -73,52 +73,14 @@
       </div>
       <div class="pso-chartDesigner-body__right" v-bar>
         <div>
-          <div class="pso-cd-vbar">
-            <el-divider content-position="left">图表名称</el-divider>
-            <el-input v-model="chartDesigner.chartName"></el-input>
-            <el-divider content-position="left">图表备注</el-divider>
-            <el-input type="textarea" :rows="2" v-model="chartDesigner.chartRemark"></el-input>
-            <div class="pso-cd-choose-wrapper">
-              <el-divider content-position="left">图表类型</el-divider>
-              <ul class="pso-cd-choose">
-                <li
-                  :class="{ choose: selectedChart.id === typeItem.id, disabled: isChartDisable(typeItem) }"
-                  v-for="(typeItem, index) in chartType"
-                  :key="index"
-                  @click="setChartType(typeItem)"
-                >
-                  <el-tooltip :open-delay="500" effect="dark" placement="top">
-                    <div slot="content" v-html="typeItem.info"></div>
-                    <div>
-                      <img class="pso-svg" :src="getChartIcon(typeItem)" />
-                    </div>
-                  </el-tooltip>
-                </li>
-              </ul>
-            </div>
-            <div class="pso-cd-datalimit">
-              <el-divider content-position="left">显示条目</el-divider>
-              <div class="pso-cd-datalimit__body">
-                <el-checkbox v-model="chartDesigner.dataLimit.checked"></el-checkbox>
-                <el-select size="small" v-model="chartDesigner.dataLimit.direction">
-                  <el-option label="前" value="前"></el-option>
-                  <el-option label="后" value="后"></el-option>
-                </el-select>
-                <el-input-number size="small" v-model="chartDesigner.dataLimit.count"></el-input-number>
-                <el-select size="small" v-model="chartDesigner.dataLimit.unit">
-                  <el-option label="条" value="条"></el-option>
-                  <el-option label="%" value="%"></el-option>
-                </el-select>
-              </div>
-            </div>
-          </div>
+          <pso-cd-panel :selected="selectedChart" @select="setChartType"></pso-cd-panel>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { mapState } from "vuex";
 import { CD_SOURCE_GET, CD_INIT, CD_DIMENSION_SET } from "../../store/mutation-types";
 import { CHART } from "../../const/chart";
 
@@ -127,15 +89,16 @@ import PsoCdSource from "./source";
 import PsoCdDimension from "./dimension";
 import PsoCdFigure from "./figure";
 import PsoDatafilter from "../data-filter/index";
+import PsoCdPanel from "./panel";
 
 const SVGInjector = require("svg-injector");
 
 export default {
-  components: { PsoHeader, PsoCdSource, PsoCdDimension, PsoCdFigure, PsoDatafilter },
+  components: { PsoHeader, PsoCdSource, PsoCdDimension, PsoCdFigure, PsoDatafilter, PsoCdPanel },
   props: ["params"],
   data() {
+    this.CHARTTYPE = _.cloneDeep(Object.values(CHART));
     return {
-      chartType: _.cloneDeep(Object.values(CHART)),
       selectedChart: {},
       formOptions: [],
       sqlOptions: [],
@@ -164,7 +127,7 @@ export default {
     this.chartDesigner.sourceType = this.params.sourceType;
     await this.getFormList();
     await this.loadChartCfg();
-    this.selectedChart = this.chartType[0];
+    this.selectedChart = this.CHARTTYPE[0];
     this.chartDesigner.initializing = false;
   },
   mounted() {
@@ -231,12 +194,13 @@ export default {
           chartName: chartCfg.chartName,
           dataLimit: chartCfg.dataLimit,
           filter: chartCfg.filter,
+          condition: chartCfg.condition || [],
         });
 
         await this.$store.dispatch(CD_SOURCE_GET, { options: this.params.fields });
 
         if (chartCfg.chartType) {
-          let chartTypeModel = _.find(this.chartType, { id: chartCfg.chartType });
+          let chartTypeModel = _.find(this.CHARTTYPE, { id: chartCfg.chartType });
           chartTypeModel && this.setChartType(chartTypeModel);
         }
       } else {
@@ -246,13 +210,6 @@ export default {
     goFilter() {
       this.loadChart();
       this.showFilter = false;
-    },
-    getChartIcon(cType) {
-      return `/static/app/img/chart/${cType.id}.svg`;
-    },
-    isChartDisable(cType) {
-      cType.disabled = this.chartDesigner.dimension.length > cType.dimensionLimit || this.chartDesigner.figure.length > cType.metricsLimit;
-      return cType.disabled;
     },
     getChartViewData() {
       return {
@@ -265,6 +222,7 @@ export default {
         chartRemark: this.chartDesigner.chartRemark,
         dataLimit: this.chartDesigner.dataLimit,
         filter: this.chartDesigner.filter,
+        condition: this.chartDesigner.condition,
       };
     },
     async save() {

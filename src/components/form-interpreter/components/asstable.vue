@@ -247,7 +247,7 @@ export default {
     },
     formTableViewAuth() {
       if (this.authCfg.authable) {
-        return this.cpnt.data.__auth__ || 0;
+        return this.cpnt.data.__auth__ || 1;
       } else {
         return 7;
       }

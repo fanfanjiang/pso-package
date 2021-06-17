@@ -10,6 +10,21 @@
         min-height: 100px;
         border: 1px solid #ebedf0;
         overflow: auto;
+
+        .data-filter__or {
+            display: flex;
+
+            .branch-picker__value {
+                height: 40px;
+                line-height: 40px;
+            }
+
+            .data-filter__and {
+                &+.data-filter__and {
+                    margin-left: 10px;
+                }
+            }
+        }
     }
 
     .pso-chart-name {

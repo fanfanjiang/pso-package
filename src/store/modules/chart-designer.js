@@ -15,6 +15,7 @@ const STATE = {
     dimension: [],
     figure: [],
     filter: [],
+    condition: [],
     conditionOptions: [],
     dataLimit: {
         checked: false,

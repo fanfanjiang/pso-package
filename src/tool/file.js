@@ -27,7 +27,7 @@ export function getFileIcon(name, url) {
     if (/\S+\.(ppt)$/.test(name)) {
         return `${prefix}/ppt.svg`;
     }
-    if (/\S+\.(mp4)$/.test(name)) {
+    if (/\S+\.(mp4|mkv)$/.test(name)) {
         return `${prefix}/media.svg`;
     }
     return `${prefix}/file.svg`;

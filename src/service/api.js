@@ -876,22 +876,6 @@ export default class API {
         }
     }
 
-    static async addOrUpdatePaper(data) {
-        try {
-            return await this.request('/api/paper', { data, method: 'post' });
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    static async addOrUpdatePaper(data) {
-        try {
-            return await this.request('/api/paper', { data, method: 'post' });
-        } catch (error) {
-            throw error;
-        }
-    }
-
     static async doActionScript(data) {
         try {
             return await this.request('/api/form/action/script', { data, method: 'post' });

@@ -34,7 +34,7 @@ export const BaseMixin = {
 export const QuestionMixin = {
     props: {
         cpnt: Object,
-        data: Array,
+        data: Object,
         index: Number
     },
     data() {
@@ -75,4 +75,4 @@ export const QuestionMixin = {
             this.data.option = source[option].split(this.splitSymbol);
         }
     },
-} 
+}
