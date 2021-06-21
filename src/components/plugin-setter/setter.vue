@@ -86,6 +86,7 @@
           <el-button v-if="p.picker === 'picker-sql'" size="mini" type="primary" plain @click="editSql(p)"> 编辑脚本 </el-button>
           <el-button v-if="p.picker === 'picker-stats'" size="mini" type="primary" plain @click="setStats(p)"> 设置关联统计 </el-button>
           <picker-fmatchup v-if="p.picker === 'picker-fmatchup'" v-bind="getMatchupProps(p)"></picker-fmatchup>
+          <formrelate v-if="p.picker === 'formrelate'" v-bind="getRelateFields(p)"></formrelate>
           <template #label>
             {{ p.name }}
             <el-tooltip v-if="p.tip" effect="dark" placement="top-start">
@@ -122,6 +123,7 @@ import SqlDesigner from "../sql-designer";
 import StatsPicker from "./picker/stats-picker";
 import Dfilter from "./picker/filter";
 import PickerFmatchup from "./picker/picker-fmatchup";
+import Formrelate from "./picker/formrelate";
 
 const componentsMap = {};
 const requireComponent = require.context("./cpnts", true);
@@ -140,7 +142,7 @@ requireComponent.keys().forEach((fileName) => {
 
 export default {
   mixins: [formOp],
-  components: { ...componentsMap, formulaDesigner, SqlDesigner, StatsPicker, Dfilter, PickerFmatchup },
+  components: { ...componentsMap, formulaDesigner, SqlDesigner, StatsPicker, Dfilter, PickerFmatchup, Formrelate },
   props: {
     data: Array,
     code: String,
@@ -340,6 +342,17 @@ export default {
       }
       console.log(data.value);
       return { data: data.value, sources, targets };
+    },
+    getRelateFields(option) { 
+      let sources = [];
+      if (option.relateParam) {
+        const src = this.formCfg[this.getRelateItem({ relateParam: option.relateParam })];
+        if (src) {
+          sources = src.fields;
+        }
+      }
+      console.log(option);
+      return { data: option.value, sources, node: this.node };
     },
   },
 };

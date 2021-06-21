@@ -24,6 +24,7 @@ export default {
   props: {
     data: Object,
     formField: String,
+    formName: String,
     fields: Array,
     source: {
       type: String,
@@ -100,6 +101,11 @@ export default {
 
       this.$set(this.cache, this.curCode, fields);
       this.$emit("loaded", { fields, store, config: this.formConfig, forms: this.options });
+
+      if (this.formName) {
+        const form = _.find(this.options, { node_name: this.curCode });
+        this.data[this.formName] = form ? form.node_display : "";
+      }
 
       this.loading = false;
     },

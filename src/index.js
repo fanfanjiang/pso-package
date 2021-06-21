@@ -174,6 +174,7 @@ import PsoFvStats from "./components/composite/fv-stats";
 import PsoFormEntry from "./components/composite/form";
 import PsoFvtree from "./components/composite/fvtree";
 import PsoFvSrcv from "./components/composite/fv-srcv";
+import PsoFvMultifv from "./components/composite/fv-multifv";
 
 const components = {
     PsoEmpty,
@@ -302,7 +303,8 @@ const components = {
     PsoFvStats,
     PsoFormEntry,
     PsoFvtree,
-    PsoFvSrcv
+    PsoFvSrcv,
+    PsoFvMultifv
 }
 
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host, xssFilter = false, __CONST__ } = {}) {

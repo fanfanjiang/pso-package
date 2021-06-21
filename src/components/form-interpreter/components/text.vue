@@ -12,7 +12,7 @@
       :placeholder="cpnt.data._placeholder"
       :autofocus="cpnt.data._autofocus"
       :maxlength="cpnt.data._fieldLen"
-      :rows="2"  
+      :rows="2"
       show-word-limit
       @focus="focusing = true"
       @blur="handleInputBlur"

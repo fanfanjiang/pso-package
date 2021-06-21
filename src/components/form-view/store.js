@@ -138,6 +138,7 @@ export default class FormViewStore {
         this.notifyType = "formcopy";
         this.printTemplates = [];
 
+        this.actionable = true;
 
         this.formView = {
             show: false,
@@ -507,7 +508,7 @@ export default class FormViewStore {
             } else {
                 this.workInstance(ret.data);
                 this.instances = this.instances.concat(ret.data);
-                if (!ret.data.length || (typeof ret.total !== 'undefined' && ret.total <= this.instances.length)) {
+                if (ret.data.length < data.limit || (typeof ret.total !== 'undefined' && ret.total <= this.instances.length)) {
                     this.fetchFinished = true;
                 }
             }
@@ -1148,11 +1149,13 @@ export default class FormViewStore {
         return this.actionMGR.checkAction({ action, data: data || this.selectedList });
     }
 
-    async addOrUpdate({ leaf_id = "", formData }, refresh = true, emit = true) {
+    async addOrUpdate({ leaf_id = "", formData }, refresh = true, emit = true, showMsg = true) {
         if (formData) {
             const dataId = leaf_id || shortid.generate();
             const ret = await API.form({ data: { leaf_id: dataId, formData }, method: "put" });
-            this.$vue.ResultNotify(ret);
+            if (showMsg) {
+                this.$vue.ResultNotify(ret);
+            }
             if (ret.success) {
                 if (emit) {
                     this.$vue.$emit("data-changed", { leaf_id: leaf_id || ret.data.data, formData, op: leaf_id ? 2 : 1 });
@@ -1285,7 +1288,7 @@ export default class FormViewStore {
 
     figureBtnWidth({ btns, size = 'mini', name = 'name' }) {
         if (!btns || !btns.length) return 0;
-        const baseWidth = 40;
+        const baseWidth = 46;
         const textWidth = 12;
         const figure = (text) => {
             return baseWidth + (text ? text.length : 4) * textWidth;
@@ -1320,8 +1323,8 @@ export default class FormViewStore {
             const data = await this.formProxy.fetch({ ids, mode });
             const ret = await API.request("/api/form/data/print", { data: { ...template, data, mainCode: this.store.data_code, map: this.formProxyMap } });
             if (ret.success) {
-                window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
-                // window.open(`/pdf?url=/static/temp/${ret.data.name}.pdf`);
+                // window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
+                window.open(`/pdf?url=/static/temp/${ret.data.name}.pdf`);
             }
             callback && callback();
         }

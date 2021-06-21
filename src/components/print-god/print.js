@@ -75,11 +75,11 @@ export default class Print {
     }
 
     get lineHeight() {
-        return (this.page.layout === "portrait" ? this.pageHeight : this.pageWidth) + 26 - this.pageMargin[0] - this.pageMargin[2];
+        return (this.page.layout === "portrait" ? this.pageHeight : this.pageWidth) + 26 - this.pageMargin[1] - this.pageMargin[3];
     }
 
     get lineWidth() {
-        return (this.page.layout === "portrait" ? this.pageWidth : this.pageHeight) + 50 - this.pageMargin[1] - this.pageMargin[3];
+        return (this.page.layout === "portrait" ? this.pageWidth : this.pageHeight) + 50 - this.pageMargin[0] - this.pageMargin[2];
     }
 
     addSheet(id) {
@@ -123,8 +123,10 @@ export default class Print {
 
         this.sheetId = id;
         this.sheet = null;
+
+        const { template } = this.getSheet(id);
         setTimeout(() => {
-            this.sheet = new Sheet({ $sheet: this.$sheet, print: this, template: this.getSheet(id).template, $vue: this.$vue });
+            this.sheet = new Sheet({ $sheet: this.$sheet, print: this, template, $vue: this.$vue });
         })
     }
 

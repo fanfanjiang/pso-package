@@ -878,7 +878,7 @@ export default class API {
 
     static async doActionScript(data) {
         try {
-            return await this.request('/api/form/action/script', { data, method: 'post' });
+            return await this.request('/api/form/action/script', { data, method: 'post', showMsg: true });
         } catch (error) {
             throw error;
         }

@@ -1,5 +1,6 @@
 const formulajs = require("@handsontable/formulajs");
 // const formulajs = require("@formulajs/formulajs");
+import { SYS_FIELDS } from "../../const/form";
 
 export const formulaMixin = {
     computed: {
@@ -32,11 +33,22 @@ export const formulaMixin = {
                         val = item._proxy.list[0][item.componentid === 'user' ? (item._sourceType === "2" ? `${item._bindFormField}_x` : "user_name") : 'node_display'];
                     }
                 }
+                if (item.componentid === 'tag') {
+                    if (item._proxy && item._proxy.list.length) {
+                        val = _.map(item._proxy.list, item._proxy.list[0]['node_display'] ? 'node_display' : "tag_name").join(',')
+                    }
+                }
                 // console.log(val);
                 datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), val);
             });
-            // console.log(datasource);
+
+            //系统字段
+            SYS_FIELDS.forEach(d => {
+                datasource = datasource.replace(new RegExp(`@${d._fieldValue}@`, "g"), this.cpnt.store.instance[d._fieldValue] || '');
+            })
+
             try {
+                console.log(datasource);
                 const value = eval(datasource);
                 if (typeof value !== 'object') {
                     return value;

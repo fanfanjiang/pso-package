@@ -47,9 +47,9 @@
         }
     }
 
-
     .lay-vv__b-header {
-        width: 100%;
+        left: 15px;
+        right: 15px;
         position: absolute;
         background-color: #fff;
         z-index: 99999;
@@ -57,5 +57,13 @@
 
     .lay-vv__b__body {
         margin-top: 54px;
+        height: calc(100% - 54px);
+
+        &.multifv {
+
+            .pso-view-body {
+                padding: 10px 0 0 0; 
+            }
+        }
     }
 }

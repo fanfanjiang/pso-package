@@ -25,18 +25,18 @@
       <el-divider content-position="left">页边距 (单位：mm)</el-divider>
       <div class="form-wrapper">
         <el-form-item label="上">
-          <el-input-number :precision="2" :controls="false" size="mini" v-model="print.page.margin[0]"> </el-input-number>
+          <el-input-number :precision="2" :controls="false" size="mini" v-model="print.page.margin[1]"> </el-input-number>
         </el-form-item>
         <el-form-item label="下">
-          <el-input-number :precision="2" :controls="false" size="mini" v-model="print.page.margin[2]"></el-input-number>
+          <el-input-number :precision="2" :controls="false" size="mini" v-model="print.page.margin[3]"></el-input-number>
         </el-form-item>
       </div>
       <div class="form-wrapper">
         <el-form-item label="左">
-          <el-input-number :controls="false" size="mini" v-model="print.page.margin[1]"></el-input-number>
+          <el-input-number :controls="false" size="mini" v-model="print.page.margin[0]"></el-input-number>
         </el-form-item>
         <el-form-item label="右">
-          <el-input-number :precision="2" :controls="false" size="mini" v-model="print.page.margin[3]"></el-input-number>
+          <el-input-number :precision="2" :controls="false" size="mini" v-model="print.page.margin[2]"></el-input-number>
         </el-form-item>
       </div>
     </el-form>

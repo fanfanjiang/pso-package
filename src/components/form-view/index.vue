@@ -18,7 +18,7 @@
       <div class="pso-view-body" ref="viewBody">
         <!-- 标题和权限视图过滤 -->
         <div ref="header" v-loading="store.fetching">
-          <div class="pso-view-header">
+          <div class="pso-view-header" v-if="!params.hideViewTitle || (store.authViews.length > 1 && !params.hideAuthTab)">
             <div class="pso-view-header__l" v-if="!params.hideViewTitle">
               <div class="pso-view-title">
                 <i class="el-icon-document"></i>
@@ -240,6 +240,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    actionable: {
+      type: Boolean,
+      default: true,
+    },
     actExtParam: Object, //动作扩展参数，目前用于打开子视图时传入参数
   },
   data() {
@@ -313,6 +317,7 @@ export default {
           statusesFilter: this.statusesFilter,
           showFilter: this.expanding,
           actExtParam: this.actExtParam,
+          actionable: this.actionable,
         });
 
         if (this.viewAuth) {

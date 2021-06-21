@@ -126,7 +126,7 @@ export default {
           this.instance[key] = this.params[key];
         }
       }
-
+ 
       this.initing = false;
     }
   },

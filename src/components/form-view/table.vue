@@ -197,7 +197,7 @@ export default {
       return this.store.actionMGR.getActions("2");
     },
     finalOptable() {
-      return this.params.operate || !!this.tableActions.length;
+      return this.store.actionable && (this.params.operate || !!this.tableActions.length);
     },
     finalOptWidth() {
       return this.operateWidth + this.store.figureBtnWidth({ btns: this.tableActions });

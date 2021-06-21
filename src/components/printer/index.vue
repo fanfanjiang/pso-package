@@ -126,8 +126,8 @@ export default {
           data: { ...this.curTemplate, data, mainCode: this.formProxy.store.data_code, map: this.formProxy.getCpntMap() },
         });
         if (ret.success) {
-          // window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
-          window.open(`/pdf?url=/static/temp/${ret.data.name}.pdf`);
+          window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
+          // window.open(`/pdf?url=/static/temp/${ret.data.name}.pdf`);
         }
       }
     },

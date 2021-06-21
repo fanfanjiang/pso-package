@@ -12,7 +12,7 @@
         {{ store.cpntText.copy }}
       </el-button>
     </template>
-    <action-group :store="store"></action-group>
+    <action-group v-if="store.actionable" :store="store"></action-group>
     <dropdown
       v-if="opChangable"
       :text="store.cpntText.change"
@@ -118,6 +118,10 @@ export default {
       default: false,
     },
     importable: {
+      type: Boolean,
+      default: false,
+    },
+    operate: {
       type: Boolean,
       default: false,
     },

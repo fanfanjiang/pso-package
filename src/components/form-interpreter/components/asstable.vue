@@ -6,6 +6,7 @@
           <template v-if="cpnt.data._relate">
             <div class="cpnt-text" v-if="cpnt.data._selectMode === '2'">
               <el-input
+                v-if="!(selectionType === 'radio' && proxy.valList.length)"
                 size="mini"
                 autosize
                 v-model="searchProxy"
@@ -104,6 +105,7 @@
           :edtail-editable="false"
           :changable="false"
           :stageable="false"
+          :actionable="false"
           :params="formTableCfg"
           :def-keys="devKeysCfg"
           @selection-confirm="handleAddSelection"

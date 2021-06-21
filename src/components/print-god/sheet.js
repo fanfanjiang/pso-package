@@ -75,10 +75,16 @@ export default class Sheet {
     }
 
     getColWidth(col) {
+        if (this.template && this.template.cols) {
+            return this.template.cols[col] || this.print.def.colWidth;
+        }
         return this.print.def.colWidth;
     }
 
     getRowHeight(row) {
+        if (this.template && this.template.rows) {
+            return this.template.rows[row] || this.print.def.rowHeight;
+        }
         return this.print.def.rowHeight;
     }
 
@@ -515,14 +521,14 @@ export default class Sheet {
             // this.analyzeSheetData(row, col, cell.content, sheetData, endCell);
 
             //这里直接跟新数据，不整体设置data
-            this.addHotCellData(row, col, cell.content);  
+            this.addHotCellData(row, col, cell.content);
         }
 
         //
         // if (!_.isEmpty(sheetData)) {
         //     this.hot.updateSettings({ data: sheetData }, true);
         // }
- 
+
         const merged = this.getMergedCells();
         data.merge.forEach(m => {
             merged.add(m)
@@ -530,6 +536,10 @@ export default class Sheet {
         props.forEach(({ row, col, prop }) => {
             this.hot.setCellMetaObject(row, col, prop)
         });
+
+        if (data.background) {
+            this.background = data.background;
+        }
 
         this.hot.render();
     }
@@ -591,7 +601,6 @@ export default class Sheet {
         data.range.e = this.mapKey(endCell[0], endCell[1]);
         data.styles = this.print.styleMap;
 
-        console.log(data);
         return data;
     }
 }
