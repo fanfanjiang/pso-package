@@ -92,6 +92,8 @@ export default {
 .pso-super-detail {
   padding: 20px;
   background: #fff;
+  height: 100%;
+  overflow: auto;
   .pso-super-detail-title {
     font-size: 22px;
     margin-bottom: 30px;

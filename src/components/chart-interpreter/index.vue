@@ -1,7 +1,7 @@
 <template>
   <div class="pso-chart" ref="chart">
     <div class="pso-chart-wrapper" v-loading="!loaded">
-      <div class="pso-chart-name">{{ chartCfg.chartName }}</div>
+      <div class="pso-chart-name" v-if="chartCfg.chartName">{{ chartCfg.chartName }}</div>
       <div class="pso-chart-filter">
         <pso-datafilter
           v-if="defCondition.length"

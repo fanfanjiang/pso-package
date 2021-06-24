@@ -90,7 +90,6 @@
             </div>
           </div>
           <div class="form-executor-header__r">
-            <el-button size="mini" type="success" icon="el-icon-plus" @click="handleParamsAdd()">添加参数</el-button>
             <el-button size="mini" type="primary" icon="el-icon-upload" @click="saveSearch()">保存</el-button>
           </div>
         </div>
@@ -111,29 +110,52 @@
           <el-form-item label="默认值" v-if="curCol.searchType">
             <el-input size="mini" v-model="curCol.defaultVal"></el-input>
           </el-form-item>
+          <el-form-item label="动态选项">
+            <el-switch v-model="curCol.dyncoptions"></el-switch>
+          </el-form-item>
+          <template v-if="curCol.dyncoptions">
+            <el-form-item label="统计插件">
+              <el-select clearable filterable size="mini" v-model="curCol.dynccode" @change="fetchTemp">
+                <el-option v-for="(tp, i) in templetes" :key="i" :label="tp.node_display" :value="tp.node_name"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="名称字段">
+              <el-select clearable filterable size="mini" v-model="curCol.dyncname">
+                <el-option v-for="(d, i) in tempFields" :key="i" :label="d.name" :value="d.field"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="值字段">
+              <el-select clearable filterable size="mini" v-model="curCol.dyncvalue">
+                <el-option v-for="(d, i) in tempFields" :key="i" :label="d.name" :value="d.field"></el-option>
+              </el-select>
+            </el-form-item>
+          </template>
         </el-form>
-        <el-table border size="mini" key="params" :data="curCol.searchList" style="width: 100%" height="300">
-          <el-table-column label="参数名" width="220">
-            <template slot-scope="scope">
-              <el-input size="mini" v-model="scope.row.n"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="参数值">
-            <template slot-scope="scope">
-              <el-input size="mini" v-model="scope.row.v"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="作为默认" width="100" align="center">
-            <template slot-scope="scope">
-              <el-switch v-model="scope.row.d"></el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="90" align="center">
-            <template slot-scope="scope">
-              <el-button size="mini" plain @click="handleParamsDel(scope.$index)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <template v-if="!curCol.dyncoptions">
+          <el-button size="mini" type="success" icon="el-icon-plus" @click="handleParamsAdd()">添加参数</el-button>
+          <el-table border size="mini" key="params" :data="curCol.searchList" style="width: 100%; margin-top: 10px" height="300">
+            <el-table-column label="参数名" width="220">
+              <template slot-scope="scope">
+                <el-input size="mini" v-model="scope.row.n"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="参数值">
+              <template slot-scope="scope">
+                <el-input size="mini" v-model="scope.row.v"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="作为默认" width="100" align="center">
+              <template slot-scope="scope">
+                <el-switch v-model="scope.row.d"></el-switch>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="90" align="center">
+              <template slot-scope="scope">
+                <el-button size="mini" plain @click="handleParamsDel(scope.$index)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </template>
       </div>
     </pso-dialog>
     <pso-dialog :visible="showDrillEditor" @close="showDrillEditor = false" width="60%">
@@ -212,14 +234,15 @@ export default {
       menus: [],
       tempFields: [],
       tempCache: {},
+      templetes: [],
     };
   },
   async created() {
     this.initializing = true;
-    const templetes = (await this.API.getTempleteTree()).filter((i) => i.tp_type === 1);
+    this.templetes = (await this.API.getTempleteTree()).filter((i) => i.tp_type === 1);
     const menus = await this.API.getAllMenu();
     this.menus = menus.data.nav.filter((m) => {
-      return m.is_leaf && m.menu_type === MENU_TYPE[0].v && _.find(templetes, { node_name: m.menu_link });
+      return m.is_leaf && m.menu_type === MENU_TYPE[0].v && _.find(this.templetes, { node_name: m.menu_link });
     });
 
     formatJSONList(this.column, STATIC_COLUMN_FIELDS);
@@ -274,6 +297,9 @@ export default {
       if (this.curCol) {
         this.curCol.drillParams.forEach((d) => (d.t = ""));
       }
+      this.fetchTemp(code);
+    },
+    async fetchTemp(code) {
       if (this.tempCache[code]) {
         this.tempFields = this.tempCache[code];
       } else {

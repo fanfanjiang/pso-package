@@ -22,6 +22,7 @@ export const COMMONFIELDS = {
     headerTextColor: '#666',
     styleType: '0',
     hidden: false, //隐藏
+    headerHidden: false, //隐藏
 }
 
 export const DATABASE = {

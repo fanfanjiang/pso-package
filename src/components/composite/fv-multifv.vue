@@ -26,7 +26,11 @@
         </el-tabs>
       </div>
       <div class="lay-vv__b__body multifv" v-if="mainCurRow && curRelate">
+        <div class="interpreter-wrapper" v-if="curRelate.cid === 'pso-form-interpreter'">
+          <pso-form-interpreter v-bind="relateParams"></pso-form-interpreter>
+        </div>
         <pso-form-view
+          v-else
           key="body"
           v-bind="relateParams"
           :params="relateParams"
@@ -63,34 +67,39 @@ export default {
       return this.params.relateto;
     },
     relateParams() {
-      const params = { viewAuth: this.params.viewAuth };
       if (this.mainCurRow && this.curRelate) {
-        const { relate, opts } = this.curRelate;
+        const { fid, relate, opts, cid } = this.curRelate;
+        if (cid === "pso-form-interpreter") {
+          if (relate && relate.length) {
+            return { formId: fid, dataId: this.mainCurRow[relate[0]["src"]], editable: false };
+          }
+        } else {
+          const params = { viewAuth: this.params.viewAuth };
 
-        if (opts) {
-          for (let item of opts) {
-            if (typeof params[item.field] === "undefined") {
-              params[item.field] = item.value;
+          if (opts) {
+            for (let item of opts) {
+              if (typeof params[item.field] === "undefined") {
+                params[item.field] = item.value;
+              }
             }
           }
-        }
 
-        if (relate) {
-          params.defForm = {};
-          for (let item of relate) {
-            if (item.trg && typeof this.mainCurRow[item.src] !== "undefined" && this.mainCurRow[item.src] !== "") {
-              params.defForm[item.trg] = this.mainCurRow[item.src];
+          if (relate) {
+            params.defForm = {};
+            for (let item of relate) {
+              if (item.trg && typeof this.mainCurRow[item.src] !== "undefined" && this.mainCurRow[item.src] !== "") {
+                params.defForm[item.trg] = this.mainCurRow[item.src];
+              }
             }
           }
+          params.hideViewTitle = true;
+          params.hideAuthTab = true;
+          return params;
         }
       }
-      params.hideViewTitle = true;
-      params.hideAuthTab = true;
-      return params;
     },
   },
   created() {
-    console.log(this.params);
     if (this.relations.length) {
       this.onChangeRelate();
     }
@@ -136,3 +145,11 @@ export default {
   },
 };
 </script>
+<style lang="less">
+.interpreter-wrapper {
+  height: 100%;
+  overflow: auto;
+  background-color: #f8f8f8;
+  padding: 15px;
+}
+</style>

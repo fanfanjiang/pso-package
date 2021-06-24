@@ -9,6 +9,9 @@
     <el-form-item label="隐藏">
       <el-switch size="mini" v-model="cpnt.data.hidden"></el-switch>
     </el-form-item>
+    <el-form-item label="隐藏头部">
+      <el-switch size="mini" v-model="cpnt.data.headerHidden"></el-switch>
+    </el-form-item>
     <el-form-item label="头部背景色">
       <el-color-picker size="mini" v-model="cpnt.data.headerBgColor"></el-color-picker>
     </el-form-item>

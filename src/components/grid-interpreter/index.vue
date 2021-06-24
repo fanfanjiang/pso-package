@@ -2,7 +2,7 @@
   <div class="grid-interpreter" v-loading="initializing">
     <div class="grid-interpreter-body">
       <grid-layout
-        :layout="store.layout"
+        :layout="gridLayout"
         :col-num="24"
         :row-height="10"
         :is-draggable="false"
@@ -13,7 +13,7 @@
         :margin="[20, 20]"
         :use-css-transforms="true"
       >
-        <grid-item v-for="(d, i) in store.data" :x="d.data.x" :y="d.data.y" :w="d.data.w" :h="d.data.h" :i="d.data.i" :key="i">
+        <grid-item v-for="(d, i) in grid" :x="d.data.x" :y="d.data.y" :w="d.data.w" :h="d.data.h" :i="d.data.i" :key="i">
           <component v-bind:is="getCpntEl(d.data.id)" :cpnt="d"></component>
         </grid-item>
       </grid-layout>
@@ -49,6 +49,19 @@ export default {
       initializing: true,
       store: null,
     };
+  },
+  computed: {
+    grid() {
+      if (!this.store) return [];
+      return this.store.data.filter((d) => d.urine.child_status === 1 && !d.urine.hidden);
+    },
+    gridLayout() {
+      if (!this.store) return [];
+      return this.store.layout.filter((d) => {
+        const exist = _.find(this.store.data, { i: d.i });
+        return exist && exist.urine.child_status === 1 && !exist.urine.hidden;
+      });
+    },
   },
   async created() {
     this.initializing = true;

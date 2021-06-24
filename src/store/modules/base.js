@@ -106,37 +106,39 @@ export default {
             }
             return true;
         },
-        async ['APP_ANALYZEMENU']({ state, getters, commit }, params = {}) {
+        ['APP_MAKEMENU']({ state, getters, commit, dispatch }, { menus, callback, auth }) {
+            menus.forEach((item) => {
+                const { menu_type, tp_route, menu_code, menu_link } = item;
+                if (menu_type === 1 && tp_route) {
+                    item.menu_path = tp_route.replace(/:menu_code/g, menu_code);
+                } else if (menu_type === 2) {
+                    item.menu_path = menu_link;
+                }
+                if (item.menu_path && state.user) {
+                    item.menu_path = item.menu_path.replace(/@uid@/g, state.user.user_id);
+                }
+                if (callback) {
+                    callback(item);
+                }
+            });
+            const menuTree = listToTree({
+                list: menus,
+                pid: "node_pid",
+                id: "node_id",
+                afterPush: (node, pnode) => {
+                    pnode.children = _.orderBy(pnode.children, ["node_serial", "create_time"], ["asc", "asc"]);
+                },
+            }).filter((item) => auth ? item.node_auth !== "0" : true);
+            return { menus, menuTree }
+        },
+        async ['APP_ANALYZEMENU']({ dispatch }, params = {}) {
             const { auth = true, callback } = params;
             const ret = await API.getAllMenu({});
             if (ret.success) {
                 const { nav: menus, message: notice } = ret.data;
-
-                menus.forEach((item) => {
-                    const { menu_type, tp_route, menu_code, menu_link } = item;
-                    if (menu_type === 1 && tp_route) {
-                        item.menu_path = tp_route.replace(/:menu_code/g, menu_code);
-                    } else if (menu_type === 2) {
-                        item.menu_path = menu_link;
-                    }
-                    if (item.menu_path && state.user) {
-                        item.menu_path = item.menu_path.replace(/@uid@/g, state.user.user_id);
-                    }
-                    if (callback) {
-                        callback(item);
-                    }
-                });
-
-                const menuTree = listToTree({
-                    list: menus,
-                    pid: "node_pid",
-                    id: "node_id",
-                    afterPush: (node, pnode) => {
-                        pnode.children = _.orderBy(pnode.children, ["node_serial", "create_time"], ["asc", "asc"]);
-                    },
-                }).filter((item) => auth ? item.node_auth !== "0" : true);
-
-                return { menus, menuTree, notice }
+                const data = dispatch('APP_MAKEMENU', { menus, auth, callback });
+                data.notice = notice;
+                return data
             }
         }
     }

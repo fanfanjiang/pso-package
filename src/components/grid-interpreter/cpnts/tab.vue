@@ -3,7 +3,7 @@
     <template #header>
       <button-tabs v-model="curTab" :data="tabs" :indexed="false" :color="cpnt.data.headerTextColor"></button-tabs>
     </template>
-    <component v-if="cpntEL" v-bind:is="cpntEL" :cpnt="subCpnt"></component>
+    <component v-if="cpntEL" :key="subCpnt && subCpnt.i" v-bind:is="cpntEL" :cpnt="subCpnt"></component>
   </pso-grid-wrapper>
 </template>
 <script>

@@ -88,16 +88,20 @@ export const STATIC_COLUMN_FIELDS = {
     number: 0,
     formulable: "0",
     formula: "",
-    searchable: "0",
-    searchList: [],
-    searchType: '',
-    searchOp: '',
     defaultVal: '',
     drillTarget: '',
     drillParams: [],
     sortable: "0",
     defSort: "", //默认排序类型
     defSortOrder: 0,//默认排序顺序
+    searchable: "0",
+    searchList: [],
+    searchType: '',
+    searchOp: '',
+    dyncoptions: false, //静态选项
+    dynccode: "", 
+    dyncname: "", //动态选项
+    dyncvalue: "",//动态选项
 }
 
 

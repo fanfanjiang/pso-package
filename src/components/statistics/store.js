@@ -66,7 +66,8 @@ export default class STAVStore extends FVStore {
             //默认排序配置
             const defSorts = [];
 
-            this.fields.forEach((f) => {
+            for (let f of this.fields) {
+
                 Vue.set(f, 'display', f.name);
 
                 if (f.searchable === "1" && f.formulable !== "1") {
@@ -76,15 +77,26 @@ export default class STAVStore extends FVStore {
                     if (f.defaultVal) {
                         data = f.defaultVal;
                     }
-                    if (f.searchList && f.searchList.length) {
-                        data = [];
-                        sItem._option = f.searchList.map((i) => {
-                            if (i.d) {
-                                data.push(i.v);
-                            }
-                            return { _optionName: i.n, _optionValue: i.v };
-                        });
+
+                    if (f.dyncoptions && f.dynccode && f.dyncname) {
+
+                        const ret = await API.getStatisticData({ tp_code: f.dynccode, leaf_auth: 4, search_type: "select" });
+                        if (ret.data && ret.data.DATA) {
+                            sItem._option = ret.data.DATA.map(d => ({ _optionName: d[f.dyncname], _optionValue: d[f.dyncvalue || f.dyncname] }))
+                        }
+
+                    } else {
+                        if (f.searchList && f.searchList.length) {
+                            data = [];
+                            sItem._option = f.searchList.map((i) => {
+                                if (i.d) {
+                                    data.push(i.v);
+                                }
+                                return { _optionName: i.n, _optionValue: i.v };
+                            });
+                        }
                     }
+
                     this.conditionOptions.push(genComponentData(sItem));
                     conditionItems.push({ cpnt: sItem, field: sItem.fid, op: f.searchOp, data, match: "" });
                 }
@@ -92,7 +104,7 @@ export default class STAVStore extends FVStore {
                 if (f.defSort) {
                     defSorts.push(f)
                 }
-            });
+            }
 
             if (conditionItems.length) {
                 this.defCondition.push(conditionItems);

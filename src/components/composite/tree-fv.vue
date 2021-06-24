@@ -1,19 +1,21 @@
 <template>
-  <div class="pso-page">
-    <div class="pso-page-body">
-      <div class="pso-page__tree">
-        <pso-tree-common
-          ref="tree"
-          :edit-mode="false"
-          :draggable="false"
-          :request-options="treeOptions"
-          @node-click="nodeClickHandler"
-        ></pso-tree-common>
-      </div>
-      <div class="pso-page-body__content">
-        <div class="pso-page-body__wrapper" v-if="curNode">
-          <pso-form-view v-bind="formParams" :params="formParams"></pso-form-view>
+  <div :class="viewClass">
+    <div class="pso-view-extend">
+      <div class="pso-tree">
+        <div class="pso-tree__body">
+          <pso-tree-common
+            ref="tree"
+            :edit-mode="false"
+            :draggable="false"
+            :request-options="treeOptions"
+            @node-click="nodeClickHandler"
+          ></pso-tree-common>
         </div>
+      </div>
+    </div>
+    <div class="pso-view-body">
+      <div class="pso-view-table" style="height: 100%" v-if="curNode">
+        <pso-form-view v-bind="formParams" :params="formParams"></pso-form-view>
       </div>
     </div>
   </div>
@@ -33,6 +35,15 @@ export default {
     };
   },
   computed: {
+    viewClass() {
+      return {
+        "pso-view__expand": true,
+        "pso-view__expand-wider": true,
+        "pso-view-mgt": true,
+        "pso-view": true,
+        "pso-fvtree": true,
+      };
+    },
     treeOptions() {
       return {
         data_type: this.params.tree_data_type,

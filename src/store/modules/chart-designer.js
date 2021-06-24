@@ -2,7 +2,7 @@ import MUT_TYPES from '../mutation-types';
 import API from "../../service/api.js";
 import { FIGER_DEFALUT_OP, SORT } from "../../const/chart";
 import FormStore from "../../components/form-designer/model/store.js";
-import { makeFormByScript, makeFormByPluginModule } from '../../tool/form'
+import { makeFormByScript, makeFormByPluginModule, makeSysFormFields } from '../../tool/form'
 import Vue from 'vue';
 
 const STATE = {
@@ -134,7 +134,7 @@ export default {
                 options: { db: true },
                 onlyData: true,
                 beforePush: item => !item.parent.CPNT.host_db
-            });
+            }).concat(makeSysFormFields());
             commit(MUT_TYPES.CD_SOURCE_SET, fields);
             state.conditionOptions = fields;
             state.initializing = false;

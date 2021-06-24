@@ -1,21 +1,29 @@
 <template>
-  <div>
+  <div class="pso-form">
     <el-button style="margin-bottom: 10px" size="mini" type="primary" plain @click="addParam">添加目标表单配置</el-button>
-    <div v-for="(d, i) in data" :key="i">
-      <picker-form from-text="选择目标表单" form-field="fid" form-name="name" source="3" :data="d" @loaded="formLoaded"></picker-form>
-      <el-button size="mini" plain @click="setCurItem(i)">设置目标表单参数</el-button>
+    <el-form label-position="top" size="mini" style="margin-bottom: 40px" v-for="(d, i) in data" :key="i">
+      <picker-form from-text="选择目标表单" form-field="fid" source="3" :data="d" @loaded="formLoaded"></picker-form>
+      <el-form-item label="视图名称">
+        <el-input size="mini" v-model="d.name"></el-input>
+      </el-form-item>
+      <el-form-item label="组件类型">
+        <el-select filterable clearable size="mini" v-model="d.cid">
+          <el-option v-for="(s, i) in COMPONENTS" :key="i" :label="s.n" :value="s.v"></el-option>
+        </el-select>
+      </el-form-item>
       <div>
         <picker-fmatchup v-bind="getMatchup(i)"></picker-fmatchup>
       </div>
-      <el-form label-width="110px">
+      <template v-if="d.cid !== 'pso-form-interpreter'">
+        <el-button size="mini" plain @click="setCurItem(i)">设置目标视图参数</el-button>
         <el-form-item label="反哺字段">
           <el-select filterable clearable size="mini" v-model="d.feed">
             <el-option v-for="(s, i) in sources" :key="i" :label="s.fieldDisplay" :value="s.field_name"></el-option>
           </el-select>
         </el-form-item>
-      </el-form>
+      </template>
       <el-button size="mini" type="danger" plain @click="delHandler(i)">删除配置项</el-button>
-    </div>
+    </el-form>
     <pso-dialog :visible="showEditor" width="70%" @close="showEditor = false">
       <template #title>
         <pso-dialog-header>
@@ -35,7 +43,13 @@
 import PickerFmatchup from "./picker-fmatchup";
 import PickerForm from "../../picker/pso-picker-form";
 import { formatJSONList } from "../../../utils/util";
-const FIELDS = { fid: "", name: "", feed: "", relate: [], opts: [] };
+
+const COMPONENTS = [
+  { n: "表单视图", v: "pso-form-view" },
+  { n: "表单详情", v: "pso-form-interpreter" },
+];
+
+const FIELDS = { fid: "", name: "", cid: "pso-form-view", feed: "", relate: [], opts: [] };
 
 export default {
   components: { PickerFmatchup, PickerForm, Setter: () => import("../setter") },
@@ -45,6 +59,7 @@ export default {
     data: Array,
   },
   data() {
+    this.COMPONENTS = COMPONENTS;
     return {
       showEditor: false,
       curItem: null,

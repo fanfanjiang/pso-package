@@ -113,7 +113,6 @@ export default class Module {
         let { id = 'chart', i } = cpnt;
 
         const __cpnt__ = this.constructor.CPNT[id];
-        console.log(1, id, __cpnt__);
         if (!__cpnt__) {
             return;
         }
