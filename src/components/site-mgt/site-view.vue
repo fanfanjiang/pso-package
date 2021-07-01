@@ -48,8 +48,9 @@
                   <span v-else>{{ scope.row[f.field] }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="110" align="center">
+              <el-table-column label="操作" width="180" align="center">
                 <template slot-scope="scope">
+                  <el-button size="mini" type="success" @click="publish(scope.$index)">发布</el-button>
                   <el-button size="mini" type="success" @click="makeRelation(scope.$index)">站点关系</el-button>
                 </template>
               </el-table-column>
@@ -264,6 +265,11 @@ export default {
     getLevelName(auto_no) {
       const level = _.find(this.sitelevle, { auto_no });
       return level ? level.level_name : "未设置";
+    },
+    async publish(index) {
+      const { site_id } = this.instances[index];
+      const ret = await this.API.request("/api/sys/site/publish", { data: { site_id }, method: "post" });
+      this.ResultNotify(ret);
     },
     async makeRelation(index) {
       this.curInst = this.instances[index];

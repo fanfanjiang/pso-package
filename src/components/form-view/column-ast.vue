@@ -3,7 +3,7 @@
     <template v-if="relatedShowField">
       {{ showVal }}
     </template>
-    <pso-cpnt-ast v-else-if="val && field._option" :cpnt="cpnt"></pso-cpnt-ast>
+    <pso-cpnt-ast v-else-if="val && field._option" :cpnt="cpnt" emitSilent></pso-cpnt-ast>
   </el-form>
 </template>
 <script>

@@ -409,6 +409,10 @@ export default {
       type: String,
       default: "",
     },
+    outercode: {
+      type: String,
+      default: "",
+    },
     names: Array,
     msgMains: Array,
     msgSubs: Array,
@@ -786,21 +790,6 @@ export default {
         this.block.field_config.splice(_.findIndex(this.block.field_config, t), 1);
       });
     },
-    async debugScript() {
-      this.showDebugPanel = true;
-      this.activeDebugTab = "result";
-
-      try {
-        const paramvalue = await this.getDebugParams();
-        this.debuging = true;
-        const ret = await this.API.debugSQLScript({ script: this.block, paramvalue });
-        this.debugResult += `[${dayjs().format("HH:mm:ss")}]     ${JSON.stringify(ret)}</br>`;
-        this.debuging = false;
-      } catch (error) {
-        console.log(error);
-        return null;
-      }
-    },
     indexAddHandler(n) {
       const sql = _.find(this.INDEX, { n });
       let text = sql.v;
@@ -816,14 +805,39 @@ export default {
       } catch (error) {}
       return {};
     },
+    async getShitParams() {
+      const paramvalue = await this.getDebugParams();
+      const params = { script: this.block, paramvalue };
+      if (this.outercode) {
+        params.db_id = this.outercode;
+      }
+      return params;
+    },
+    async debugScript() {
+      this.showDebugPanel = true;
+      this.activeDebugTab = "result";
+
+      try {
+        const params = await this.getShitParams();
+        this.debuging = true;
+        const ret = await this.API.debugSQLScript(params);
+
+        this.debugResult += `[${dayjs().format("HH:mm:ss")}]     ${JSON.stringify(ret)}</br>`;
+        this.debuging = false;
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    },
     async genColumn() {
       if (!this.block.script) return;
       this.showDebugPanel = true;
       this.activeDebugTab = "column";
 
       this.columning = true;
-      const paramvalue = await this.getDebugParams();
-      const ret = await this.API.getColumnBySql({ script: this.block, paramvalue });
+      const params = await this.getShitParams();
+      
+      const ret = await this.API.getColumnBySql(params);
       if (ret.success && ret.data) {
         this.columns = JSON.parse(ret.data.data).map((d) => {
           const exist = _.find(this.trueSource, { _fieldValue: d.field });

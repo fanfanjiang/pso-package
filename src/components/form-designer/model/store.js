@@ -22,7 +22,7 @@ export default class FormStore {
         this.data_code = ""; //表单配置code
         this.templateId = ''; //模板node_id
 
-        this.beInstanceId = psodataid();  
+        this.beInstanceId = psodataid();
         this.instance_id = "";  //数据实例id
         this.parentInstanceId = "";  //数据父级实例id
 
@@ -96,6 +96,7 @@ export default class FormStore {
             data: {
                 fid: "0",
                 componentid: "stage",
+                layout: true,
                 children: _.cloneDeep(this.data_config)
             },
             store: this
@@ -160,7 +161,7 @@ export default class FormStore {
 
     _forEach(fun) {
         for (let key in this.cpntsMap) {
-            if (!this.cpntsMap[key].CPNT.layout) {
+            if (!this.cpntsMap[key].CPNT.layout && this.cpntsMap[key].componentid !== 'stage') {
                 fun && fun(this.cpntsMap[key], key);
             }
         }

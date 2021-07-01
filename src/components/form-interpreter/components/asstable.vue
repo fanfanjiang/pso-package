@@ -155,6 +155,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    emitSilent: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     this.clearDefFormOnClose = false;
@@ -248,11 +252,9 @@ export default {
       return {};
     },
     formTableViewAuth() {
-      if (this.authCfg.authable) {
-        return this.cpnt.data.__auth__ || 1;
-      } else {
-        return 7;
-      }
+      const { authable, authdef = 1 } = this.authCfg;
+      if (!authable) return 7;
+      return this.cpnt.data.__auth__ || authdef || 1;
     },
     devKeysCfg() {
       const params = [];
@@ -341,7 +343,7 @@ export default {
     this.prepareByProxy(this.proxy.valList);
 
     //1、初始化的时候发出通知
-    this.dispatch("PsoformInterpreter", "cpnt-asstable-initialized", this.getChangeEntity());
+    this.makeAttention("PsoformInterpreter", "cpnt-asstable-initialized");
 
     this.watchFun.push(
       this.$watch("proxy.valList", {
@@ -349,14 +351,14 @@ export default {
           this.prepareByProxy(data);
 
           //2、只要proxy发生变化就发出通知，此时_val可能发生变化也可能不变
-          this.dispatch("PsoformInterpreter", "asstable-selected", this.getChangeEntity());
+          this.makeAttention("PsoformInterpreter", "asstable-selected");
 
           //3、只有_val发生变化才发出通知（mixin中）
 
           //4、当proxy发生变化但是_val并没有发生变化时才发出通知
           //删除时和新增时 获取到新旧值的长度是不一样的，新增时可以正确获取到长度不同的新旧值，但是删除时不行
           if (data.length === preData.length && data === preData) {
-            this.dispatch("PsoformInterpreter", "asstable-change", this.getChangeEntity());
+            this.makeAttention("PsoformInterpreter", "asstable-change");
           }
         },
       })
@@ -381,6 +383,11 @@ export default {
     });
   },
   methods: {
+    makeAttention(cpt, sound) {
+      if (!this.emitSilent) {
+        this.dispatch(cpt, sound, this.getChangeEntity());
+      }
+    },
     searchDisplay(data) {
       const fields = this.cpnt.data._selectFields;
       let text = data[fields[0]];

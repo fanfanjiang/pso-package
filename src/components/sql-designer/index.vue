@@ -42,6 +42,7 @@
           <designer
             v-if="curBlock"
             :scode="scode"
+            :outercode="outercode"
             :block="curBlock"
             :names="names"
             :msg-mains="msgMains"
@@ -67,6 +68,10 @@ export default {
       type: Array,
     },
     scode: {
+      type: String,
+      default: "",
+    },
+    outercode: {
       type: String,
       default: "",
     },

@@ -5,7 +5,7 @@
         <el-input size="mini" v-model="cpnt.data._unit"></el-input>
       </el-form-item>
       <el-form-item label="小数点">
-        <el-input-number size="mini" v-model="cpnt.data._decimalPlaces" :min="0" :max="5"></el-input-number>
+        <el-input-number size="mini" v-model="cpnt.data._decimalPlaces" :min="0" :max="6"></el-input-number>
       </el-form-item>
       <el-form-item label="百分比模式">
         <el-switch size="mini" v-model="cpnt.data._usePercent"></el-switch>

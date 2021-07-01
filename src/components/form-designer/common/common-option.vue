@@ -6,27 +6,12 @@
     :animation="100"
     handle=".act-select__option__handle"
   >
-    <div
-      class="act-select__option flex-row-center-between"
-      v-for="(option,idx) in cpnt.data._option"
-      :key="idx"
-    >
+    <div class="act-select__option flex-row-center-between" v-for="(option, idx) in cpnt.data._option" :key="idx">
       <i class="el-icon-sort act-select__option__handle"></i>
       <el-input size="mini" v-model="option._optionName" placeholder="选项名"></el-input>
       <el-input size="mini" v-model="option._optionValue" placeholder="选项值"></el-input>
-      <el-tooltip
-        effect="dark"
-        content="设为默认"
-        placement="top-end"
-        :enterable="false"
-        :hide-after="500"
-      >
-        <el-radio
-          size="mini"
-          v-if="!multiple"
-          v-model="cpnt.data._defaultValue"
-          :label="option._optionValue"
-        ></el-radio>
+      <el-tooltip effect="dark" content="设为默认" placement="top-end" :enterable="false" :hide-after="500">
+        <el-radio size="mini" v-if="!multiple" v-model="cpnt.data._defaultValue" :label="option._optionValue"></el-radio>
         <el-checkbox
           size="mini"
           v-else
@@ -35,13 +20,7 @@
           :label="option._optionValue"
         ></el-checkbox>
       </el-tooltip>
-      <el-tooltip
-        effect="dark"
-        content="删除"
-        placement="top-end"
-        :enterable="false"
-        :hide-after="500"
-      >
+      <el-tooltip effect="dark" content="删除" placement="top-end" :enterable="false" :hide-after="500">
         <i class="act-select__option__del el-icon-close" @click="delOption(idx)"></i>
       </el-tooltip>
     </div>

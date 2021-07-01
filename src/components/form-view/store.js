@@ -774,8 +774,6 @@ export default class FormViewStore {
         } else {
             this.fields = fields;
         }
-
-        this.fields = this.makeFieldsOrder(this.fields);
     }
 
     makeFieldsOrder(fields) {
@@ -785,7 +783,7 @@ export default class FormViewStore {
     analyzeColumn(cfg, defKey) {
         this.oriColData = this.getFormColumn(cfg, defKey);
         if (this.oriColData) {
-            this.fields = _.cloneDeep(this.oriColData);
+            this.fields = this.makeFieldsOrder(_.cloneDeep(this.oriColData));
         } else {
             this.fields = [];
         }
@@ -1151,7 +1149,7 @@ export default class FormViewStore {
 
     async addOrUpdate({ leaf_id = "", formData }, refresh = true, emit = true, showMsg = true) {
         if (formData) {
-            const dataId = leaf_id || shortid.generate();
+            const dataId = leaf_id || psodataid();
             const ret = await API.form({ data: { leaf_id: dataId, formData }, method: "put" });
             if (showMsg) {
                 this.$vue.ResultNotify(ret);

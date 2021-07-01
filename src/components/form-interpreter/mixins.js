@@ -50,6 +50,7 @@ export const formulaMixin = {
             try {
                 console.log(datasource);
                 const value = eval(datasource);
+                console.log(value);
                 if (typeof value !== 'object') {
                     return value;
                 }

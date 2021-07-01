@@ -4,7 +4,7 @@
       <el-tabs v-model="activeTab" type="border-card">
         <el-tab-pane :label="t.name" :name="t.id" v-for="t in data" :key="t.id">
           <pso-title>基本参数</pso-title>
-          <el-form ref="form" label-width="120px" label-position="left" :inline="true">
+          <el-form ref="form" label-width="120px" label-position="left">
             <el-form-item label="是否开启权限">
               <el-switch v-model="t.authable" size="mini"></el-switch>
             </el-form-item>
@@ -16,7 +16,12 @@
                 <el-option v-for="sts in statusCfg[t.id]" :key="sts.value" :label="sts.name" :value="sts.value"></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="默认权限">
+              <auth-edit v-model="t.authdef" :data="MENU_LEAF_AUTH"></auth-edit>
+            </el-form-item>
           </el-form>
+          <!-- <pso-title>特定权限</pso-title>
+          <authshit :data="t.authshit"></authshit> -->
           <pso-title>权限参数</pso-title>
           <view-auth :data="t.authCfg" :def-form="store.data_code"></view-auth>
         </el-tab-pane>
@@ -27,10 +32,15 @@
 </template>
 <script>
 import viewAuth from "../menu-mgt/view";
+import AuthEdit from "../common-auth/edit";
+import Authshit from "./authshit";
+
+import { MENU_LEAF_AUTH } from "../../const/menu";
 export default {
   props: ["store", "data"],
-  components: { viewAuth },
+  components: { viewAuth, AuthEdit, Authshit },
   data() {
+    this.MENU_LEAF_AUTH = MENU_LEAF_AUTH;
     return {
       activeTab: "",
       statusCfg: {},
@@ -45,7 +55,16 @@ export default {
     this.asstables.forEach((t) => {
       const exist = _.find(this.data, { id: t._fieldValue });
       //加个子表code
-      let defData = { name: t._fieldName, id: t._fieldValue, authCfg: [], searchType: "", status: [], authable: false };
+      let defData = {
+        name: t._fieldName,
+        id: t._fieldValue,
+        authCfg: [],
+        searchType: "",
+        status: [],
+        authable: false,
+        authdef: 1,
+        // authshit: [],
+      };
       if (exist) {
         Object.assign(exist, { ...defData, ...exist });
       } else {

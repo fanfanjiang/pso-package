@@ -1,7 +1,10 @@
 // import 'babel-polyfill';
 
-const formulajs = require("@handsontable/formulajs");
-// const formulajs = require("@formulajs/formulajs");
+//同济用的库
+// const formulajs = require("@handsontable/formulajs");
+
+//换过的，和做同济不是一个
+const formulajs = require("@formulajs/formulajs"); 
 const UAParser = require('../share/util/u-agent');
 
 import debounce from "throttle-debounce/debounce";
@@ -157,6 +160,10 @@ import PsoCenterModule from "./components/module-mgt";
 
 import PsoTagtreeMgt from "./components/tag-tree/mgt";
 import PsoTagtree from "./components/tag-tree/index";
+import PsoGreatPanel from "./components/great-panel";
+
+import PsoDataSyncset from "./components/data-sync/set-view.vue";
+import PsoDataSync from "./components/data-sync/sync-view.vue";
 
 //混合视图
 import PsoFvAst from "./components/composite/fv-ast";
@@ -287,6 +294,9 @@ const components = {
     PsoCenterModule,
     PsoTagtreeMgt,
     PsoTagtree,
+    PsoGreatPanel,
+    PsoDataSyncset,
+    PsoDataSync,
 
     //混合视图
     PsoFvAst,

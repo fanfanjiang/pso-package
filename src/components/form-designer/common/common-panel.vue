@@ -74,12 +74,7 @@
         </div>
       </el-form-item>
       <el-form-item label="字典名称">
-        <el-input
-          size="mini"
-          v-model.trim="cpnt.data._fieldValue"
-          :disabled="!!(!cpnt.data._fvEditable || (!!cpnt.store.data_code && !cpnt.add && cpnt.store.is_pub))"
-          clearable
-        ></el-input>
+        <el-input @change="onFieldChange" size="mini" v-model.trim="cpnt.data._fieldValue" :disabled="fieldDisable" clearable></el-input>
       </el-form-item>
       <el-form-item label="是否加密">
         <el-switch size="mini" v-model="cpnt.data._encry" active-value="1" inactive-value="0"></el-switch>
@@ -140,9 +135,28 @@ export default {
   components: {
     panelHeader,
   },
+  computed: {
+    fieldDisable() {
+      return !!(!this.cpnt.data._fvEditable || (!!this.cpnt.store.data_code && !this.cpnt.add && this.cpnt.store.is_pub));
+    },
+  },
   data() {
     this.FIELD_FORMAT = FIELD_FORMAT;
     return {};
+  },
+  methods: {
+    onFieldChange() {
+      if (!this.fieldDisable) {
+        this.cpnt.store._forEach((d) => {
+          if (
+            d.data.fid !== this.cpnt.data.fid &&
+            (d.data._fieldValue.indexOf(this.cpnt.data._fieldValue) !== -1 || this.cpnt.data._fieldValue.indexOf(d.data._fieldValue) !== -1)
+          ) {
+            this.cpnt.data._fieldValue = psodataid();
+          }
+        });
+      }
+    },
   },
 };
 </script>

@@ -8,7 +8,7 @@ export default class ASTStore extends FVStore {
 
     async findById(value, bindId = 'leaf_id') {
         if (value) {
-            const ret = await API.searchForm({ form_code: this.store.data_code, leaf_auth: 4, keys: { [bindId]: { type: 4, value, } } });
+            const ret = await API.searchForm({ form_code: this.store.data_code, leaf_auth: 4, keys: { [bindId]: { type: 4, value } } });
             if (ret.success) {
                 //由于查询出的数据不一定是按顺序返回的，会触发值改变的事件，所以只能排个序
                 let data = [];
