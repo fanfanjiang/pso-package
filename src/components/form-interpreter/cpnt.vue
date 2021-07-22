@@ -1,5 +1,13 @@
 <template>
-  <component :form-field="cpnt.fid" v-bind:is="currentCpnt" @value-change="$emit('value-change', $event)" v-show="displayable(cpnt)" :cpnt="cpnt" :key="cpnt.fid">
+  <component
+    :form-field="cpnt.fid"
+    :form-fieldval="cpnt.data._fieldValue"
+    v-bind:is="currentCpnt"
+    @value-change="$emit('value-change', $event)"
+    v-show="displayable(cpnt)"
+    :cpnt="cpnt"
+    :key="cpnt.fid"
+  >
     <template v-for="cpntItem in cpnt.childComponents">
       <pso-form-component
         @value-change="$emit('value-change', $event)"

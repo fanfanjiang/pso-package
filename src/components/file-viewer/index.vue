@@ -35,7 +35,14 @@
           :initial-index="fIndex"
         >
           <el-carousel-item v-for="(file, index) in files" :key="index">
-            <component v-if="index === fIndex || isLoaded(index)" v-bind:is="fileCpnt(file)" :file="file"></component>
+            <component
+              :file="file"
+              v-bind:is="fileCpnt(file)"
+              v-if="index === fIndex || isLoaded(index)"
+              :emitscroll="emitscroll"
+              @iframescroll="$emit('iframescroll', $event)"
+              @iframeload="$emit('iframeload', $event)"
+            ></component>
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -58,6 +65,10 @@ export default {
     fIndex: {
       type: Number,
       default: 0,
+    },
+    emitscroll: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

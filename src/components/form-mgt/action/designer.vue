@@ -77,7 +77,7 @@
             <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus" @click="showFields = true">设置字段</el-button>
             <div>
               <div class="action-fields" v-for="(v, k, i) in action.fields" :key="i">
-                <div>{{ getField(k)._fieldName }}</div>
+                <div v-if="getField(k)">{{ getField(k)._fieldName }}</div>
                 <div>
                   <field-check :data="action.fields" :field="k"></field-check>
                 </div>
@@ -241,6 +241,7 @@ export default {
     for (let key in this.action.fields) {
       this.checkedFields.push(key);
     }
+    this.checkActionField();
     this.action.color = this.action.color || COLORS[0];
     if (this.action.id === "add") {
       this.action.method = "3";
@@ -273,6 +274,13 @@ export default {
         } else {
           this.$delete(this.action.fields, o._fieldValue);
           delete this.action.fields[o._fieldValue];
+        }
+      }
+      for (let f in this.action.fields) {
+        const exist = _.find(this.options, { _fieldValue: f });
+        if (!exist) {
+          this.$delete(this.action.fields, f);
+          delete this.action.fields[f];
         }
       }
     },

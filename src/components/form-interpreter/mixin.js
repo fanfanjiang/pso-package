@@ -69,9 +69,11 @@ export default {
                     this.changedynamically(params);
                 })
             }
-            this.$on('cpnt-value-changed', (params) => {
-                this.changedynamically(params);
-            })
+            if (this.cpnt.data._astchangeType !== '2') {
+                this.$on('cpnt-value-changed', (params) => {
+                    this.changedynamically(params);
+                })
+            }
         }
     },
     methods: {

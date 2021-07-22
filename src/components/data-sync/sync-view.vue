@@ -2,7 +2,7 @@
   <div style="height: 100%">
     <pso-form-view v-bind="viewOptions" :params="viewOptions" @initialized="onInit">
       <template v-slot:op>
-        <el-button size="mini" type="success" @click="onSync()">同步</el-button>
+        <el-button size="mini" type="success" @click="onSync()" v-loading="syncing" :disabled="syncing">同步</el-button>
       </template>
       <template v-slot:column="data">
         <el-button size="mini" type="primary" @click="onSetSql(data.data.row)">设计脚本</el-button>
@@ -26,6 +26,7 @@ export default {
       showDeisgner: { show: false },
       instance: null,
       vStore: null,
+      syncing: false,
     };
   },
   computed: {
@@ -49,18 +50,22 @@ export default {
       this.showDeisgner.show = true;
     },
     async onSave(data) {
-      data.js_conf = JSON.stringify(this.sql);
+      if (this.instance && this.instance.leaf_id === data.leaf_id) {
+        data.js_conf = JSON.stringify(this.sql);
+      }
       this.vStore.addOrUpdate({ leaf_id: data.leaf_id, formData: { data_code: this.vStore.store.data_code, dataArr: [data] } });
     },
     async onSync() {
       if (!this.vStore.selectedList.length) {
         return this.$message({ message: "请选择数据", type: "warning" });
       }
+      this.syncing = true;
       const ret = await this.API.request("/api/datasync/sync", {
         data: { leafs: _.map(this.vStore.selectedList, "leaf_id").join(",") },
         method: "post",
       });
       this.ResultNotify(ret);
+      this.syncing = false;
     },
   },
 };

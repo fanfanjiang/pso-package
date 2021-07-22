@@ -4,7 +4,7 @@
 // const formulajs = require("@handsontable/formulajs");
 
 //换过的，和做同济不是一个
-const formulajs = require("@formulajs/formulajs"); 
+const formulajs = require("@formulajs/formulajs");
 const UAParser = require('../share/util/u-agent');
 
 import debounce from "throttle-debounce/debounce";
@@ -55,6 +55,7 @@ import PsoTagMgt from "./components/tag-mgt";
 import PsoKnowlMgt from "./components/knowl";
 import PsoDataFilter from "./components/data-filter";
 import PsoFileList from "./components/file-list";
+import PsoFileViewer from "./components/file-viewer";
 
 //表单组件
 import PsoFormView from "./components/form-view";
@@ -233,6 +234,7 @@ const components = {
     PsoDialog,
     PsoDialogHeader,
     PsoFileList,
+    PsoFileViewer,
     PsoSearch,
     PsoAffix,
     PsoStatistics,
@@ -393,8 +395,9 @@ const Mixin = { FormMixin, ViewMixin, FreeDrag };
 
 import Auth from './tool/auth';
 import randomColor from './utils/randomcolor';
+import { makeFiles } from "./tool/file";
 
-const tool = { Auth, genComponentData, randomColor };
+const tool = { Auth, genComponentData, randomColor, makeFiles };
 
 import FormStore from './components/form-designer/model/store';
 import WfStore from './components/workflow-executor/store';

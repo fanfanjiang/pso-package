@@ -173,6 +173,12 @@ export default class FormStore {
         return map;
     }
 
+    getCpntDataMapWithFV() {
+        const map = {};
+        this._forEach((cpnt, key) => map[cpnt.data._fieldValue] = cpnt.data);
+        return map;
+    }
+
     //获取所有表单字段值，系统和非系统的
     getInstanceValue() {
         const data = { ...this.instance };

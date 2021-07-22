@@ -3,7 +3,7 @@
     <div class="pso-carousel-cal">
       <el-carousel ref="cal" v-if="!initializing" :height="height" :direction="cpnt.data.scrDrt" @change="carouselChange">
         <el-carousel-item v-for="(d, i) in store.instances" :key="i">
-          <div v-if="d.__picture__" class="pso-carousel-item" :style="`background-image:url(${d.__picture__})`">
+          <div v-if="d.__picture__" class="pso-carousel-item" :style="{ 'background-image': `url(${d.__picture__})` }">
             <div v-if="d[cpnt.data.fieldTitle] && !cpnt.data.showBody">
               <span>{{ d[cpnt.data.fieldTitle] }}</span>
             </div>

@@ -10,6 +10,7 @@ const defalutCpntData = [
     { n: '_fieldRealType', v: 'string' },
     { n: '_defaultValue', v: '' },
     { n: '_association', v: '' },
+    { n: '_astchangeType', v: '1' },
     { n: '_fieldValue', v: '' },
     { n: '_fieldLen', v: 50 },
     { n: '_required', v: false },

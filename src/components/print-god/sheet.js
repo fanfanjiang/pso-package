@@ -1,7 +1,7 @@
 
 import { matchRegExp } from '../../utils/util';
 import shortid from "shortid";
-import { STYLES } from "./const";
+import { STYLES, EXTEND } from "./const";
 const DEFAULT_STYLE = 'default';
 const STYLEARY = Object.values(STYLES);
 
@@ -15,6 +15,7 @@ export default class Sheet {
         this.background = { id: '', show: true, url: '' };
         this.$sheet = null;
         this.name = '';
+        this.extend = {};
 
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
@@ -110,6 +111,11 @@ export default class Sheet {
     }
 
     mapKey(row, col) {
+        if (typeof row === 'undefined') return;
+        if (typeof row !== 'number' && typeof row !== 'string') {
+            col = row.col;
+            row = row.row;
+        }
         return `${row}:${col}`;
     }
 
@@ -138,6 +144,28 @@ export default class Sheet {
 
     removeDragFeild() {
         this.dragField = null;
+    }
+
+    get curCell() {
+        const range = this.getFormatRange();
+        if (!range) return;
+        return range.from
+    }
+
+    get curExtend() {
+        return this.extend[this.mapKey(this.curCell)];
+    }
+
+    addExtend(cell) {
+        cell = cell || this.curCell;
+        if (cell) {
+            const key = this.mapKey(cell.row, cell.col);
+            if (!this.extend[key]) {
+                this.$vue.$set(this.extend, key, _.cloneDeep(EXTEND))
+            }
+            console.log(this.extend);
+            return this.extend[key];
+        }
     }
 
     getFormatRange(range) {
@@ -508,8 +536,6 @@ export default class Sheet {
         data = data || this.template;
         if (!data || _.isEmpty(data)) return;
         const props = [];
-        const sheetData = [];
-        const endCell = this.splitCellTag(data.range.e);
         for (let tag in data.cells) {
             const [row, col] = this.splitCellTag(tag);
             const cell = data.cells[tag];
@@ -518,16 +544,9 @@ export default class Sheet {
                 props.push({ row, col, prop: { className } })
             }
 
-            // this.analyzeSheetData(row, col, cell.content, sheetData, endCell);
-
             //这里直接跟新数据，不整体设置data
             this.addHotCellData(row, col, cell.content);
         }
-
-        //
-        // if (!_.isEmpty(sheetData)) {
-        //     this.hot.updateSettings({ data: sheetData }, true);
-        // }
 
         const merged = this.getMergedCells();
         data.merge.forEach(m => {
@@ -539,6 +558,10 @@ export default class Sheet {
 
         if (data.background) {
             this.background = data.background;
+        }
+
+        if (data.extend) {
+            this.extend = data.extend;
         }
 
         this.hot.render();
@@ -558,6 +581,7 @@ export default class Sheet {
                 s: "0:0",
             },
             styles: {},
+            extend: {},
             background: this.background
         }
 
@@ -582,20 +606,24 @@ export default class Sheet {
                 if (!content && !this.cellHasBorder(meta.className)) continue;
                 const style = this.getCellStyleName(meta);
 
-                if (endCell[0] < meta.row) {
-                    endCell[0] = meta.row;
+                const { rowspan = 1, colspan = 1 } = this.getCellMergeInfo(meta.row, meta.col) || {};
+                const _row = meta.row + rowspan - 1;
+                const _col = meta.col + colspan - 1;
+
+                if (endCell[0] < _row) {
+                    endCell[0] = _row;
                 }
-                if (endCell[1] < meta.col) {
-                    endCell[1] = meta.col;
+                if (endCell[1] < _col) {
+                    endCell[1] = _col;
                 }
                 data.cells[key] = { content, style }
             }
         }
 
-        if (Array.isArray(data.merge) && 0 < data.merge.length) {
-            const last = data.merge[data.merge.length - 1];
-            endCell[0] = Math.max(endCell[0], last.row + last.rowspan - 1);
-            // endCell[1] = Math.max(endCell[1], last.col + last.colspan - 1);
+        for (let key in this.extend) {
+            if (this.extend[key].extendable) {
+                data.extend[key] = this.extend[key]
+            }
         }
 
         data.range.e = this.mapKey(endCell[0], endCell[1]);

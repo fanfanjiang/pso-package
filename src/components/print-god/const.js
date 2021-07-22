@@ -13,11 +13,11 @@ export const PAGE_DIRECT = [
     { n: '横向', v: 'landscape' },
 ];
 
-export const FONT_SIZE = [6, 8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 64, 72, 144];
+export const FONT_SIZE = [6, 8, 9, 10, 11, 12, 14, 16, 18, 24, 30, 36, 48, 64, 72, 144];
 
 export const FONT_FAMILY = [
-    { n: '微软雅黑', v: 'YaHei' },
     { n: '宋体', v: 'SimSun' },
+    { n: '微软雅黑', v: 'YaHei' },
     { n: '黑体', v: 'SimHei' },
     { n: '楷体', v: 'KaiTi' },
 ];
@@ -52,8 +52,15 @@ export const STYLES = {
     'text-decoration': { prefix: 'text-decoration', type: 'array', },
 };
 
+export const EXTEND = {
+    extendable: false,
+    showOpts: false,
+    optNum: 0
+};
+
+
 export default {
     PAGE, PAGE_MARGIN, PAGE_DIRECT,
     FONT_SIZE, FONT_FAMILY, BORDER_WIDTH, BORDER_TYPE,
-    COLOR, FONT_ALIGN_H, FONT_ALIGN_V, STYLES
+    COLOR, FONT_ALIGN_H, FONT_ALIGN_V, STYLES, EXTEND
 }

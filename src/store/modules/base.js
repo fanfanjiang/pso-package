@@ -101,7 +101,7 @@ export default {
         },
         async ['APP_FORCESIGN']({ state, getters, commit, dispatch }, params = {}) {
             commit('APP_CHECKUSER', params);
-            if (!state.user) {
+            if (!state.user || params.force) {
                 return await dispatch("APP_MOCKSIGNIN", { appid: params.appid || "" });
             }
             return true;

@@ -34,6 +34,12 @@
           </el-option-group>
         </el-select>
       </el-form-item>
+      <el-form-item label="动态默认行为" v-if="cpnt.data._association">
+        <el-select size="mini" v-model="cpnt.data._astchangeType" placeholder="请选择">
+          <el-option label="始终变化" value="1"></el-option>
+          <el-option label="只赋值一次" value="2"></el-option>
+        </el-select>
+      </el-form-item>
       <slot></slot>
       <el-form-item label="验证">
         <div class="act-panel_check">

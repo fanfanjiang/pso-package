@@ -64,11 +64,11 @@ export default class FormProxy {
     getCpntMap() {
         const map = {};
         if (this.store) {
-            map[this.store.data_code] = this.store.getCpntDataMap();
+            map[this.store.data_code] = this.store.getCpntDataMapWithFV();
         }
 
         for (let ast of this.assStores) {
-            map[ast.data_code] = ast.getCpntDataMap();
+            map[ast.data_code] = ast.getCpntDataMapWithFV();
         }
         return map;
     }

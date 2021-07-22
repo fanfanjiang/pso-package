@@ -152,6 +152,17 @@
         </el-popover>
       </div>
     </el-tooltip>
+    <el-tooltip effect="dark" content="扩展设置" placement="bottom">
+      <div class="printgod-designer-menu-item">
+        <el-popover placement="bottom" trigger="click" v-model="showExtend">
+          <div class="printgod-menu-btn" slot="reference">
+            <span class="el-icon-edit-outline" style="font-size: 20px"></span>
+            <i class="el-icon-arrow-down"></i>
+          </div>
+          <cell-extend v-if="showExtend" :print="print"></cell-extend>
+        </el-popover>
+      </div>
+    </el-tooltip>
   </div>
 </template>
 <script>
@@ -163,9 +174,10 @@ import IconColor from "./icon/color";
 import IconAlignh from "./icon/align-h";
 import IconAlignv from "./icon/align-v";
 import PaperSet from "./paper";
+import CellExtend from "./extend";
 import backgroundSetter from "./background-setter";
 export default {
-  components: { IconBorder, IconMerge, IconBorderw, IconColor, PaperSet, backgroundSetter, IconAlignh, IconAlignv },
+  components: { IconBorder, IconMerge, IconBorderw, IconColor, PaperSet, backgroundSetter, IconAlignh, IconAlignv, CellExtend },
   props: {
     print: Object,
   },
@@ -179,6 +191,7 @@ export default {
       showBack: false,
       showAlignh: false,
       showAlignv: false,
+      showExtend: false,
     };
   },
   computed: {

@@ -5,17 +5,40 @@
 </template>
 <script>
 export default {
-  props: ["src"],
+  props: {
+    src: String,
+    emitscroll: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
-      loading: true
+      scrollEl: null,
+      loading: true,
     };
   },
   mounted() {
-    $(this.$refs.iframe).on("load", () => {
+    const el = $(this.$refs.iframe);
+    el.on("load", () => {
       this.loading = false;
+      this.scrollEl = el.contents().find("#viewerContainer");
+      this.$emit("iframeload", { scrollContainer: this.scrollEl });
+      if (this.emitscroll) {
+        this.scrollEl.on("scroll", this.onIframeScroll);
+      }
     });
-  }
+  },
+  destroyed() {
+    if (this.scrollEl) {
+      this.scrollEl.unbind("mousedown", this.onIframeScroll);
+    }
+  },
+  methods: {
+    onIframeScroll() {
+      this.$emit("iframescroll", this.scrollEl.scrollTop());
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

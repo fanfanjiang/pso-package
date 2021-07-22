@@ -2,6 +2,7 @@ import { Message } from 'element-ui';
 import Qs from 'qs';
 import axios from 'axios';
 import Auth from '../tool/auth';
+import Storge from '../utils/storage';
 import { sm2 } from '../../lib/sm';
 
 const excluded = [];
@@ -23,6 +24,9 @@ export default class API {
     static cachedFun = [];
 
     static doAuthError() {
+        Storge.remove('user');
+        Auth.removeToken();
+
         this.handleAuthError && this.handleAuthError();
         Message({ showClose: true, message: '登录过期，请重新登录', type: 'warning' });
     }
@@ -73,7 +77,7 @@ export default class API {
                 Message({ showClose: true, message, type: 'warning' });
             }
 
-            return ret;
+            return ret || {};
 
         } catch (error) {
             if (error.response) {
@@ -104,13 +108,11 @@ export default class API {
 
                         return oriRequest;
                     }
-                    this.doAuthError();
-                }
-
-                if (error.response.status === 404) {
-                    Message({ showClose: true, message: "网络繁忙，请稍后再试", type: 'warning' });
+                    return this.doAuthError();
                 }
             }
+
+            return { success: false, msg: "请求失败，请检查网络或请稍后再试" }
         }
     }
 
@@ -756,7 +758,7 @@ export default class API {
             const formData = new FormData();
             formData.append("file", file);
             for (let key in data) {
-                formData.append(key, data[key], fileName);
+                formData.append(key, data[key]);
             }
             return await this.request(api, { data: formData, method: 'post', headers: { 'Content-Type': 'multipart/form-data' } });
         } catch (error) {
