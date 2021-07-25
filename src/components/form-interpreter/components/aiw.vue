@@ -1,6 +1,6 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <el-input size="small" type="text" :disabled="true" :value="transWords"></el-input>
+    <el-input :size="size" type="text" :disabled="true" :value="transWords"></el-input>
   </pso-label>
 </template>
 <script>

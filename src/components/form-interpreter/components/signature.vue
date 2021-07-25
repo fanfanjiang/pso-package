@@ -8,7 +8,7 @@
         type="danger"
         icon="el-icon-delete"
         circle
-        size="mini"
+        :size="size"
         @click="cpnt.data._val=''"
       ></el-button>
     </div>

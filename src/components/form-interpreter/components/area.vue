@@ -2,16 +2,16 @@
   <pso-label :cpnt="cpnt">
     <el-cascader
       ref="cascader"
-      :popper-class="cascaderpopper"
-      size="small"
-      v-if="show"
-      v-model="proxy"
-      :props="props"
-      :disabled="!cpntEditable"
-      filterable
       clearable
-      @visible-change="visibleHandler"
+      filterable
+      v-if="show"
+      :size="size"
+      :props="props"
+      v-model="proxy"
+      :disabled="!cpntEditable"
+      :popper-class="cascaderpopper"
       @expand-change="changeHandler"
+      @visible-change="visibleHandler"
     ></el-cascader>
   </pso-label>
 </template>

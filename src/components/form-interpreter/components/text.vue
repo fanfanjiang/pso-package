@@ -1,10 +1,10 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required" class="cpnt-text">
-    <el-input v-if="shouldDesen" size="small" :type="textType" :disabled="!true" :value="desensitized"></el-input>
+    <el-input v-if="shouldDesen" :size="size" :type="textType" :disabled="!true" :value="desensitized"></el-input>
     <el-input
       v-else
       ref="cpnt"
-      size="small"
+      :size="size"
       :type="textType"
       :clearable="true"
       :disabled="!cpntEditable"

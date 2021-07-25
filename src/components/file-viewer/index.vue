@@ -4,8 +4,9 @@
       <div class="pso-file-viewer__header-title">{{ currentFile.name }}</div>
       <span class="pso-file-viewer__header-number">{{ fIndex + 1 }} / {{ files.length }}</span>
       <div class="pso-file-viewer__fun">
+        <slot></slot>
         <el-tooltip popper-class="pso-file-viewer__fun-tip" effect="dark" content="下载" placement="bottom">
-          <i class="el-icon-download" @click.stop="$emit('download', currentFile)"></i>
+          <i v-if="downloadable" class="el-icon-download" @click.stop="$emit('download', currentFile)"></i>
         </el-tooltip>
         <el-tooltip popper-class="pso-file-viewer__fun-tip" effect="dark" content="关闭" placement="bottom">
           <i class="el-icon-close" @click.stop="$emit('close')"></i>
@@ -65,6 +66,10 @@ export default {
     fIndex: {
       type: Number,
       default: 0,
+    },
+    downloadable: {
+      type: Boolean,
+      default: true,
     },
     emitscroll: {
       type: Boolean,

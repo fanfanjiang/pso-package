@@ -753,10 +753,16 @@ export default class API {
         }
     }
 
-    static async upload({ file, fileName = '', data = {}, api }) {
+    static async upload({ file, data = {}, api }) {
         try {
             const formData = new FormData();
-            formData.append("file", file);
+            if (Array.isArray(file)) {
+                file.forEach((f, i) => {
+                    formData.append(`file${i}`, f);
+                })
+            } else {
+                formData.append("file", file);
+            }
             for (let key in data) {
                 formData.append(key, data[key]);
             }

@@ -3,7 +3,7 @@
     <el-time-picker
       v-if="cpnt.data._type === 'time'"
       ref="cpnt"
-      size="small"
+      :size="size"
       :disabled="!cpntEditable"
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
@@ -14,7 +14,7 @@
     <el-date-picker
       v-else
       ref="cpnt"
-      size="small"
+      :size="size"
       :value-format="format"
       :format="displayFormat"
       v-model="cpnt.data._val"
@@ -36,7 +36,7 @@ const TIME_FORMAT = {
   time: "HH:mm:ss",
   year: "yyyy",
   month: "MM",
-  week: "yyyy-MM-dd HH:mm:ss"
+  week: "yyyy-MM-dd HH:mm:ss",
 };
 
 const TIME_DISPLAY_FORMAT = {
@@ -45,7 +45,7 @@ const TIME_DISPLAY_FORMAT = {
   time: "HH:mm:ss",
   year: "yyyy",
   month: "MM",
-  week: "yyyy 第 WW 周"
+  week: "yyyy 第 WW 周",
 };
 
 export default {

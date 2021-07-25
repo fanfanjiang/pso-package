@@ -1,10 +1,10 @@
 <template>
   <pso-label :cpnt="cpnt">
     <el-input
-      size="small"
+      :size="size"
       type="text"
       :clearable="true"
-      :disabled="!cpnt.store.editable||cpnt.data._read"
+      :disabled="!cpnt.store.editable || cpnt.data._read"
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
     ></el-input>

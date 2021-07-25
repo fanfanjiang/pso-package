@@ -2,7 +2,7 @@
   <pso-label :cpnt="cpnt">
     <template v-if="!reloading">
       <el-select
-        size="small"
+        :size="size"
         v-if="cpnt.data._showType === 'select'"
         :disabled="!cpntEditable"
         v-model="cpnt.data._val"
@@ -17,14 +17,15 @@
           :value="opt._fixedVal || opt._optionValue"
         ></el-option>
       </el-select>
-      <el-radio-group size="small" v-else v-model="cpnt.data._val">
-        <el-radio
+      <el-radio-group :size="size" v-else v-model="cpnt.data._val">
+        <el-radio-button
+          :size="size"
           :label="opt._fixedVal || opt._optionValue"
           :disabled="!cpntEditable"
           v-for="opt in fixedOptions"
           :key="opt._optionValue"
-          >{{ opt._fixedName || opt._optionName || opt._optionValue }}</el-radio
-        >
+          >{{ opt._fixedName || opt._optionName || opt._optionValue }}
+        </el-radio-button>
       </el-radio-group>
     </template>
   </pso-label>

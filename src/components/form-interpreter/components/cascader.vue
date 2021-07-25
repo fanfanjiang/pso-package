@@ -4,7 +4,7 @@
       v-if="show"
       filterable
       clearable
-      size="small"
+      :size="size"
       :disabled="!cpntEditable"
       :props="props"
       v-model="proxy"

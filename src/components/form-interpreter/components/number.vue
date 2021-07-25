@@ -1,11 +1,11 @@
 <template>
   <pso-label :cpnt="cpnt">
     <div class="pso-number" v-if="show">
-      <el-input v-if="shouldDesen" size="small" :disabled="true" :value="desensitized"></el-input>
+      <el-input v-if="shouldDesen" :size="size" :disabled="true" :value="desensitized"></el-input>
       <el-input-number
         v-else
         ref="cpnt"
-        size="small"
+        :size="size"
         v-model="proxy"
         :disabled="!cpntEditable"
         :controls="false"

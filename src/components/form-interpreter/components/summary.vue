@@ -1,12 +1,11 @@
 <template>
   <el-form-item :label="cpnt.data._fieldName" :required="cpnt.data._required">
-    <el-input size="small" readonly :value="showVal" :placeholder="cpnt.data._placeholder"></el-input>
+    <el-input :size="size" readonly :value="showVal" :placeholder="cpnt.data._placeholder"></el-input>
   </el-form-item>
 </template>
 <script>
 import cpntMixin from "../mixin";
 import { SUMMARY_OP_TYPE } from "../../../const/form";
-import Big from "big.js/big.mjs";
 import { filterByDecimal } from "../../../tool/form";
 
 export default {

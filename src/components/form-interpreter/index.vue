@@ -5,7 +5,7 @@
         v-if="!loading && store"
         :label-width="labelWidth"
         :label-position="labelPosition"
-        size="small"
+        :size="size"
         v-loading="store.storeLoading"
       >
         <pso-form-component v-for="cpnt in store.root.childComponents" :key="cpnt.fid" :cpnt="cpnt"></pso-form-component>
@@ -58,6 +58,10 @@ export default {
     ignoreAstColumn: {
       type: Boolean, //忽略关联表在表单设计中设置的列表
       default: false,
+    },
+    size: {
+      type: String,
+      default: "small",
     },
   },
   data() {
@@ -166,6 +170,7 @@ export default {
         extendAuth: this.extendAuth,
         parentInstanceId: this.parentInstanceId,
         ignoreAstColumn: this.ignoreAstColumn,
+        size: this.size,
       };
 
       if (this.formEntity) {
@@ -197,7 +202,7 @@ export default {
       const mainData = { optype: this.store.instance_id ? 1 : 0 };
 
       mainData.leaf_id = this.store.instance_id || this.store.beInstanceId;
-   
+
       //是否需要将一些系统字段放进去？？？
       // if (this.store.instance_id) {
       //   ["d_status", "d_audit", "d_stage"].forEach((field) => {

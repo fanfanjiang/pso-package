@@ -56,6 +56,9 @@ export default class FormStore {
 
         this.ignoreAstColumn = false;
 
+        this.size = 'small';
+
+
         //扩展配置
         this.ext_config = null;
 

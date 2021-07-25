@@ -1,11 +1,12 @@
 <template>
   <pso-label :cpnt="cpnt">
     <el-date-picker
+      :size="size"
       value-format="yyyy-MM-dd HH:mm:ss"
       type="datetimerange"
       v-model="cpnt.data._val"
-      :disabled="!cpnt.store.editable||cpnt.data._read"
       :placeholder="cpnt.data._placeholder"
+      :disabled="!cpnt.store.editable || cpnt.data._read"
     ></el-date-picker>
   </pso-label>
 </template>

@@ -1,8 +1,8 @@
 <template>
   <pso-label :cpnt="cpnt">
     <el-input
-      size="small"
-      :disabled="!cpnt.store.editable||cpnt.data._read"
+      :size="size"
+      :disabled="!cpnt.store.editable || cpnt.data._read"
       v-model="cpnt.data._val"
       :placeholder="cpnt.data._placeholder"
     ></el-input>

@@ -36,6 +36,9 @@ export default {
             if (this.shouldDesen) {
                 return desensitize(this.cpnt.data._val);
             }
+        },
+        size() {
+            return this.cpnt.store ? this.cpnt.store.size : 'small'
         }
     },
     created() {

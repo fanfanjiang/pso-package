@@ -23,7 +23,11 @@ export default {
     el.on("load", () => {
       this.loading = false;
       this.scrollEl = el.contents().find("#viewerContainer");
-      this.$emit("iframeload", { scrollContainer: this.scrollEl });
+
+      const container = el.contents().find("#outerContainer");
+
+      this.$emit("iframeload", { scrollContainer: this.scrollEl, container });
+      
       if (this.emitscroll) {
         this.scrollEl.on("scroll", this.onIframeScroll);
       }

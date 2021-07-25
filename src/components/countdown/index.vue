@@ -1,6 +1,6 @@
 <template>
   <div>
-    <slot v-bind:timeData="timeData">{{remainTime}}</slot>
+    <slot v-bind:timeData="timeData">{{ remainTime }}</slot>
   </div>
 </template>
 <script>
@@ -10,23 +10,23 @@ export default {
   props: {
     time: {
       type: Number,
-      default: 60000
+      default: 60000,
     },
     ml: {
       type: Boolean,
-      default: false
+      default: false,
     },
     auto: {
       type: Boolean,
-      default: false
+      default: false,
     },
     autoReset: {
       type: Boolean,
-      default: true
+      default: true,
     },
     format: {
       type: String,
-      default: "s"
+      default: "s",
     }
   },
   data() {
@@ -34,7 +34,7 @@ export default {
       countId: "",
       remain: 0,
       counting: false,
-      end: 0
+      end: 0,
     };
   },
   computed: {
@@ -45,9 +45,9 @@ export default {
       return {
         counting: this.counting,
         remain: this.remain,
-        format: this.remainTime
+        format: this.remainTime,
       };
-    }
+    },
   },
   created() {
     this.reset();
@@ -106,7 +106,7 @@ export default {
     },
     isFinished() {
       return this.remain === 0;
-    }
-  }
+    },
+  },
 };
 </script>

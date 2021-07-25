@@ -1,6 +1,6 @@
 <template>
   <pso-label :cpnt="cpnt">
-    <el-input size="small" :disabled="!cpnt.store.editable || cpnt.data._read" v-model="idVal"></el-input>
+    <el-input :size="size" :disabled="!cpnt.store.editable || cpnt.data._read" v-model="idVal"></el-input>
   </pso-label>
 </template>
 <script>
