@@ -99,7 +99,7 @@ export const STATIC_COLUMN_FIELDS = {
     searchType: '',
     searchOp: '',
     dyncoptions: false, //静态选项
-    dynccode: "", 
+    dynccode: "",
     dyncname: "", //动态选项
     dyncvalue: "",//动态选项
 }
@@ -108,7 +108,8 @@ export const STATIC_COLUMN_FIELDS = {
 export const STATIC_CONFIG_FIELDS = {
     paging: "0",
     stats: "0",
-    actions: []
+    actions: [],
+    conditions: []
 }
 
 export const STATIC_ACTION_FIELDS = {

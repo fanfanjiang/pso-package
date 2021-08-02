@@ -1,5 +1,6 @@
 <template>
   <div class="custom-column" v-loading="initializing">
+    <el-button size="mini" type="primary" plain @click="addParam" style="margin-bottom: 10px">添加参数</el-button>
     <el-table border size="mini" key="list" :data="column" style="width: 100%">
       <el-table-column type="index" :index="1" width="40"></el-table-column>
       <el-table-column label="字段" width="140" prop="field">
@@ -75,7 +76,7 @@
       <el-table-column fixed="right" label="操作" width="160" align="center">
         <template slot-scope="scope">
           <el-button size="mini" plain @click="handleParams(scope.$index)">参数</el-button>
-          <el-button size="mini" plain @click="handleDrill(scope.$index)">钻取</el-button>
+          <el-button size="mini" v-if="drillable" plain @click="handleDrill(scope.$index)">钻取</el-button>
           <el-button size="mini" plain @click="handleDel(scope.$index)" v-if="customizable">删除</el-button>
         </template>
       </el-table-column>
@@ -213,12 +214,16 @@
 <script>
 import { FILTER_TYPE_ARY } from "../../../share/const/filter";
 import { STATIC_COLUMN_FIELDS } from "../../const/sys";
-import { assignList, formatJSONList } from "../../utils/util";
+import { formatJSONList } from "../../utils/util";
 import { MENU_TYPE } from "../../const/menu";
 
 export default {
   props: {
     customizable: {
+      type: Boolean,
+      default: true,
+    },
+    drillable: {
       type: Boolean,
       default: true,
     },
@@ -255,6 +260,9 @@ export default {
     this.initializing = false;
   },
   methods: {
+    addParam() {
+      this.column.push(_.cloneDeep(STATIC_COLUMN_FIELDS));
+    },
     handleDel(index) {
       this.column.splice(index, 1);
     },

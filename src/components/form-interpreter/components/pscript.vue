@@ -125,7 +125,8 @@ export default {
         this.record(data);
       }
       this.skipedFirstRecord = true;
-      this.cpnt.data._val = _.map(data, this.saveField).join(",");
+      this.cpnt.data._val = _.map(data, this.saveField).join(","); 
+      console.log(1, this.saveField, data, this.cpnt.data._val);
       this.dispatch("PsoformInterpreter", "pscript-selected", { cpnt: this.cpnt, data, store: this.store });
     },
     scriptParams: {

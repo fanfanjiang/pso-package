@@ -34,6 +34,49 @@ export default class STAVStore extends FVStore {
         return this.paging ? [this.limit, 30, 50, 300, 500, 1000, 99999] : [this.dataTotal];
     }
 
+    async analyzeConditions(fields, callback) {
+        const conditionItems = [];
+
+        for (let f of fields) {
+
+            if (callback) {
+                callback(f);
+            }
+
+            if (f.searchable === "1" && f.formulable !== "1" && f.searchType) {
+                let data = "";
+                const fType = FILTER_TYPE[f.searchType];
+                const sItem = { componentid: fType.cid, fid: f.field, _fieldValue: f.field, _fieldName: f.name, displayName: f.name, _val: "" };
+                if (f.defaultVal) {
+                    data = f.defaultVal;
+                }
+
+                if (f.dyncoptions && f.dynccode && f.dyncname) {
+
+                    const ret = await API.getStatisticData({ tp_code: f.dynccode, leaf_auth: 4, search_type: "select" });
+                    if (ret.data && ret.data.DATA) {
+                        sItem._option = ret.data.DATA.map(d => ({ _optionName: d[f.dyncname], _optionValue: d[f.dyncvalue || f.dyncname] }))
+                    }
+
+                } else {
+                    if (f.searchList && f.searchList.length) {
+                        data = [];
+                        sItem._option = f.searchList.map((i) => {
+                            if (i.d) {
+                                data.push(i.v);
+                            }
+                            return { _optionName: i.n, _optionValue: i.v };
+                        });
+                    }
+                }
+
+                this.conditionOptions.push(genComponentData(sItem));
+                conditionItems.push({ cpnt: sItem, field: sItem.fid, op: f.searchOp, data, match: "" });
+            }
+        }
+        return conditionItems;
+    }
+
     async initialize(id, query) {
         this.initializing = true;
 
@@ -47,67 +90,40 @@ export default class STAVStore extends FVStore {
 
             const { tp_content, tp_config } = this.staCfg;
 
+            let extendConditions = [];
+
             //动作配置
             if (tp_config) {
-                const { actions } = JSON.parse(tp_config);
+                const { actions, conditions } = JSON.parse(tp_config);
                 if (actions) {
                     for (let act of actions) {
                         const { code, actionIds, trans } = act;
                         await this.actionMGR.addActions({ code, actionIds, trans });
                     }
                 }
+
+                if (conditions) {
+                    extendConditions = await this.analyzeConditions(conditions);
+                    console.log(extendConditions);
+                }
             }
 
             this.oriColData = JSON.parse(tp_content);
             this.fields = _.orderBy(JSON.parse(tp_content), ["number"], ["asc"]);
 
-            const conditionItems = [];
-
             //默认排序配置
             const defSorts = [];
 
-            for (let f of this.fields) {
+            const conditionItems = await this.analyzeConditions(this.fields, (field) => {
+                Vue.set(field, 'display', field.name);
 
-                Vue.set(f, 'display', f.name);
-
-                if (f.searchable === "1" && f.formulable !== "1") {
-                    let data = "";
-                    const fType = FILTER_TYPE[f.searchType];
-                    const sItem = { componentid: fType.cid, fid: f.field, _fieldValue: f.field, _fieldName: f.name, displayName: f.name, _val: "" };
-                    if (f.defaultVal) {
-                        data = f.defaultVal;
-                    }
-
-                    if (f.dyncoptions && f.dynccode && f.dyncname) {
-
-                        const ret = await API.getStatisticData({ tp_code: f.dynccode, leaf_auth: 4, search_type: "select" });
-                        if (ret.data && ret.data.DATA) {
-                            sItem._option = ret.data.DATA.map(d => ({ _optionName: d[f.dyncname], _optionValue: d[f.dyncvalue || f.dyncname] }))
-                        }
-
-                    } else {
-                        if (f.searchList && f.searchList.length) {
-                            data = [];
-                            sItem._option = f.searchList.map((i) => {
-                                if (i.d) {
-                                    data.push(i.v);
-                                }
-                                return { _optionName: i.n, _optionValue: i.v };
-                            });
-                        }
-                    }
-
-                    this.conditionOptions.push(genComponentData(sItem));
-                    conditionItems.push({ cpnt: sItem, field: sItem.fid, op: f.searchOp, data, match: "" });
+                if (field.defSort) {
+                    defSorts.push(field)
                 }
+            });
 
-                if (f.defSort) {
-                    defSorts.push(f)
-                }
-            }
-
-            if (conditionItems.length) {
-                this.defCondition.push(conditionItems);
+            if (conditionItems.length || extendConditions.length) {
+                this.defCondition.push(conditionItems.concat(extendConditions));
                 this.showFilter = true;
             }
 

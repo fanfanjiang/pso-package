@@ -39,6 +39,7 @@ export default class Sheet {
             colHeaders: true,
             contextMenu: true,
             mergeCells: true,
+            trimWhitespace: false,
             language: "zh-CN",
             customBorders: true,
             manualRowResize: true, //自定义行高

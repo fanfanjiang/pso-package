@@ -13,5 +13,7 @@ export default {
   color: #999;
   background-color: transparent;
   border-radius: 5px;
+  position: relative;
+  z-index: 0;
 }
 </style>

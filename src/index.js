@@ -319,7 +319,10 @@ const components = {
     PsoFvMultifv
 }
 
+import { decodejson } from './utils/util';
+
 const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3', host, xssFilter = false, __CONST__ } = {}) {
+
     Object.keys(components).map(key => {
         Vue.component(key, components[key]);
     })
@@ -359,6 +362,8 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     const parser = new UAParser();
 
     if (window.__APPCONFIG__) {
+
+        decodejson(window.__APPCONFIG__);
         Vue.prototype.__APPCONFIG__ = window.__APPCONFIG__;
     }
 
@@ -368,11 +373,6 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     Vue.prototype.__isMobile__ = Vue.prototype.__device__.device.type === 'mobile';
     Vue.prototype.__CONST__ = __CONST__ || {};
 };
-
-// auto install
-if (typeof window !== 'undefined' && window.Vue) {
-    install(window.Vue);
-}
 
 Object.keys(formulajs).forEach(key => {
     window[key] = formulajs[key];

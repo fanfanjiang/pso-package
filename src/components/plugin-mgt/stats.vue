@@ -8,6 +8,7 @@
       <div class="stats-mgt-header__r">
         <el-button size="mini" type="primary" @click="goDesigner">设计脚本</el-button>
         <el-button size="mini" type="primary" @click="showEditor = true">设置动作</el-button>
+        <el-button size="mini" type="primary" @click="showCustom = true">自定义参数</el-button>
         <el-button size="mini" type="primary" @click="checkColumn">发布列表</el-button>
         <el-button size="mini" type="primary" @click="makeHeader">发布表头</el-button>
       </div>
@@ -30,6 +31,19 @@
       </template>
       <div class="pso-dialog-content">
         <action-setter :data="config.actions" :column="column"></action-setter>
+      </div>
+    </pso-dialog>
+    <pso-dialog :visible="showCustom" width="60%" @close="showCustom = false">
+      <template #title>
+        <pso-dialog-header>
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>自定义参数设置</span>
+          </template>
+        </pso-dialog-header>
+      </template>
+      <div class="pso-dialog-content">
+        <stats-column :column="config.conditions" :drillable="false" customizable></stats-column>
       </div>
     </pso-dialog>
   </div>
@@ -62,6 +76,7 @@ export default {
       sql: [],
       oldSql: "",
       showEditor: false,
+      showCustom: false,
     };
   },
   created() {

@@ -181,3 +181,17 @@ export function matchRegExp(input, regStr) {
     }
     return matches;
 }
+
+export function decode16(str) {
+    return str.replace(/\\x(\w{2})/g, function (_, $1) {
+        return String.fromCharCode(parseInt($1, 16))
+    });
+}
+
+export function decodejson(data) {
+    for (let key in data) {
+        if (data[key] && typeof data[key] === 'string') {
+            data[key] = decode16(data[key])
+        }
+    }
+}

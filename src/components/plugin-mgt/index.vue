@@ -102,6 +102,7 @@ const _DATA = {
   tpCfg: {
     paging: "0",
     stats: "0",
+    conditions: [],
   },
 };
 

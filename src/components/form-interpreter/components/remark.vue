@@ -42,5 +42,7 @@ export default {
   display: flex;
   align-items: center;
   border-radius: 10px;
+  position: relative;
+  z-index: 0;
 }
 </style>
