@@ -121,13 +121,11 @@
         <el-switch v-model="action.linkFormView"> </el-switch>
       </el-form-item>
       <div class="form-action-panel" v-if="action.linkFormView">
-        <el-form-item label="选择表单视图">
-          <pso-picker-tree :request-options="{ dimen: '1' }" pattern="radio" rootable @confirm="confirmFormView">
-            <el-button size="mini" type="primary" plain>选择视图</el-button>
-          </pso-picker-tree>
+        <el-form-item label="配置视图">
+          <el-button size="mini" type="primary" plain @click="showFV = true">配置视图</el-button>
         </el-form-item>
-        <el-form-item label="已选">
-          <span>{{ action.FormViewId }}</span>
+        <el-form-item label="视图权限">
+          <auth-edit v-model="action.FormViewAuth" :data="MENU_LEAF_AUTH"></auth-edit>
         </el-form-item>
         <div class="pso-table-controller">
           <el-button size="mini" type="primary" plain @click="addHandler">添加动作参数</el-button>
@@ -199,6 +197,19 @@
         <el-checkbox v-for="(o, i) in options" :label="o._fieldValue" :key="i">{{ o._fieldName }}</el-checkbox>
       </el-checkbox-group>
     </el-dialog>
+    <pso-dialog :visible="showFV" width="70%" @close="showFV = false">
+      <template #title>
+        <pso-dialog-header>
+          <template #title>
+            <i class="el-icon-edit-outline"></i>
+            <span>表单视图配置</span>
+          </template>
+        </pso-dialog-header>
+      </template>
+      <div class="pso-dialog-content">
+        <f-setter v-if="fvcode" :node="action" :code="fvcode.node_name" :data="action.formViewOpts" :sources="optionsWithsys"></f-setter>
+      </div>
+    </pso-dialog>
   </div>
 </template>
 <script>
@@ -206,11 +217,14 @@ import SqlDesigner from "../../sql-designer";
 import PsoPickerIcon from "../../picker/pso-picker-icon";
 import DynamicRule from "../../dynamic-rule";
 import FieldCheck from "./field-check";
+import FSetter from "../../plugin-setter/setter";
+import AuthEdit from "../../common-auth/edit";
+import { MENU_LEAF_AUTH } from "../../../const/menu";
 
 const COLORS = ["#409EFF", "#67C23A", "#E6A23C", "#F56C6C", "#9C27B0"];
 
 export default {
-  components: { SqlDesigner, PsoPickerIcon, DynamicRule, FieldCheck },
+  components: { SqlDesigner, PsoPickerIcon, DynamicRule, FieldCheck, FSetter, AuthEdit },
   props: {
     action: Object,
     options: Array,
@@ -220,13 +234,20 @@ export default {
   },
   data() {
     this.COLORS = COLORS;
+    this.MENU_LEAF_AUTH = MENU_LEAF_AUTH;
     return {
       sqlOpener: { show: false },
       showIcon: false,
       curScript: [],
       showFields: false,
+      showFV: false,
       checkedFields: [],
     };
+  },
+  computed: {
+    fvcode() {
+      return _.find(this.plugins, { node_display: "表单视图" });
+    },
   },
   watch: {
     checkedFields: {
@@ -298,11 +319,6 @@ export default {
     },
     rtChangeHandler(type) {
       this.action.ruleType = type;
-    },
-    confirmFormView(data) {
-      if (data.length && data[0].node_name) {
-        this.action.FormViewId = data[0].node_name;
-      }
     },
     addHandler() {
       this.action.formViewField.push({ t: "", s: "" });

@@ -14,8 +14,8 @@
           </template>
         </pso-dialog-header>
       </template>
-      <div class="pso-dialog-content"> 
-        <dynamic-filter :targets="fields" :sources="fields" v-model="condition"></dynamic-filter>
+      <div class="pso-dialog-content">
+        <dynamic-filter :targets="fields" :sources="sources" v-model="condition"></dynamic-filter>
       </div>
     </pso-dialog>
   </div>
@@ -27,6 +27,7 @@ export default {
   props: {
     data: Object,
     fields: Array,
+    sources: Array,
   },
   data() {
     return {
@@ -37,9 +38,14 @@ export default {
   methods: {
     makeFilter() {
       const ret = [];
-      this.condition.forEach(({ value, op, tid }) => {
-        if (value !== "" && typeof value !== "undefined") {
-          ret.push(`${tid}#${value}#${op}`);
+      this.condition.forEach((citem) => {
+        const { value, op, tid, sid } = citem;
+        if (tid) {
+          if (sid) {
+            ret.push(`${tid}#$__${sid}__$#${op}`);
+          } else if (value !== "" && typeof value !== "undefined") {
+            ret.push(`${tid}#${value}#${op}`);
+          }
         }
       });
       if (ret.length) {

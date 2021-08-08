@@ -160,37 +160,55 @@ export default class ActionMGR {
         return batchData;
     }
 
-    async checkActionView(action, data) {
-        const { linkFormView, FormViewId, formViewField } = action;
-        if (typeof this.onShowFormView !== 'function' || !linkFormView || !FormViewId) return;
+    async checkActionView(action, data = []) {
+        const { linkFormView, formViewField, FormViewAuth, formViewOpts } = action;
 
-        const ret = await API.getMenuInfo({ menu_code: FormViewId });
-        if (ret.data) {
-            const { menu_link: plug_code, menu_name, leaf_auth, auth_config, param_value } = ret.data;
-            const params = { plug_code, menu_name, viewAuth: parseInt(leaf_auth || 0) };
+        if (typeof this.onShowFormView !== 'function' || !linkFormView || !formViewOpts) return;
 
-            if (auth_config) params.auth_config = JSON.parse(auth_config);
+        const params = { viewAuth: FormViewAuth };
 
-            if (param_value) {
-                const pluginParams = JSON.parse(param_value);
-                this.$vue.$set(params, 'pluginParams', {});
-                pluginParams.forEach(item => {
-                    this.$vue.$set(params, item.field, item.value);
-                    this.$vue.$set(params.pluginParams, item.field, item.value);
-                })
-            }
+        this.$vue.$set(params, 'pluginParams', {});
+        formViewOpts.forEach(item => {
+            this.$vue.$set(params, item.field, item.value);
+            this.$vue.$set(params.pluginParams, item.field, item.value);
+        })
 
-            if (data.length && formViewField.length) {
-                params.actExtParam = {};
-                formViewField.forEach(({ t, s }) => {
-                    if (t && s) {
-                        params.actExtParam[t] = data[0][s]
-                    }
-                })
-            }
-
-            this.onShowFormView(params);
+        if (data.length && formViewField.length) {
+            params.actExtParam = {};
+            formViewField.forEach(({ t, s }) => {
+                if (t && s) {
+                    params.actExtParam[t] = data[0][s]
+                }
+            })
         }
+
+        if (params.defFormValue) {
+            params.defFormValue = this.setFVParams(params.defFormValue, data[0]);
+        }
+
+        if (params.defKeys) {
+            params.defKeys = this.setFVParams(params.defKeys, data[0]);
+        }
+        this.onShowFormView(params);
+    }
+
+    setFVParams(str, data) {
+        const checked = [];
+        for (let item of str.split(";")) {
+            const key = item.split("#");
+            if (key[1]) {
+                const regret = new RegExp(`(?<=\\$__)\\S+(?=__\\$)`).exec(key[1]);
+                if (regret && regret[0]) {
+                    if (!data || typeof data[regret[0]] === 'undefined' || data[regret[0]] === '') {
+                        continue;
+                    }
+                    checked.push(`${key[0]}#${data[regret[0]]}#${key[2]}`);
+                    continue;
+                }
+            }
+            checked.push(item);
+        }
+        return checked.length ? checked.join(';') : "";
     }
 
     async afterFormSave({ action, data }) {

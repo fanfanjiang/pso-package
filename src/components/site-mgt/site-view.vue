@@ -224,8 +224,10 @@ export default {
     async fetch() {
       this.loading = true;
       const ret = await this.API.getSites({ ...this.getFetchParams("site_name") });
-      this.instances = ret.data.data;
-      this.dataTotal = ret.data.data.length;
+      if (ret.data.data) {
+        this.instances = ret.data.data;
+        this.dataTotal = ret.data.data.length;
+      }
       this.loading = false;
     },
     selectHandler(selected) {

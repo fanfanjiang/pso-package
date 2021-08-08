@@ -81,6 +81,7 @@
           <dfilter
             v-if="p.picker === 'picker-dfilter' && !loadingFields && formCfg[getRelateItem(p)]"
             :fields="formCfg[getRelateItem(p)].fields"
+            :sources="sources"
             :data="p"
           ></dfilter>
           <el-button v-if="p.picker === 'picker-sql'" size="mini" type="primary" plain @click="editSql(p)"> 编辑脚本 </el-button>
@@ -147,6 +148,7 @@ export default {
     data: Array,
     code: String,
     node: Object,
+    sources: Array,
   },
   data() {
     return {
@@ -343,7 +345,7 @@ export default {
       console.log(data.value);
       return { data: data.value, sources, targets };
     },
-    getRelateFields(option) { 
+    getRelateFields(option) {
       let sources = [];
       if (option.relateParam) {
         const src = this.formCfg[this.getRelateItem({ relateParam: option.relateParam })];

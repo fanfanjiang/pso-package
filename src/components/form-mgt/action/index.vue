@@ -75,8 +75,9 @@ const FIELDS = {
   diseditable: false,
 
   linkFormView: false,
-  FormViewId: "",
   formViewField: [],
+  formViewOpts: [],
+  FormViewAuth: 0,
 };
 
 const DEFAULT = [{ id: "add", name: "新增", deleteable: false }];

@@ -21,7 +21,6 @@
   </div>
 </template>
 <script>
-import { GridLayout, GridItem } from "vue-grid-layout";
 import GridStore from "../grid-designer/store";
 
 const componentsMap = {};
@@ -39,7 +38,7 @@ requireComponent.keys().forEach((fileName) => {
   componentsMap[`GridCpnt${componentName}`] = componentConfig.default;
 });
 export default {
-  components: { ...componentsMap, GridLayout, GridItem },
+  components: { ...componentsMap },
   componentName: "PsoGridInterpreter",
   props: {
     params: Object,

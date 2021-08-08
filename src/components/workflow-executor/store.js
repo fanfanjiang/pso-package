@@ -255,7 +255,39 @@ export default class WfStore {
         return family;
     }
 
+    findNodes({ options = {}, cb, opType = 'and', beforePush }) {
+        const list = [];
+        (function traverse(item, parent, index) {
+            cb && cb(item);
+            let searchTag = opType === 'and';
+            for (let key in options) {
+                if (opType === 'and') {
+                    if (options[key] !== item[key]) {
+                        searchTag = false;
+                        break;
+                    }
+                } else {
+                    if (options[key] === item[key]) {
+                        searchTag = true;
+                        break;
+                    }
+                }
+            }
+            if (searchTag && typeof beforePush === 'function') searchTag = beforePush(item);
+            if (searchTag) list.push({ target: item, parent, index })
+            if (item.children && item.children.length) {
+                item.children.forEach((chd, i) => traverse(chd, item, i))
+            }
+        })(this.startNode);
+        if (options.nid) {
+            return list.length ? list[0] : {}
+        }
+        return list;
+    }
+
     async setInstance(instanceId = '') {
+        //审核节点设空
+
         if (instanceId) {
             await this.getInstance(instanceId);
             //如果是复制流程
@@ -266,6 +298,9 @@ export default class WfStore {
         } else {
             this.newInstance();
             this.instanceFlag = true;
+            setTimeout(() => {
+                this.emptyReviews();
+            }, 1000);
         }
     }
 
@@ -337,6 +372,8 @@ export default class WfStore {
         if (file && file.length) {
             this.data.attach = _.map(file, 'res_id').join(',');
         }
+
+        this.emptyReviews();
 
         //设置日志
         if (log) {
@@ -423,6 +460,14 @@ export default class WfStore {
                     </div>`);
         }
         $el.empty().append($wrapper);
+    }
+
+    emptyReviews() {
+        const reviews = this.findNodes({ options: { tid: "review" } });
+        reviews.forEach(d => {
+            const $el = $(this.executorPrintRef).find(`[field=${d.target.nid}]`);
+            $el.html('');
+        })
     }
 
     setTableLogVal(data) {

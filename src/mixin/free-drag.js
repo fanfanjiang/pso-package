@@ -1,7 +1,7 @@
 import { clearSelections, on, off } from "../utils/dom.js";
 const UAParser = require('../../share/util/u-agent');
 
-export default function (stage = "stage", target = "target") {
+export default function (stage = "stage", target = "target", actualMove = true) {
   return {
     data() {
       return {
@@ -12,7 +12,7 @@ export default function (stage = "stage", target = "target") {
           initX: 0,
           initY: 0,
           X: 0,
-          y: 0
+          y: 0,
         },
         isMobile: false
       }
@@ -68,19 +68,27 @@ export default function (stage = "stage", target = "target") {
 
         if (this.stageTrans.draging) return;
         this.stageTrans.draging = true;
-        this.stageTrans.left = this.$refs[target].offsetLeft;
-        this.stageTrans.top = this.$refs[target].offsetTop;
+
+        if (actualMove) {
+          this.stageTrans.left = this.$refs[target].offsetLeft;
+          this.stageTrans.top = this.$refs[target].offsetTop;
+        }
+
         this.stageTrans.initX = this.stageTrans.x = this.getClientX(event);
         this.stageTrans.initY = this.stageTrans.y = this.getClientY(event);
 
         on(this.$refs[stage], this.mousemove, this.dragover);
+
+        this.$emit('drag-start');
       },
       dragover(event) {
         this.stageTrans.x = this.getClientX(event);
         this.stageTrans.y = this.getClientY(event);
 
-        $(this.$refs[target]).css("left", `${this.stageTrans.x - this.stageTrans.initX + this.stageTrans.left}px`);
-        $(this.$refs[target]).css("top", `${this.stageTrans.y - this.stageTrans.initY + this.stageTrans.top}px`);
+        if (actualMove) {
+          $(this.$refs[target]).css("left", `${this.stageTrans.x - this.stageTrans.initX + this.stageTrans.left}px`);
+          $(this.$refs[target]).css("top", `${this.stageTrans.y - this.stageTrans.initY + this.stageTrans.top}px`);
+        }
 
         this.$emit('drag-move');
       },

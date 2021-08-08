@@ -245,6 +245,7 @@ export default {
       default: true,
     },
     actExtParam: Object, //动作扩展参数，目前用于打开子视图时传入参数
+    defFormValue: Object, 
   },
   data() {
     return {

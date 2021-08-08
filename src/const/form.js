@@ -169,11 +169,11 @@ export const SYS_FIELDS = [
     { _fieldValue: 'd_audit', _fieldName: '审核状态', componentid: 'text' },
     { _fieldValue: 'd_stage', _fieldName: '审核阶段', componentid: 'text' },
     { _fieldValue: 'creator', _fieldName: '表单创建人', componentid: 'text' },
-    { _fieldValue: 'c_time', _fieldName: '创建时间', componentid: 'text' },
+    { _fieldValue: 'c_time', _fieldName: '创建时间', componentid: 'time' },
     { _fieldValue: 'data_code', _fieldName: '表单ID', componentid: 'text' },
     { _fieldValue: 'dept_id', _fieldName: '部门ID', componentid: 'text' },
     { _fieldValue: 'dept_name', _fieldName: '部门名称', componentid: 'text' },
-    { _fieldValue: 'input_time', _fieldName: '输入时间', componentid: 'text' },
+    { _fieldValue: 'input_time', _fieldName: '输入时间', componentid: 'time' },
     { _fieldValue: 'sync_status', _fieldName: '同步状态', componentid: 'text' },
 ]
 

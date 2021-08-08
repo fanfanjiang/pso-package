@@ -728,7 +728,6 @@ export default class FormViewStore {
             },
         });
 
-        this.conditionOptions = _.cloneDeep(fields);
 
         if (this.fields.length) {
 
@@ -742,6 +741,7 @@ export default class FormViewStore {
 
                 const exist = _.find(fields, { field_name: f.field_name.replace("_x", "") });
                 if (exist) {
+                    exist.displayName = f.display;
                     Object.assign(f, exist, { display: f.display, field_name: f.field_name, show: f.show });
                     if (f.searchable && CPNT[exist.componentid].op) {
                         const cdt = { cpnt: exist, field: exist.fid, op: "", data: "", match: "" }
@@ -774,6 +774,8 @@ export default class FormViewStore {
         } else {
             this.fields = fields;
         }
+
+        this.conditionOptions = _.cloneDeep(fields);
     }
 
     makeFieldsOrder(fields) {

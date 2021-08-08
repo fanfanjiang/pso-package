@@ -604,7 +604,7 @@ export default class Sheet {
                 const key = this.mapKey(meta.row, meta.col);
                 const content = this.mapVal(meta.row, meta.col) || '';
 
-                if (!content && !this.cellHasBorder(meta.className)) continue;
+                if ((!content && !this.cellHasBorder(meta.className)) || this.isBehindMerge(meta.row, meta.col)) continue;
                 const style = this.getCellStyleName(meta);
 
                 const { rowspan = 1, colspan = 1 } = this.getCellMergeInfo(meta.row, meta.col) || {};
@@ -626,6 +626,7 @@ export default class Sheet {
                 data.extend[key] = this.extend[key]
             }
         }
+
 
         data.range.e = this.mapKey(endCell[0], endCell[1]);
         data.styles = this.print.styleMap;
