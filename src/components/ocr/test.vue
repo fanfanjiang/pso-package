@@ -46,10 +46,19 @@
       </great-panel>
     </div>
     <div class="ocr-test-r">
+      <transition name="el-fade-in">
+        <great-panel v-if="ocrRet">
+          <template #header>
+            <i class="el-icon-chat-dot-square"></i>
+            <span>识别结果</span>
+          </template>
+          <ocr-result :data="ocrRet"></ocr-result>
+        </great-panel>
+      </transition>
       <great-panel>
         <template #header>
           <i class="el-icon-data-analysis"></i>
-          <span>识别结果</span>
+          <span>结果详情</span>
         </template>
       </great-panel>
       <div class="ocr-test-output">
@@ -59,52 +68,20 @@
   </div>
 </template>
 <script>
-import GreatPanel from "../great-panel";
+import { OcrTest } from "./mixin";
+
 export default {
-  components: { GreatPanel },
+  mixins: [OcrTest],
   data() {
     return {
-      initializing: true,
-      api: "/api/ocr/upload",
-      cmOptions: {
-        tabSize: 4,
-        styleActiveLine: true,
-        lineNumbers: true,
-        line: true,
-        lineWrapping: true,
-      },
-      output: "",
-      templates: [],
       instance: {
         cert_id: "",
         word: "",
       },
       submiting: false,
-      uploading: false,
     };
   },
-  created() {
-    this.initializ();
-  },
   methods: {
-    async initializ() {
-      this.initializing = true;
-      const ret = await this.API.request("/api/ocr/template", { data: { limit: 99999 }, method: "get" });
-      this.initializing = false;
-      this.templates = ret.data.data;
-    },
-    onStart() {
-      this.uploading = true;
-    },
-    onError() {
-      this.uploading = false;
-    },
-    onSuccess(data) {
-      if (data.data) {
-        this.output += (this.output ? "\n\n" : "") + JSON.stringify(data.data);
-      }
-      this.uploading = false;
-    },
     async submit() {
       const { cert_id, word } = this.instance;
       const data = _.find(this.templates, { cert_id });
@@ -119,51 +96,3 @@ export default {
   },
 };
 </script>
-<style lang="less">
-.ocr-test {
-  display: flex;
-  height: 100%;
-  .ocr-test-l {
-    width: 40%;
-    height: 100%;
-  }
-  .ocr-test-r {
-    width: 60%;
-    height: 100%;
-    padding-left: 10px;
-    overflow: hidden;
-    .great-panel-header {
-      margin-bottom: 0;
-    }
-  }
-  .ocr-test-output {
-    height: 100%;
-    .vue-codemirror {
-      height: 100%;
-      width: 100%;
-    }
-    .CodeMirror {
-      height: 100% !important;
-      width: 100%;
-      border-radius: 0;
-      border: none;
-    }
-    .CodeMirror-gutters {
-      border: none;
-    }
-  }
-  .ocr-test-form {
-    background: #fff;
-    padding: 20px 10px;
-  }
-}
-.ocr-uploader {
-  height: 140px;
-  .pso-upload {
-    height: 100%;
-  }
-  .pso-upload__footer {
-    display: none;
-  }
-}
-</style>

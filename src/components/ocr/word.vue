@@ -6,7 +6,7 @@
     <div class="ocr-word-r">
       <pso-common-view
         ref="view"
-        title="识别词"
+        title="识别变种词"
         icon="el-icon-tickets"
         :fetch-fun="fetch"
         :fields="FIELDS"
@@ -35,7 +35,7 @@
       </template>
       <div class="pso-dialog-content">
         <el-form label-position="left" label-width="120px" size="small" v-if="curInstance">
-          <el-form-item label="识别词" required>
+          <el-form-item label="识别变种词" required>
             <el-input v-model="curInstance.error_word" size="small" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="纠正词" required>
@@ -54,7 +54,7 @@ export default {
   components: { WordChange },
   mixins: [FetchMixin],
   data() {
-    this.FIELDS = [{ v: "error_word", n: "识别词" }];
+    this.FIELDS = [{ v: "error_word", n: "识别变种词" }];
     this.DATA = {
       auto_no: "",
       error_word: "",

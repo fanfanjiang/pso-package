@@ -10,7 +10,12 @@
       @dbclick="dbClickHandler"
       @select="selectHandler"
     >
-      <template #tablefun> </template>
+      <template #tablefun>
+        <pso-search text="证件名称" v-model="fetchParams.cert_name"></pso-search>
+        <el-divider direction="vertical"></el-divider>
+        <pso-search text="证件编码" v-model="fetchParams.cert_code"></pso-search>
+        <el-divider direction="vertical"></el-divider>
+      </template>
       <template #datafun>
         <el-button type="primary" size="mini" @click="addHandler">新增</el-button>
         <el-button type="danger" size="mini" @click="delHandler" :disabled="deleting" :loading="deleting">删除</el-button>
@@ -124,15 +129,15 @@ export default {
     this.SLOTS = [{ n: "操作", v: "field", w: 200 }];
     this.FIELDS = [
       { v: "cert_name", n: "证件名称" },
-      { v: "cert_code", n: "证件编码" },
-      { v: "match_type", n: "匹配类型", trans: (v) => MATCH_TYPE[v] },
-      { v: "rec_stock", n: "识别词库" },
+      { v: "cert_code", n: "证件编码", w: 200 },
+      { v: "cert_type", n: "证件类型", w: 180, trans: (v) => CERT_TYPE[v] },
+      { v: "match_type", n: "匹配类型", w: 100, aln: "center", trans: (v) => MATCH_TYPE[v] },
+      // { v: "rec_stock", n: "识别词库" },
       // { v: "cert_regex", n: "匹配正则" },
       // { v: "return_tag", n: "返回标记" },
-      { v: "cert_type", n: "证件类型", trans: (v) => CERT_TYPE[v] },
-      { v: "is_stamp", n: "识别印章", trans: (v) => TYPE[v] },
-      { v: "is_sign", n: "识别签字", trans: (v) => TYPE[v] },
-      { v: "match_order", n: "匹配顺序" },
+      { v: "is_stamp", n: "识别印章", w: 100, aln: "center", trans: (v) => TYPE[v] },
+      // { v: "is_sign", n: "识别签字", trans: (v) => TYPE[v] },
+      { v: "match_order", n: "匹配顺序", w: 100, aln: "center" },
       // { v: "cert_init", n: "初始替换" },
     ];
     this.DATA = {
@@ -148,6 +153,7 @@ export default {
       is_sign: 0,
       match_order: 0,
       cert_init: "",
+      cert_status: 0,
     };
     return {
       ID: "cert_id",
@@ -155,6 +161,10 @@ export default {
       showField: false,
       showDot: false,
       pInstance: {},
+      fetchParams: {
+        cert_name: "",
+        cert_code: "",
+      },
     };
   },
   created() {},

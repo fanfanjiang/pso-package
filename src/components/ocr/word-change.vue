@@ -10,7 +10,10 @@
       :row-style-fun="rowStyleFun"
       @rowclick="onRowClick"
     >
-      <template #tablefun> </template>
+      <template #tablefun>
+        <pso-search text="搜索" v-model="fetchParams.change_word"></pso-search>
+        <el-divider direction="vertical"></el-divider>
+      </template>
       <template #datafun> </template>
     </pso-common-view>
   </div>
@@ -23,8 +26,11 @@ export default {
   data() {
     this.FIELDS = [{ v: "change_word", n: "纠正词" }];
     return {
-      ID: "auto_no",
+      ID: "change_word",
       clicked: null,
+      fetchParams: {
+        change_word: "",
+      },
     };
   },
   created() {},
@@ -38,7 +44,7 @@ export default {
     },
     onRowClick(data) {
       this.clicked = data;
-      this.$emit("rowclick", data.change_word); 
+      this.$emit("rowclick", data.change_word);
     },
     rowStyleFun(row) {
       if (this.clicked && this.clicked.change_word === row.change_word) {

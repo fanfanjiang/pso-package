@@ -3,8 +3,17 @@
     <div class="ocr-test-l">
       <great-panel>
         <template #header>
-          <i class="el-icon-upload2"></i>
-          <span>上传证照</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%">
+            <div>
+              <i class="el-icon-upload2"></i>
+              <span>上传证照</span>
+            </div>
+            <div>
+              <el-select placeholder="选择证照" filterable clearable size="mini" v-model="upData.cert_code">
+                <el-option v-for="(d, i) in templates" :key="i" :label="d.cert_name" :value="d.cert_code"></el-option>
+              </el-select>
+            </div>
+          </div>
         </template>
         <div class="ocr-uploader" v-loading="uploading">
           <pso-upload
@@ -14,6 +23,7 @@
             visible
             dragable
             :api="api"
+            :data="upData.cert_code ? upData : {}"
             :upable="false"
             :srcable="false"
             :showconfirm="false"
@@ -36,9 +46,7 @@
             <el-form-item label="识别词">
               <el-input :readonly="!instance.field" v-model="instance.word" size="large" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="纠正词">
-              <el-input :readonly="!instance.field" v-model="instance.wrong" size="large" autocomplete="off"></el-input>
-            </el-form-item>
+
             <el-form-item>
               <el-button type="primary" @click="submit('match_pre')" :disabled="submiting || !instance.word" :loading="submiting">
                 加⼊紧前词库
@@ -50,6 +58,9 @@
                 加⼊紧后词库
               </el-button>
             </el-form-item>
+            <el-form-item label="纠正词">
+              <el-input :readonly="!instance.field" v-model="instance.wrong" size="large" autocomplete="off"></el-input>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="makeWord" :disabled="making || !instance.word || !instance.wrong" :loading="making">
                 加⼊纠错词库
@@ -60,10 +71,19 @@
       </great-panel>
     </div>
     <div class="ocr-test-r">
+      <transition name="el-fade-in">
+        <great-panel v-if="ocrRet">
+          <template #header>
+            <i class="el-icon-chat-dot-square"></i>
+            <span>识别结果</span>
+          </template>
+          <ocr-result :data="ocrRet"></ocr-result>
+        </great-panel>
+      </transition>
       <great-panel>
         <template #header>
           <i class="el-icon-data-analysis"></i>
-          <span>识别结果</span>
+          <span>结果详情</span>
         </template>
       </great-panel>
       <div class="ocr-test-output">
@@ -73,69 +93,34 @@
   </div>
 </template>
 <script>
-import GreatPanel from "../great-panel";
+import { OcrTest } from "./mixin";
+
 export default {
-  components: { GreatPanel },
+  mixins: [OcrTest],
   data() {
     return {
-      initializing: true,
-      api: "/api/ocr/upload",
-      cmOptions: {
-        tabSize: 4,
-        styleActiveLine: true,
-        lineNumbers: true,
-        line: true,
-        lineWrapping: true,
-      },
-      output: "",
-      templates: [],
       instance: {
         field: "",
         word: "",
         wrong: "",
       },
       submiting: false,
-      uploading: false,
       fetching: false,
       making: false,
       fields: [],
     };
   },
-  created() {
-    this.initializ();
-  },
   methods: {
-    async initializ() {
-      this.initializing = true;
-      const ret = await this.API.request("/api/ocr/template", { data: { limit: 99999 }, method: "get" });
-      this.initializing = false;
-      this.templates = ret.data.data;
-    },
     async fetch(cert_id) {
       this.fetching = true;
       const ret = await this.API.request("/api/ocr/field", { data: { cert_id, limit: 99999 }, method: "get" });
       this.fields = ret.success ? ret.data : [];
       this.fetching = false;
     },
-    onStart() {
-      this.fields = [];
-      this.uploading = true;
-    },
-    onError() {
-      this.uploading = false;
-    },
-    async onSuccess(data) {
-      if (data.data) {
-        this.output += (this.output ? "\n\n" : "") + JSON.stringify(data.data);
-
-        if (data.data.data._type) {
-          const template = _.find(this.templates, { cert_code: data.data.data._type });
-          if (template && template.cert_type === 99) {
-            await this.fetch(template.cert_id);
-          }
-        }
+    async afterSuccess(ret = {}) {
+      if (ret._template && ret._template.cert_type === 99) {
+        await this.fetch(ret._template.cert_id);
       }
-      this.uploading = false;
     },
     async submit(stock) {
       const { field, word } = this.instance;
@@ -165,51 +150,3 @@ export default {
   },
 };
 </script>
-<style lang="less">
-.ocr-test {
-  display: flex;
-  height: 100%;
-  .ocr-test-l {
-    width: 40%;
-    height: 100%;
-  }
-  .ocr-test-r {
-    width: 60%;
-    height: 100%;
-    padding-left: 10px;
-    overflow: hidden;
-    .great-panel-header {
-      margin-bottom: 0;
-    }
-  }
-  .ocr-test-output {
-    height: 100%;
-    .vue-codemirror {
-      height: 100%;
-      width: 100%;
-    }
-    .CodeMirror {
-      height: 100% !important;
-      width: 100%;
-      border-radius: 0;
-      border: none;
-    }
-    .CodeMirror-gutters {
-      border: none;
-    }
-  }
-  .ocr-test-form {
-    background: #fff;
-    padding: 20px 10px;
-  }
-}
-.ocr-uploader {
-  height: 140px;
-  .pso-upload {
-    height: 100%;
-  }
-  .pso-upload__footer {
-    display: none;
-  }
-}
-</style>

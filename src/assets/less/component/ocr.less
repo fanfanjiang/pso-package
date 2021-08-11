@@ -1,0 +1,99 @@
+.ocr-test {
+    display: flex;
+    height: 100%;
+
+    .ocr-test-l {
+        width: 40%;
+        height: 100%;
+    }
+
+    .ocr-test-r {
+        width: 60%;
+        height: 100%;
+        padding-left: 10px;
+        overflow: hidden;
+
+        .great-panel-header {
+            margin-bottom: 0;
+        }
+    }
+
+    .ocr-test-output {
+        height: 100%;
+
+        .vue-codemirror {
+            height: 100%;
+            width: 100%;
+        }
+
+        .CodeMirror {
+            height: 100% !important;
+            width: 100%;
+            border-radius: 0;
+            border: none;
+        }
+
+        .CodeMirror-gutters {
+            border: none;
+        }
+    }
+
+    .ocr-test-form {
+        background: #fff;
+        padding: 20px 10px;
+    }
+
+    .ocr-uploader {
+        height: 140px;
+
+        .pso-upload {
+            height: 100%;
+        }
+
+        .pso-upload__footer {
+            display: none;
+        }
+    }
+}
+
+.ocr-test-ret {
+    padding: 20px;
+    margin-top: 10px;
+    color: #fff;
+
+    &.success {
+        background: #67C23A;
+    }
+
+    &.fail {
+        background: #F56C6C;
+    }
+
+    >div {
+        &+div {
+            margin-top: 20px;
+        }
+
+        display: flex;
+        align-items: center;
+    }
+
+    .ocr-test-ret-header {
+        i {
+            font-size: 30px;
+        }
+
+        span {
+            margin-left: 20px;
+            font-size: 20px;
+        }
+    }
+
+    .ocr-test-ret-body {
+        font-size: 16px;
+    }
+
+    .ocr-test-ret-footer {
+        font-size: 16px;
+    }
+}

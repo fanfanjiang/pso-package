@@ -52,6 +52,7 @@
                 :prop="f.v"
                 :label="f.n"
                 :width="f.w"
+                :align="f.aln || 'left'"
                 show-overflow-tooltip
                 resizable
               >
