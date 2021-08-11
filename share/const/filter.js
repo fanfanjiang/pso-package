@@ -200,6 +200,7 @@ const FILTER_TYPE = {
         name: '关联表',
         op: [
             { ...FILTER_OP.op1, match: 99 },
+            { ...FILTER_OP.op2, match: 99 },
             // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
             // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
@@ -210,6 +211,7 @@ const FILTER_TYPE = {
         name: '标签',
         op: [
             { ...FILTER_OP.op1, match: 99 },
+            { ...FILTER_OP.op2, match: 99 },
             // { ...FILTER_OP.op90, match: 1, defaultVal: 'empty' },
             // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
@@ -246,9 +248,9 @@ const FILTER_TYPE = {
             // { ...FILTER_OP.op91, match: 1, defaultVal: 'empty' },
         ]
     }
-}
-exports.FILTER_TYPE = FILTER_TYPE;
+};
 
+exports.FILTER_TYPE = FILTER_TYPE;
 exports.FILTER_TYPE_ARY = Object.values(FILTER_TYPE);
 
 

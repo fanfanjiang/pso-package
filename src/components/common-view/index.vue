@@ -37,19 +37,30 @@
             :data="instances"
             style="width: 100%"
             :height="tableHeight"
+            :row-style="analyzeRowStyle"
             @row-dblclick="$emit('dbclick', $event)"
+            @row-click="$emit('rowclick', $event)"
             @selection-change="$emit('select', $event)"
           >
             <template #default>
-              <el-table-column type="selection" width="40" header-align="center" align="center"></el-table-column>
+              <el-table-column v-if="selectable" type="selection" width="40" header-align="center" align="center"></el-table-column>
               <el-table-column type="index" label="序号" :index="1" width="50" align="center"></el-table-column>
-              <el-table-column v-for="(f, i) in fields" :key="i" :prop="f.v" :label="f.n" :width="f.w" show-overflow-tooltip resizable>
+              <el-table-column
+                header-align="center"
+                v-for="(f, i) in fields"
+                :key="i"
+                :prop="f.v"
+                :label="f.n"
+                :width="f.w"
+                show-overflow-tooltip
+                resizable
+              >
                 <template slot-scope="scope">
                   <span v-if="f.trans">{{ f.trans(scope.row[f.v]) }}</span>
                   <span v-else>{{ scope.row[f.v] }}</span>
                 </template>
               </el-table-column>
-              <el-table-column v-for="(s, i) in slots" :key="i" :label="s.n" :width="s.w">
+              <el-table-column header-align="center" v-for="(s, i) in slots" :key="i" :label="s.n" :width="s.w">
                 <template slot-scope="scope">
                   <slot :name="s.v" v-bind:data="{ row: scope.row }"></slot>
                 </template>
@@ -114,6 +125,11 @@ export default {
       type: Array,
       default: () => [],
     },
+    selectable: {
+      type: Boolean,
+      default: true,
+    },
+    rowStyleFun: Function,
   },
   data() {
     return {
@@ -150,6 +166,11 @@ export default {
         this.dataTotal = ret.data.page;
       }
       this.fetching = false;
+    },
+    analyzeRowStyle({ row, rowIndex }) {
+      if (typeof this.rowStyleFun === "function") {
+        return this.rowStyleFun(row);
+      }
     },
   },
 };

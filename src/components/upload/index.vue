@@ -1,6 +1,6 @@
 <template>
   <div class="pso-upload">
-    <div class="pso-upload__header">
+    <div class="pso-upload__header" v-if="headerable">
       <div class="pso-upload__header-title">添加附件</div>
       <i class="pso-upload__header-cose el-icon-close" @click="$emit('close')"></i>
     </div>
@@ -12,7 +12,7 @@
       @dragleave.prevent="dragleave"
     >
       <el-upload
-        v-if="upable"
+        v-if="upable || dragable"
         drag
         class="pso-upload__area"
         :data="data"
@@ -26,9 +26,9 @@
         :multiple="true"
       >
         <i class="el-icon-upload"></i>
-        <div class="pso-upload__area-text">将文件拖到此处</div>
+        <div class="pso-upload__area-text">点击或将文件拖到此处</div>
       </el-upload>
-      <div class="pso-upload__list-wrapper" v-show="showFileList">
+      <div class="pso-upload__list-wrapper" v-show="showFileList && showconfirm">
         <pso-file-list :files="upFileList" @delete="deleteFile"></pso-file-list>
       </div>
     </div>
@@ -53,7 +53,7 @@
           <el-button icon="el-icon-folder" size="small" type="text" :loading="fileDemanding">知识库</el-button>
         </pso-picker-resource>
       </div>
-      <div class="pso-upload__footer-right" v-show="showFileList">
+      <div class="pso-upload__footer-right" v-show="showFileList && showconfirm">
         <el-button class="pso-upload__footer-cancel" size="small" type="text" @click="$emit('close')">取消</el-button>
         <el-button class="pso-upload__footer-confirm" size="small" type="primary" @click="confirm">确认</el-button>
       </div>
@@ -86,7 +86,19 @@ export default {
       type: Boolean,
       default: true,
     },
+    dragable: {
+      type: Boolean,
+      default: false,
+    },
     srcable: {
+      type: Boolean,
+      default: true,
+    },
+    headerable: {
+      type: Boolean,
+      default: true,
+    },
+    showconfirm: {
       type: Boolean,
       default: true,
     },
@@ -147,6 +159,7 @@ export default {
     onError(err, file, fileList) {
       this.$message.error("上传失败");
       this.deleteFile(file);
+      this.$emit("error", file);
     },
     onProgress(event, file, fileList) {
       let _file = this.findFile(file.uid);
@@ -169,6 +182,7 @@ export default {
         }
       }
       this.upFileList.push({ fid: file.uid, name: file.name, percentage: 0 });
+      this.$emit("start", file);
     },
     deleteFile(file) {
       let index = this.findFile(file.fid || file.uid, "findIndex");

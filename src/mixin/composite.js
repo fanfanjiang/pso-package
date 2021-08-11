@@ -56,7 +56,6 @@ export const FormAsMainMixin = {
             return this.mainCurRow && this.mainCurRow.leaf_id;
         },
         displayRow() {
-            console.log(this.params.displayRow);
             return this.params.displayRow !== "1";
         },
         bottomHeight() {

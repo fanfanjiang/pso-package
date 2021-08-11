@@ -158,6 +158,9 @@ export const FetchMixin = {
         },
         addHandler() {
             this.curInstance = { ...this.DATA };
+            if (this.beforeAddInstance) {
+                this.beforeAddInstance();
+            }
             this.showEditor = true;
         },
         dbClickHandler(row) {
