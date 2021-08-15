@@ -16,7 +16,8 @@ export const OcrTest = {
                 lineWrapping: true,
             },
             upData: {
-                cert_code: ""
+                cert_code: "",
+                api: ""
             },
             output: "",
             uploading: false,
@@ -52,14 +53,18 @@ export const OcrTest = {
 
             if (ret.success) {
                 if (ret.data._type) {
-                    const exist = _.find(this.templates, { cert_code: ret.data._type })
+                    const exist = _.find(this.templates, { cert_code: ret.data._type });
                     ret._template = exist;
                 }
             }
 
             this.ocrResults.push(ret);
 
-            this.output = ret.success ? JSON.stringify(ret.data) : (ret.message || "无信息");
+            if (this.onOutput) {
+                this.output = this.onOutput(ret);
+            } else {
+                this.output = ret.success ? JSON.stringify(ret.data) : (ret.message || "无信息");
+            }
 
             if (this.afterSuccess) {
                 this.afterSuccess(ret);

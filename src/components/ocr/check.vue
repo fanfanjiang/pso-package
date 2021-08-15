@@ -111,6 +111,28 @@ export default {
     };
   },
   methods: {
+    onOutput(ret) {
+      let str = "原始数据:\n\n";
+
+      str += `${ret.data._data || ""}\n\n\n`;
+
+      delete ret.data._data;
+      delete ret.data._name;
+      delete ret.data._type;
+
+      if (ret.success) {
+        str += `识别数据:\n\n`;
+
+        for (let key in ret.data) {
+          str += `${key} : ${ret.data[key]}\n`;
+        }
+        
+      } else {
+        str += `错误信息:\n\n${ret.message}`;
+      }
+
+      return str;
+    },
     async fetch(cert_id) {
       this.fetching = true;
       const ret = await this.API.request("/api/ocr/field", { data: { cert_id, limit: 99999 }, method: "get" });

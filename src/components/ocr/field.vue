@@ -19,6 +19,7 @@
         <el-button plain type="primary" size="mini" @click="onClickShit(data.row, 'match_word')">词库</el-button>
         <el-button plain type="primary" size="mini" @click="onClickShit(data.row, 'match_pre')">紧前</el-button>
         <el-button plain type="primary" size="mini" @click="onClickShit(data.row, 'match_after')">紧后</el-button>
+        <el-button plain type="primary" size="mini" @click="onClickShit(data.row, 'val_rule')">替换词</el-button>
         <el-button plain v-if="data.row.con_val_type === 1" type="primary" size="mini" @click="onClickOp(data.row)">配置字段</el-button>
       </template>
     </pso-common-view>
@@ -110,16 +111,16 @@ export default {
   },
   data() {
     this.VAL_TYPE = VAL_TYPE;
-    this.SLOTS = [{ n: "操作", v: "field", w: 300 }];
+    this.SLOTS = [{ n: "操作", v: "field", w: 380 }];
     this.FIELDS = [
-      { v: "content_name", n: "返回名称" },
-      { v: "content_field", n: "返回字段" },
-      { v: "match_order", n: "匹配顺序" },
-      { v: "match_word", n: "匹配词库" },
-      { v: "con_val_type", n: "值类型", trans: (v) => VAL_TYPE[v] },
+      { v: "content_name", n: "返回名称", w: 160 },
+      { v: "content_field", n: "返回字段", w: 160 },
+      { v: "match_order", n: "匹配顺序", w: 100 },
+      // { v: "match_word", n: "匹配词库" },
+      { v: "con_val_type", n: "值类型", w: 100, trans: (v) => VAL_TYPE[v] },
       { v: "con_val_format", n: "输出格式" },
-      { v: "match_pre", n: "紧前分割词库" },
-      { v: "match_after", n: "紧后分割词库" },
+      // { v: "match_pre", n: "紧前分割词库" },
+      // { v: "match_after", n: "紧后分割词库" },
     ];
     this.DATA = {
       leaf_id: "",
@@ -131,6 +132,8 @@ export default {
       con_val_format: "",
       match_pre: "",
       match_after: "",
+      val_rule: "",
+      begin_match: 0,
     };
     return {
       ID: "leaf_id",

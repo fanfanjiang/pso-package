@@ -11,7 +11,8 @@
         width: 60%;
         height: 100%;
         padding-left: 10px;
-        overflow: hidden;
+        display: flex;
+        flex-direction: column;
 
         .great-panel-header {
             margin-bottom: 0;
@@ -20,6 +21,8 @@
 
     .ocr-test-output {
         height: 100%;
+        overflow: auto;
+        flex: 1;
 
         .vue-codemirror {
             height: 100%;

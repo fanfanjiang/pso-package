@@ -81,7 +81,25 @@ export default {
       submiting: false,
     };
   },
+  created() {
+    this.upData.api = "/Ocr/TestOcrCert";
+  },
   methods: {
+    onOutput(ret) {
+      let str = "原始数据:\n\n";
+
+      str += `${ret.data._data || ""}\n\n\n`;
+
+      delete ret.data._data;
+      delete ret.data._name;
+      delete ret.data._type;
+
+      if (!ret.success) {
+        str += `错误信息:\n\n${ret.message}`;
+      }
+
+      return str;
+    },
     async submit() {
       const { cert_id, word } = this.instance;
       const data = _.find(this.templates, { cert_id });
