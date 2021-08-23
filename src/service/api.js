@@ -26,9 +26,9 @@ export default class API {
     static doAuthError() {
         Storge.remove('user');
         Auth.removeToken();
-
         this.handleAuthError && this.handleAuthError();
         Message({ showClose: true, message: '登录过期，请重新登录', type: 'warning' });
+        return { success: false };
     }
 
     static doEncrypt(data) {
@@ -84,7 +84,6 @@ export default class API {
                 if (error.response.status === 401) {
                     const rft = Auth.getRefreshToken();
                     if (rft) {
-
                         const oriRequest = new Promise((resolve) => {
                             this.cachedFun.push(async () => {
                                 resolve(this.request(..._arguments));
@@ -94,7 +93,7 @@ export default class API {
                         if (!this.refreshing) {
                             this.refreshing = true;
                             const refreshRet = await this.request('/refresh', { data: { rft } });
-                            if (refreshRet && refreshRet.success) {
+                            if (refreshRet && refreshRet.success && refreshRet.data.token) {
                                 Auth.setToken(refreshRet.data.token);
                                 this.refreshing = false;
                                 while (this.cachedFun.length) {
@@ -105,13 +104,15 @@ export default class API {
                                 this.doAuthError();
                             }
                         }
-
                         return oriRequest;
                     }
                     return this.doAuthError();
                 }
-            }
 
+                if (error.response.data && typeof error.response.data === 'object' && typeof error.response.data.success !== 'undefined') {
+                    return error.response.data;
+                }
+            }
             return { success: false, msg: "请求失败，请检查网络或请稍后再试" }
         }
     }

@@ -80,7 +80,7 @@
         </div>
       </el-form-item>
       <el-form-item label="字典名称">
-        <el-input @change="onFieldChange" size="mini" v-model.trim="cpnt.data._fieldValue" :disabled="fieldDisable" clearable></el-input>
+        <el-input @change="onFieldChange" size="mini" v-model.trim="cpnt.data._fieldValue" :disabled="false" clearable></el-input>
       </el-form-item>
       <el-form-item label="是否加密">
         <el-switch size="mini" v-model="cpnt.data._encry" active-value="1" inactive-value="0"></el-switch>

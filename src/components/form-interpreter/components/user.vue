@@ -98,6 +98,8 @@ export default {
   },
   methods: {
     async getFormSource() {
+
+      
       const params = { limit: 9999999, page: 0, leaf_auth: 4, data_code: this.cpnt.data._bindForm, keys: JSON.stringify({}) };
       const ret = await this.API.form({ data: params, method: "get" });
       this.formSrcList = ret.data;

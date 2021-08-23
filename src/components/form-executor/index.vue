@@ -62,7 +62,13 @@
     </template>
     <div class="form-executor" ref="executor" v-loading="removing">
       <div class="form-executor-body">
-        <pso-form-interpreter v-if="showpreter" ref="formImage" v-bind="formParams" @data-loaded="onLoaded"></pso-form-interpreter>
+        <pso-form-interpreter
+          v-if="showpreter"
+          ref="formImage"
+          v-bind="formParams"
+          @data-loaded="onLoaded"
+          @cpnt-value-changed="onCpntChange"
+        ></pso-form-interpreter>
       </div>
       <div class="form-executor-footer" v-if="(editable || addable) && !initializing">
         <div class="form-executor-footer__l" v-if="addable && keepable">
@@ -191,6 +197,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.quickInput.initKeyevent(store);
       });
+    },
+    onCpntChange(data) {
+      this.$emit("executor-value-changed", data);
     },
     async keepSubmitHander() {
       const data = await this.addOrUpdate();

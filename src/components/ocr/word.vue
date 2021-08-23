@@ -87,10 +87,12 @@ export default {
     },
     checkValidity(data) {
       if (!data.error_word) {
-        return this.$notify({ title: "错误词不能为空", type: "warning" });
+        this.$notify({ title: "错误词不能为空", type: "warning" });
+        return;
       }
       if (!data.change_word) {
-        return this.$notify({ title: "改正词不能为空", type: "warning" });
+        this.$notify({ title: "改正词不能为空", type: "warning" });
+        return;
       }
       if (!data.auto_no) {
         delete data.auto_no;

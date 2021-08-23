@@ -135,6 +135,11 @@ export default {
         const { printer_config } = ret.data.data;
         if (printer_config) {
           this.templates = formatJSONList(printer_config, PRINTER_FIELDS);
+          // if (code === "healthCancel") {
+          //   this.templates[0].code = code;
+          //   await this.save();
+          // }
+          console.log(this.templates);
         }
       }
     },

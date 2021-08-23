@@ -138,7 +138,6 @@ export default {
 
       const formProxy = new FormProxy({ code: this.code, source: this.source });
       await formProxy.analyze({ asstable: true });
-
       this.print = new Print({
         $vue: this,
         $sheet: this.$refs.sheet,

@@ -181,7 +181,8 @@ export default {
     },
     checkValidity(data) {
       if (!data.cert_name) {
-        return this.$notify({ title: "名称不能为空", type: "warning" });
+        this.$notify({ title: "名称不能为空", type: "warning" });
+        return;
       }
       if (!data.cert_id) {
         delete data.cert_id;

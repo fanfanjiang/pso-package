@@ -20,7 +20,7 @@
         <el-button plain type="primary" size="mini" @click="onClickShit(data.row, 'match_pre')">紧前</el-button>
         <el-button plain type="primary" size="mini" @click="onClickShit(data.row, 'match_after')">紧后</el-button>
         <el-button plain type="primary" size="mini" @click="onClickShit(data.row, 'val_rule')">替换词</el-button>
-        <el-button plain v-if="data.row.con_val_type === 1" type="primary" size="mini" @click="onClickOp(data.row)">配置字段</el-button>
+        <el-button plain v-if="data.row.con_val_type !== 0" type="primary" size="mini" @click="onClickOp(data.row)">配置字段</el-button>
       </template>
     </pso-common-view>
     <pso-dialog :visible="showEditor" width="50%" @close="showEditor = false">
@@ -49,11 +49,6 @@
           <el-form-item label="匹配顺序">
             <el-input-number size="mini" v-model="curInstance.match_order" controls-position="right" :min="0"></el-input-number>
           </el-form-item>
-          <el-form-item label="值类型">
-            <el-select filterable clearable size="small" v-model="curInstance.con_val_type">
-              <el-option v-for="(v, n) in VAL_TYPE" :key="n" :label="v" :value="parseInt(n)"></el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item label="输出格式">
             <el-input v-model="curInstance.con_val_format" size="small" autocomplete="off"></el-input>
           </el-form-item>
@@ -62,6 +57,38 @@
           </el-form-item>
           <el-form-item label="紧后分割词库">
             <el-button plain type="primary" size="mini" @click="onClickShit(curInstance, 'match_after')">设置</el-button>
+          </el-form-item>
+          <el-form-item label="值类型">
+            <el-select filterable clearable size="small" v-model="curInstance.con_val_type">
+              <el-option v-for="(v, n) in VAL_TYPE" :key="n" :label="v.n" :value="parseInt(n)"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="合并模式" v-if="!!~VAL_TYPE[curInstance.con_val_type].rule.indexOf(3)">
+            <el-radio-group v-model="curInstance.merge_content">
+              <el-radio v-for="(v, k, i) in MERGE" :label="parseInt(k)" :key="i">{{ v.n }}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="去符号内容" v-if="!!~VAL_TYPE[curInstance.con_val_type].rule.indexOf(0)">
+            <el-radio-group v-model="curInstance.clean_symbol">
+              <el-radio v-for="(v, k, i) in CLEAN" :label="parseInt(k)" :key="i">{{ v.n }}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="符号集合" v-if="!!~VAL_TYPE[curInstance.con_val_type].rule.indexOf(1)">
+            <el-input placeholder="多个用|分割" v-model="curInstance.symbol_list" size="small" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="清除已匹配内容" v-if="!!~VAL_TYPE[curInstance.con_val_type].rule.indexOf(2)">
+            <el-radio-group v-model="curInstance.clean_pre_value">
+              <el-radio v-for="(v, k, i) in CLEANED" :label="parseInt(k)" :key="i">{{ v.n }}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="适配数量" v-if="!!~VAL_TYPE[curInstance.con_val_type].rule.indexOf(6)">
+            <el-input-number size="mini" v-model="curInstance.pattern_amount" controls-position="right" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="提取正则" v-if="!!~VAL_TYPE[curInstance.con_val_type].rule.indexOf(4)">
+            <el-input v-model="curInstance.pattern_string" size="small" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="输出格式" v-if="!!~VAL_TYPE[curInstance.con_val_type].rule.indexOf(5)">
+            <el-input v-model="curInstance.format_string" size="small" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -101,7 +128,51 @@
 import { FetchMixin } from "../../mixin/view";
 import OcrFormat from "./format";
 import Doteditor from "./doteditor";
-const VAL_TYPE = { 0: "直接获取", 1: "多分段获取" };
+const CLEAN = {
+  0: {
+    n: "不去除",
+  },
+  1: {
+    n: "去除",
+  },
+};
+
+const CLEANED = {
+  0: {
+    n: "不清除",
+  },
+  1: {
+    n: "清除",
+  },
+};
+
+const MERGE = {
+  0: {
+    n: "非",
+  },
+  1: {
+    n: "是",
+  },
+};
+
+const VAL_TYPE = {
+  0: {
+    n: "直接获取",
+    rule: [0, 1],
+  },
+  1: {
+    n: "范围直接提取",
+    rule: [0, 1, 2],
+  },
+  2: {
+    n: "范围单个格式获取",
+    rule: [0, 1, 3, 4, 5],
+  },
+  3: {
+    n: "范围多个格式获取",
+    rule: [0, 1, 4, 5, 6],
+  },
+};
 
 export default {
   components: { OcrFormat, Doteditor },
@@ -111,13 +182,16 @@ export default {
   },
   data() {
     this.VAL_TYPE = VAL_TYPE;
+    this.CLEAN = CLEAN;
+    this.CLEANED = CLEANED;
+    this.MERGE = MERGE;
     this.SLOTS = [{ n: "操作", v: "field", w: 380 }];
     this.FIELDS = [
       { v: "content_name", n: "返回名称", w: 160 },
       { v: "content_field", n: "返回字段", w: 160 },
       { v: "match_order", n: "匹配顺序", w: 100 },
       // { v: "match_word", n: "匹配词库" },
-      { v: "con_val_type", n: "值类型", w: 100, trans: (v) => VAL_TYPE[v] },
+      { v: "con_val_type", n: "值类型", w: 100, trans: (v) => VAL_TYPE[v].n },
       { v: "con_val_format", n: "输出格式" },
       // { v: "match_pre", n: "紧前分割词库" },
       // { v: "match_after", n: "紧后分割词库" },
@@ -134,6 +208,13 @@ export default {
       match_after: "",
       val_rule: "",
       begin_match: 0,
+      clean_symbol: 0,
+      symbol_list: "",
+      clean_pre_value: 0,
+      merge_content: 0,
+      pattern_string: "",
+      pattern_amount: 0,
+      format_string: "",
     };
     return {
       ID: "leaf_id",
@@ -160,15 +241,18 @@ export default {
     },
     checkValidity(data) {
       if (!data.content_name) {
-        return this.$notify({ title: "名称不能为空", type: "warning" });
+        this.$notify({ title: "名称不能为空", type: "warning" });
+        return;
       }
       if (!data.content_field) {
-        return this.$notify({ title: "返回字段不能为空", type: "warning" });
+        this.$notify({ title: "返回字段不能为空", type: "warning" });
+        return;
       }
       if (!data.leaf_id) {
         delete data.leaf_id;
       }
       data.cert_id = this.id;
+      console.log(data);
       return true;
     },
     onClickOp(data) {

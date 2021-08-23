@@ -104,6 +104,7 @@
         :keepable="store.keepable"
         @data-changed="dataChangeHandler"
         @data-loaded="formLoadedhandler"
+        @executor-value-changed="onExecutorValueChange"
         @prev="store.showPrev.call(store, $event)"
         @next="store.showNext.call(store, $event)"
       ></pso-form-executor>
@@ -245,7 +246,7 @@ export default {
       default: true,
     },
     actExtParam: Object, //动作扩展参数，目前用于打开子视图时传入参数
-    defFormValue: Object, 
+    defFormValue: Object,
   },
   data() {
     return {
@@ -393,6 +394,9 @@ export default {
     },
     formLoadedhandler(data) {
       this.$emit("form-loaded", data);
+    },
+    onExecutorValueChange(data) {
+      this.$emit("executor-value-changed", data);
     },
   },
 };

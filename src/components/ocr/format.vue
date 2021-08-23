@@ -85,10 +85,12 @@ export default {
     },
     checkValidity(data) {
       if (!data.cert_val_name) {
-        return this.$notify({ title: "取值名称不能为空", type: "warning" });
+        this.$notify({ title: "取值名称不能为空", type: "warning" });
+        return;
       }
       if (!data.cert_val_pattern) {
-        return this.$notify({ title: "取值正则不能为空", type: "warning" });
+        this.$notify({ title: "取值正则不能为空", type: "warning" });
+        return;
       }
       if (!data.auto_no) {
         delete data.auto_no;

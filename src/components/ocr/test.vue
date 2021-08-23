@@ -18,6 +18,7 @@
             :srcable="false"
             :showconfirm="false"
             :headerable="false"
+            :data="upData"
           ></pso-upload>
         </div>
       </great-panel>
