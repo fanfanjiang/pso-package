@@ -135,6 +135,11 @@ export const ConfigMixin = {
                             this.appConfig.logo = logoRet.data[0].res_path;
                         }
                     }
+                    if (base.map_key7 && base.map_key7 !== 'null') {
+                        this.$store.state.base.appConfig.theme = base.map_key7;
+                    } else {
+                        this.$store.state.base.appConfig.theme = this.$store.state.base.appConfig.defTheme;
+                    }
                 }
 
                 if (link && link.length) {

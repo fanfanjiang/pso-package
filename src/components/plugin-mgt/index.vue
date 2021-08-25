@@ -92,6 +92,7 @@ import { TP_NEW_TYPES, STATIC_COLUMN_FIELDS } from "../../const/sys";
 import GridDesigner from "../grid-designer";
 import PaperDesigner from "../paper-designer";
 import { formatJSONList } from "../../utils/util";
+import { PLUGIN_DEFAULT } from "../../const/app";
 
 const _DATA = {
   column: [],
@@ -270,7 +271,7 @@ export default {
       this.treeData = data.filter((d) => d.is_leaf);
     },
     async syncPlugin() {
-      const plugins = this.__CONST__.PLUGIN_DEFAULT;
+      const plugins = PLUGIN_DEFAULT;
       this.syncing = true;
 
       for (let item of this.treeData) {

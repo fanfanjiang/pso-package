@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%">
+  <div style="height: 100%" v-loading="loading">
     <pso-common-view
       ref="view"
       title="证件配置"
@@ -23,6 +23,9 @@
       <template v-slot:field="{ data }">
         <el-button plain type="primary" size="mini" @click="onClickShit(data.row)">配置词库</el-button>
         <el-button plain v-if="data.row.cert_type === 99" type="primary" size="mini" @click="onClickFieldOp(data.row)">配置内容</el-button>
+        <el-popconfirm title="点击后将复制一条相同配置的证件" @confirm="onClickCopy(data.row)">
+          <el-button style="margin-left: 10px" slot="reference" plain type="primary" size="mini">复制</el-button>
+        </el-popconfirm>
       </template>
     </pso-common-view>
     <pso-dialog :visible="showEditor" width="50%" @close="showEditor = false">
@@ -57,7 +60,7 @@
             <el-input v-model="curInstance.cert_regex" size="small" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="返回标记">
-            <el-input v-model="curInstance.return_tag" size="small" autocomplete="off"></el-input>
+            <el-input-number size="mini" v-model="curInstance.return_tag" controls-position="right" :min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="证件类型">
             <el-select filterable clearable size="small" v-model="curInstance.cert_type">
@@ -73,8 +76,8 @@
           <el-form-item label="匹配顺序">
             <el-input-number size="mini" v-model="curInstance.match_order" controls-position="right" :min="0"></el-input-number>
           </el-form-item>
-          <el-form-item label="初始替换">
-            <el-input v-model="curInstance.cert_init" size="small" autocomplete="off"></el-input>
+          <el-form-item label="API匹配路径">
+            <el-input v-model="curInstance.cert_api" size="small" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -126,7 +129,7 @@ export default {
     this.TYPE = TYPE;
     this.MATCH_TYPE = MATCH_TYPE;
     this.CERT_TYPE = CERT_TYPE;
-    this.SLOTS = [{ n: "操作", v: "field", w: 200 }];
+    this.SLOTS = [{ n: "操作", v: "field", w: 260 }];
     this.FIELDS = [
       { v: "cert_name", n: "证件名称" },
       { v: "cert_code", n: "证件编码", w: 200 },
@@ -147,12 +150,13 @@ export default {
       match_type: 1,
       rec_stock: "",
       cert_regex: "",
-      return_tag: "",
+      return_tag: 100,
       cert_type: 99,
       is_stamp: 0,
       is_sign: 0,
       match_order: 0,
       cert_init: "",
+      cert_api: "",
       cert_status: 0,
     };
     return {
@@ -160,6 +164,7 @@ export default {
       using: false,
       showField: false,
       showDot: false,
+      loading: false,
       pInstance: {},
       fetchParams: {
         cert_name: "",
@@ -202,6 +207,13 @@ export default {
         this.saveHandler();
       }
       this.showDot = false;
+    },
+    async onClickCopy({ cert_id }) {
+      this.loading = true;
+      const ret = await this.API.request("/api/ocr/copy", { data: { cert_id } });
+      this.ResultNotify(ret);
+      this.loading = false;
+      this.refresh();
     },
   },
 };

@@ -20,7 +20,8 @@ export default {
             appid: '',
             appName: '',
             platform: '',
-            theme: '1B9AEE'
+            theme: '1B9AEE',
+            defTheme: '1B9AEE',
         },
         notify: {
             initialized: false,

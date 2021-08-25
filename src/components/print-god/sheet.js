@@ -37,7 +37,7 @@ export default class Sheet {
             rowHeights: (row) => this.getRowHeight(row),
             rowHeaders: true,
             colHeaders: true,
-            contextMenu: true,
+            contextMenu: this.getCtxMenu(),
             mergeCells: true,
             trimWhitespace: false,
             language: "zh-CN",
@@ -51,6 +51,49 @@ export default class Sheet {
             height: $('.printgod-designer-sheet-body').height(),
             cells: (row, column, prop) => this.renderCells(row, column, prop),
         });
+    }
+
+    getCtxMenu() {
+        return {
+            callback: (command, t) => {
+                switch (command) {
+                    case "merge":
+                        this.mergeOrUnmerge();
+                        break;
+                    case "row_above":
+                        this.refreshMapVal();
+                        break;
+                    case "remove_row":
+                        this.refreshMapVal();
+                        break;
+                    case "col_left":
+                        this.refreshMapVal();
+                        break;
+                    case "remove_col":
+                        this.refreshMapVal();
+                        break;
+                }
+            },
+            items: {
+                row_above: { name: "插入行" },
+                col_left: { name: "插入列" },
+                remove_row: { name: "删除行" },
+                remove_col: { name: "删除列" },
+                cut: { name: "清除内容" },
+                mergeCells: { name: "合并/取消合并" }
+            }
+        }
+    }
+
+    refreshMapVal() {
+        const dataMap = this.hot.getData(0, 0, this.hot.countRows(), this.hot.countCols());
+        this.fMap = {};
+        for (let row = 0; row < dataMap.length; row++) {
+            for (let col = 0; col < dataMap[row].length; col++) {
+                this.fMap[this.mapKey(row, col)] = dataMap[row][col] ? dataMap[row][col] : void 0;
+            }
+        }
+        this.hot.render();
     }
 
     addHotHook() {
@@ -536,26 +579,22 @@ export default class Sheet {
     setSheetData(data) {
         data = data || this.template;
         if (!data || _.isEmpty(data)) return;
-        const props = [];
+
         for (let tag in data.cells) {
             const [row, col] = this.splitCellTag(tag);
             const cell = data.cells[tag];
             const className = this.cellStyleToCls(data.styles[cell.style]);
             if (className) {
-                props.push({ row, col, prop: { className } })
+                this.hot.setCellMetaObject(row, col, { className })
             }
-
             //这里直接跟新数据，不整体设置data
-            this.addHotCellData(row, col, cell.content);
+            if (cell.content) {
+                this.addHotCellData(row, col, cell.content);
+            }
         }
 
         const merged = this.getMergedCells();
-        data.merge.forEach(m => {
-            merged.add(m)
-        })
-        props.forEach(({ row, col, prop }) => {
-            this.hot.setCellMetaObject(row, col, prop)
-        });
+        data.merge.forEach(m => merged.add(m));
 
         if (data.background) {
             this.background = data.background;
@@ -564,7 +603,6 @@ export default class Sheet {
         if (data.extend) {
             this.extend = data.extend;
         }
-
         this.hot.render();
     }
 
@@ -630,7 +668,7 @@ export default class Sheet {
 
         data.range.e = this.mapKey(endCell[0], endCell[1]);
         data.styles = this.print.styleMap;
-
+        console.log(data);
         return data;
     }
 }

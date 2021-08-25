@@ -56,6 +56,7 @@
 <script>
 import { TP_CTL_TYPE } from "../../const/menu";
 import { PLUGIN_PARAMS } from "../../const/sys";
+import { PLUGIN_PARAMS_FORM, PLUGIN_PARAMS_WORKFLOW } from "../../const/app";
 
 export default {
   props: ["data"],
@@ -86,10 +87,10 @@ export default {
       }
     },
     addFormParam() {
-      this.addParams(this.__CONST__.PLUGIN_PARAMS_FORM);
+      this.addParams(PLUGIN_PARAMS_FORM);
     },
     addFlowParam() {
-      this.addParams(this.__CONST__.PLUGIN_PARAMS_WORKFLOW);
+      this.addParams(PLUGIN_PARAMS_WORKFLOW);
     },
     addParams(source, prefix = "") {
       source.forEach((d) => {
@@ -107,7 +108,7 @@ export default {
     },
     handleAssParams() {
       this.showEditor = false;
-      this.addParams(this.__CONST__.PLUGIN_PARAMS_FORM, this.prefix);
+      this.addParams(PLUGIN_PARAMS_FORM, this.prefix);
     },
   },
 };

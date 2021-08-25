@@ -6,14 +6,13 @@ export const PAGE = [
 ];
 
 export const PAGE_MARGIN = [19.1, 17.8, 19.1, 17.8];
-// export const PAGE_MARGIN = [0, 0, 0, 0];
 
 export const PAGE_DIRECT = [
     { n: '纵向', v: 'portrait' },
     { n: '横向', v: 'landscape' },
 ];
 
-export const FONT_SIZE = [6, 8, 9, 10, 11, 12, 14, 16, 18, 24, 30, 36, 48, 64, 72, 144];
+export const FONT_SIZE = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 30, 36, 48, 64, 72, 144];
 
 export const FONT_FAMILY = [
     { n: '宋体', v: 'SimSun' },

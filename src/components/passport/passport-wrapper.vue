@@ -52,6 +52,9 @@ export default {
     };
   },
   created() {
+    if (this.outerAppid) {
+      this.appswitch = false;
+    }
     this.defAppid = this.outerAppid;
     this.initializeCfg(false);
   },

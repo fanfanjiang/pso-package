@@ -166,6 +166,8 @@ import PsoGreatPanel from "./components/great-panel";
 import PsoDataSyncset from "./components/data-sync/set-view.vue";
 import PsoDataSync from "./components/data-sync/sync-view.vue";
 
+import PsoAppcfgMgt from "./components/app-config";
+
 //OCR
 import PsoOcrInit from "./components/ocr/init.vue";
 import PsoOcrMgt from "./components/ocr/index.vue";
@@ -307,14 +309,15 @@ const components = {
     PsoGreatPanel,
     PsoDataSyncset,
     PsoDataSync,
-
+    PsoAppcfgMgt,
+     
     //orc
     PsoOcrInit,
     PsoOcrMgt,
     PsoOcrTest,
     PsoOcrCheck,
     PsoOcrWord,
-    
+
     //混合视图
     PsoFvAst,
     PsoFvWv,

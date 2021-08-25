@@ -1,7 +1,13 @@
 <template>
   <div class="printgod-sheet-tabs">
-    <div class="sheet-tabs-item" :class="{ active: print.sheetId === i }" v-for="(d, i) in print.sheets" :key="i">
-      <span class="sheet-tabs-item-title" @click="setHandler(i)">{{ d.name }}</span>
+    <div
+      class="sheet-tabs-item"
+      @click.stop="setHandler(i)"
+      :class="{ active: print.sheetId === i }"
+      v-for="(d, i) in print.sheets"
+      :key="i"
+    >
+      <span class="sheet-tabs-item-title">{{ d.name }}</span>
       <el-dropdown placement="top-start" size="small" @command="editHandler($event, i)">
         <span class="el-dropdown-link"><i class="el-icon-arrow-down el-icon--right"></i> </span>
         <el-dropdown-menu slot="dropdown">
