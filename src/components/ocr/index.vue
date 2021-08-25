@@ -70,8 +70,8 @@
           <el-form-item label="识别印章">
             <el-switch size="mini" v-model="curInstance.is_stamp" :active-value="1" :inactive-value="0"></el-switch>
           </el-form-item>
-          <el-form-item label="识别签字">
-            <el-switch size="mini" v-model="curInstance.is_sign" :active-value="1" :inactive-value="0"></el-switch>
+          <el-form-item label="是否启用">
+            <el-switch size="mini" v-model="curInstance.cert_status" :active-value="0" :inactive-value="1"></el-switch>
           </el-form-item>
           <el-form-item label="匹配顺序">
             <el-input-number size="mini" v-model="curInstance.match_order" controls-position="right" :min="0"></el-input-number>

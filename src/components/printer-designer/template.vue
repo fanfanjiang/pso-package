@@ -9,7 +9,7 @@
     <div class="ptemplate-item-b">
       <slot>
         <div class="title">{{ data.name }}</div>
-        <div>
+        <div v-if="removeable">
           <el-dropdown size="small" @command="commandHandler">
             <span class="el-dropdown-link"><i class="el-icon-more el-icon--right"></i> </span>
             <el-dropdown-menu slot="dropdown">
@@ -27,6 +27,10 @@ export default {
     data: {
       type: Object,
       default: () => ({}),
+    },
+    removeable: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {

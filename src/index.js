@@ -1,5 +1,3 @@
-// import 'babel-polyfill';
-
 //同济用的库
 // const formulajs = require("@handsontable/formulajs");
 
@@ -132,7 +130,7 @@ import PsoPassport from "./components/passport/passport-wrapper.vue";
 import PsoApproval from "./components/passport/approval.vue";
 
 import PsoSqlDesigner from "./components/sql-designer";
-
+ 
 //通知
 import PsoNotify from "./components/notify";
 import PsoNotifyPopover from "./components/notify/popover";

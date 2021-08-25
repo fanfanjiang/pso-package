@@ -30,6 +30,17 @@ const themes = [
       '@nav-text-color-hover': '#F2F2F2',
       '@nav-text-Invert-color': '#9C3238',
     }
+  },
+  {
+    name: '092A77',
+    label: "深蓝",
+    variables: {
+      '@main-color': '#092A77',
+      '@nav-bg-color': '#092A77',
+      '@nav-text-color': '#ffffff',
+      '@nav-text-color-hover': '#F2F2F2',
+      '@nav-text-Invert-color': '#092A77',
+    }
   }
 ]
 

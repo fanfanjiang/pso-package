@@ -27,6 +27,9 @@
       </template>
       <div class="pso-dialog-content">
         <el-form label-position="left" label-width="100px" size="small">
+          <el-form-item label="参考模板" required>
+            <pso-picker-print @selected="onCopyTemp"></pso-picker-print>
+          </el-form-item>
           <el-form-item label="模板名称" required>
             <el-input size="small" v-model="curInstance.name"></el-input>
           </el-form-item>
@@ -96,6 +99,7 @@ import PTemplate from "./template";
 import shortid from "shortid";
 import RichDesigner from "../rich-designer";
 import PrintGod from "../print-god";
+import PsoPickerPrint from "../picker/pso-picker-print";
 
 const PRINTER_FIELDS = {
   id: "",
@@ -109,7 +113,7 @@ const PRINTER_FIELDS = {
 };
 
 export default {
-  components: { PTemplate, RichDesigner, PrintGod },
+  components: { PTemplate, RichDesigner, PrintGod, PsoPickerPrint },
   props: {
     formId: String,
   },
@@ -135,11 +139,6 @@ export default {
         const { printer_config } = ret.data.data;
         if (printer_config) {
           this.templates = formatJSONList(printer_config, PRINTER_FIELDS);
-          // if (code === "healthCancel") {
-          //   this.templates[0].code = code;
-          //   await this.save();
-          // }
-          console.log(this.templates);
         }
       }
     },
@@ -152,6 +151,11 @@ export default {
       this.curInstance.id = shortid.generate();
       this.curInstance.code = this.formId;
       this.showEditor = true;
+    },
+    onCopyTemp(data) {
+      delete data.id;
+      delete data.code;
+      Object.assign(this.curInstance, data);
     },
     removeTemplate(index) {
       this.templates.splice(index, 1);
