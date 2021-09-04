@@ -18,14 +18,15 @@
         ></el-option>
       </el-select>
       <el-radio-group :size="size" v-else v-model="cpnt.data._val">
-        <el-radio-button
+        <el-radio
           :size="size"
           :label="opt._fixedVal || opt._optionValue"
           :disabled="!cpntEditable"
           v-for="opt in fixedOptions"
           :key="opt._optionValue"
-          >{{ opt._fixedName || opt._optionName || opt._optionValue }}
-        </el-radio-button>
+        >
+          {{ opt._fixedName || opt._optionName || opt._optionValue }}
+        </el-radio>
       </el-radio-group>
     </template>
   </pso-label>

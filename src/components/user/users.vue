@@ -285,6 +285,10 @@ export default {
         if (!this.data.user_pwd) {
           return this.$message("请完善信息");
         }
+        const regex = new RegExp("(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z]).{6,16}");
+        if (!regex.test(this.data.user_pwd)) {
+          return this.$message("您的密码复杂度太低（密码中必须包含大小写字母、数字）,长度为6到16位");
+        }
         if (this.base.userGenFun !== "1") {
           if (!data.user) {
             return this.$message("请完善信息");

@@ -192,6 +192,16 @@ import PsoFvtree from "./components/composite/fvtree";
 import PsoFvSrcv from "./components/composite/fv-srcv";
 import PsoFvMultifv from "./components/composite/fv-multifv";
 
+//shit
+import PsoBiExcel from "./components/bi/excel";
+import PsoBiDb from "./components/bi/db";
+import PsoBiForm from "./components/bi/form";
+import PsoBiScript from "./components/bi/script";
+import PsoBiCockpit from "./components/bi/cockpit";
+import PsoBiRule from "./components/bi/rule";
+import PsoBiCompare from "./components/bi/compare";
+
+
 const components = {
     PsoEmpty,
     PsoSkeleton,
@@ -332,7 +342,15 @@ const components = {
     PsoFormEntry,
     PsoFvtree,
     PsoFvSrcv,
-    PsoFvMultifv
+    PsoFvMultifv,
+
+    PsoBiExcel,
+    PsoBiDb,
+    PsoBiForm, 
+    PsoBiScript,
+    PsoBiCockpit,
+    PsoBiRule,
+    PsoBiCompare,
 }
 
 import { decodejson } from './utils/util';

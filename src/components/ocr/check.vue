@@ -16,19 +16,7 @@
           </div>
         </template>
         <div class="ocr-uploader" v-loading="uploading">
-          <pso-upload
-            @start="onStart"
-            @error="onError"
-            @success="onSuccess"
-            visible
-            dragable
-            :api="api"
-            :data="upData.cert_code ? upData : {}"
-            :upable="false"
-            :srcable="false"
-            :showconfirm="false"
-            :headerable="false"
-          ></pso-upload>
+          <ocr-upload :api="api" :data="upData" @success="onSuccess"></ocr-upload>
         </div>
       </great-panel>
       <great-panel>
@@ -126,7 +114,6 @@ export default {
         for (let key in ret.data) {
           str += `${key} : ${ret.data[key]}\n`;
         }
-        
       } else {
         str += `错误信息:\n\n${ret.message}`;
       }

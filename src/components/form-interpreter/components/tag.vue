@@ -73,7 +73,7 @@ export default {
   async created() {
     this.resetPicker({ idName: this.tagIdName, reset: false });
     if (this.cpnt.data._val) {
-      await this.setDataByIds(this.cpnt.data._val.split(","));
+      await this.setDataByIds(this.cpnt.data._val);
     } else {
       this.proxy.valList = [];
     }
@@ -97,6 +97,9 @@ export default {
       }
     },
     async setDataByIds(data) {
+      if (data && typeof data === "number") {
+        data = data + "";
+      }
       if (data && typeof data === "string") {
         data = data.split(",");
       }

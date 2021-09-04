@@ -6,20 +6,8 @@
           <i class="el-icon-upload2"></i>
           <span>上传证照</span>
         </template>
-        <div class="ocr-uploader" v-loading="uploading">
-          <pso-upload
-            @start="onStart"
-            @error="onError"
-            @success="onSuccess"
-            visible
-            dragable
-            :api="api"
-            :upable="false"
-            :srcable="false"
-            :showconfirm="false"
-            :headerable="false"
-            :data="upData"
-          ></pso-upload>
+        <div class="ocr-uploader">
+          <ocr-upload :api="api" :data="upData" @success="onSuccess"></ocr-upload>
         </div>
       </great-panel>
       <great-panel>

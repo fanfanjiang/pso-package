@@ -139,6 +139,9 @@
         :keepable="false"
         @data-changed="dataChangeHandler"
       ></pso-form-executor>
+      <pso-dialog :visible="store.formView.show" width="90%" @close="store.formView.show = false">
+        <pso-form-view v-bind="store.formView.options" :params="store.formView.options" v-if="store.formView.options"></pso-form-view>
+      </pso-dialog>
     </template>
   </div>
 </template>

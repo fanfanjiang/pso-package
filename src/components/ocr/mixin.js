@@ -1,8 +1,9 @@
 import GreatPanel from "../great-panel";
 import OcrResult from "./ocr-result";
+import OcrUpload from "./upload";
 
 export const OcrTest = {
-    components: { GreatPanel, OcrResult },
+    components: { GreatPanel, OcrResult, OcrUpload },
     data() {
         return {
             initializing: true,
@@ -20,7 +21,6 @@ export const OcrTest = {
                 api: ""
             },
             output: "",
-            uploading: false,
             ocrResults: []
         }
     },
@@ -39,17 +39,8 @@ export const OcrTest = {
             this.initializing = false;
             this.templates = ret.data.data;
         },
-        onStart() {
-            this.uploading = true;
-        },
-        onError() {
-            this.uploading = false;
-        },
-        onSuccess(data) {
-            this.uploading = false;
-            if (!data || !data.data) return;
-
-            const ret = data.data;
+        onSuccess(ret) {
+            if (!ret || !ret.data) return;
 
             if (ret.success) {
                 if (ret.data._type) {

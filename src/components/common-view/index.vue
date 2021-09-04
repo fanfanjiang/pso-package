@@ -1,7 +1,7 @@
 <template>
   <div class="pso-view" ref="view">
     <div class="pso-view-body">
-      <div ref="header">
+      <div ref="header" v-if="headable">
         <div class="pso-view-header">
           <div class="pso-view-header__l">
             <div class="pso-view-title">
@@ -127,6 +127,10 @@ export default {
       default: () => [],
     },
     selectable: {
+      type: Boolean,
+      default: true,
+    },
+    headable: {
       type: Boolean,
       default: true,
     },

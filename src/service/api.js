@@ -80,6 +80,7 @@ export default class API {
             return ret || {};
 
         } catch (error) {
+            console.log(error);
             if (error.response) {
                 if (error.response.status === 401) {
                     const rft = Auth.getRefreshToken();

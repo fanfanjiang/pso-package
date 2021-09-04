@@ -303,7 +303,7 @@ export default {
               }
 
               const ret = await this.API.form({
-                data: { keys: JSON.stringify(keys), data_code: this.store.data_code, limit: 9999999999, page: 0 },
+                data: { keys: JSON.stringify(keys), data_code: this.store.data_code, limit: 9999999999, leaf_auth: 4, page: 0 },
                 method: "get",
               });
 

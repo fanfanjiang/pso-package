@@ -81,16 +81,18 @@ export default {
   },
   created() {
     formatJSONList([this.config], STATIC_CONFIG_FIELDS);
-
-    if (this.node.tp_type === TP_NEW_TYPES[1].value) {
-      if (this.node.data_list) {
-        try {
-          this.sql = JSON.parse(this.node.data_list);
-        } catch (error) {
-          this.oldSql = this.node.data_list;
+    if (this.node.tp_code) {
+      if (this.node.tp_type === TP_NEW_TYPES[1].value) {
+        if (this.node.data_list) {
+          try {
+            this.sql = JSON.parse(this.node.data_list);
+          } catch (error) {
+            this.oldSql = this.node.data_list;
+          }
         }
       }
     }
+
     this.$watch("sql", {
       deep: true,
       handler(val) {
@@ -100,16 +102,18 @@ export default {
   },
   methods: {
     async checkColumn() {
-      const ret = await this.API.getPluginColumn({ tp_code: this.node.tp_code });
-      if (ret.success && ret.data.data) {
-        const data = JSON.parse(ret.data.data);
-        assignList({
-          target: this.column,
-          source: data,
-          tid: "field",
-          sid: "field",
-          base: STATIC_COLUMN_FIELDS,
-        });
+      if (this.node.tp_code) {
+        const ret = await this.API.getPluginColumn({ tp_code: this.node.tp_code });
+        if (ret.success && ret.data.data) {
+          const data = JSON.parse(ret.data.data);
+          assignList({
+            target: this.column,
+            source: data,
+            tid: "field",
+            sid: "field",
+            base: STATIC_COLUMN_FIELDS,
+          });
+        }
       }
     },
     makeHeader() {

@@ -43,7 +43,7 @@ export default class FormProxy {
 
     async appendSysFields(store) {
         const ret = await API.getFormDict({ data_code: store.data_code });
-        const extendFields = [];
+        const extendFields = [genComponentData({ componentid: 'text', fid: 'INDEX', _fieldValue: 'INDEX', _fieldName: '数据序号', _val: "", __sys__: '1', is_sys: '1' })];
         for (let item of ret.data) {
             let field = store.searchByField(item.field_name, true);
             if (!field) {
