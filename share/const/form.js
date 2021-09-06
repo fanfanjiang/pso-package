@@ -404,6 +404,7 @@ const CPNT = {
       { n: '_bindForm', v: '' },
       { n: '_bindFormField', v: 'user_id' },
       { n: '_sourceType', v: '1' },
+      { n: '_filter', v: [] },
     ],
   },
   department: {

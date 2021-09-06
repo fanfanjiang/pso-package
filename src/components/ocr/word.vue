@@ -35,6 +35,11 @@
       </template>
       <div class="pso-dialog-content">
         <el-form label-position="left" label-width="120px" size="small" v-if="curInstance">
+          <el-form-item label="证照" required>
+            <el-select filterable clearable size="small" v-model="curInstance.cert_id">
+              <el-option v-for="(d, i) in shits" :key="i" :label="d.cert_name" :value="d.cert_id"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="识别变种词" required>
             <el-input v-model="curInstance.error_word" size="small" autocomplete="off"></el-input>
           </el-form-item>
@@ -59,6 +64,7 @@ export default {
       auto_no: "",
       error_word: "",
       change_word: "",
+      cert_id: "",
     };
     return {
       ID: "auto_no",
@@ -66,9 +72,15 @@ export default {
       fetchParams: {
         change_word: "",
       },
+      shits: [],
     };
   },
-  created() {},
+  async created() {
+    const ret = await this.API.request("/api/ocr/template", { data: { limit: 9999, page: 0 }, method: "get" });
+    if (ret.success) {
+      this.shits = ret.data.data;
+    }
+  },
   methods: {
     async fetch(data = {}) {
       const ret = await this.API.request("/api/ocr/word", {
