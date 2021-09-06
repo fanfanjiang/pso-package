@@ -8,7 +8,7 @@ const UAParser = require('../share/util/u-agent');
 import debounce from "throttle-debounce/debounce";
 
 import './assets/theme/index.css';
-
+  
 import Vuebar from 'vuebar';
 import 'muse-ui/lib/styles/base.less';
 import 'muse-ui/lib/styles/theme.less';
@@ -201,6 +201,11 @@ import PsoBiCockpit from "./components/bi/cockpit";
 import PsoBiRule from "./components/bi/rule";
 import PsoBiCompare from "./components/bi/compare";
 
+import PsoAppSetting from "./components/app-setting/index";
+import PsoMsgTemplate from "./components/app-setting/msg-template";
+import PsoNotifyManual from "./components/notify/manual";
+import PsoNotifyLog from "./components/notify/log";
+
 
 const components = {
     PsoEmpty,
@@ -351,6 +356,10 @@ const components = {
     PsoBiCockpit,
     PsoBiRule,
     PsoBiCompare,
+    PsoAppSetting,
+    PsoMsgTemplate,
+    PsoNotifyManual,
+    PsoNotifyLog
 }
 
 import { decodejson } from './utils/util';

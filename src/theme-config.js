@@ -8,6 +8,9 @@ const themes = [
       '@nav-text-color': '#ffffff',
       '@nav-text-color-hover': '#F2F2F2',
       '@nav-text-Invert-color': '#1B9AEE',
+      '@aside-bg-color': '#f8f8f9',
+      '@aside-text-color': '#303133',
+      '@aside-text-color-active': '#1B9AEE',
     }
   },
   {
@@ -18,6 +21,9 @@ const themes = [
       '@nav-bg-color': '#ffffff',
       '@nav-text-color': '#EC5D2E',
       '@nav-text-Invert-color': '#ffffff',
+      '@aside-bg-color': '#f8f8f9',
+      '@aside-text-color': '#303133',
+      '@aside-text-color-active': '#1B9AEE',
     }
   },
   {
@@ -29,6 +35,9 @@ const themes = [
       '@nav-text-color': '#ffffff',
       '@nav-text-color-hover': '#F2F2F2',
       '@nav-text-Invert-color': '#9C3238',
+      '@aside-bg-color': '#f8f8f9',
+      '@aside-text-color': '#303133',
+      '@aside-text-color-active': '#1B9AEE',
     }
   },
   {
@@ -40,6 +49,9 @@ const themes = [
       '@nav-text-color': '#ffffff',
       '@nav-text-color-hover': '#F2F2F2',
       '@nav-text-Invert-color': '#092A77',
+      '@aside-bg-color': '#f8f8f9',
+      '@aside-text-color': '#303133',
+      '@aside-text-color-active': '#1B9AEE',
     }
   }
 ]

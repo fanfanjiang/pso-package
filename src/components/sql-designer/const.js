@@ -53,7 +53,7 @@ export const NOTICE_WAY = [
 ];
 
 export const MSG_SENDER = [
-    { v: "0", n: "system" },
+    { v: "0", n: "系统" },
     { v: "1", n: "当前用户" },
 ];
 

@@ -2,7 +2,7 @@
   <div class="pso-view" ref="view">
     <div class="pso-view-body">
       <div ref="header" v-if="headable">
-        <div class="pso-view-header">
+        <div class="pso-view-header" v-if="title">
           <div class="pso-view-header__l">
             <div class="pso-view-title">
               <i :class="icon"></i>

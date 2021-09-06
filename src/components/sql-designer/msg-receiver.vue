@@ -7,7 +7,7 @@
         </el-tag>
       </span>
     </div>
-    <option-input :data="block.msgData" id-field="msg_receiver" t-field="receiver_is_field" :options="columns">
+    <option-input :data="block" id-field="msg_receiver" t-field="receiver_is_field" :options="columns">
       <pso-picker-user pattern="checkbox" v-if="TYPE === '0'" @confirm="confirmReceiver"></pso-picker-user>
       <pso-picker-dept pattern="checkbox" v-if="TYPE === '1'" @confirm="confirmReceiver"></pso-picker-dept>
       <pso-picker-position pattern="checkbox" v-if="TYPE === '2'" @confirm="confirmReceiver"></pso-picker-position>
@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     TYPE() {
-      return this.block.msgData.receiver_type;
+      return this.block.receiver_type;
     },
     IDNAME() {
       const data = { idName: "", name: "" };
@@ -71,14 +71,14 @@ export default {
     },
     "proxy.list"(val) {
       if (val && val.length) {
-        this.block.msgData.msg_receiver = _.map(val, this.IDNAME.idName).join(",");
+        this.block.msg_receiver = _.map(val, this.IDNAME.idName).join(",");
       } else {
-        this.block.msgData.msg_receiver = "";
+        this.block.msg_receiver = "";
       }
     },
   },
   async created() {
-    const rers = this.block.msgData.msg_receiver;
+    const rers = this.block.msg_receiver;
     if (rers) {
       const list = [];
       const data = rers.split(",");

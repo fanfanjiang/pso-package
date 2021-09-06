@@ -46,24 +46,6 @@ export default {
       this.data = (
         await this.API.getSysConfigNoauth({ appid: this.appid, keys: JSON.stringify({ config_type: { value: 6, type: 1 } }) })
       ).data;
-      const ids = _.map(this.data, "map_key7");
-      if (ids.length) {
-        let files = [];
-        if (this.appid) {
-          const ret = await this.API.getFielsNoauth({ ids: ids.join(","), appid: this.appid });
-          if (ret.success) {
-            files = ret.data;
-          }
-        } else {
-          files = this.data.map((d) => ({ res_path: "/static/app/img/wechat.png", res_id: d.map_key7 }));
-        }
-        files.forEach((d) => {
-          const exist = _.find(this.data, { map_key7: d.res_id });
-          if (exist) {
-            exist.map_key7 = d.res_path;
-          }
-        });
-      }
       this.initializing = false;
     },
     goSocial(spath) {

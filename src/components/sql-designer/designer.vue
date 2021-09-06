@@ -159,7 +159,7 @@
               </el-form-item>
             </div>
             <div class="form-wrapper" v-if="block.msgData.receiver_type !== '4'">
-              <msg-receiver :block="block" :columns="columns"></msg-receiver>
+              <msg-receiver :block="block.msgData" :columns="columns"></msg-receiver>
             </div>
             <div class="form-wrapper">
               <el-form-item label="到期日期" required>

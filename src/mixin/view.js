@@ -130,6 +130,7 @@ export const FetchMixin = {
             deleting: false,
             fetchParams: {},
             selected: [],
+            optype: 1,
             curInstance: null,
             ID: ''
         }
@@ -143,6 +144,7 @@ export const FetchMixin = {
             } else {
                 params.keys = {}
             }
+            console.log(this.fetchParams);
             for (let k in this.fetchParams) {
                 const isValueAry = Array.isArray(this.fetchParams[k]);
                 const value = isValueAry ? `${this.fetchParams[k].join(",")}` : this.fetchParams[k];
@@ -161,10 +163,12 @@ export const FetchMixin = {
             if (this.beforeAddInstance) {
                 this.beforeAddInstance();
             }
+            this.optype = 0;
             this.showEditor = true;
         },
         dbClickHandler(row) {
             this.curInstance = _.cloneDeep(row);
+            this.optype = 1;
             this.showEditor = true;
         },
         async delHandler() {
@@ -179,8 +183,7 @@ export const FetchMixin = {
             if (params) {
                 data = { ...params, optype: 2 };
             } else {
-                const IDNotEmpty = this.curInstance[this.ID];
-                data = { ...this.curInstance, optype: IDNotEmpty ? 1 : 0 };
+                data = { ...this.curInstance, optype: this.optype };
             }
             if (!params && this.checkValidity) {
                 const checkFalse = this.checkValidity(data);

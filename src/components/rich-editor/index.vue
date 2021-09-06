@@ -16,6 +16,10 @@ export default {
       type: String,
       default: "_val",
     },
+    height: {
+      type: Number,
+      default: 300,
+    },
   },
   data() {
     return {
@@ -27,7 +31,7 @@ export default {
       return {
         language_url: "/static/app/libs/tinymce/langs/zh_CN.js",
         language: "zh_CN",
-        height: 300,
+        height: this.height,
         menubar: false,
         plugins: [
           "advlist autolink lists link image charmap print",

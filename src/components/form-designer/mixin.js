@@ -1,5 +1,6 @@
 import emitter from "../../mixin/emitter";
 import FormStore from "./model/store.js";
+import { SYS_FIELDS } from "../../const/form";
 
 export const common = {
     mixins: [emitter],
@@ -97,6 +98,11 @@ export const formOp = {
 
                     if (f) {
                         Object.assign(d, f.data);
+                    } else {
+                        const exist = _.find(SYS_FIELDS, { _fieldValue: d.field_name })
+                        if (exist) {
+                            Object.assign(d, exist);
+                        }
                     }
 
                     const mixedBlood = d.field_name === "d_tag" || d.field_name === "d_name";
