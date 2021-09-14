@@ -307,3 +307,16 @@ export function judgeByRules(args) {
     }
     return true;
 }
+
+export function analyzeKeysString(str, user_id) {
+    const result = {};
+    str.split(";").forEach((item) => {
+        const key = item.split("#");
+        let value = key[1];
+        if (value === '$user_id' && user_id) {
+            value = user_id;
+        }
+        result[key[0]] = { value, type: key[2] };
+    });
+    return result;
+}

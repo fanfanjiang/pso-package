@@ -24,7 +24,10 @@ import { FetchMixin } from "../../mixin/view";
 export default {
   mixins: [FetchMixin],
   data() {
-    this.FIELDS = [{ v: "change_word", n: "纠正词" }];
+    this.FIELDS = [
+      { v: "cert_name", n: "证照名称" },
+      { v: "change_word", n: "纠正词" },
+    ];
     return {
       ID: "change_word",
       clicked: null,
@@ -44,7 +47,7 @@ export default {
     },
     onRowClick(data) {
       this.clicked = data;
-      this.$emit("rowclick", data.change_word);
+      this.$emit("rowclick", data);
     },
     rowStyleFun(row) {
       if (this.clicked && this.clicked.change_word === row.change_word) {

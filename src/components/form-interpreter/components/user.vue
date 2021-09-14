@@ -24,6 +24,7 @@
 </template>
 <script>
 import { pickerMixin } from "../../../mixin/picker";
+import { analyzeKeysString } from "../../../tool/form";
 import cpntMixin from "../mixin";
 import { mapState } from "vuex";
 
@@ -56,7 +57,7 @@ export default {
     },
   },
   watch: {
-    "proxy.list"(val) { 
+    "proxy.list"(val) {
       if (val && val.length) {
         this.cpnt.data._val = _.map(val, this.uid).join(",");
       } else {
@@ -98,7 +99,13 @@ export default {
   },
   methods: {
     async getFormSource() {
-      const params = { limit: 9999999, page: 0, leaf_auth: 4, data_code: this.cpnt.data._bindForm, keys: JSON.stringify({}) };
+      const params = {
+        limit: 9999999,
+        page: 0,
+        leaf_auth: 4,
+        data_code: this.cpnt.data._bindForm,
+        keys: JSON.stringify(analyzeKeysString(this.analyzeDyncKeys())),
+      };
       const ret = await this.API.form({ data: params, method: "get" });
       this.formSrcList = ret.data;
     },

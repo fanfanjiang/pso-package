@@ -59,7 +59,10 @@ export default {
   components: { WordChange },
   mixins: [FetchMixin],
   data() {
-    this.FIELDS = [{ v: "error_word", n: "识别变种词" }];
+    this.FIELDS = [
+      { v: "cert_name", n: "证照名称" },
+      { v: "error_word", n: "识别变种词" },
+    ];
     this.DATA = {
       auto_no: "",
       error_word: "",
@@ -70,6 +73,7 @@ export default {
       ID: "auto_no",
       words: [],
       fetchParams: {
+        cert_id: "",
         change_word: "",
       },
       shits: [],
@@ -112,7 +116,8 @@ export default {
       return true;
     },
     onWordChange(data) {
-      this.fetchParams.change_word = data;
+      this.fetchParams.change_word = data.change_word;
+      this.fetchParams.cert_id = data.cert_id;
     },
   },
 };

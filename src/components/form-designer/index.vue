@@ -162,13 +162,15 @@ export default {
         },
         method: this.params.id ? "put" : "post",
       });
-      if (!ret.success) return (this.saving = false);
+      this.ResultNotify(ret);
+      if (!ret.success) {
+        return (this.saving = false);
+      }
       if (!this.params.id) {
         const { node_name } = ret.data;
         this.params.id = this.formCfg.data_id = node_name;
         this.params.pid = "";
       }
-      this.$notify({ title: "保存成功", type: "success" });
       this.$emit("saved");
       this.saving = false;
     },

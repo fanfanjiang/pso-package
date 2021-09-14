@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="stats-mgt-body">
-      <stats-column :column="column" :customizable="false" @save="$emit('save')"></stats-column>
+      <stats-column  :column="column" :customizable="true" @save="$emit('save')"></stats-column>
       <div v-if="headerable">
         <stats-header :header="header" :column="column" ref="header"></stats-header>
       </div>

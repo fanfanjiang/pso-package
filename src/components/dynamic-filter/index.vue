@@ -82,7 +82,10 @@ export default {
       },
     },
   },
-  created() {},
+  created() {
+    console.log(this.targets);
+    console.log(this.sources);
+  },
   methods: {
     getTarget(item) {
       const { tid, value } = item;

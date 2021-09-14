@@ -12,6 +12,7 @@
       <picker-form
         :data="cpnt.data"
         form-field="_bindForm"
+        source="3"
         :fields="[{ n: '绑定字段', f: '_bindFormField' }]"
         @loaded="formLoaded"
       ></picker-form>
@@ -41,6 +42,7 @@ import commonPanel from "../common/common-panel";
 import { pickerMixin } from "../../../mixin/picker";
 import PickerForm from "../../picker/pso-picker-form";
 import DynamicFilter from "../../dynamic-filter";
+import { makeSysFormFields } from "../../../tool/form";
 
 export default {
   props: ["cpnt"],
@@ -54,6 +56,7 @@ export default {
     return {
       showDialog: false,
       loading: false,
+      sysFields: [],
       filterFields: [],
       proxy: {
         defaultList: [],
@@ -90,6 +93,7 @@ export default {
     },
   },
   async created() {
+    this.sysFields = makeSysFormFields();
     if (!this.isSetCurrent && this.cpnt.data._defaultValue) {
       this.loading = true;
       for (let uid of this.cpnt.data._defaultValue.split(",")) {

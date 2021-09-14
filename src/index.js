@@ -130,7 +130,7 @@ import PsoPassport from "./components/passport/passport-wrapper.vue";
 import PsoApproval from "./components/passport/approval.vue";
 
 import PsoSqlDesigner from "./components/sql-designer";
- 
+
 //通知
 import PsoNotify from "./components/notify";
 import PsoNotifyPopover from "./components/notify/popover";
@@ -318,7 +318,7 @@ const components = {
     PsoDataSyncset,
     PsoDataSync,
     PsoAppcfgMgt,
-     
+
     //orc
     PsoOcrInit,
     PsoOcrMgt,
@@ -346,7 +346,7 @@ const components = {
 
     PsoBiExcel,
     PsoBiDb,
-    PsoBiForm, 
+    PsoBiForm,
     PsoBiScript,
     PsoBiCockpit,
     PsoBiRule,
@@ -430,8 +430,9 @@ const Mixin = { FormMixin, ViewMixin, FreeDrag };
 import Auth from './tool/auth';
 import randomColor from './utils/randomcolor';
 import { makeFiles } from "./tool/file";
+import { listToTree } from './utils/util';
 
-const tool = { Auth, genComponentData, randomColor, makeFiles };
+const tool = { Auth, genComponentData, randomColor, makeFiles, listToTree };
 
 import FormStore from './components/form-designer/model/store';
 import WfStore from './components/workflow-executor/store';

@@ -261,25 +261,7 @@ export default {
       if (this.authCfg.status && this.authCfg.status.length) {
         params.push(`d_status#${this.authCfg.status.join(",")}#4`);
       }
-      if (this.cpnt.data._filter && this.cpnt.store) {
-        this.cpnt.data._filter.forEach((f) => {
-          if (f.value !== "" || f.sid) {
-            let value = f.value;
-            if (f.sid) {
-              const source = this.cpnt.store.searchByField(f.sid);
-              if (source && source.data._val) {
-                value = source.data._val;
-              } else {
-                value = this.cpnt.store.instance[f.sid];
-              }
-            }
-            if (typeof value !== "undefined") {
-              params.push(`${f.tid}#${value}#${f.op}`);
-            }
-          }
-        });
-      }
-      return params.join(";");
+      return this.analyzeDyncKeys(params);
     },
     formTableCfg() {
       return {
