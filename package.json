@@ -1,14 +1,16 @@
 {
   "name": "pbpm",
   "version": "0.2.88",
-  "main": "dist/pbpm.umd.js",
+  "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
     "build": "vue-cli-service build --target lib --name pbpm src/index.js",
     "build:exam": "vue-cli-service build example/main.js",
     "test:unit": "vue-cli-service test:unit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "vue-scrollto": "^2.20.0"
+  },
   "devDependencies": {
     "@formulajs/formulajs": "^2.6.9",
     "@tinymce/tinymce-vue": "^3",

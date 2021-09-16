@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 10px">
+  <div>
     <el-row :gutter="10">
       <el-col :xs="8" :sm="8" :md="6" v-for="(t, i) in templates" :key="i">
         <p-template @click="showTemplate(i)" @command="commandHandler($event, i)" :data="t"></p-template>

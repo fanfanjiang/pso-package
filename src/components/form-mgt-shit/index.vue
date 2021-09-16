@@ -22,19 +22,24 @@
             </div>
           </div>
           <div class="pso-view-header__r">
-            <el-button size="mini" type="primary" @click="saveConfig">保存设置</el-button>
             <el-button size="mini" type="primary" plain @click="showCodeEditor = true">修改CODE</el-button>
             <el-button size="mini" type="primary" plain @click="handleEditForm">表单设计</el-button>
           </div>
         </div>
-        <div class="pso-view-viewtab">
+        <div class="pso-view-viewtab" style="margin-bottom: 15px">
           <button-tabs v-if="!!curNode.is_leaf" v-model="curTab" :data="TABS" :indexed="false"></button-tabs>
-          <button-tabs v-else v-model="curTab" :data="TABS_FOLDER" :indexed="false"></button-tabs>
         </div>
         <div class="pso-view-table" v-loading="saving">
           <template v-if="!!curNode.is_leaf">
-            <pso-form-view v-show="curTab === 'preview'" :cfg-id="curNode.node_name" :view-auth="4" wipeable wipeallable> </pso-form-view>
-            <form-field v-if="curTab === 'field'" :data="tableData" :code="curNode.node_name"></form-field>
+            <pso-form-view
+              v-show="curTab === 'preview'"
+              wipeable
+              wipeallable
+              :view-auth="4"
+              :cfg-id="curNode.node_name"
+              :params="{ hideViewTitle: true, hideAuthTab: true }"
+            >
+            </pso-form-view>
             <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData" :actions="actions" :store="formStore"></form-column>
             <form-action v-if="curTab === 'action' && formStore" :actions="actions" :store="formStore"></form-action>
             <form-status
@@ -45,13 +50,6 @@
               :stage="stageData"
               :subdata="subCfg"
             ></form-status>
-            <form-publish
-              v-if="curTab === 'publish' && formStore"
-              :data="pubCfg"
-              :node="curNode"
-              :store="formStore"
-              @save="saveConfig"
-            ></form-publish>
             <form-upload
               v-if="curTab === 'upload' && formStore"
               :data="upload"
@@ -60,14 +58,8 @@
               :store="formStore"
             ></form-upload>
             <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
-            <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
-            <form-apicfg v-if="curTab === 'api'" :data="inner_api" :fields="tableData" :code="formStore.data_code"></form-apicfg>
-            <form-msg v-if="curTab === 'message'" :data="ext_config" :fields="tableData"></form-msg>
             <printer-designer v-if="curTab === 'print'" :form-id="curNode.node_name"></printer-designer>
           </template>
-          <div v-if="curTab === 'auth'" style="padding-top: 20px">
-            <pso-nodeauth :node="curNode" :leaf-authcfg="leafAuthcfg"></pso-nodeauth>
-          </div>
         </div>
       </template>
       <el-dialog title="修改CODE" append-to-body :visible.sync="showCodeEditor" :width="'400px'">
@@ -86,20 +78,14 @@
 </template>
 <script>
 import { formOp } from "../form-designer/mixin.js";
-import PsoNodeauth from "../node-auth";
 import PsoTitle from "../title";
 import PsoFormAttach from "../form-interpreter/components/attachment";
 
-import FormField from "./form-field";
-import FormColumn from "./form-column";
+import FormColumn from "./column";
 import FormStatus from "./form-status";
-import FormPublish from "./form-publish";
 import FormRule from "./form-rule";
-import FormAsstable from "./form-asstable";
 import FormUpload from "./form-upload";
-import FormApicfg from "./form-apicfg";
 import FormAction from "./action";
-import FormMsg from "./form-msg";
 import GreatPanel from "../great-panel";
 
 import ButtonTabs from "../button-tabs";
@@ -115,56 +101,33 @@ const TABS = [
   { label: "数据", id: "preview", icon: "el-icon-coin" },
   { label: "视图", id: "list", icon: "el-icon-picture" },
   { label: "动作", id: "action", icon: "el-icon-s-promotion" },
-  { label: "状态", id: "status", icon: "el-icon-s-help" },
   { label: "规则", id: "rule", icon: "el-icon-s-operation" },
-  { label: "发布", id: "publish", icon: "el-icon-monitor" },
-  { label: "导入", id: "upload", icon: "el-icon-upload" },
-  { label: "字段", id: "field", icon: "el-icon-cpu" },
-  { label: "子表", id: "asstable", icon: "el-icon-connection" },
-  // { label: "API", id: "api", icon: "el-icon-share" },
-  { label: "消息", id: "message", icon: "el-icon-message-solid" },
+  { label: "状态", id: "status", icon: "el-icon-s-help" },
   { label: "打印", id: "print", icon: "el-icon-printer" },
-  { label: "权限", id: "auth", icon: "el-icon-key" },
+  { label: "EXCEL", id: "upload", icon: "el-icon-upload" },
 ];
-
-const TABS_FOLDER = [{ label: "权限", id: "auth", icon: "el-icon-key" }];
 
 export default {
   mixins: [formOp, MgtMixin],
   components: {
-    FormField,
-    PsoNodeauth,
     PsoTitle,
     PsoFormAttach,
     FormColumn,
     FormStatus,
-    FormPublish,
     FormRule,
-    FormAsstable,
     FormUpload,
-    FormApicfg,
     FormAction,
     ButtonTabs,
     GreatPanel,
-    FormMsg,
     PrinterDesigner,
-  },
-  props: {
-    params: {
-      type: Object,
-    },
   },
   data() {
     this.TABS = TABS;
-    this.TABS_FOLDER = TABS_FOLDER;
     return {
       initializing: true,
       appid: "",
       key: 0,
-      treeOptions: {
-        dimen: 3,
-        data_type: this.params.data_type,
-      },
+      treeOptions: { dimen: 3 },
       defaultNodeData: {
         node_dimen: 3,
       },
@@ -188,7 +151,7 @@ export default {
     async setSelect(data, tab = "preview") {
       this.initializing = true;
       this.reset();
-      if (!data.is_leaf) tab = "auth";
+      if (!data.is_leaf) return;
 
       this.curTab = tab;
       this.curNode = data;
@@ -254,7 +217,6 @@ export default {
 
         if (cfg.submit_config) {
           this.subCfg = JSON.parse(cfg.submit_config);
-          console.log(this.subCfg);
         }
 
         if (cfg.sub_config) {

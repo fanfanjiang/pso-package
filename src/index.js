@@ -65,7 +65,7 @@ import PsoFormExecutor from "./components/form-executor";
 import PsoFormInterpreter from "./components/form-interpreter";
 import PsoCpntAst from "./components/form-interpreter/components/asstable";
 
-import PsoDataMgt from "./components/form-mgt";
+import PsoFormMgt from "./components/form-mgt-shit";
 
 import PsoSriptDesigner from "./components/script-designer";
 
@@ -240,7 +240,7 @@ const components = {
     PsoWfTodo,
 
     PsoTempleteMgt,
-    PsoDataMgt,
+    PsoFormMgt,
     PsoChartDesigner,
     PsoChartInterpreter,
     PsoViewDesigner,
