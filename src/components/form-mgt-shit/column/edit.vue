@@ -70,6 +70,7 @@
       </div>
       <div class="form-col-eidt__section">
         <div class="form-col-eidt__title">高级检索</div>
+        <div class="form-col-eidt__tip">勾选字段设置检索项，拖动表格行可改变显示顺序</div>
         <c-filter :instance="instance" :store="store" :isnew="isnew"></c-filter>
       </div>
       <div class="form-col-eidt__section">

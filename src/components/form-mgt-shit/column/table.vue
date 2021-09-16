@@ -114,8 +114,7 @@
   </div>
 </template>
 <script>
-import { Search } from "../mixin";
-import Sortable from "sortablejs";
+import { Search, TableDrag } from "../mixin";
 const YESNO = {
   true: "是",
   false: "否",
@@ -130,7 +129,7 @@ const ALIGN = {
   right: "居右",
 };
 export default {
-  mixins: [Search],
+  mixins: [Search, TableDrag],
   props: {
     isnew: {
       type: Boolean,
@@ -142,7 +141,6 @@ export default {
     this.YESNO2 = YESNO2;
     this.ALIGN = ALIGN;
     return {
-      sortable: null,
       curRow: null,
       opener: { show: false },
     };
@@ -169,13 +167,8 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.columnDrop();
+      this.initDrop($(this.$refs.preview).find(".el-table__header-wrapper tr").get(0), "number");
     });
-  },
-  destroyed() {
-    if (this.sortable) {
-      this.sortable.destroy();
-    }
   },
   methods: {
     onHeaderDrag(newWidth, oldWidth, column) {
@@ -187,39 +180,6 @@ export default {
     rowClickHandler(data) {
       this.curRow = data;
       this.opener.show = true;
-    },
-    columnDrop() {
-      const wrapperTr = $(this.$refs.preview).find(".el-table__header-wrapper tr").get(0);
-      this.sortable = Sortable.create(wrapperTr, {
-        animation: 180,
-        delay: 0,
-        onEnd: (evt) => {
-          const item = this.show_fields[evt.oldIndex];
-          const newItem = this.show_fields[evt.newIndex];
-          const preItem = this.show_fields[evt.newIndex - 1];
-          const nexItem = this.show_fields[evt.newIndex + 1];
-
-          const newOrder = evt.newIndex > evt.oldIndex ? newItem.number + 1 : newItem.number - 1;
-
-          if (evt.newIndex > evt.oldIndex && nexItem && nexItem.number <= newOrder) {
-            this.show_fields.forEach((d, i) => {
-              if (i > evt.newIndex) {
-                d.number = d.number + (nexItem.number === newOrder ? 1 : 2);
-              }
-            });
-          }
-
-          if (evt.newIndex < evt.oldIndex && preItem && preItem.number >= newOrder) {
-            this.show_fields.forEach((d, i) => {
-              if (i < evt.newIndex) {
-                d.number = d.number - (preItem.number === newOrder ? 1 : 2);
-              }
-            });
-          }
-
-          item.number = newOrder;
-        },
-      });
     },
   },
 };

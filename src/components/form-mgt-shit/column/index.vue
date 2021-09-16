@@ -48,6 +48,7 @@ const BASE = {
   rowAction: [],
   qsearch: [],
   tsearch: "",
+  searchposition: "left",
 };
 
 export default {
