@@ -64,7 +64,7 @@
               :code="curNode.node_name"
               :store="formStore"
             ></form-upload>
-            <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
+            <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :data="rules"></form-rule>
             <printer-designer v-if="curTab === 'print'" :form-id="curNode.node_name"></printer-designer>
           </template>
         </div>
@@ -90,7 +90,7 @@ import PsoFormAttach from "../form-interpreter/components/attachment";
 
 import FormColumn from "./column";
 import FormStatus from "./form-status";
-import FormRule from "./form-rule";
+import FormRule from "./rule";
 import FormUpload from "./form-upload";
 import FormAction from "./action";
 import GreatPanel from "../great-panel";

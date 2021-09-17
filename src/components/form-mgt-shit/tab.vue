@@ -57,6 +57,11 @@ export default {
         this.$emit("change", val);
       },
     },
+    value: {
+      handler(val, oldVal) {
+        this.curTab = val;
+      },
+    },
   },
   created() {
     this.curTab = this.value;
