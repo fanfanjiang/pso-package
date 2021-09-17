@@ -390,8 +390,8 @@ export default {
           form_code: this.cpnt.data._option,
           leaf_auth: 4,
           keys: {
-            [this.cpnt.data._selectFields[0]]: {
-              type: 2,
+            [this.cpnt.data._selectFields.join(",")]: {
+              type: 6,
               value,
             },
           },
