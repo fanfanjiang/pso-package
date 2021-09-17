@@ -83,7 +83,7 @@ export default {
   }
   .form-col-filter_aside {
     width: 150px;
-    height: 500px;
+    height: 400px;
     .form-col-filter_aside-search {
       overflow: hidden;
     }

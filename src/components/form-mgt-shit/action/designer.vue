@@ -4,17 +4,17 @@
       <el-form-item label="按钮名称">
         <el-input size="small" v-model="action.name"></el-input>
       </el-form-item>
+      <el-form-item label="按钮放置位置">
+        <el-radio-group :disabled="action.id === 'add'" v-model="action.location">
+          <el-radio label="1">数据表格上方</el-radio>
+          <el-radio label="2">每行数据中</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item label="启用按钮">
         <el-radio-group :disabled="action.id === 'add'" v-model="action.method" @change="checkMethod">
           <el-radio label="1">一直（需要选择数据）</el-radio>
           <el-radio label="2">满足条件（需要选择数据）</el-radio>
           <el-radio label="3">全局（不需要选择数据）</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="按钮放置位置">
-        <el-radio-group :disabled="action.id === 'add'" v-model="action.location">
-          <el-radio label="1">数据表格上方</el-radio>
-          <el-radio label="2">每行数据中</el-radio>
         </el-radio-group>
       </el-form-item>
       <div class="form-action-panel" v-if="action.method === '2'">

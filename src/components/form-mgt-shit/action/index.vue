@@ -1,29 +1,7 @@
 <template>
   <div :class="viewClass">
     <div class="pso-view-extend">
-      <div class="pso-tabs">
-        <div class="pso-tabs-header">
-          <div class="pso-tabs-title">
-            <i class="el-icon-s-promotion"></i>
-            <span>按钮</span>
-          </div>
-          <div class="pso-tabs-r">
-            <el-button size="mini" icon="el-icon-plus" circle @click="addAction(true)"></el-button>
-          </div>
-        </div>
-        <el-tabs tab-position="left" v-model="curTab">
-          <el-tab-pane v-for="(n, i) in actions" :label="n.name" :name="n.id" :key="i">
-            <div class="pso-tabs-item" slot="label">
-              <span>{{ n.name }}</span>
-              <div class="pso-tabs-item__ctrl" v-if="n.deleteable">
-                <el-popconfirm title="你确定要删除吗？" @confirm="delAction(i)">
-                  <i slot="reference" class="el-icon-delete"></i>
-                </el-popconfirm>
-              </div>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+      <shit-tab title="按钮" :data="actions" v-model="curTab" @add="addAction(true)" @remove="delAction($event.i)"></shit-tab>
     </div>
     <div class="pso-view-body">
       <designer
@@ -43,6 +21,7 @@ import shortid from "shortid";
 import Designer from "./designer";
 import { formatJSONList } from "../../../utils/util";
 import { makeSysFormFields } from "../../../tool/form";
+import ShitTab from "../tab";
 
 const FIELDS = {
   name: "按钮",
@@ -83,7 +62,7 @@ const FIELDS = {
 const DEFAULT = [{ id: "add", name: "新增", deleteable: false }];
 export default {
   mixins: [MgtMixin],
-  components: { Designer },
+  components: { Designer, ShitTab },
   props: {
     actions: Array,
     store: null,

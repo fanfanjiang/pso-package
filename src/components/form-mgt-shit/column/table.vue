@@ -191,7 +191,7 @@ export default {
   }
   .form-col-table_aside {
     width: 150px;
-    height: 500px;
+    height: 400px;
     .form-col-table_aside-search {
       overflow: hidden;
     }

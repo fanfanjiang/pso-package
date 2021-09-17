@@ -40,7 +40,14 @@
               :params="{ hideViewTitle: true, hideAuthTab: true }"
             >
             </pso-form-view>
-            <form-column v-if="curTab === 'list'" :data="colCfg" :def-col="colData" :actions="actions" :store="formStore"></form-column>
+            <form-column
+              v-if="curTab === 'list'"
+              :data="colCfg"
+              :def-col="colData"
+              :actions="actions"
+              :store="formStore"
+              @save="saveConfig"
+            ></form-column>
             <form-action v-if="curTab === 'action' && formStore" :actions="actions" :store="formStore"></form-action>
             <form-status
               v-if="curTab === 'status' && formStore"

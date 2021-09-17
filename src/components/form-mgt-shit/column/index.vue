@@ -5,7 +5,7 @@
         <c-item :instance="d" @edit="editCol(d)"></c-item>
       </el-col>
       <el-col :xs="8" :sm="8" :md="6">
-        <div class="pso-card-item" style="height: 152px; margin-bottom: 10px" @click="newCol">
+        <div class="pso-card-item" style="height: 192px; margin-bottom: 10px" @click="newCol">
           <div class="pso-card-item-plus">
             <i class="el-icon-plus"></i>
             <span>添加视图</span>
@@ -14,7 +14,7 @@
       </el-col>
     </el-row>
     <pso-drawer
-      size="70%"
+      size="65%"
       title="视图设置"
       :modal="true"
       :destroy="true"
@@ -23,6 +23,11 @@
       customclass="design-drawer withoutmodel"
     >
       <c-edit :instance="curInst" :store="store" :isnew="isnew" :actions="actions"></c-edit>
+      <template #footer>
+        <div class="form-column-shit-footer">
+          <el-button size="large" type="primary" @click="saveColumn">保 存</el-button>
+        </div>
+      </template>
     </pso-drawer>
   </div>
 </template>
@@ -34,6 +39,7 @@ import { FORM_COLUMN_FIELDS } from "../../../const/sys";
 
 const BASE = {
   name: "",
+  id: "",
   actions: [],
   data: [],
   fieldTitle: "",
@@ -73,6 +79,7 @@ export default {
     newCol() {
       this.curInst = {
         ..._.cloneDeep(BASE),
+        id: psodataid(),
         data: formatJSONList(_.cloneDeep(this.defCol), FORM_COLUMN_FIELDS),
       };
       this.opener.show = true;
@@ -83,11 +90,26 @@ export default {
       this.opener.show = true;
       this.isnew = false;
     },
+    saveColumn() {
+      if (!this.curInst.name) {
+        return this.$message({ message: "请填写视图名称", type: "warning" });
+      }
+      if (this.isnew) {
+        this.data.column.push(this.curInst);
+      }
+      this.$emit("save");
+      this.opener.show = false;
+    },
   },
 };
 </script>
 <style lang="less">
 .form-column-shit {
+}
+.form-column-shit-footer {
+  padding: 20px;
+  background: #fff;
+  text-align: left;
 }
 .pso-card-item-plus {
   height: 100%;
@@ -98,12 +120,13 @@ export default {
   cursor: pointer;
   i {
     font-weight: bold;
-    font-size: 40px;
-    color: #999;
+    font-size: 50px;
+    color: #666;
   }
   span {
-    color: #999;
+    color: #666;
     margin-top: 15px;
+    font-size: 16px;
   }
 }
 </style>
