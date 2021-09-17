@@ -7,12 +7,6 @@
         :params="{ ...params, hideAuthTab: true }"
         :def-limit="20"
         :table-row-click="mainRowClickHandler"
-        :addable="true"
-        :deletable="opable"
-        :detailEditable="opable"
-        :modifiable="opable"
-        :changable="opable"
-        :stageable="opable"
         simple-pagination
         @initialized="handleInitialized"
         @data-loaded="mainLoadedHandler"

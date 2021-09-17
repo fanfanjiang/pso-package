@@ -18,7 +18,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div v-if="curLink" style="margin-top:5px">
+    <div v-if="curLink" style="margin-top: 5px">
       <dynamic-rule :rules="curLink.rule" :type="curLink.ruleType" :options="options" sysable @typechange="rtChangeHandler"></dynamic-rule>
     </div>
   </div>

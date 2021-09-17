@@ -118,6 +118,7 @@ const CPNT = {
       { n: '_prefix', v: false },
       { n: '_prefixType', v: '' },
       { n: '_prefixList', v: [] },
+      { n: '_rules', v: [] },
     ]
   },
   cascader: {
