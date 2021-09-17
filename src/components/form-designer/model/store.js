@@ -2,7 +2,7 @@ import Component from './cpnt'
 import { setSelectedActor } from "../helper/dom.js";
 import { CPNT } from "../../../const/form";
 import Vue from 'vue';
-import { makeSysFormFields } from "../../../tool/form";
+import { makeSysFormFields, judgeByRules } from "../../../tool/form";
 import API from '../../../service/api'
 import { _DATA } from "../../form-mgt/const";
 
@@ -227,7 +227,12 @@ export default class FormStore {
             }
         }
 
-        this.setShowByRules();
+        try {
+            this.setShowByRules();
+            this.checkSelectByRules();
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async getAsstable() {
@@ -353,6 +358,64 @@ export default class FormStore {
             }
         }
         return resault;
+    }
+
+    checkSelectByRules(cpnt) {
+        if (!this.ext_config || !this.ext_config.newRules) return;
+
+        const rules = this.ext_config.newRules;
+
+        const check = (r, show = true) => {
+
+            show = judgeByRules({ datas: [this.getInstanceValue()], ruleOptions: r, store: this });
+
+            for (let practice of r.practices) {
+                if (practice.cid === 'checkbox') {
+
+                    const _cpnt = this.searchByField(practice.tid, true);
+                    if (_cpnt) {
+
+                        if (!_cpnt._fixedOptions) {
+                            _cpnt._fixedOptions = _.cloneDeep(_cpnt._option);
+                        }
+                        console.log(_cpnt._fixedOptions);
+                        _cpnt._fixedOptions.forEach(o => {
+                            if (practice.fids && practice.fids.includes(o._optionValue)) {
+                                Vue.set(o, '_hidden', show)
+                            }
+                        })
+                    }
+                }
+            }
+
+            r.practices.forEach(_fieldValue => {
+                const _cpnt = this.search({ options: { db: true }, dataOptions: { _fieldValue } })[0];
+                if (_cpnt) {
+                    Vue.set(_cpnt.data, r.controlType == 2 ? '_required' : 'showInRules', show)
+                }
+            })
+        }
+
+        for (let r of rules) {
+
+            //查看是否有选项型的规则
+            const exist = _.find(r.practices, { cid: "checkbox" });
+            if (!exist) continue;
+
+            if (!r.filtersIds) {
+                r.filtersIds = _.map(r.rule, 'field');
+            }
+
+            if (cpnt) {
+                if (r.filtersIds.indexOf(cpnt.data._fieldValue) !== -1) {
+                    check(r, true);
+                } else {
+                    continue;
+                }
+            } else {
+                check(r, false);
+            }
+        }
     }
 
     setShowByRules(cpnt) {

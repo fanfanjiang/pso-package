@@ -58,6 +58,7 @@ export const _DATA = {
     outer_api: {},
     ext_config: {
         quickInput: { enable: false, reg: '', relation: [] },
-        notify: { content: '' }
+        notify: { content: '' },
+        newRules: []
     }
 };

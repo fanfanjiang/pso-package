@@ -60,6 +60,7 @@
               :store="formStore"
             ></form-upload>
             <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :rules="rules"></form-rule>
+            <new-rule v-if="curTab === 'newrule' && formStore" :store="formStore" :data="ext_config.newRules"></new-rule>
             <form-asstable v-if="curTab === 'asstable' && formStore" :store="formStore" :data="asstable"></form-asstable>
             <form-apicfg v-if="curTab === 'api'" :data="inner_api" :fields="tableData" :code="formStore.data_code"></form-apicfg>
             <form-msg v-if="curTab === 'message'" :data="ext_config" :fields="tableData"></form-msg>
@@ -105,6 +106,8 @@ import GreatPanel from "../great-panel";
 import ButtonTabs from "../button-tabs";
 import PrinterDesigner from "../printer-designer";
 
+import NewRule from "./rule";
+
 import { ATUH_LEAF_FORM } from "../../const/sys";
 import { FORM_COLUMN_FIELDS } from "../../const/sys";
 import { formatJSONList, assignJSONDB } from "../../utils/util";
@@ -121,9 +124,9 @@ const TABS = [
   { label: "导入", id: "upload", icon: "el-icon-upload" },
   { label: "字段", id: "field", icon: "el-icon-cpu" },
   { label: "子表", id: "asstable", icon: "el-icon-connection" },
-  // { label: "API", id: "api", icon: "el-icon-share" },
   { label: "消息", id: "message", icon: "el-icon-message-solid" },
   { label: "打印", id: "print", icon: "el-icon-printer" },
+  { label: "附加", id: "newrule", icon: "el-icon-s-operation" },
   { label: "权限", id: "auth", icon: "el-icon-key" },
 ];
 
@@ -148,6 +151,7 @@ export default {
     GreatPanel,
     FormMsg,
     PrinterDesigner,
+    NewRule,
   },
   props: {
     params: {

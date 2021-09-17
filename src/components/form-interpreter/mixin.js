@@ -94,7 +94,12 @@ export default {
                 }
                 this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });
                 this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });
-                if (this.cpnt.store) this.cpnt.store.setShowByRules(this.cpnt);
+                if (this.cpnt.store) {
+                    this.cpnt.store.setShowByRules(this.cpnt);
+
+                    //检查规则中的选项规则是否有触发
+                    this.cpnt.store.checkSelectByRules(this.cpnt);
+                }
             })
         },
         changedynamically({ cpnt, value, store, proxy }) {
