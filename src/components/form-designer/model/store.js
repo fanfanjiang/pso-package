@@ -369,20 +369,20 @@ export default class FormStore {
 
             show = judgeByRules({ datas: [this.getInstanceValue()], ruleOptions: r, store: this });
 
-            for (let practice of r.practices) {
-                if (practice.cid === 'checkbox') {
+            if (show) {
+                for (let practice of r.practices) {
+                    if (practice.cid === 'checkbox') {
 
-                    const _cpnt = this.searchByField(practice.tid, true);
-                    if (_cpnt) {
+                        const _cpnt = this.searchByField(practice.tid, true);
+                        if (_cpnt) {
 
-                        if (!_cpnt._fixedOptions) {
-                            _cpnt._fixedOptions = _.cloneDeep(_cpnt._option);
-                        }
-                        _cpnt._fixedOptions.forEach(o => {
-                            if (practice.fids && practice.fids.includes(o._optionValue)) {
-                                Vue.set(o, '_hidden', show)
+                            if (!_cpnt._fixedOptions) {
+                                _cpnt._fixedOptions = _.cloneDeep(_cpnt._option);
                             }
-                        })
+                            _cpnt._fixedOptions.forEach(o => {
+                                Vue.set(o, '_hidden', practice.fids.includes(o._optionValue) ? !show : show)
+                            })
+                        }
                     }
                 }
             }
