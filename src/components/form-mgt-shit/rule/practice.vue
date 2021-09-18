@@ -2,13 +2,16 @@
   <div class="rule-practice">
     <div class="rule-practice-body">
       <div class="rule-practice-item" v-for="(d, i) in data" :key="i">
-        <div>{{ PRACTICE[d.cid] }}</div>
+        <div class="rule-practice-item-header">
+          <span>{{ PRACTICE[d.cid] }}</span>
+          <i class="el-icon-close" @click="onRemove(i)"></i>
+        </div>
         <practice-proxy :instance="d" :store="store"></practice-proxy>
       </div>
     </div>
     <div class="rule-practice-add">
-      <el-dropdown size="mini" trigger="click" @command="onAdd">
-        <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus">添加动作</el-button>
+      <el-dropdown size="medium" trigger="click" @command="onAdd">
+        <el-button class="el-dropdown-link" size="small" icon="el-icon-plus">添加动作</el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="(v, k) in PRACTICE" :key="k" :command="k">{{ v }}</el-dropdown-item>
         </el-dropdown-menu>
@@ -20,7 +23,10 @@
 import PracticeProxy from "./practice-proxy.vue";
 
 const PRACTICE = {
-  checkbox: "隐藏“选择”字段选项",
+  required: "表单字段必填",
+  show: "表单字段显示",
+  color: "视图表格高亮",
+  checkbox: "隐藏表单选择字段选项",
 };
 
 export default {
@@ -37,6 +43,36 @@ export default {
     onAdd(command) {
       this.data.push({ cid: command });
     },
+    onRemove(index) {
+      this.data.splice(index, 1);
+    },
   },
 };
 </script>
+<style lang="less">
+.rule-practice-item {
+  padding: 15px;
+  background: #ecf5ff;
+  & + .rule-practice-item {
+    margin-top: 10px;
+  }
+  .rule-practice-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    i {
+      font-size: 22px;
+      color: #f56c6c;
+      cursor: pointer;
+    }
+    span {
+      font-size: 15px;
+      color: #000;
+    }
+  }
+}
+.rule-practice-add {
+  margin-top: 10px;
+}
+</style>

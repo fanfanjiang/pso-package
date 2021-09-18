@@ -10,23 +10,27 @@
         clearable
         :placeholder="cpnt.data._placeholder"
       >
-        <el-option
-          v-for="opt in fixedOptions"
-          :key="opt._optionValue"
-          :label="opt._fixedName || opt._optionName || opt._optionValue"
-          :value="opt._fixedVal || opt._optionValue"
-        ></el-option>
+        <template v-for="opt in fixedOptions">
+          <el-option
+            v-if="!opt._hidden"
+            :key="opt._optionValue"
+            :value="opt._fixedVal || opt._optionValue"
+            :label="opt._fixedName || opt._optionName || opt._optionValue"
+          ></el-option>
+        </template>
       </el-select>
       <el-radio-group :size="size" v-else v-model="cpnt.data._val">
-        <el-radio
-          :size="size"
-          :label="opt._fixedVal || opt._optionValue"
-          :disabled="!cpntEditable"
-          v-for="opt in fixedOptions"
-          :key="opt._optionValue"
-        >
-          {{ opt._fixedName || opt._optionName || opt._optionValue }}
-        </el-radio>
+        <template v-for="opt in fixedOptions">
+          <el-radio
+            v-if="!opt._hidden"
+            :size="size"
+            :key="opt._optionValue"
+            :disabled="!cpntEditable"
+            :label="opt._fixedVal || opt._optionValue"
+          >
+            {{ opt._fixedName || opt._optionName || opt._optionValue }}
+          </el-radio>
+        </template>
       </el-radio-group>
     </template>
   </pso-label>

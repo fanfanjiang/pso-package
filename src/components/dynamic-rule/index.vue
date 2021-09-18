@@ -12,7 +12,7 @@
     </div>
     <div class="dynamic-rule-add">
       <el-dropdown size="mini" trigger="click" @command="addHandler">
-        <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus">添加筛选条件</el-button>
+        <el-button class="el-dropdown-link" size="small" icon="el-icon-plus">添加筛选条件</el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="(o, i) in fields" :key="i" :command="i">{{ o._fieldName }}</el-dropdown-item>
         </el-dropdown-menu>

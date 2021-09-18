@@ -1,5 +1,6 @@
 <template>
   <div style="padding: 0 0 0 15px">
+    <div style="font-size: 17px; font-weight: bold; margin: 15px 0">动作设置</div>
     <el-form label-position="top" size="mini">
       <el-form-item label="按钮名称">
         <el-input size="small" v-model="action.name"></el-input>

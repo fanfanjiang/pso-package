@@ -1,15 +1,17 @@
 <template>
   <pso-label :cpnt="cpnt">
     <el-checkbox-group :size="size" v-model="proxy" v-if="!reloading">
-      <el-checkbox
-        :size="size"
-        :key="opt._optionValue"
-        v-for="opt in fixedOptions"
-        :disabled="!cpntEditable"
-        :label="opt._fixedVal || opt._optionValue"
-      >
-        {{ opt._fixedName || opt._optionName || opt._optionValue }}
-      </el-checkbox>
+      <template v-for="opt in fixedOptions">
+        <el-checkbox
+          v-if="!opt._hidden"
+          :key="opt._optionValue"
+          :size="size"
+          :disabled="!cpntEditable"
+          :label="opt._fixedVal || opt._optionValue"
+        >
+          {{ opt._fixedName || opt._optionName || opt._optionValue }}
+        </el-checkbox>
+      </template>
     </el-checkbox-group>
   </pso-label>
 </template>

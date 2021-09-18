@@ -118,7 +118,12 @@ export const optionFix = {
         }
     },
     created() {
-        this.fixedOptions = _.cloneDeep(this.cpnt.data._option);
+        if (!this.cpnt.data._fixedOptions) {
+            this.cpnt.data._fixedOptions = _.cloneDeep(this.cpnt.data._option);
+        }
+
+        this.fixedOptions = this.cpnt.data._fixedOptions
+
         if (this.fixable) {
             this.startWatch();
         }

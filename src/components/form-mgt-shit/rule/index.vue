@@ -42,6 +42,9 @@ export default {
   },
   created() {
     this.options = this.store.search({ onlyData: true, options: { db: true } });
+    if (this.data.length) {
+      this.curTab = this.data[0].id;
+    }
   },
   methods: {
     onAdd() {
@@ -51,6 +54,12 @@ export default {
     },
     onRemove({ i }) {
       this.data.splice(i, 1);
+      const num = this.data.length;
+      if (num) {
+        this.curTab = this.data[num - 1].id;
+      } else {
+        this.curTab = "";
+      }
     },
     setCurInst() {
       this.curInst = null;

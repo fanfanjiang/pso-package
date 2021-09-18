@@ -71,7 +71,9 @@ export async function checkUniq(data, field) {
 export function assignJSONDB(orgDB, baseDB, compare = true) {
     formatJSONList([orgDB], baseDB, compare);
     for (let k in orgDB) {
-        formatJSONList([orgDB[k]], baseDB[k], compare);
+        if (!Array.isArray(baseDB[k]) && typeof baseDB[k] === 'object') {
+            formatJSONList([orgDB[k]], baseDB[k], compare);
+        }
     }
 }
 
