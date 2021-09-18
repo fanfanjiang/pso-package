@@ -95,8 +95,6 @@ export default {
                 this.dispatch("PsoformInterpreter", "cpnt-value-changed", { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });
                 this.$emit('value-change', { cpnt: this.cpnt, value, proxy: this.proxy, fields: this.fields, store: this.store });
                 if (this.cpnt.store) {
-                    this.cpnt.store.setShowByRules(this.cpnt);
-
                     this.cpnt.store.checkRules(this.cpnt);
                 }
             })

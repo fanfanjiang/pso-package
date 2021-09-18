@@ -228,7 +228,6 @@ export default class FormStore {
         }
 
         try {
-            this.setShowByRules();
             this.checkRules();
         } catch (error) {
             console.log(error);
@@ -361,13 +360,11 @@ export default class FormStore {
     }
 
     checkRules(cpnt) {
-        if (!this.ext_config || !this.ext_config.newRules) return;
+        const rules = this.rule_config;
 
-        const rules = this.ext_config.newRules;
+        const check = (r) => {
 
-        const check = (r, show = true) => {
-
-            show = judgeByRules({ datas: [this.getInstanceValue()], ruleOptions: r, store: this });
+            const show = judgeByRules({ datas: [this.getInstanceValue()], ruleOptions: r, store: this });
 
             for (let practice of r.practices) {
                 if (practice.cid === 'checkbox') {
@@ -386,20 +383,9 @@ export default class FormStore {
                     }
                 }
             }
-
-            r.practices.forEach(_fieldValue => {
-                const _cpnt = this.search({ options: { db: true }, dataOptions: { _fieldValue } })[0];
-                if (_cpnt) {
-                    Vue.set(_cpnt.data, r.controlType == 2 ? '_required' : 'showInRules', show)
-                }
-            })
         }
 
         for (let r of rules) {
-
-            //查看是否有选项型的规则
-            const exist = _.find(r.practices, { cid: "checkbox" });
-            if (!exist) continue;
 
             if (!r.filtersIds) {
                 r.filtersIds = _.map(r.rule, 'field');
@@ -407,63 +393,12 @@ export default class FormStore {
 
             if (cpnt) {
                 if (r.filtersIds.indexOf(cpnt.data._fieldValue) !== -1 || r.filtersIds.indexOf(cpnt.data.fid) !== -1) {
-                    check(r, true);
+                    check(r);
                 } else {
                     continue;
                 }
             } else {
-                check(r, false);
-            }
-        }
-    }
-
-    setShowByRules(cpnt) {
-
-        const rules = this.rule_config;
-        const check = (r, show = true) => {
-            const conditions = [];
-            r.filters.forEach(f => {
-                let condition = false;
-                const _cpnt = this.search({ options: { db: true }, dataOptions: { _fieldValue: f.id } })[0];
-
-                if (_cpnt) {
-                    const op = _cpnt.CPNT.fop[f.op];
-                    switch (op.id) {
-                        case 'op1':
-                            condition = _cpnt.data._val == f.val
-                            break;
-                    }
-                }
-
-                conditions.push(condition);
-            })
-
-            show = conditions[r.type === 1 ? 'every' : "some"](i => i);
-
-            r.controlIds.forEach(_fieldValue => {
-                const _cpnt = this.search({ options: { db: true }, dataOptions: { _fieldValue } })[0];
-                if (_cpnt) {
-                    Vue.set(_cpnt.data, r.controlType == 2 ? '_required' : 'showInRules', show)
-                }
-            })
-        }
-
-        if (rules && rules.length) {
-            for (let r of rules) {
-
-                if (!r.filtersIds) {
-                    r.filtersIds = _.map(r.filters, 'id');
-                }
-
-                if (cpnt) {
-                    if (r.filtersIds.indexOf(cpnt.data._fieldValue) !== -1) {
-                        check(r, true);
-                    } else {
-                        continue;
-                    }
-                } else {
-                    check(r, false);
-                }
+                check(r);
             }
         }
     }
