@@ -229,7 +229,7 @@ export default class FormStore {
 
         try {
             this.setShowByRules();
-            this.checkSelectByRules();
+            this.checkRules();
         } catch (error) {
             console.log(error);
         }
@@ -360,7 +360,7 @@ export default class FormStore {
         return resault;
     }
 
-    checkSelectByRules(cpnt) {
+    checkRules(cpnt) {
         if (!this.ext_config || !this.ext_config.newRules) return;
 
         const rules = this.ext_config.newRules;

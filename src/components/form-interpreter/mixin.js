@@ -97,8 +97,7 @@ export default {
                 if (this.cpnt.store) {
                     this.cpnt.store.setShowByRules(this.cpnt);
 
-                    //检查规则中的选项规则是否有触发
-                    this.cpnt.store.checkSelectByRules(this.cpnt);
+                    this.cpnt.store.checkRules(this.cpnt);
                 }
             })
         },

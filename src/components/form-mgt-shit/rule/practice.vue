@@ -26,7 +26,7 @@ const PRACTICE = {
   show: "显示表单字段",
   hide: "隐藏表单字段",
   required: "必填表单字段",
-  color: "高亮视图表格",
+  // color: "高亮视图表格",
   checkbox: "显示表单字段选项",
 };
 
