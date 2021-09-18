@@ -36,6 +36,7 @@ export default {
         } else {
           this.cpnt.data._val = "";
         }
+        console.log(this.cpnt.data._val);
       }
     });
   },

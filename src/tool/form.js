@@ -263,9 +263,9 @@ export function judgeByRules(args) {
                 } else if (r.op === 'op6') {
                     condition = sv <= tv;
                 } else if (r.op === 'op7') {
+                    sv = sv + '';
                     if (sv && tv && typeof tv === 'string') {
                         const tList = tv.split(',');
-                        sv = sv + '';
                         let tempRet = true;
                         for (let v in sv.split(',')) {
                             if (tList.indexOf(v) == -1) {
@@ -277,9 +277,9 @@ export function judgeByRules(args) {
                     }
                 } else if (r.op === 'op8') {
                     condition = true;
+                    sv = sv + '';
                     if (tv && typeof tv === 'string') {
                         const tList = tv.split(',');
-                        sv = sv + '';
                         let tempRet = true;
                         for (let v in sv.split(',')) {
                             if (tList.indexOf(v) == -1) {

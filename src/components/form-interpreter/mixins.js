@@ -3,6 +3,11 @@ const formulajs = require("@handsontable/formulajs");
 import { SYS_FIELDS } from "../../const/form";
 
 export const formulaMixin = {
+    data() {
+        return {
+            formulaType: '0'
+        }
+    },
     computed: {
         numProxy() {
             return this.cpnt.store.search({
@@ -27,17 +32,24 @@ export const formulaMixin = {
             let datasource = this.cpnt.data[this.sourceField || '_datasource'];
             data.forEach(item => {
                 let val = item._val;
-                //如果是人员或者部门，做特殊处理
-                if ((item.componentid === 'user' || item.componentid === 'department')) {
-                    if (item._proxy && item._proxy.list.length) {
-                        val = item._proxy.list[0][item.componentid === 'user' ? (item._sourceType === "2" ? `${item._bindFormField}_x` : "user_name") : 'node_display'];
+
+                if (this.formulaType === '1') {
+
+                    val = item.__showVal__ || item._val;
+                    
+                    //如果是人员或者部门，做特殊处理
+                    if ((item.componentid === 'user' || item.componentid === 'department')) {
+                        if (item._proxy && item._proxy.list.length) {
+                            val = item._proxy.list[0][item.componentid === 'user' ? (item._sourceType === "2" ? `${item._bindFormField}_x` : "user_name") : 'node_display'];
+                        }
+                    }
+                    if (item.componentid === 'tag') {
+                        if (item._proxy && item._proxy.list.length) {
+                            val = _.map(item._proxy.list, item._proxy.list[0]['node_display'] ? 'node_display' : "tag_name").join(',')
+                        }
                     }
                 }
-                if (item.componentid === 'tag') {
-                    if (item._proxy && item._proxy.list.length) {
-                        val = _.map(item._proxy.list, item._proxy.list[0]['node_display'] ? 'node_display' : "tag_name").join(',')
-                    }
-                }
+
                 // console.log(val);
                 datasource = datasource.replace(new RegExp(`@${item.fid}@`, "g"), val);
             });
@@ -67,7 +79,7 @@ export const cpntFix = {
         return {
             fixValue: '',
             mainCpnts: [],
-            asstables: {}
+            asstables: {},
         }
     },
     computed: {

@@ -16,6 +16,7 @@ export default {
       sourceField: "_source",
       idVal: "",
       scriptVal: "",
+      formulaType: "1",
     };
   },
   async created() {
