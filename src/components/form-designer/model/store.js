@@ -386,13 +386,6 @@ export default class FormStore {
                     }
                 }
             }
-
-            r.practices.forEach(_fieldValue => {
-                const _cpnt = this.search({ options: { db: true }, dataOptions: { _fieldValue } })[0];
-                if (_cpnt) {
-                    Vue.set(_cpnt.data, r.controlType == 2 ? '_required' : 'showInRules', show)
-                }
-            })
         }
 
         for (let r of rules) {
