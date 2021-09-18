@@ -378,7 +378,6 @@ export default class FormStore {
                         if (!_cpnt._fixedOptions) {
                             _cpnt._fixedOptions = _.cloneDeep(_cpnt._option);
                         }
-                        console.log(_cpnt._fixedOptions);
                         _cpnt._fixedOptions.forEach(o => {
                             if (practice.fids && practice.fids.includes(o._optionValue)) {
                                 Vue.set(o, '_hidden', show)
@@ -407,7 +406,7 @@ export default class FormStore {
             }
 
             if (cpnt) {
-                if (r.filtersIds.indexOf(cpnt.data._fieldValue) !== -1) {
+                if (r.filtersIds.indexOf(cpnt.data._fieldValue) !== -1 || r.filtersIds.indexOf(cpnt.data.fid) !== -1) {
                     check(r, true);
                 } else {
                     continue;

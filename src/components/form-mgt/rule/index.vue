@@ -42,6 +42,9 @@ export default {
   },
   created() {
     this.options = this.store.search({ onlyData: true, options: { db: true } });
+    if (this.data.length) {
+      this.curTab = this.data[0].id;
+    }
   },
   methods: {
     onAdd() {

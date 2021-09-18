@@ -1,5 +1,10 @@
 <template>
   <div class="form-rule-set">
+    <el-form label-position="left" label-width="90px" :inline="true">
+      <el-form-item label="规则名称" style="margin-bottom: 10px">
+        <el-input v-model="instance.name"></el-input>
+      </el-form-item>
+    </el-form>
     <div class="form-rule-stitle">当满足以下条件时</div>
     <dynamic-rule :rules="instance.rule" :type="instance.ruleType" :options="options" sysable @typechange="onTypeChange"></dynamic-rule>
     <div class="form-rule-stitle" style="margin-top: 20px">则执行动作</div>
