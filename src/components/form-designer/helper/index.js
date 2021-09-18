@@ -16,6 +16,7 @@ const defalutCpntData = [
     { n: '_required', v: false },
     { n: '_read', v: false },
     { n: '_hideOnNew', v: false },
+    { n: '_hideOnEdit', v: false },
     { n: '_hideForever', v: false },
     { n: '_placeholder', v: '' },
     { n: '_fieldInfo', v: '' },

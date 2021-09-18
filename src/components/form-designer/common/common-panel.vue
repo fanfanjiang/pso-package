@@ -72,6 +72,9 @@
           </el-tooltip>
         </div>
         <div class="act-panel_check">
+          <el-switch size="mini" v-model="cpnt.data._hideOnEdit" active-text="编辑记录时隐藏"></el-switch>
+        </div>
+        <div class="act-panel_check">
           <el-switch size="mini" v-model="cpnt.data._hideForever" active-text="永久隐藏"></el-switch>
           <el-tooltip effect="dark" placement="top-start">
             <div slot="content">通常用于隐藏一些不需要用户填入的字段。</div>

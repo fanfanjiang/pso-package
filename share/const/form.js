@@ -274,6 +274,7 @@ const CPNT = {
     table_show: true,
     ass_db: true,
     op: FILTER_TYPE.asstable.op,
+    fop: [{ ...OP_FILTER.op1 }],
     data: [
       { n: '_option', v: '' },
       { n: '_type', v: 1 },

@@ -425,7 +425,7 @@ export default class FormStore {
             r.filters.forEach(f => {
                 let condition = false;
                 const _cpnt = this.search({ options: { db: true }, dataOptions: { _fieldValue: f.id } })[0];
-
+       
                 if (_cpnt) {
                     const op = _cpnt.CPNT.fop[f.op];
                     switch (op.id) {

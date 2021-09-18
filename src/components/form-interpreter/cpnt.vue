@@ -47,7 +47,7 @@ export default {
     displayable(cpnt) {
       if (this.forceShow || cpnt.data.forceShow) return true;
 
-      const show = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : true;
+      const show = cpnt.data._hideForever ? false : !cpnt.store.instance_id ? cpnt.data._hideOnNew !== true : cpnt.data._hideOnEdit !== true;
 
       //显示规则判断
       let showInRules = true;
