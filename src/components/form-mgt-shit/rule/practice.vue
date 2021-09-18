@@ -23,10 +23,11 @@
 import PracticeProxy from "./practice-proxy.vue";
 
 const PRACTICE = {
-  required: "表单字段必填",
-  show: "表单字段显示",
-  color: "视图表格高亮",
-  checkbox: "隐藏表单选择字段选项",
+  show: "显示表单字段",
+  hide: "隐藏表单字段",
+  required: "必填表单字段",
+  color: "高亮视图表格",
+  checkbox: "显示表单字段选项",
 };
 
 export default {
