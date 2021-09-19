@@ -14,25 +14,6 @@
           <el-input size="mini" v-model="scope.row.name" placeholder></el-input>
         </template>
       </el-table-column>
-      <el-table-column label="禁止编辑" width="100">
-        <template slot-scope="scope">
-          <el-switch size="mini" v-model="scope.row.uneditable"></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="显示颜色" align="center" width="100">
-        <template slot-scope="scope">
-          <el-color-picker size="mini" v-model="scope.row.color"></el-color-picker>
-        </template>
-      </el-table-column>
-      <el-table-column label="显示方式">
-        <template slot-scope="scope">
-          <el-select size="mini" v-model="scope.row.display">
-            <el-option label="仅自身文字" value="1"></el-option>
-            <el-option label="整行文字" value="2"></el-option>
-            <el-option label="整行背景色" value="3"></el-option>
-          </el-select>
-        </template>
-      </el-table-column>
       <el-table-column label="目标值">
         <template slot-scope="scope">
           <el-select size="mini" v-model="scope.row.target" multiple>

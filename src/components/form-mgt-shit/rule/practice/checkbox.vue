@@ -15,6 +15,7 @@
 <script>
 import { formatJSONList } from "../../../../utils/util";
 const _DATA = {
+  id: "",
   cid: "",
   tid: "",
   fids: [],

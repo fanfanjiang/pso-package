@@ -145,6 +145,8 @@ export default class FormViewStore {
             options: null
         }
 
+        this.ruleResult = {};
+
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
                 this[op] = options[op];
@@ -920,22 +922,7 @@ export default class FormViewStore {
         return withIndex ? { column, index } : column;
     }
 
-    analyzeRowClass() {
-
-    }
-
-    getFieldStyleCfg(value, styleObj, filters) {
-        const style = this[styleObj][value + ''];
-        if (style && style.display && style.color) {
-            if (filters) {
-                if (filters.includes(style.display)) {
-                    return style;
-                }
-            } else {
-                return style;
-            }
-        }
-    }
+    analyzeRowClass() { }
 
     getStyle(data) {
         if (data) {
@@ -950,22 +937,22 @@ export default class FormViewStore {
     }
 
     analyzeRowStyle({ row, rowIndex }) {
-        const statusStyle = this.getStyle(this.getFieldStyleCfg(row.d_status, 'statusesObj', ['2', '3']));
-        const stageStyle = this.getStyle(this.getFieldStyleCfg(row.d_stage, 'stagesObj', ['2', '3']));
         let clickStyle = {};
         if (this.clickedRow && this.clickedRow.leaf_id === row.leaf_id) {
             clickStyle = { 'background-color': '#DCF1FF' };
         }
-        return { ...stageStyle, ...statusStyle, ...clickStyle }
+        return { ...clickStyle }
     }
 
     analyzeCellStyle({ row, column, rowIndex, columnIndex }) {
-        if (column.property && column.property.replace('_x', '') === 'd_status') {
-            return this.getStyle(this.getFieldStyleCfg(row.d_status, 'statusesObj', ['1']));
+        const checkRule = this.checkRowRule(row);
+    }
+
+    checkRowRule(row) {
+        if (!ruleResult[row.leaf_id]) {
+            ruleResult[row.leaf_id] = this.store.checkRules({ instance: row, prafilter: ['color', 'colhide', 'banedit'] });
         }
-        if (column.property && column.property.replace('_x', '') === 'd_stage') {
-            return this.getStyle(this.getFieldStyleCfg(row.d_stage, 'stagesObj', ['1']));
-        }
+        return ruleResult[row.leaf_id];
     }
 
     getSummary({ columns }) {

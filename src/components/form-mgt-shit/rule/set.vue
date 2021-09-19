@@ -1,22 +1,26 @@
 <template>
   <div class="form-rule-set">
-    <div class="form-rule-title">规则设置</div>
-    <el-form size="mini" label-position="top" style="margin-bottom: 50px">
-      <el-form-item label="规则名称" style="margin-bottom: 10px">
-        <el-input size="small" v-model="instance.name"></el-input>
-      </el-form-item>
-    </el-form>
-    <div class="form-rule-stitle">当满足以下条件时</div>
-    <dynamic-rule :rules="instance.rule" :type="instance.ruleType" :options="options" sysable @typechange="onTypeChange"></dynamic-rule>
-    <div class="form-rule-stitle" style="margin-top: 50px">则执行以下动作：</div>
-    <rule-practice :data="instance.practices" :store="store"></rule-practice>
+    <div class="form-rule-set-body">
+      <div class="form-rule-title">规则设置</div>
+      <el-form size="mini" label-position="top" style="margin-bottom: 50px">
+        <el-form-item label="规则名称" style="margin-bottom: 10px">
+          <el-input size="small" v-model="instance.name"></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="form-rule-stitle">当满足以下条件时</div>
+      <dynamic-rule :rules="instance.rule" :type="instance.ruleType" :options="options" sysable @typechange="onTypeChange"></dynamic-rule>
+      <div class="form-rule-stitle" style="margin-top: 50px">则执行以下动作：</div>
+      <rule-practice :data="instance.practices" :store="store"></rule-practice>
+    </div>
+    <shit-save @save="$emit('save')"></shit-save> 
   </div>
 </template>
 <script>
 import DynamicRule from "../../dynamic-rule";
 import RulePractice from "./practice.vue";
+import ShitSave from "../save.vue";
 export default {
-  components: { DynamicRule, RulePractice },
+  components: { DynamicRule, RulePractice, ShitSave },
   props: {
     instance: Object,
     options: Array,
@@ -31,8 +35,14 @@ export default {
 </script>
 <style lang="less">
 .form-rule-set {
-  padding: 15px;
-  padding-right: 300px;
+  padding: 15px 0 0 15px;
+  position: relative;
+  height: 100%;
+  .form-rule-set-body {
+    height: 100%;
+    overflow: auto;
+    padding: 0 300px 100px 0;
+  }
   .form-rule-title {
     font-size: 17px;
     font-weight: 700;

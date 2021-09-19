@@ -26,8 +26,10 @@ const PRACTICE = {
   show: "显示表单字段",
   hide: "隐藏表单字段",
   required: "必填表单字段",
-  // color: "高亮视图表格",
   checkbox: "显示表单字段选项",
+  color: "高亮视图表格",
+  colhide: "隐藏视图列",
+  banedit: "禁止编辑视图列",
 };
 
 export default {
@@ -42,7 +44,7 @@ export default {
   },
   methods: {
     onAdd(command) {
-      this.data.push({ cid: command });
+      this.data.push({ id: psodataid(), cid: command });
     },
     onRemove(index) {
       this.data.splice(index, 1);
@@ -56,6 +58,9 @@ export default {
   background: #ecf5ff;
   & + .rule-practice-item {
     margin-top: 10px;
+  }
+  .el-select {
+    width: 100%;
   }
   .rule-practice-item-header {
     display: flex;

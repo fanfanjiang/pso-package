@@ -48,7 +48,7 @@
               :store="formStore"
               @save="saveConfig"
             ></form-column>
-            <form-action v-if="curTab === 'action' && formStore" :actions="actions" :store="formStore"></form-action>
+            <form-action v-if="curTab === 'action' && formStore" :actions="actions" :store="formStore" @save="saveConfig"></form-action>
             <form-status
               v-if="curTab === 'status' && formStore"
               :code="formStore.data_code"
@@ -64,7 +64,7 @@
               :code="curNode.node_name"
               :store="formStore"
             ></form-upload>
-            <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :data="rules"></form-rule>
+            <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :data="rules" @save="saveConfig"></form-rule>
             <printer-designer v-if="curTab === 'print'" :form-id="curNode.node_name"></printer-designer>
           </template>
         </div>
@@ -288,34 +288,12 @@ export default {
     },
     async saveConfig() {
       this.saving = true;
-
-      //提取规则参数
-      const rules = [];
-      this.rules.forEach((item) => {
-        const rule = {
-          controlType: item.controlType,
-          controlIds: item.controlIds,
-          filters: [],
-          type: item.type,
-        };
-        item.filters.forEach((fitem) => {
-          rule.filters.push({
-            id: fitem.id,
-            name: fitem.name,
-            cid: fitem.cid,
-            op: fitem.op,
-            val: fitem.val,
-          });
-        });
-        rules.push(rule);
-      });
-
       const ret = await this.API.updateFormTree({
         data_code: this.curNode.node_name,
         display_columns: JSON.stringify(this.colCfg),
         status_config: JSON.stringify(this.staData),
         pub_config: JSON.stringify(this.pubCfg),
-        rule_config: JSON.stringify(rules),
+        rule_config: JSON.stringify(this.rules),
         submit_config: JSON.stringify(this.subCfg),
         stage_config: JSON.stringify(this.stageData),
         sub_config: JSON.stringify(this.asstable),

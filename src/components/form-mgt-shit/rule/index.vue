@@ -4,7 +4,7 @@
       <shit-tab title="规则" :data="data" v-model="curTab" @add="onAdd" @remove="onRemove"></shit-tab>
     </div>
     <div class="pso-view-body">
-      <rule-set v-if="curInst" :instance="curInst" :options="options" :store="store"></rule-set>
+      <rule-set v-if="curInst" :instance="curInst" :options="options" :store="store" @save="$emit('save')"></rule-set>
     </div>
   </div>
 </template>

@@ -359,52 +359,75 @@ export default class FormStore {
         return resault;
     }
 
-    checkRules(cpnt) {
-        const rules = this.rule_config;
+    checkRules({ cpnt, callback, instance, prafilter } = {}) {
+        if (!this.rule_config) return;
+
+        const checkResult = {};
 
         const check = (r) => {
 
-            const show = judgeByRules({ datas: [this.getInstanceValue()], ruleOptions: r, store: this });
+            let result;
+            const praRet = {};
 
             for (let practice of r.practices) {
 
+                //过滤
+                if (prafilter && !prafilter.includes(practice.cid)) {
+                    continue;
+                }
+
+                if (typeof result === 'undefined') {
+                    result = judgeByRules({ datas: [instance || this.getInstanceValue()], ruleOptions: r, store: this });
+                }
+
                 //选项
                 if (practice.cid === 'checkbox') {
-                    if (show) {
+                    if (result) {
                         const _cpnt = this.searchByField(practice.tid, true);
                         if (_cpnt) {
 
                             if (!_cpnt._fixedOptions) {
                                 _cpnt._fixedOptions = _.cloneDeep(_cpnt._option);
                             }
-                            
+
                             _cpnt._fixedOptions.forEach(o => {
-                                Vue.set(o, '_hidden', practice.fids.includes(o._optionValue) ? !show : show)
+                                Vue.set(o, '_hidden', practice.fids.includes(o._optionValue) ? !result : result)
                             })
                         }
                     }
-                } else if (practice.cid === 'checkbox') {
+                } else if (['show', 'hide', 'required'].includes(practice.cid)) {
+                    practice.tids.forEach(field => {
+                        const _cpnt = this.searchByField(field);
 
+                        const checkField = practice.cid === 'required' ? '_required' : "showInRules";
+                        if (_cpnt) {
+                            Vue.set(_cpnt.data, checkField, practice.cid === 'hide' ? !result : result)
+                        }
+                    })
+                } else {
+                    callback && callback(practice, result, r);
                 }
+
+                praRet[practice.id] = { ...practice, result }
             }
+
+            return praRet;
         }
 
-        for (let r of rules) {
+        for (let r of this.rule_config) {
 
             if (!r.filtersIds) {
                 r.filtersIds = _.map(r.rule, 'field');
             }
 
-            if (cpnt) {
-                if (r.filtersIds.indexOf(cpnt.data._fieldValue) !== -1 || r.filtersIds.indexOf(cpnt.data.fid) !== -1) {
-                    check(r);
-                } else {
-                    continue;
-                }
-            } else {
-                check(r);
+            if (cpnt && (r.filtersIds.indexOf(cpnt.data._fieldValue) === -1 && r.filtersIds.indexOf(cpnt.data.fid) === -1)) {
+                continue
             }
+
+            checkResult[r.id] = check(r);
         }
+
+        return checkResult;
     }
 
     setQuickInput(input) {
