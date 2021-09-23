@@ -273,7 +273,7 @@ export default {
         editable: (this.store.dataId ? this.detailEditable : this.addable) && this.store.instanceEditable,
         addable: this.addable && this.store.opAddable,
         deletable: this.deletable && this.store.instanceEditable && !this.store.actionMGR.actioning,
-        extendAuth: this.store.actionMGR.fieldsRule,
+        extendAuth: this.store.actionMGR.actioning ? this.store.actionMGR.fieldsRule : this.store.curInstRule,
         befSaveFunc: this.store.actionMGR.checkBefActionScript.bind(this.store.actionMGR),
       };
     },

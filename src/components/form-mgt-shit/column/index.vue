@@ -2,7 +2,7 @@
   <div class="form-column-shit">
     <el-row :gutter="10">
       <el-col :xs="8" :sm="8" :md="6" v-for="(d, i) in data.column" :key="i">
-        <c-item :instance="d" @edit="editCol(d)"></c-item>
+        <c-item :instance="d" @edit="editCol(d)" @remove="removeCol(i)"></c-item>
       </el-col>
       <el-col :xs="8" :sm="8" :md="6">
         <div class="pso-card-item" style="height: 192px; margin-bottom: 10px" @click="newCol">
@@ -89,6 +89,10 @@ export default {
       this.curInst = data;
       this.opener.show = true;
       this.isnew = false;
+    },
+    removeCol(index) {
+      this.data.column.splice(index, 1);
+      this.$emit("save");
     },
     saveColumn() {
       if (!this.curInst.name) {

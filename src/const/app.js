@@ -340,24 +340,24 @@ export const PLUGIN_DEFAULT = [
         ])
     },
     {
-        n: '表单视图树(alpha)', id: "pso-fvtree", path: '/fvtree/:menu_code', type: 0, params: [
+        n: '表单视图树', id: "pso-fvtree", path: '/fvtree/:menu_code', type: 0, params: [
             { field: "fvtree", value: "", picker: "", name: "配置", saveType: "2", relateParam: "" },
         ]
     },
     {
-        n: '表单视图-资源文件(alpha)', id: "pso-fv-srcv", path: '/fv-srcv/:menu_code', type: 0, params: PLUGIN_PARAMS_FORM.concat({ field: "opable", value: true, picker: "picker-yes", name: "开启操作模式", saveType: "1", relateParam: "" })
+        n: '表单视图-资源文件', id: "pso-fv-srcv", path: '/fv-srcv/:menu_code', type: 0, params: PLUGIN_PARAMS_FORM.concat({ field: "opable", value: true, picker: "picker-yes", name: "开启操作模式", saveType: "1", relateParam: "" })
     },
     {
         n: '流程视图', id: "pso-wf-view", path: '/wf/list/:menu_code', type: 0, params: PLUGIN_PARAMS_WORKFLOW
     },
     {
-        n: '流程树-表单视图(alpha)', id: "pso-wtree-fv", path: '/wf/list-tree/:menu_code', type: 0, params: PLUGIN_PARAMS_TREE.concat(PLUGIN_PARAMS_FORM)
+        n: '流程树-表单视图', id: "pso-wtree-fv", path: '/wf/list-tree/:menu_code', type: 0, params: PLUGIN_PARAMS_TREE.concat(PLUGIN_PARAMS_FORM)
     },
     {
-        n: '流程树-流程视图(alpha)', id: "pso-wtree-wv", path: '/wf/list-tree-form/:menu_code', type: 0, params: PLUGIN_PARAMS_TREE.concat(PLUGIN_PARAMS_WORKFLOW)
+        n: '流程树-流程视图', id: "pso-wtree-wv", path: '/wf/list-tree-form/:menu_code', type: 0, params: PLUGIN_PARAMS_TREE.concat(PLUGIN_PARAMS_WORKFLOW)
     },
     {
-        n: '树-流程时间线(alpha)', id: "pso-tree-timeline", path: '/wf/list-timeline/:menu_code', type: 0, params: PLUGIN_PARAMS_TREE
+        n: '树-流程时间线', id: "pso-tree-timeline", path: '/wf/list-timeline/:menu_code', type: 0, params: PLUGIN_PARAMS_TREE
     },
     {
         n: '流程视图-关联子表', id: "pso-wv-ast", path: '/wf/wf-list-asstable/:menu_code', type: 0, params: PLUGIN_PARAMS_WORKFLOW.concat([

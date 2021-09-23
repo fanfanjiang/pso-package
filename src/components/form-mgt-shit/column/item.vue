@@ -25,7 +25,17 @@
       <div class="pso-card-item-action">
         <div class="pso-card-item-action-l"></div>
         <div class="pso-card-item-action-r">
-          <el-button size="small" icon="el-icon-edit-outline" @click="$emit('edit')">编辑</el-button>
+          <el-popconfirm
+            confirmButtonText="确定"
+            cancelButtonText="取消"
+            icon="el-icon-info"
+            iconColor="red"
+            title="你确定要删除吗？"
+            @confirm="$emit('remove')"
+          >
+            <el-button slot="reference" size="mini" plain type="danger" icon="el-icon-delete">删除</el-button>
+          </el-popconfirm>
+          <el-button style="margin-left:10px" size="mini" icon="el-icon-edit-outline" @click="$emit('edit')">编辑</el-button>
         </div>
       </div>
     </div>
@@ -38,56 +48,3 @@ export default {
   },
 };
 </script>
-<style lang="less">
-.pso-card-item {
-  margin-bottom: 10px;
-  border: 1px solid #e3e3e3;
-  transition: all 0.2s ease-in;
-  &:hover {
-    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease-in;
-  }
-  .pso-card-item-header {
-    height: 40px;
-    padding: 0 10px;
-    display: flex;
-    align-items: center;
-    background: #1b9aee;
-    color: #fff;
-    i {
-      margin-right: 3px;
-    }
-  }
-  .pso-card-item-body {
-    .pso-card-item-content {
-      height: 100px;
-      overflow: auto;
-      padding: 10px;
-      > div {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        & + div {
-          margin-top: 3px;
-        }
-
-        span {
-          &:nth-child(1) {
-            color: #666;
-          }
-          &:nth-child(2) {
-            color: #000;
-          }
-        }
-      }
-    }
-    .pso-card-item-action {
-      height: 50px;
-      padding: 0 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-  }
-}
-</style>

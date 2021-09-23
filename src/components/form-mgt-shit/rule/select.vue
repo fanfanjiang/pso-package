@@ -1,6 +1,9 @@
 <template>
   <el-form size="mini" label-position="left" label-width="80px">
-    <el-form-item label="选择字段">
+    <el-form-item label="全部字段">
+      <el-switch size="small" v-model="instance.checkall" active-value="1" inactive-value="0"></el-switch>
+    </el-form-item>
+    <el-form-item label="选择字段" v-if="instance.checkall === '0'">
       <el-select size="small" placeholder="字段" multiple filterable clearable v-model="instance.tids">
         <el-option v-for="(d, i) in options" :key="i" :label="d.data._fieldName" :value="d.data._fieldValue"></el-option>
       </el-select>
@@ -9,11 +12,14 @@
 </template>
 <script>
 import { formatJSONList } from "../../../utils/util";
+
 const _DATA = {
   id: "",
   cid: "",
+  checkall: "0",
   tids: [],
 };
+
 export default {
   props: {
     store: Object,

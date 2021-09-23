@@ -35,7 +35,7 @@ export default {
 </script>
 <style lang="less">
 .form-rule-set {
-  padding: 15px 0 0 15px;
+  padding: 0 0 0 15px;
   position: relative;
   height: 100%;
   .form-rule-set-body {

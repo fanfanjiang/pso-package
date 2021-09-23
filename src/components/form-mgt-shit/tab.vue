@@ -1,11 +1,11 @@
 <template>
   <div class="pso-tabs">
-    <div class="pso-tabs-header">
+    <div class="pso-tabs-header" style="padding-top:0px">
       <div class="pso-tabs-title">
         <i class="el-icon-s-promotion"></i>
         <span>{{ title }}</span>
       </div>
-      <div class="pso-tabs-r">
+      <div class="pso-tabs-r" v-if="addable">
         <el-button size="mini" icon="el-icon-plus" circle @click="$emit('add')"></el-button>
       </div>
     </div>
@@ -38,6 +38,10 @@ export default {
       default: "id",
     },
     deleteable: {
+      type: Boolean,
+      default: true,
+    },
+    addable: {
       type: Boolean,
       default: true,
     },

@@ -220,11 +220,15 @@ export default class FormViewStore {
     }
 
     get instanceEditable() {
-        return this.opAddable && (this.dataId ? (this.getEditableByStatus(this.curInstance) || this.actionMGR.editable) : true);
+        return this.opAddable && (this.dataId ? (this.getEditableByRule(this.curInstance) || this.actionMGR.editable) : true);
     }
 
     get availableFields() {
         return this.fields.filter((f) => f.using === "1" && f.show === "1");
+    }
+
+    get curInstRule() {
+        return this.curInstance && this.getInstanceRule(this.curInstance);
     }
 
     getStatusEntity(d_status) {
@@ -235,9 +239,14 @@ export default class FormViewStore {
         return this.stagesObj[d_stage + ''] || {};
     }
 
-    getEditableByStatus(instance) {
-        const { d_stage, d_status } = instance;
-        return !this.getStatusEntity(d_status).uneditable && !this.getStageEntity(d_stage).uneditable;
+    getEditableByRule(instance, col) {
+        const banedit = this.getInstanceRule(instance);
+        return banedit['__allbanedit__'] !== 1 && (col ? banedit[col] !== 1 : true);
+    }
+
+    getInstanceRule(instance) {
+        const checkRule = this.checkRowRule(instance);
+        return (checkRule && checkRule['banedit']) ? checkRule['banedit'] : {};
     }
 
     //初始化
@@ -924,16 +933,8 @@ export default class FormViewStore {
 
     analyzeRowClass() { }
 
-    getStyle(data) {
-        if (data) {
-            const { color, display } = data;
-            if (display === '1' || display === '2') {
-                return { color }
-            } else {
-                return { 'background-color': color }
-            }
-        }
-        return {};
+    getStyle({ ccolor, bcolor }) {
+        return { 'background-color': ccolor, color: bcolor };
     }
 
     analyzeRowStyle({ row, rowIndex }) {
@@ -946,13 +947,47 @@ export default class FormViewStore {
 
     analyzeCellStyle({ row, column, rowIndex, columnIndex }) {
         const checkRule = this.checkRowRule(row);
+        if (checkRule && checkRule['color']) {
+            return checkRule['color'][column.property] || checkRule['color']['__allcolor__']
+        }
     }
 
     checkRowRule(row) {
-        if (!ruleResult[row.leaf_id]) {
-            ruleResult[row.leaf_id] = this.store.checkRules({ instance: row, prafilter: ['color', 'colhide', 'banedit'] });
+        if (!this.ruleResult[row.leaf_id]) {
+            const data = {};
+            const rule = this.store.checkRules({ instance: row, prafilter: ['color', 'colhide', 'banedit'] });
+
+            //分析颜色
+            if (rule['color']) {
+                data['color'] = this.makeRuleValue(rule['color'], '__allcolor__', (d) => this.getStyle(d));
+            }
+
+            if (rule['colhide']) {
+                data['colhide'] = this.makeRuleValue(rule['colhide'], '__allcolhide__', (d) => true);
+            }
+
+            if (rule['banedit']) {
+                data['banedit'] = this.makeRuleValue(rule['banedit'], '__allbanedit__', (d) => 1);
+            }
+
+            //分析
+            this.ruleResult[row.leaf_id] = data;
         }
-        return ruleResult[row.leaf_id];
+        return this.ruleResult[row.leaf_id];
+    }
+
+    makeRuleValue(rule, allTag, makeValue) {
+        const data = {};
+        rule.forEach(d => {
+            if (d.checkall === '1') {
+                data[allTag] = makeValue(d);
+            } else {
+                d.tids.forEach(t => {
+                    data[t] = makeValue(d);
+                })
+            }
+        })
+        return data;
     }
 
     getSummary({ columns }) {
@@ -1018,6 +1053,13 @@ export default class FormViewStore {
     }
 
     formatListVal(d, f) {
+        //查看是否需要隐藏
+        const checkRule = this.checkRowRule(d);
+        if (checkRule && checkRule['colhide'] && (checkRule['colhide']['__allcolhide__'] || checkRule['colhide'][f.field_name])) {
+            return ''
+        }
+
+
         let _val = d[f.field_name];
         if ((f.componentid === "select" || f.componentid === "checkbox") && f._option) {
             const opt = _.find(f._option, { _optionValue: _val });

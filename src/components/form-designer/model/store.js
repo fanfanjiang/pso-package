@@ -360,14 +360,13 @@ export default class FormStore {
     }
 
     checkRules({ cpnt, callback, instance, prafilter } = {}) {
-        if (!this.rule_config) return;
+        if (!this.rule_config) return {};
 
         const checkResult = {};
 
         const check = (r) => {
 
             let result;
-            const praRet = {};
 
             for (let practice of r.practices) {
 
@@ -408,10 +407,11 @@ export default class FormStore {
                     callback && callback(practice, result, r);
                 }
 
-                praRet[practice.id] = { ...practice, result }
+                if (typeof checkResult[practice.cid] === 'undefined') {
+                    checkResult[practice.cid] = [];
+                }
+                checkResult[practice.cid].push(practice);
             }
-
-            return praRet;
         }
 
         for (let r of this.rule_config) {
@@ -424,7 +424,7 @@ export default class FormStore {
                 continue
             }
 
-            checkResult[r.id] = check(r);
+            check(r);
         }
 
         return checkResult;

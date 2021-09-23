@@ -1,9 +1,16 @@
 <template>
   <div :class="viewClass">
     <div class="pso-view-extend">
-      <shit-tab title="按钮" :data="actions" v-model="curTab" @add="addAction(true)" @remove="delAction($event.i)"></shit-tab>
+      <shit-tab
+        title="按钮"
+        :deleteable="false"
+        :data="actions"
+        v-model="curTab"
+        @add="addAction(true)"
+        @remove="delAction($event.i)"
+      ></shit-tab>
     </div>
-    <div class="pso-view-body">
+    <div class="pso-view-body" style="position: relative">
       <designer
         v-if="curAction"
         :action="curAction"
@@ -12,6 +19,7 @@
         :plugins="plugins"
         :options-withsys="optionsWithsys"
       ></designer>
+      <shit-save @save="$emit('save')"></shit-save>
     </div>
   </div>
 </template>
@@ -22,6 +30,7 @@ import Designer from "./designer";
 import { formatJSONList } from "../../../utils/util";
 import { makeSysFormFields } from "../../../tool/form";
 import ShitTab from "../tab";
+import ShitSave from "../save.vue";
 
 const FIELDS = {
   name: "按钮",
@@ -62,7 +71,7 @@ const FIELDS = {
 const DEFAULT = [{ id: "add", name: "新增", deleteable: false }];
 export default {
   mixins: [MgtMixin],
-  components: { Designer, ShitTab },
+  components: { Designer, ShitTab, ShitSave },
   props: {
     actions: Array,
     store: null,
@@ -108,6 +117,7 @@ export default {
       if (num) {
         this.curTab = this.actions[num - 1].id;
       }
+      this.$emit('save');
     },
     getCurAction() {
       this.curAction = null;

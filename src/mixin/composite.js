@@ -62,7 +62,7 @@ export const FormAsMainMixin = {
             return this.params.bottomHeight || '50%';
         },
         bodyEditable() {
-            return this.vStore.getEditableByStatus(this.mainCurRow);
+            return this.vStore.getEditableByRule(this.mainCurRow);
         }
     },
     methods: {

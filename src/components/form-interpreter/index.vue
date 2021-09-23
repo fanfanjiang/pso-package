@@ -42,7 +42,7 @@ export default {
     dataDefault: Object,
     mockAsstables: Object,
     hiddenCpnts: Array,
-    extendAuth: Array,
+    extendAuth: [Array, Object],
     labelPosition: {
       type: String,
       default: "top",

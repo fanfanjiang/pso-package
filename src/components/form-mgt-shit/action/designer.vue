@@ -1,9 +1,28 @@
 <template>
-  <div style="padding: 0 0 0 15px">
-    <div style="font-size: 17px; font-weight: bold; margin: 15px 0">动作设置</div>
+  <div style="padding: 0 0 100px 15px; height: 100%; overflow: auto">
+    <div style="font-size: 17px; font-weight: bold; margin: 0 0 0 15px 0">动作设置</div>
     <el-form label-position="top" size="mini">
       <el-form-item label="按钮名称">
         <el-input size="small" v-model="action.name"></el-input>
+      </el-form-item>
+      <el-form-item label="按钮颜色">
+        <div class="action-color-picker">
+          <span
+            v-for="(c, i) in COLORS"
+            :key="i"
+            :class="{ active: c === action.color }"
+            :style="getColorStyle(c)"
+            @click="action.color = c"
+          >
+            <i class="el-icon-check"></i>
+          </span>
+        </div>
+      </el-form-item>
+      <el-form-item label="按钮图标">
+        <el-button type="primary" icon="el-icon-edit" circle @click="showIcon = true"></el-button>
+      </el-form-item>
+      <el-form-item label="按钮说明">
+        <el-input type="text" v-model="action.remark"> </el-input>
       </el-form-item>
       <el-form-item label="按钮放置位置">
         <el-radio-group :disabled="action.id === 'add'" v-model="action.location">
@@ -75,7 +94,7 @@
             </el-radio-group>
           </el-form-item>
           <div v-if="action.modeContent === '1'">
-            <el-button class="el-dropdown-link" size="mini" icon="el-icon-plus" @click="showFields = true">设置字段</el-button>
+            <el-button class="el-dropdown-link" size="small" icon="el-icon-plus" @click="showFields = true">设置字段</el-button>
             <div>
               <div class="action-fields" v-for="(v, k, i) in action.fields" :key="i">
                 <div v-if="getField(k)">{{ getField(k)._fieldName }}</div>
@@ -123,30 +142,30 @@
       </el-form-item>
       <div class="form-action-panel" v-if="action.linkFormView">
         <el-form-item label="配置视图">
-          <el-button size="mini" type="primary" plain @click="showFV = true">配置视图</el-button>
+          <el-button size="small" type="primary" plain @click="showFV = true">配置视图</el-button>
         </el-form-item>
         <el-form-item label="视图权限">
           <auth-edit v-model="action.FormViewAuth" :data="MENU_LEAF_AUTH"></auth-edit>
         </el-form-item>
         <div class="pso-table-controller">
-          <el-button size="mini" type="primary" plain @click="addHandler">添加动作参数</el-button>
+          <el-button size="small" type="primary" plain @click="addHandler">添加动作参数</el-button>
         </div>
-        <el-table key="status" size="mini" border :data="action.formViewField" style="width: 100%">
+        <el-table key="status" size="small" border :data="action.formViewField" style="width: 100%">
           <el-table-column label="原字段" width="160">
             <template slot-scope="scope">
-              <el-select size="mini" clearable v-model="scope.row.s">
+              <el-select size="small" clearable v-model="scope.row.s">
                 <el-option v-for="(o, i) in optionsWithsys" :label="o._fieldName" :key="i" :value="o._fieldValue"></el-option>
               </el-select>
             </template>
           </el-table-column>
           <el-table-column label="目标字段" width="160">
             <template slot-scope="scope">
-              <el-input size="mini" v-model="scope.row.t" placeholder></el-input>
+              <el-input size="small" v-model="scope.row.t" placeholder></el-input>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="90" align="center">
             <template slot-scope="scope">
-              <el-button size="mini" type="danger" @click="delHandler(scope.$index)">删除</el-button>
+              <el-button size="small" type="danger" @click="delHandler(scope.$index)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -156,38 +175,19 @@
       </el-form-item>
       <div class="form-action-panel" v-if="action.linkable">
         <el-form-item label="绑定插件">
-          <el-select size="mini" clearable filterable v-model="action.bindPlugin">
+          <el-select size="small" clearable filterable v-model="action.bindPlugin">
             <el-option v-for="(p, i) in plugins" :key="i" :label="p.node_display" :value="p.node_name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="链接地址">
-          <el-input size="mini" v-model="action.openLink"></el-input>
+          <el-input size="small" v-model="action.openLink"></el-input>
         </el-form-item>
         <el-form-item label="参数">
-          <el-select size="mini" multiple clearable filterable v-model="action.linkParams">
+          <el-select size="small" multiple clearable filterable v-model="action.linkParams">
             <el-option v-for="(o, i) in optionsWithsys" :key="i" :label="o._fieldName" :value="o._fieldValue"></el-option>
           </el-select>
         </el-form-item>
       </div>
-      <el-form-item label="按钮颜色">
-        <div class="action-color-picker">
-          <span
-            v-for="(c, i) in COLORS"
-            :key="i"
-            :class="{ active: c === action.color }"
-            :style="getColorStyle(c)"
-            @click="action.color = c"
-          >
-            <i class="el-icon-check"></i>
-          </span>
-        </div>
-      </el-form-item>
-      <el-form-item label="按钮图标">
-        <el-button type="primary" icon="el-icon-edit" circle @click="showIcon = true"></el-button>
-      </el-form-item>
-      <el-form-item label="按钮说明">
-        <el-input type="textarea" :rows="2" v-model="action.remark"> </el-input>
-      </el-form-item>
     </el-form>
     <sql-designer ref="designer" :opener="sqlOpener" :sql="curScript" :scode="code"></sql-designer>
     <el-dialog title="选择图标" append-to-body :visible.sync="showIcon" width="80%">

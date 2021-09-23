@@ -5,6 +5,7 @@
     </div>
     <div class="pso-view-body">
       <rule-set v-if="curInst" :instance="curInst" :options="options" :store="store" @save="$emit('save')"></rule-set>
+      <pso-empty v-if="!data.length" text="暂无规则"></pso-empty>
     </div>
   </div>
 </template>
@@ -60,6 +61,7 @@ export default {
       } else {
         this.curTab = "";
       }
+      this.$emit("save");
     },
     setCurInst() {
       this.curInst = null;

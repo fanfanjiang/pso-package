@@ -2,15 +2,21 @@
   <div>
     <el-row :gutter="10">
       <el-col :xs="8" :sm="8" :md="6" v-for="(t, i) in templates" :key="i">
-        <p-template @click="showTemplate(i)" @command="commandHandler($event, i)" :data="t"></p-template>
+        <p-template
+          @click="showTemplate(i)"
+          @edit="showTemplate(i)"
+          @remove="removeTemplate(i)"
+          @save="save"
+          :data="t"
+        ></p-template>
       </el-col>
       <el-col :xs="8" :sm="8" :md="6">
-        <p-template @click="addTemplate">
-          <template #top>
-            <i class="el-icon-plus" style="font-size: 20px"></i>
-          </template>
-          <div>添加模板</div>
-        </p-template>
+        <div class="pso-card-item" style="height: 192px; margin-bottom: 10px" @click="addTemplate">
+          <div class="pso-card-item-plus">
+            <i class="el-icon-plus"></i>
+            <span>添加模板</span>
+          </div>
+        </div>
       </el-col>
     </el-row>
     <pso-dialog :visible="showEditor" width="50%" @close="showEditor = false">

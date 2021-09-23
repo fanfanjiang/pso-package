@@ -7,11 +7,6 @@
       <el-form-item label="公司名称：" required>
         <el-input v-model="data.map_key5" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="LOGO">
-        <pso-form-attach ref="attach" :cpnt="attach" @value-change="onAttachChange" :downloadable="false">
-          <el-button size="mini"><i class="el-icon-paperclip el-icon--left"></i>上传</el-button>
-        </pso-form-attach>
-      </el-form-item>
       <el-form-item label="默认样式风格：" required>
         <el-select clearable v-model="data.map_key7">
           <el-option v-for="(d, i) in THEMES" :key="i" :label="d.label" :value="d.name"></el-option>
@@ -50,11 +45,9 @@
 </template>
 <script>
 const THEMES = require("../../theme-config");
-import { Attach } from "../../mixin/form";
 import { COLUMN } from "./const";
 
 export default {
-  mixins: [Attach],
   data() {
     this.THEMES = THEMES;
     return {
@@ -83,7 +76,6 @@ export default {
     },
   },
   async created() {
-    this.createCpnt();
     this.fetch();
   },
   methods: {
@@ -115,9 +107,6 @@ export default {
       const ret = await this.API.updateSysConfig({ optype: this.optype, ...this.data });
       this.ResultNotify(ret);
       this.initializing = false;
-    },
-    onAttachChange({ value }) {
-      this.data.map_key1 = value;
     },
   },
 };

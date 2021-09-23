@@ -1,0 +1,69 @@
+.pso-card-item {
+    margin-bottom: 10px;
+    border: 1px solid #e3e3e3;
+    transition: all 0.2s ease-in;
+
+    &:hover {
+        box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease-in;
+    }
+
+    .pso-card-item-header {
+        height: 40px;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #1b9aee;
+        color: #fff;
+
+        i {
+            font-size: 20px;
+        }
+
+        .pso-card-item-header-l {
+            display: flex;
+            align-items: center;
+
+            i {
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .pso-card-item-body {
+        .pso-card-item-content {
+            height: 100px;
+            overflow: auto;
+            padding: 12px 15px;
+
+            >div {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                &+div {
+                    margin-top: 5px;
+                }
+
+                span {
+                    &:nth-child(1) {
+                        color: #666;
+                    }
+
+                    &:nth-child(2) {
+                        color: #000;
+                    }
+                }
+            }
+        }
+
+        .pso-card-item-action {
+            height: 50px;
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+}

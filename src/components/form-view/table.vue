@@ -46,7 +46,7 @@
               </span>
               <span v-else class="modifier-value" :style="{ 'text-align': f.align }">{{ store.formatListVal(scope.row, f) }}</span>
               <span
-                v-if="modifiable && f.editable && store.getEditableByStatus(scope.row)"
+                v-if="modifiable && f.editable && store.getEditableByRule(scope.row, f.field_name)"
                 class="el-icon-edit modifier-trigger"
                 @click.stop="openModifier(scope.row, f, scope.$index)"
               ></span>

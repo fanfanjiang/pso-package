@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding-top: 20px;">
     <el-button size="mini" type="primary" plain @click="showDeisgner.show = true">编辑脚本</el-button>
     <sql-designer :opener="showDeisgner" :scode="code" :sql="data"></sql-designer>
   </div>

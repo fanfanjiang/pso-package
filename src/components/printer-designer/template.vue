@@ -1,23 +1,43 @@
 <template>
-  <div class="ptemplate-item" @click="$emit('click')">
-    <div class="ptemplate-item-t">
-      <slot name="top">
-        <span>数据源：{{ data.source === "1" ? "表单" : "统计脚本" }}</span>
-        <span>模板：{{ data.type === "1" ? "通用模板" : "富文本模板" }}</span>
-      </slot>
+  <div class="pso-card-item">
+    <div class="pso-card-item-header">
+      <div class="pso-card-item-header-l">
+        <i class="el-icon-picture"></i>
+        <span v-if="!editing">{{ data.name }}</span>
+        <el-input v-else size="mini" v-model="data.name"></el-input>
+      </div>
+      <div class="pso-card-item-header-r">
+        <i v-if="!editing" class="el-icon-edit" style="cursor: pointer" @click="editing = true"></i>
+        <i v-else class="el-icon-check" style="cursor: pointer" @click="editName"></i>
+      </div>
     </div>
-    <div class="ptemplate-item-b">
-      <slot>
-        <div class="title">{{ data.name }}</div>
-        <div v-if="removeable">
-          <el-dropdown size="small" @command="commandHandler">
-            <span class="el-dropdown-link"><i class="el-icon-more el-icon--right"></i> </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="remove">移除</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+    <div class="pso-card-item-body">
+      <div class="pso-card-item-content">
+        <div>
+          <span>数据源</span>
+          <span>{{ data.source === "1" ? "表单" : "统计脚本" }}</span>
         </div>
-      </slot>
+        <div>
+          <span>模板</span>
+          <span>{{ data.type === "1" ? "通用模板" : "富文本模板" }}</span>
+        </div>
+      </div>
+      <div class="pso-card-item-action">
+        <div class="pso-card-item-action-l"></div>
+        <div class="pso-card-item-action-r">
+          <el-popconfirm
+            confirmButtonText="确定"
+            cancelButtonText="取消"
+            icon="el-icon-info"
+            iconColor="red"
+            title="你确定要删除吗？"
+            @confirm="$emit('remove')"
+          >
+            <el-button slot="reference" size="mini" plain type="danger" icon="el-icon-delete">删除</el-button>
+          </el-popconfirm>
+          <el-button style="margin-left: 10px" size="mini" icon="el-icon-edit-outline" @click="$emit('edit')">编辑</el-button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -33,40 +53,19 @@ export default {
       default: true,
     },
   },
+  data() {
+    return {
+      editing: false,
+    };
+  },
   methods: {
-    commandHandler(command) {
-      this.$emit("command", command);
+    editName() {
+      if (!this.data.name) {
+        return;
+      }
+      this.$emit("save");
+      this.editing = false;
     },
   },
 };
 </script>
-<style lang="less">
-.ptemplate-item {
-  min-height: 140px;
-  padding: 15px;
-  margin-bottom: 10px;
-  border: 1px solid #f0f0f0;
-  transition: all 0.2s ease-in;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  &:hover {
-    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease-in;
-  }
-  .ptemplate-item-t {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  .ptemplate-item-b {
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .title {
-      font-weight: bold;
-    }
-  }
-}
-</style>
