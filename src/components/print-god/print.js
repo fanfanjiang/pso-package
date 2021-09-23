@@ -13,7 +13,7 @@ export default class Print {
 
         this.def = {
             colWidth: 100,
-            rowHeight: 24,
+            rowHeight: 23,
         }
 
         this.page = {

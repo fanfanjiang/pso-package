@@ -58,7 +58,6 @@ export default class FormStore {
 
         this.size = 'small';
 
-
         //扩展配置
         this.ext_config = null;
 

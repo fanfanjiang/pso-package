@@ -1,6 +1,6 @@
 <template>
   <div class="custom-column" v-loading="initializing">
-    <!-- <el-button size="mini" type="primary" plain @click="addParam" style="margin-bottom: 10px">添加参数</el-button> -->
+    <el-button size="mini" type="primary" plain @click="addParam" style="margin-bottom: 10px">添加参数</el-button>
     <el-table border size="mini" key="list" :data="column" style="width: 100%">
       <el-table-column type="index" :index="1" width="40"></el-table-column>
       <el-table-column label="字段" width="140" prop="field">

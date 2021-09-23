@@ -47,7 +47,8 @@ export default class Component {
                     this.data._read = false;
                     this.data._required = true;
                 }
-                if (exist.value === 0.1) {
+             
+                if (exist.value === 0.1 && this.CPNT.db) {
                     this.data._hideOnNew = this.data._hideForever = true;
                 }
             }
