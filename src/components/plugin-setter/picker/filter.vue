@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-button size="mini" type="primary" plain @click="showRule = true"> 设置条件 </el-button>
-    <el-input clearable v-model="data.value" size="mini" autocomplete="off"></el-input>
+    <el-button style="margin-bottom: 10px" size="small" type="primary" plain @click="showRule = true"> 设置条件 </el-button>
+    <el-input clearable v-model="data.value" size="small" autocomplete="off"></el-input>
     <pso-dialog :visible="showRule" width="50%" @close="showRule = false">
       <template #title>
         <pso-dialog-header>
@@ -10,7 +10,7 @@
             <span>数据约束条件设置</span>
           </template>
           <template #action>
-            <el-button type="primary" size="mini" @click="makeFilter">确定</el-button>
+            <el-button type="primary" size="small" @click="makeFilter">确定</el-button>
           </template>
         </pso-dialog-header>
       </template>

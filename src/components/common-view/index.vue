@@ -61,7 +61,7 @@
                   <span v-else>{{ scope.row[f.v] }}</span>
                 </template>
               </el-table-column>
-              <el-table-column header-align="center" v-for="(s, i) in slots" :key="i" :label="s.n" :width="s.w">
+              <el-table-column align="center" header-align="center" v-for="(s, i) in slots" :key="i" :label="s.n" :width="s.w">
                 <template slot-scope="scope">
                   <slot :name="s.v" v-bind:data="{ row: scope.row }"></slot>
                 </template>

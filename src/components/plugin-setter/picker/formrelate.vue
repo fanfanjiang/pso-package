@@ -1,13 +1,13 @@
 <template>
   <div class="pso-form">
-    <el-button style="margin-bottom: 10px" size="mini" type="primary" plain @click="addParam">添加目标表单配置</el-button>
+    <el-button style="margin-bottom: 10px" size="small" type="primary" plain @click="addParam">添加目标表单配置</el-button>
     <el-form label-position="top" size="mini" style="margin-bottom: 40px" v-for="(d, i) in data" :key="i">
       <picker-form from-text="选择目标表单" form-field="fid" source="3" :data="d" @loaded="formLoaded"></picker-form>
       <el-form-item label="视图名称">
-        <el-input size="mini" v-model="d.name"></el-input>
+        <el-input size="small" v-model="d.name"></el-input>
       </el-form-item>
       <el-form-item label="组件类型">
-        <el-select filterable clearable size="mini" v-model="d.cid">
+        <el-select filterable clearable size="small" v-model="d.cid">
           <el-option v-for="(s, i) in COMPONENTS" :key="i" :label="s.n" :value="s.v"></el-option>
         </el-select>
       </el-form-item>
@@ -15,14 +15,14 @@
         <picker-fmatchup v-bind="getMatchup(i)"></picker-fmatchup>
       </div>
       <template v-if="d.cid !== 'pso-form-interpreter'">
-        <el-button size="mini" plain @click="setCurItem(i)">设置目标视图参数</el-button>
+        <el-button size="small" plain @click="setCurItem(i)">设置目标视图参数</el-button>
         <el-form-item label="反哺字段">
-          <el-select filterable clearable size="mini" v-model="d.feed">
+          <el-select filterable clearable size="small" v-model="d.feed">
             <el-option v-for="(s, i) in sources" :key="i" :label="s.fieldDisplay" :value="s.field_name"></el-option>
           </el-select>
         </el-form-item>
       </template>
-      <el-button size="mini" type="danger" plain @click="delHandler(i)">删除配置项</el-button>
+      <el-button size="small" type="danger" plain @click="delHandler(i)">删除配置项</el-button>
     </el-form>
     <pso-dialog :visible="showEditor" width="70%" @close="showEditor = false">
       <template #title>

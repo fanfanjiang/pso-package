@@ -270,7 +270,12 @@ export default {
             }
 
             //字段长度检查
-            if (cpntData._val && typeof cpntData._fieldLen !== "undefined" && cpntData._fieldType !== "Text") {
+            if (
+              cpntData._val &&
+              typeof cpntData._fieldLen !== "undefined" &&
+              cpntData._fieldType !== "Text" &&
+              cpntData._fieldType !== "nText"
+            ) {
               if (!this.checkedFormError) {
                 const checkLength = (cpntData._val + "").length;
                 if (cpntData._fieldLen < checkLength) {

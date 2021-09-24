@@ -1,5 +1,5 @@
 <template>
-  <div class="app-setting">
+  <div class="Lay-setting">
     <div class="header">
       <el-tabs v-model="fetchParams.map_key4">
         <el-tab-pane label="微信消息模板" name="wechatweb"></el-tab-pane>
@@ -84,27 +84,3 @@ export default {
   },
 };
 </script>
-<style lang="less">
-.app-setting {
-  background-color: #fff;
-  height: 100%;
-  .header {
-    padding: 0 15px;
-    .el-tabs__header {
-      margin: 0;
-    }
-  }
-  .body {
-    height: calc(100% - 40px);
-    background-color: #f7f8fa;
-    padding: 15px;
-    overflow: hidden;
-    > div {
-      background-color: #fff;
-      height: 100%;
-      overflow: auto;
-      padding: 15px;
-    }
-  }
-}
-</style>

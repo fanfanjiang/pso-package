@@ -1,6 +1,6 @@
 <template>
   <div class="plugin-setter__setter" v-loading="initializing">
-    <el-form label-position="left" label-width="180px" v-if="!initializing">
+    <el-form size="mini" label-width="140px" label-position="right" v-if="!initializing">
       <div v-if="data.length && !loadingTp">
         <el-form-item v-for="p in data" :key="p.field" :label="p.name">
           <template v-if="p.picker === 'picker-form' || p.picker === 'picker-wf'">
@@ -8,7 +8,7 @@
               v-if="p.picker === 'picker-form'"
               filterable
               clearable
-              size="mini"
+              size="small"
               @change="handleFormChange($event, p)"
               v-model="p.value"
             >
@@ -18,7 +18,7 @@
               v-if="p.picker === 'picker-wf'"
               filterable
               clearable
-              size="mini"
+              size="small"
               @change="handleWfChange($event, p)"
               v-model="p.value"
             >
@@ -26,19 +26,19 @@
             </el-select>
             <slot v-bind:data="p"></slot>
           </template>
-          <el-select v-if="p.picker === 'picker-tag'" filterable clearable size="mini" v-model="p.value">
+          <el-select v-if="p.picker === 'picker-tag'" filterable clearable size="small" v-model="p.value">
             <el-option v-for="item in tags" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
           </el-select>
-          <el-input v-if="p.picker === 'input'" clearable v-model="p.value" size="mini" autocomplete="off"></el-input>
+          <el-input v-if="p.picker === 'input'" clearable v-model="p.value" size="small" autocomplete="off"></el-input>
           <el-switch v-if="p.picker === 'picker-yes'" v-model="p.value"></el-switch>
-          <el-select v-if="p.picker === 'picker-text'" filterable clearable size="mini" v-model="p.value">
+          <el-select v-if="p.picker === 'picker-text'" filterable clearable size="small" v-model="p.value">
             <el-option v-for="item in text" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
           <el-select
             v-if="p.picker === 'picker-field' && !loadingFields && formCfg[getRelateItem(p)]"
             filterable
             clearable
-            size="mini"
+            size="small"
             :multiple="p.saveType === '2'"
             v-model="p.value"
           >
@@ -53,7 +53,7 @@
             v-if="p.picker === 'picker-column' && !loadingFields && !loadingWf && getRelateItem(p) && formCfg[getRelateItem(p)]"
             filterable
             clearable
-            size="mini"
+            size="small"
             v-model="p.value"
           >
             <el-option v-for="item in formCfg[getRelateItem(p)].column" :key="item.name" :label="item.name" :value="item.name"></el-option>
@@ -62,20 +62,20 @@
             v-if="p.picker === 'picker-stafield'"
             filterable
             clearable
-            size="mini"
+            size="small"
             :multiple="p.saveType === '2'"
             v-model="p.value"
           >
             <el-option v-for="f in fields" :key="f.field" :label="f.name" :value="f.field"></el-option>
           </el-select>
-          <el-button v-if="p.picker === 'picker-staFormula'" size="mini" type="primary" plain @click="editScript(p)">编辑脚本</el-button>
+          <el-button v-if="p.picker === 'picker-staFormula'" size="small" type="primary" plain @click="editScript(p)">编辑脚本</el-button>
           <pso-picker-resource
             v-if="p.picker === 'picker-file'"
             source="list"
             pattern="checkbox"
             @confirm="handlefileChecked($event, p)"
           ></pso-picker-resource>
-          <el-select v-if="p.picker === 'picker-select'" filterable clearable size="mini" :multiple="p.saveType === '2'" v-model="p.value">
+          <el-select v-if="p.picker === 'picker-select'" filterable clearable size="small" :multiple="p.saveType === '2'" v-model="p.value">
             <el-option v-for="(d, i) in p.options" :key="i" :label="d.n" :value="d.v"></el-option>
           </el-select>
           <dfilter
@@ -84,8 +84,8 @@
             :sources="sources"
             :data="p"
           ></dfilter>
-          <el-button v-if="p.picker === 'picker-sql'" size="mini" type="primary" plain @click="editSql(p)"> 编辑脚本 </el-button>
-          <el-button v-if="p.picker === 'picker-stats'" size="mini" type="primary" plain @click="setStats(p)"> 设置关联统计 </el-button>
+          <el-button v-if="p.picker === 'picker-sql'" size="small" type="primary" plain @click="editSql(p)"> 编辑脚本 </el-button>
+          <el-button v-if="p.picker === 'picker-stats'" size="small" type="primary" plain @click="setStats(p)"> 设置关联统计 </el-button>
           <picker-fmatchup v-if="p.picker === 'picker-fmatchup'" v-bind="getMatchupProps(p)"></picker-fmatchup>
           <formrelate v-if="p.picker === 'formrelate'" v-bind="getRelateFields(p)"></formrelate>
           <template #label>
