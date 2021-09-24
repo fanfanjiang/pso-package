@@ -1,6 +1,6 @@
 <template>
   <div class="plugin-setter__setter" v-loading="initializing">
-    <el-form size="mini" label-width="140px" label-position="right" v-if="!initializing">
+    <el-form size="mini" label-width="150px" label-position="right" v-if="!initializing">
       <div v-if="data.length && !loadingTp">
         <el-form-item v-for="p in data" :key="p.field" :label="p.name">
           <template v-if="p.picker === 'picker-form' || p.picker === 'picker-wf'">

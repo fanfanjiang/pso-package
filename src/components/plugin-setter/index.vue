@@ -1,6 +1,6 @@
 <template>
   <div class="plugin-setter" v-loading="initializing">
-    <el-form label-position="right" label-width="140px" v-if="!initializing">
+    <el-form label-position="right" label-width="150px" v-if="!initializing">
       <el-form-item label="选择插件">
         <el-select size="small" filterable v-model="node[field]" clearable @change="pluginChangeHandler">
           <el-option v-for="(t, i) in templetes" :key="i" :label="t.node_display" :value="t.node_name"></el-option>

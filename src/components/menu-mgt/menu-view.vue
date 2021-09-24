@@ -34,7 +34,7 @@
           <menu-auth v-if="curTab === 'auth'" :node="curNode"></menu-auth>
           <view-set v-if="curTab === 'view'" :data="viewData"></view-set>
           <div class="pso-menu-param" v-if="curTab === 'param'" v-loading="saving || loading">
-            <el-form size="mini" label-position="right" label-width="100px" style="width: 500px">
+            <el-form size="mini" label-position="right" label-width="150px" style="width: 500px; margin-top: 30px">
               <template v-if="authable">
                 <el-form-item label="菜单名称">
                   <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
@@ -175,6 +175,7 @@ export default {
         method: "put",
       });
 
+      this.saving = false;
       this.ResultNotify(ret);
     },
     pickIcon(icon) {
