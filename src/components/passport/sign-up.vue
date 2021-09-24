@@ -199,10 +199,14 @@ export default {
         }
 
         this.submiting = true;
-        let ret = await this.API.reg(data);
+        const ret = await this.API.reg(data);
         this.submiting = false;
-        if (!ret.success) return;
-        this.signIn(ret.data);
+
+        this.ResultNotify(ret);
+
+        if (ret.success) {
+          this.signIn(ret.data);
+        }
       });
     },
   },
