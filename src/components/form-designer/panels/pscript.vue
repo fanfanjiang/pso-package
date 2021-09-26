@@ -112,6 +112,7 @@
 import commonPanel from "../common/common-panel";
 import columnEditor from "../../templete-mgt/column";
 import SqlDesigner from "../../sql-designer";
+import { makeSysFormFields } from "../../../tool/form";
 export default {
   props: ["cpnt"],
   components: {
@@ -129,15 +130,17 @@ export default {
   },
   computed: {
     fieldOptions() {
-      return this.cpnt.store.search({
-        options: { db: true },
-        onlyData: true,
-        beforePush: (item) => {
-          if (item.fid === this.cpnt.fid) return false;
-          if (item.parent.CPNT.host_db) return false;
-          return true;
-        },
-      });
+      return this.cpnt.store
+        .search({
+          options: { db: true },
+          onlyData: true,
+          beforePush: (item) => {
+            if (item.fid === this.cpnt.fid) return false;
+            if (item.parent.CPNT.host_db) return false;
+            return true;
+          },
+        })
+        .concat(makeSysFormFields());
     },
     autoGenFields() {
       if (!this.cpnt.data._copyTarget) return [];
