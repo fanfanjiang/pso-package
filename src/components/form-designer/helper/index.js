@@ -23,6 +23,7 @@ const defalutCpntData = [
     { n: '_unique', v: false },
     { n: '_auth', v: [] },
     { n: '_regular', v: '' },
+    { n: '_regulartip', v: '' },
     { n: '_fieldFormat', v: 'common' },
     { n: '_outputFormat', v: '' },
     { n: '_transFields', v: '' },

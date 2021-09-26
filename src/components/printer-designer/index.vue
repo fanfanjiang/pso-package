@@ -190,7 +190,7 @@ export default {
       }
       this.save();
     },
-    async save() {
+    async save() { 
       const ret = await this.API.updateFormTree({ data_code: this.formId, printer_config: JSON.stringify(this.templates) });
       this.ResultNotify(ret);
     },

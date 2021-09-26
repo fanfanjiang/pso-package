@@ -49,6 +49,7 @@
           <el-switch v-if="needUnique" size="mini" v-model="cpnt.data._unique" active-text="不允许重复"></el-switch>
         </div>
         <el-input size="mini" placeholder="正则验证" v-model="cpnt.data._regular" clearable></el-input>
+        <el-input v-if="cpnt.data._regular" size="mini" placeholder="正则验证提示信息" v-model="cpnt.data._regulartip" clearable></el-input>
       </el-form-item>
       <el-form-item label="权限">
         <div class="act-panel_check">

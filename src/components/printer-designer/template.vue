@@ -4,6 +4,7 @@
       <slot name="top">
         <span>数据源：{{ data.source === "1" ? "表单" : "统计脚本" }}</span>
         <span>模板：{{ data.type === "1" ? "通用模板" : "富文本模板" }}</span>
+        <span>模式：{{ data.mode === "1" ? "关联表自增" : "主表自增" }}</span>
       </slot>
     </div>
     <div class="ptemplate-item-b">

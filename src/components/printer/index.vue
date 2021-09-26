@@ -118,10 +118,11 @@ export default {
       }
     },
     async print() {
-      if (this.curTemplate.type === "2") {
+      const { type, mode } = this.curTemplate;
+      if (type === "2") {
         this.createPDF(this.$refs.printer, this.formStore.data_name, true);
-      } else if (this.curTemplate.type === "1") {
-        const data = await this.formProxy.fetch({ ids: this.instanceId });
+      } else if (type === "1") {
+        const data = await this.formProxy.fetch({ ids: this.instanceId, mode });
         const ret = await this.API.request("/api/form/data/print", {
           data: { ...this.curTemplate, data, mainCode: this.formProxy.store.data_code, map: this.formProxy.getCpntMap() },
         });

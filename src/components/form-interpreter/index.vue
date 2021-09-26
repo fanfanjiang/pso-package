@@ -258,7 +258,7 @@ export default {
             if (cpntData.__eventualShow__ && __required__) {
               //空值检查
               if (cpntData._required && (typeof cpntData._val === "undefined" || cpntData._val === "")) {
-                throw new Error(`${cpntData._fieldName}不能为空`);
+                throw new Error(cpntData._regulartip || `${cpntData._fieldName}不能为空`);
               }
 
               //正则检查

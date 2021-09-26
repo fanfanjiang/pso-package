@@ -566,7 +566,25 @@ const CPNT = {
       { n: '_option', v: [] },
       { n: '_datasource', v: '' },
     ]
-  }
+  },
+  pinyin: {
+    icon: "fa fa-sort-alpha-asc",
+    name: "拼音",
+    componentid: "pinyin",
+    class: 'unSubTable',
+    op: FILTER_TYPE.string.op,
+    fop: [{ ...OP_FILTER.op1 }],
+    type: 'string',
+    layout: false,
+    db: true,
+    host_db: false,
+    chart: true,
+    table_show: true,
+    data: [
+      { n: '_type', v: '1' },
+      { n: '_source', v: '' },
+    ]
+  },
 }
 
 module.exports = CPNT;
