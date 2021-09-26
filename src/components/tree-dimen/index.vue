@@ -85,7 +85,7 @@
     </pso-dialog>
     <pso-dialog :visible="showTree" width="80%" @close="showTree = false">
       <div class="pso-dialog-content">
-        <menu-view v-bind="options" :nodefun="nodefun"></menu-view>
+        <menu-view v-bind="options" :nodefun="nodefun" tagmode></menu-view>
       </div>
     </pso-dialog>
   </div>

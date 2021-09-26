@@ -131,7 +131,7 @@
 import CTable from "./table";
 import CFilter from "./filter";
 import VueScrollTo from "vue-scrollto";
-
+ 
 const DEFACTION = {
   exportCurPage: "导出EXCEL",
   makeCarbonCopy: "抄送",

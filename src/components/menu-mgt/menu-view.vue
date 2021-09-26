@@ -37,7 +37,7 @@
             <el-form size="mini" label-position="right" label-width="150px" style="width: 500px; margin-top: 30px">
               <template v-if="authable">
                 <el-form-item label="菜单名称">
-                  <el-input size="small" v-model="curNode.menu_name" autocomplete="off"></el-input>
+                  <el-input size="small" v-model="curNode[tagmode ? 'tag_name' : 'menu_name']" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="节点名称">
                   <el-input size="small" v-model="curNode.node_display" autocomplete="off"></el-input>
@@ -109,6 +109,10 @@ export default {
       default: true,
     },
     nodefun: Function,
+    tagmode: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

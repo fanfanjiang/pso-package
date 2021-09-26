@@ -116,6 +116,9 @@ import PsoUserComposite from "./components/user/composite";
 import PsoUserMgt from "./components/user";
 import PsoOrgMgt from "./components/user/organization";
 
+import PsoNewOrgMgt from "./components/usernew/org";
+
+
 import PsoSiteMgt from "./components/site-mgt";
 
 import PsoUserProfile from "./components/user-profile";
@@ -359,7 +362,9 @@ const components = {
     PsoAppSetting,
     PsoMsgTemplate,
     PsoNotifyManual,
-    PsoNotifyLog
+    PsoNotifyLog,
+
+    PsoNewOrgMgt
 }
 
 import { decodejson } from './utils/util';
