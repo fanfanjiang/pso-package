@@ -356,7 +356,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 }
 
                 data.node_name = data.node_name || '';
-                data.data_type = data.data_type || '';
+                data.data_type = data.data_type || this.where.data_type || '';
                 typeof data.is_leaf === 'undefined' && (data.is_leaf = 0);
                 typeof data.is_pass === 'undefined' && (data.is_pass = 0);
                 return { data };

@@ -89,7 +89,10 @@
           <el-form-item :label="nodePayload.nameLable">
             <el-input size="small" v-model="nodePayload.node.data.node_display" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="标签" v-if="!nodePayload.node.data.node_id && nodePayload.node.data.node_pid === 0">
+          <el-form-item
+            label="标签"
+            v-if="!nodePayload.node.data.data_type && !nodePayload.node.data.node_id && nodePayload.node.data.node_pid === 0"
+          >
             <el-select size="small" v-model="nodePayload.node.data.data_type">
               <el-option v-for="item in dimens" :key="item.dimen_tag" :label="item.tag_name" :value="item.dimen_tag"></el-option>
             </el-select>

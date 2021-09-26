@@ -82,18 +82,26 @@
         </el-table>
       </div>
     </pso-dialog>
+    <pso-dialog :visible="showTree" width="80%" @close="showTree = false">
+      <div class="pso-dialog-content">
+        <menu-view v-bind="options"></menu-view>
+      </div>
+    </pso-dialog>
   </div>
 </template>
 <script>
 import { FetchMixin } from "../../mixin/view";
 import { DIMEN_TYPE } from "../../const/tree.js";
+import MenuView from "../menu-mgt/menu-view";
 
 const CONFIG = {
   name: "",
   value: "",
   enable: true,
 };
+
 export default {
+  components: { MenuView },
   mixins: [FetchMixin],
   data() {
     this.DIMEN_TYPE = DIMEN_TYPE;
@@ -121,7 +129,16 @@ export default {
       ID: "action_id",
       curTab: "custom",
       proxy: [],
+      showTree: false,
     };
+  },
+  computed: {
+    options() {
+      return {
+        dimen: 5,
+        datatype: this.curInstance ? this.curInstance.dimen_tag : "",
+      };
+    },
   },
   watch: {
     curTab() {
@@ -165,9 +182,10 @@ export default {
     onRemoveItem(index) {
       this.proxy.splice(index, 1);
     },
-    onShowTree(data){
-
-    }
+    onShowTree(data) {
+      this.curInstance = data;
+      this.showTree = true;
+    },
   },
 };
 </script>
