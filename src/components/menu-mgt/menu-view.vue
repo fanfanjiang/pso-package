@@ -108,6 +108,7 @@ export default {
       type: Boolean,
       default: true,
     },
+    nodefun: Function,
   },
   data() {
     return {
@@ -139,10 +140,14 @@ export default {
       this.curNode = nodeData;
 
       this.loading = true;
-      const ret = await this.API.getMenuInfo({ menu_code: nodeData.node_name });
-      this.loading = false;
 
-      if (ret.success) {
+      let ret;
+      if (this.nodefun) {
+        ret = await this.nodefun(nodeData, this);
+      } else {
+        ret = await this.API.getMenuInfo({ menu_code: nodeData.node_name });
+      }
+      if (ret && ret.success) {
         for (let key in ret.data) {
           this.$set(this.curNode, key, ret.data[key]);
         }
@@ -152,6 +157,7 @@ export default {
           this.viewData = this.curNode.auth_config ? JSON.parse(this.curNode.auth_config) : [];
         }
       }
+      this.loading = false;
     },
     async updateNode() {
       this.saving = true;

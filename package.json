@@ -8,9 +8,7 @@
     "build:exam": "vue-cli-service build example/main.js",
     "test:unit": "vue-cli-service test:unit"
   },
-  "dependencies": {
-    "vue-scrollto": "^2.20.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@formulajs/formulajs": "^2.6.9",
     "@tinymce/tinymce-vue": "^3",
@@ -61,6 +59,7 @@
     "vue-codemirror": "^4.0.6",
     "vue-monaco": "^1.2.1",
     "vue-router": "^3.0.3",
+    "vue-scrollto": "^2.20.0",
     "vue-template-compiler": "^2.6.11",
     "vue-video-player": "^5.0.2",
     "vue2-transitions": "^0.3.0",

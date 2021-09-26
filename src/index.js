@@ -8,7 +8,7 @@ const UAParser = require('../share/util/u-agent');
 import debounce from "throttle-debounce/debounce";
 
 import './assets/theme/index.css';
-  
+   
 import Vuebar from 'vuebar';
 import 'muse-ui/lib/styles/base.less';
 import 'muse-ui/lib/styles/theme.less';

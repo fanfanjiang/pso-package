@@ -19,6 +19,7 @@
           @dbclick="dbClickHandler"
         >
           <template #datafun>
+            <el-button :disabled="selected.length !== 1" type="danger" size="mini" @click="onRemove">删除</el-button>
             <el-button type="primary" size="mini" @click="addHandler">新增</el-button>
           </template>
           <template v-slot:op="{ data }">
@@ -84,7 +85,7 @@
     </pso-dialog>
     <pso-dialog :visible="showTree" width="80%" @close="showTree = false">
       <div class="pso-dialog-content">
-        <menu-view v-bind="options"></menu-view>
+        <menu-view v-bind="options" :nodefun="nodefun"></menu-view>
       </div>
     </pso-dialog>
   </div>
@@ -146,13 +147,16 @@ export default {
     },
   },
   methods: {
+    async nodefun(node) {
+      return await this.API.request("/api/tag/tagmenu", { data: { tag_no: node.node_name }, method: "get" });
+    },
     async fetch(data = {}) {
       switch (this.curTab) {
         case "custom":
           data.keys = { node_dimen: { type: 1, value: 5 } };
           break;
         case "extend":
-          data.keys = { is_sys: { type: 1, value: 0 } };
+          data.keys = { is_sys: { type: 1, value: 0 }, node_dimen: { type: 0, value: 5 } };
           break;
         case "sys":
           data.keys = { is_sys: { type: 1, value: 1 } };
@@ -185,6 +189,10 @@ export default {
     onShowTree(data) {
       this.curInstance = data;
       this.showTree = true;
+    },
+    onRemove() {
+      if (!this.selected.length || this.selected[0].is_sys == 1) return;
+      this.delHandler();
     },
   },
 };

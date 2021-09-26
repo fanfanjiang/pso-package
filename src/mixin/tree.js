@@ -423,6 +423,7 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 const ret = await this.API.trees({ data, method: IS_NEW ? "post" : "put" });
 
                 if (!ret.success) {
+                    this.ResultNotify(ret);
                     this.nodePayload.loading = false;
                     return;
                 }
