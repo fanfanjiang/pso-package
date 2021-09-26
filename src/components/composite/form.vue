@@ -194,7 +194,7 @@ export default {
     padding: 15px;
     background-color: #fff;
     text-align: center;
-    z-index: 99999;
+    z-index: 999;
   }
   .pso-form-index__success {
     text-align: center;

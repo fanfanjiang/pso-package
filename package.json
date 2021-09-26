@@ -8,9 +8,7 @@
     "build:exam": "vue-cli-service build example/main.js",
     "test:unit": "vue-cli-service test:unit"
   },
-  "dependencies": {
-    "tiny-pinyin": "^1.3.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@formulajs/formulajs": "^2.6.9",
     "@tinymce/tinymce-vue": "^3",
@@ -55,6 +53,7 @@
     "signature_pad": "^3.0.0-beta.3",
     "svg-injector": "^1.1.3",
     "throttle-debounce": "^1.0.1",
+    "tiny-pinyin": "^1.3.2",
     "tiptap": "^1.26.6",
     "tiptap-extensions": "^1.28.6",
     "vue": "^2.6.11",
