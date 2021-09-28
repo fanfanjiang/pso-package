@@ -8,7 +8,7 @@ const UAParser = require('../share/util/u-agent');
 import debounce from "throttle-debounce/debounce";
 
 import './assets/theme/index.css';
-   
+
 import Vuebar from 'vuebar';
 import 'muse-ui/lib/styles/base.less';
 import 'muse-ui/lib/styles/theme.less';
@@ -116,8 +116,6 @@ import PsoUserComposite from "./components/user/composite";
 import PsoUserMgt from "./components/user";
 import PsoOrgMgt from "./components/user/organization";
 
-import PsoNewOrgMgt from "./components/usernew/org";
-
 
 import PsoSiteMgt from "./components/site-mgt";
 
@@ -133,7 +131,7 @@ import PsoPassport from "./components/passport/passport-wrapper.vue";
 import PsoApproval from "./components/passport/approval.vue";
 
 import PsoSqlDesigner from "./components/sql-designer";
- 
+
 //通知
 import PsoNotify from "./components/notify";
 import PsoNotifyPopover from "./components/notify/popover";
@@ -209,6 +207,11 @@ import PsoMsgTemplate from "./components/app-setting/msg-template";
 import PsoNotifyManual from "./components/notify/manual";
 import PsoNotifyLog from "./components/notify/log";
 
+import PsoAppsMall from "./components/application/mall";
+import PsoAppsMgt from "./components/application/mgt";
+
+import PsoNewOrgMgt from "./components/usernew/org";
+import PsoNewroleMgt from "./components/usernew/role";
 
 const components = {
     PsoEmpty,
@@ -326,7 +329,7 @@ const components = {
     PsoDataSyncset,
     PsoDataSync,
     PsoAppcfgMgt,
-     
+
     //orc
     PsoOcrInit,
     PsoOcrMgt,
@@ -354,7 +357,7 @@ const components = {
 
     PsoBiExcel,
     PsoBiDb,
-    PsoBiForm, 
+    PsoBiForm,
     PsoBiScript,
     PsoBiCockpit,
     PsoBiRule,
@@ -364,7 +367,13 @@ const components = {
     PsoNotifyManual,
     PsoNotifyLog,
 
-    PsoNewOrgMgt
+    //组织管理
+    PsoNewOrgMgt,
+
+    PsoAppsMall,
+    PsoAppsMgt,
+
+    PsoNewroleMgt,
 }
 
 import { decodejson } from './utils/util';

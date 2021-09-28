@@ -151,7 +151,7 @@ export default {
     addScript() {
       this.cpnt.data._script.push({ sql: [], param: {} });
     },
-    delScript(index) {
+    delScript(index) { 
       this.cpnt.data._script.splice(index, 1);
     },
     delScriptItem(data, key) {

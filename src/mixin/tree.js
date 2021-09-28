@@ -420,6 +420,10 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     }
                 }
 
+                if (!data.node_display) {
+                    throw new Error('名称不能为空');
+                }
+
                 const ret = await this.API.trees({ data, method: IS_NEW ? "post" : "put" });
 
                 if (!ret.success) {
@@ -446,10 +450,11 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                     this.nodePayload.showForm = false;
 
                     if (IS_NEW) {
+                        this.$emit("after-node-new", data);
                         await this.loadWholeTree(false);
                     } else {
                         this.$notify({ title: "成功", message: "添加成功", type: "success" });
-                        this.$emit(data.node_id ? "after-node-edit" : "after-node-new", data);
+                        this.$emit("after-node-edit", data);
                         this.setCurrentNode([data]);
                     }
                 });
@@ -524,7 +529,8 @@ export function TreeMixin({ treeRef = 'tree' } = {}) {
                 if (data.children && data.children.length) {
                     return this.$message({ message: "含有子节点，不能删除", type: "warning" });
                 }
-                this.updateTrash({ code: data.node_name, method: 'WasteNode' });
+                await this.updateTrash({ code: data.node_name, method: 'WasteNode' });
+                this.$emit("node-to-trash", data);
             },
             async restoreTrash() {
                 this.updateTrash({ ...this.getOpTrashData(), method: 'RecoverNode' });

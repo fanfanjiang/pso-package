@@ -6,14 +6,15 @@
       </el-tabs>
     </div>
     <div class="body">
-      <div style="padding: 0">
-        <org-view v-if="curTab" v-bind="options"></org-view>
+      <div style="padding: 0" v-if="!initializing">
+        <org-view v-if="curTab" v-bind="options" @refresh="initialize"></org-view>
       </div>
     </div>
   </div>
 </template>
-<script>
+<script> 
 import OrgView from "./org-view";
+import { listToTree } from "../../utils/util";
 
 export default {
   components: { OrgView },
@@ -31,25 +32,26 @@ export default {
     };
   },
   computed: {
-    datatype() {
-      return this.params.data_type;
-    },
     options() {
       return {
         nodeid: this.curTab,
-        datatype: this.datatype,
       };
     },
   },
   async created() {
-    this.initializing = true;
-    this.tabs = (await this.API.trees({ data: { dimen: 2 } })).data.tagtree;
-    this.initializing = false;
+    this.initialize();
+  },
+  methods: {
+    async initialize() {
+      this.initializing = true;
+      const trees = (await this.API.trees({ data: { dimen: 2 } })).data.tagtree;
 
-    if (ret.success) {
-      this.tabs = ret.data;
-      this.curTab = this.tabs.length ? this.tabs[0].node_name : "";
-    }
+      this.tabs = listToTree({ list: trees, pid: "node_pid", id: "node_id" });
+      if (this.tabs.length) {
+        this.curTab = this.tabs.length ? this.tabs[0].node_name : "";
+      }
+      this.initializing = false;
+    },
   },
 };
 </script>
