@@ -6,7 +6,7 @@
           <a href="">
             <i :class="d.icon"></i><span>{{ d.name }}</span>
           </a>
-        </li>
+        </li> 
       </ul>
     </div>
     <div class="user-profile-body">
