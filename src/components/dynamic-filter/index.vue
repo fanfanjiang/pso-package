@@ -21,7 +21,7 @@
           <div class="dynamic-rule-filter__body" v-if="c.op">
             <div class="dynamic-rule-filter__value">
               <el-select v-if="c.sid" size="mini" v-model="c.sid" clearable placeholder="请选择">
-                <el-option v-for="s in sources" :key="s.fid" :label="s._fieldName" :value="s._fieldValue"></el-option>
+                <el-option v-for="s in finalSource" :key="s.fid" :label="s._fieldName" :value="s._fieldValue"></el-option>
               </el-select>
               <template v-else>
                 <div class="dynamic-rule-filter__value-l">
@@ -33,7 +33,7 @@
                       <i class="el-icon-plus el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                      <template v-for="s in sources">
+                      <template v-for="s in finalSource">
                         <el-dropdown-item :key="s._fieldValue" :command="s._fieldValue">{{ s._fieldName }}</el-dropdown-item>
                       </template>
                     </el-dropdown-menu>
@@ -59,6 +59,7 @@
 </template>
 <script>
 import cpnt from "./cpnt";
+import FormStore from "../form-designer/model/store.js";
 // 动态筛选组件,这个只能用于keys中，需要请求接口
 export default {
   components: { cpnt },
@@ -66,13 +67,19 @@ export default {
     targets: Array,
     sources: Array,
     conditions: Array,
+    addUser: {
+      type: Boolean,
+      default: false,
+    },
   },
   model: {
     prop: "conditions",
     event: "change",
   },
   data() {
-    return {};
+    return {
+      finalSource: [],
+    };
   },
   watch: {
     conditions: {
@@ -82,9 +89,12 @@ export default {
       },
     },
   },
-  created() {
-    console.log(this.targets);
-    console.log(this.sources);
+  async created() {
+    if (this.addUser) {
+      this.addUserFields();
+    } else {
+      this.finalSource = this.sources;
+    }
   },
   methods: {
     getTarget(item) {
@@ -103,6 +113,23 @@ export default {
     },
     commandHandler(tid, item) {
       item.sid = tid;
+    },
+    async addUserFields() {
+      const ret = await this.API.formsCfg({ data: { id: "AOW5aWWAZ" }, method: "get" });
+      if (ret && ret.success && ret.data) {
+        const store = new FormStore({ ...ret.data, designMode: false, withSys: true });
+        const fields = store.search({
+          options: { db: true },
+          onlyMain: true,
+          onlyData: true,
+          beforePush: (item) => {
+            item.data._fieldName = `[登录用户]${item.data._fieldName}`;
+            item.data._fieldValue = `@user@${item.data._fieldValue}`;
+            return true;
+          },
+        });
+        this.finalSource = this.sources.concat(fields);
+      }
     },
   },
 };

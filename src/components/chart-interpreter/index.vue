@@ -2,7 +2,7 @@
   <div class="pso-chart" ref="chart">
     <div class="pso-chart-wrapper" v-loading="!loaded">
       <div class="pso-chart-name" v-if="chartCfg.chartName">{{ chartCfg.chartName }}</div>
-      <div class="pso-chart-filter">
+      <div class="pso-chart-filter" ref="chartFilter">
         <pso-datafilter
           v-if="defCondition.length"
           v-model="condition"
@@ -165,8 +165,9 @@ export default {
   },
   methods: {
     setHeight() {
-      let height = $(this.$refs.chart).height();
-      if (height > 30) this.chartHeight = `${height - 30}px`;
+      const height = $(this.$refs.chart).height();
+      const filter = $(this.$refs.chartFilter).height();
+      if (height > 30) this.chartHeight = `${height - (this.defCondition.length ? filter : 0) - 30}px`;
     },
     getSlias(_fieldValue) {
       if (this.chartCfg.metrics) {
@@ -264,7 +265,7 @@ export default {
         const navRet = await this.API.getStatisticData({ tp_code: this.formCfg.code, search_type: "init" });
         data = navRet.data.DATA;
       } else if (this.chartCfg.sourceType === "3") {
-        const ret = await this.API.getPluginModuleData({ child_id: this.chartCfg.formId });
+        const ret = await this.API.getPluginModuleData({ ...options, child_id: this.chartCfg.formId });
         data = ret.data.DATA;
       }
       return data;

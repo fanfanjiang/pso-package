@@ -73,7 +73,7 @@
       <el-button v-if="cpnt.data._relate" icon="el-icon-plus" plain size="mini" @click="showDialog = true">筛选</el-button>
     </common-panel>
     <el-dialog title="设置筛选条件" append-to-body :visible.sync="showDialog" width="40%">
-      <dynamic-filter :targets="filterFields" :sources="selfCpnts" v-model="cpnt.data._filter"></dynamic-filter>
+      <dynamic-filter :targets="filterFields" :sources="selfCpnts" v-model="cpnt.data._filter" addUser></dynamic-filter>
     </el-dialog>
   </div>
 </template>

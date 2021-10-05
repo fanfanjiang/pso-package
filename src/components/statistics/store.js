@@ -185,7 +185,8 @@ export default class STAVStore extends FVStore {
 
     async fetchStatus() {
         this.starting = true;
-        const ret = await API.getStatisticData({
+
+        const params = {
             ...this.params,
             limit: this.limit,
             start: 0,
@@ -193,7 +194,13 @@ export default class STAVStore extends FVStore {
             leaf_auth: this.activeView,
             paramvalue: this.extendData,
             search_type: "init"
-        });
+        };
+
+        if (this.condition && this.condition !== "【】") {
+            params.condition = this.condition;
+        }
+        
+        const ret = await API.getStatisticData(params);
 
         if (ret.success) {
             if (ret.data.NAV) {

@@ -774,7 +774,6 @@ export default class FormViewStore {
         } else {
             this.fields = fields;
         }
-
         this.conditionOptions = _.cloneDeep(fields);
     }
 

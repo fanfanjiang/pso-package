@@ -146,8 +146,15 @@ export default {
                         let value = f.value;
                         if (f.sid) {
                             const source = this.cpnt.store.searchByField(f.sid);
-                            if (source && source.data._val) {
-                                value = source.data._val;
+                            if (source) {
+                                if (source.data._val) {
+                                    value = source.data._val;
+                                }
+                            } else if (f.sid.indexOf('@user@') !== -1) {
+                                const field = f.sid.replace('@user@', '');
+                                if (this.$store.state.base.user && this.$store.state.base.user[field]) {
+                                    value = this.$store.state.base.user[field];
+                                }
                             } else {
                                 value = this.cpnt.store.instance[f.sid];
                             }

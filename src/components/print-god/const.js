@@ -54,7 +54,10 @@ export const STYLES = {
 export const EXTEND = {
     extendable: false,
     showOpts: false,
-    optNum: 0
+    optNum: 0,
+    esymble: "1",
+    ePosition: '1',
+    format: ""
 };
 
 

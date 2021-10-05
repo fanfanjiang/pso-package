@@ -5,11 +5,26 @@
         <el-switch size="mini" v-model="extend.extendable"> </el-switch>
       </el-form-item>
       <template v-if="extend.extendable">
-        <el-form-item label="显示全部选项">
+        <el-form-item label="选择类字段显示全部选项">
           <el-switch size="mini" v-model="extend.showOpts"> </el-switch>
         </el-form-item>
-        <el-form-item label="每行个数" v-if="extend.showOpts">
+        <el-form-item label="每行选项显示个数" v-if="extend.showOpts">
           <el-input-number :precision="0" :controls="false" size="mini" v-model="extend.optNum"></el-input-number>
+        </el-form-item>
+        <el-form-item label="选择类字段扩展显示">
+          <el-select size="mini" v-model="extend.esymble">
+            <el-option label="☑" value="1"></el-option>
+            <el-option label="()" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="扩展显示位置">
+          <el-select size="mini" v-model="extend.ePosition">
+            <el-option label="左" value="1"></el-option>
+            <el-option label="右" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="日期转换格式">
+          <el-input size="mini" v-model="extend.format"></el-input>
         </el-form-item>
       </template>
     </el-form>
