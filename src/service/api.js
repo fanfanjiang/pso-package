@@ -93,7 +93,7 @@ export default class API {
 
                         if (!this.refreshing) {
                             this.refreshing = true;
-                            const refreshRet = await this.request('/refresh', { data: { rft } });
+                            const refreshRet = await this.request('/refresh_token', { data: { rft } });
                             if (refreshRet && refreshRet.success && refreshRet.data.token) {
                                 Auth.setToken(refreshRet.data.token);
                                 this.refreshing = false;
