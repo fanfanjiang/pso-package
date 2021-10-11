@@ -41,6 +41,7 @@ import PsoPickerTree from "./components/picker/pso-picker-tree";
 import PsoPickerUser from "./components/picker/pso-picker-user";
 import PsoPickerIcon from "./components/picker/pso-picker-icon";
 import PsoPickerRole from "./components/picker/pso-picker-role";
+import PsoPickerForm from "./components/picker/pso-picker-form";
 
 import PsoTreeCommon from "./components/tree";
 import PsoTypebar from "./components/type-bar";
@@ -227,7 +228,8 @@ const components = {
     PsoPickerIcon,
     PsoPickerRole,
     PsoTreeCommon,
-
+    PsoPickerForm,
+    
     PsoFormView,
     PsoFormExecutor,
     PsoCpntAst,

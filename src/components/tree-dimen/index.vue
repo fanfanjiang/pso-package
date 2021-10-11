@@ -52,6 +52,9 @@
               <el-option v-for="item in DIMEN_TYPE" :key="item.n" :label="item.n" :value="item.v"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="维度值" v-if="curInstance.node_dimen === 5">
+            <el-input size="small" v-model="curInstance.dimen_tag" autocomplete="off"></el-input>
+          </el-form-item>
         </el-form>
         <div class="pso-table-controller">
           <el-button size="small" type="primary" plain @click="onAddItem">添加扩展配置</el-button>

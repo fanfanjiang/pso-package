@@ -159,7 +159,7 @@ export const FetchMixin = {
             this.selected = data;
         },
         addHandler() {
-            this.curInstance = { ...this.DATA };
+            this.curInstance = _.cloneDeep(this.DATA);
             if (this.beforeAddInstance) {
                 this.beforeAddInstance();
             }

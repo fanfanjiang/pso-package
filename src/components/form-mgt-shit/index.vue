@@ -56,6 +56,7 @@
               :status="staData"
               :stage="stageData"
               :subdata="subCfg"
+              @save="saveConfig"
             ></form-status>
             <form-upload
               v-if="curTab === 'upload' && formStore"
