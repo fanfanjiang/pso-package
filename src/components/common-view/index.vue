@@ -18,7 +18,7 @@
                 <pso-search text="搜索" v-model="fetchParams.keywords"></pso-search>
                 <el-divider direction="vertical"></el-divider>
               </template>
-              <el-button type="text" icon="el-icon-refresh" @click="fetch">刷新</el-button>
+              <el-button v-if="refreshable" type="text" icon="el-icon-refresh" @click="fetch">刷新</el-button>
             </div>
           </div>
           <div class="pso-view-fun-r">
@@ -135,6 +135,10 @@ export default {
       default: true,
     },
     rowStyleFun: Function,
+    refreshable: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {

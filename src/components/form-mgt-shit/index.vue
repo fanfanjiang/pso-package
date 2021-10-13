@@ -64,6 +64,7 @@
               :fields="tableData"
               :code="curNode.node_name"
               :store="formStore"
+              @save="saveConfig"
             ></form-upload>
             <form-rule v-if="curTab === 'rule' && formStore" :store="formStore" :data="rules" @save="saveConfig"></form-rule>
             <printer-designer v-if="curTab === 'print'" :form-id="curNode.node_name"></printer-designer>
@@ -129,13 +130,19 @@ export default {
     GreatPanel,
     PrinterDesigner,
   },
+  props: {
+    params: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     this.TABS = TABS;
     return {
       initializing: true,
       appid: "",
       key: 0,
-      treeOptions: { dimen: 3 },
+      treeOptions: { dimen: 3, data_type: this.params.data_type },
       defaultNodeData: {
         node_dimen: 3,
       },

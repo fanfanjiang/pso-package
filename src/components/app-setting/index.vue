@@ -8,7 +8,7 @@
       </el-tabs>
     </div>
     <div class="body">
-      <div style="padding:30px">
+      <div style="padding: 30px">
         <base-set v-if="curTab === 'base'"></base-set>
         <social v-if="curTab === 'social'"></social>
         <theme-set v-if="curTab === 'theme'"></theme-set>

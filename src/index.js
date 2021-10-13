@@ -205,6 +205,9 @@ import PsoBiCompare from "./components/bi/compare";
 
 import PsoAppSetting from "./components/app-setting/index";
 import PsoMsgTemplate from "./components/app-setting/msg-template";
+import PsoSettingOther from "./components/app-setting/other";
+
+
 import PsoNotifyManual from "./components/notify/manual";
 import PsoNotifyLog from "./components/notify/log";
 
@@ -213,6 +216,7 @@ import PsoAppsMgt from "./components/application/mgt";
 
 import PsoNewOrgMgt from "./components/usernew/org";
 import PsoNewroleMgt from "./components/usernew/role";
+
 
 const components = {
     PsoEmpty,
@@ -366,6 +370,9 @@ const components = {
     PsoBiCompare,
     PsoAppSetting,
     PsoMsgTemplate,
+    PsoSettingOther,
+
+    
     PsoNotifyManual,
     PsoNotifyLog,
 

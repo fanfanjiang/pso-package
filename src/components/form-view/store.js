@@ -817,9 +817,10 @@ export default class FormViewStore {
                     exist = temp;
                 }
             }
-
+           
             this.usedFormCol = exist.name;
-            this.usedActionIds = exist.actions;
+            this.usedActionIds = exist.topAction.concat(exist.rowAction);
+
             if (!!exist.expanding) {
                 this.showFilter = true;
             }

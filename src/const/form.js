@@ -175,6 +175,7 @@ export const SYS_FIELDS = [
     { _fieldValue: 'dept_name', _fieldName: '部门名称', componentid: 'text' },
     { _fieldValue: 'input_time', _fieldName: '输入时间', componentid: 'time' },
     { _fieldValue: 'sync_status', _fieldName: '同步状态', componentid: 'text' },
+    { _fieldValue: 'apply_id', _fieldName: '应用ID', componentid: 'text' },
 ]
 
 export const CPNT = require('../../share/const/form');

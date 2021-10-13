@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="initializing" style="margin-top: 20px">
+  <div v-loading="initializing">
     <great-panel>
       <template #header>
         <i class="el-icon-edit-outline"></i>
@@ -32,6 +32,7 @@
     </great-panel>
     <div style="margin-top: 20px">
       <el-button size="mini" type="primary" plain @click="translate">重置</el-button>
+      <el-button size="mini" type="primary" @click="$emit('save')">保存</el-button>
     </div>
     <el-table
       border
@@ -46,7 +47,7 @@
         <template slot-scope="scope">
           <el-switch size="mini" v-model="scope.row.enable"></el-switch>
         </template>
-      </el-table-column> 
+      </el-table-column>
       <el-table-column label="条件" width="70" align="center" sortable>
         <template slot-scope="scope">
           <el-switch size="mini" v-model="scope.row.is_condition" active-value="1" inactive-value="0"></el-switch>
@@ -78,6 +79,7 @@
       </el-table-column>
       <el-table-column prop="relate_target" label="目标字段" width="160" align="center"> </el-table-column>
     </el-table>
+    <shit-save @save="$emit('save')"></shit-save>
   </div>
 </template> 
 <script>
@@ -88,7 +90,7 @@ import GreatPanel from "../great-panel";
 const AVAIABLE = ["relate", "common", "common_x", "user", "dept", "tag"];
 export default {
   components: { GreatPanel },
-  props: { 
+  props: {
     data: Object,
     code: String,
     store: Object,

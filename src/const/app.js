@@ -204,6 +204,21 @@ export const CONFIG_TYPE = [{
     ]
 },
 {
+    n: '资源分类配置',
+    id: 80,
+    cpnt: 'resource',
+    t: "",
+    deletable: true,
+    column: [
+        { n: '绑定栏目', k: 'map_key2' },
+        { n: '保存类型', k: 'map_key3' },
+        { n: '是否重命名', k: 'map_key4' },
+        { n: '是否覆盖', k: 'map_key5' },
+        { n: '是否分类', k: 'map_key6' },
+        { n: '分类名称', k: 'map_key7' },
+    ]
+},
+{
     n: '资源控制',
     id: 99,
     cpnt: 'appcontrol',
