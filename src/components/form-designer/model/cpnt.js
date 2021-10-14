@@ -57,7 +57,7 @@ export default class Component {
 
         //字段权限
         const auth = _.find(store.__fieldAuth__, { field_name: this.data._fieldValue }) || {};
-        this.data.__auth__ = (!_.isNull(auth.show_auth)) ? auth.show_auth : null;
+        this.data.__auth__ = (auth.show_auth || auth.show_auth == 0) ? auth.show_auth : null;
 
         //对以前数据的兼容处理
         this.compatible('_required');
