@@ -50,6 +50,34 @@ export const OCR_VENDOR = {
             [OCR_WAY[0].id]: false,
             [OCR_WAY[1].id]: false,
         },
+    },
+    '华为': {
+        name: "华为",
+        id: "华为",
+        enable: {
+            [OCR_WAY[0].id]: true,
+            [OCR_WAY[1].id]: true,
+        },
+        params: {
+            [OCR_WAY[0].id]: {
+                ai_cert: { _fieldValue: 'ai_cert', _fieldName: 'AI事项', componentid: 'text', group: "api", _fieldLen: 200 },
+                id_card: { _fieldValue: 'id_card', _fieldName: '身份证接口', componentid: 'text', group: "api", _fieldLen: 200 },
+                bank_card: { _fieldValue: 'bank_card', _fieldName: '银行卡接口', componentid: 'text', group: "api", _fieldLen: 200 },
+                b_lic: { _fieldValue: 'b_lic', _fieldName: '营业执照', componentid: 'text', group: "api", _fieldLen: 200 },
+                stamp: { _fieldValue: 'stamp', _fieldName: '印章识别', componentid: 'text', group: "api", _fieldLen: 200 },
+            },
+            [OCR_WAY[1].id]: {
+                auth: { _fieldValue: 'auth', _fieldName: '认证', componentid: 'text', group: "api", _fieldLen: 200 },
+                ai_cert: { _fieldValue: 'ai_cert', _fieldName: 'AI事项', componentid: 'text', group: "api", _fieldLen: 200 },
+                id_card: { _fieldValue: 'id_card', _fieldName: '身份证接口', componentid: 'text', group: "api", _fieldLen: 200 },
+                bank_card: { _fieldValue: 'bank_card', _fieldName: '银行卡接口', componentid: 'text', group: "api", _fieldLen: 200 },
+                b_lic: { _fieldValue: 'b_lic', _fieldName: '营业执照', componentid: 'text', group: "api", _fieldLen: 200 },
+                region: { _fieldValue: 'region', _fieldName: '区域', componentid: 'text', group: "params", _fieldLen: 200 },
+                project_id: { _fieldValue: 'project_id', _fieldName: '项目', componentid: 'text', group: "params", _fieldLen: 200 },
+                appkey: { _fieldValue: 'appkey', _fieldName: 'APPKEY', componentid: 'text', group: "params" },
+                appsecret: { _fieldValue: 'appsecret', _fieldName: 'APP密钥', componentid: 'text', group: "params" },
+            }
+        }
     }
 }
 
