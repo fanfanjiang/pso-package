@@ -1,7 +1,7 @@
 {
   "name": "pbpm",
   "version": "0.2.88",
-  "main": "dist/pbpm.umd.js",
+  "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve example/main.js",
     "build": "vue-cli-service build --target lib --name pbpm src/index.js",
@@ -53,6 +53,7 @@
     "signature_pad": "^3.0.0-beta.3",
     "svg-injector": "^1.1.3",
     "throttle-debounce": "^1.0.1",
+    "tiny-pinyin": "^1.3.2",
     "tiptap": "^1.26.6",
     "tiptap-extensions": "^1.28.6",
     "vue": "^2.6.11",
