@@ -365,6 +365,13 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
         Vue.use(window.VueCodemirror);
     }
 
+
+    if (window.__APPCONFIG__) {
+        decodejson(window.__APPCONFIG__);
+        Vue.prototype.__APPCONFIG__ = window.__APPCONFIG__;
+        xssFilter = !!window.__APPCONFIG__.encryptRequired;
+    }
+
     Vue.use(Vuebar);
     Vue.use(TextField);
     Vue.use(VCharts);
@@ -394,12 +401,6 @@ const install = function (Vue, { API, apiUrl, apiPrefix = '', defaultAppId = '3'
     });
 
     const parser = new UAParser();
-
-    if (window.__APPCONFIG__) {
-
-        decodejson(window.__APPCONFIG__);
-        Vue.prototype.__APPCONFIG__ = window.__APPCONFIG__;
-    }
 
     Vue.prototype.PSODOMPurify = DOMPurify;
     Vue.prototype.__device__ = parser.getResult();
