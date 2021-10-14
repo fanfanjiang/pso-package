@@ -30,6 +30,7 @@ export default class Component {
             this.data._hideForever = true;
         }
 
+        //动作或者其他的扩展权限
         if (store.extendAuth) {
             const exist = _.find(store.extendAuth, { id: this.data._fieldValue });
             if (exist && exist.value) {
@@ -47,16 +48,16 @@ export default class Component {
                     this.data._read = false;
                     this.data._required = true;
                 }
-             
+
                 if (exist.value === 0.1 && this.CPNT.db) {
                     this.data._hideOnNew = this.data._hideForever = true;
                 }
             }
         }
 
-        //权限
+        //字段权限
         const auth = _.find(store.__fieldAuth__, { field_name: this.data._fieldValue }) || {};
-        this.data.__auth__ = auth.show_auth || null;
+        this.data.__auth__ = (!_.isNull(auth.show_auth)) ? auth.show_auth : null;
 
         //对以前数据的兼容处理
         this.compatible('_required');
