@@ -6,17 +6,19 @@
       </el-button>
       <el-divider direction="vertical"></el-divider>
     </template>
-    <el-popover v-model="showFidSet" placement="bottom-start" width="300" trigger="click">
-      <div class="pso-switch-panel">
-        <template v-for="(f, i) of store.fields">
-          <div class="pso-switch-panel__item" v-if="f.display" :key="i">
-            <el-switch v-model="f.show" :inactive-text="f.display" active-value="1" inactive-value="0"></el-switch>
-          </div>
-        </template>
-      </div>
-      <el-button type="text" icon="el-icon-setting" slot="reference"><template v-if="!__isMobile__">列表</template></el-button>
-    </el-popover>
-    <el-divider direction="vertical"></el-divider>
+    <template v-if="showColFilter">
+      <el-popover v-model="showFidSet" placement="bottom-start" width="300" trigger="click">
+        <div class="pso-switch-panel">
+          <template v-for="(f, i) of store.fields">
+            <div class="pso-switch-panel__item" v-if="f.display" :key="i">
+              <el-switch v-model="f.show" :inactive-text="f.display" active-value="1" inactive-value="0"></el-switch>
+            </div>
+          </template>
+        </div>
+        <el-button type="text" icon="el-icon-setting" slot="reference"><template v-if="!__isMobile__">列表</template></el-button>
+      </el-popover>
+      <el-divider direction="vertical"></el-divider>
+    </template>
     <el-input
       ref="keywords"
       :placeholder="quickSearchLabel"
@@ -49,6 +51,10 @@ export default {
   props: {
     store: Object,
     files: String,
+    showColFilter: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -58,7 +64,7 @@ export default {
     };
   },
   computed: {
-    quickSearchLabel() { 
+    quickSearchLabel() {
       return `搜索${this.store.quickSearch ? this.store.quickSearch.display : ""}`;
     },
   },

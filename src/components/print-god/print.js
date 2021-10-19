@@ -10,7 +10,6 @@ export default class Print {
         this.assStores = [];
         this.$vue = null;
 
-
         this.def = {
             colWidth: 100,
             rowHeight: 23,
@@ -22,8 +21,11 @@ export default class Print {
             width: PAGE[1].w,
             height: PAGE[1].h,
             margin: _.cloneDeep(PAGE_MARGIN),
-            radio: 1
+            radio: 1,
         }
+
+        this.filter = {};
+        this.curFilter = {};
 
         this.menu = {
             fontSize: 9,
@@ -110,6 +112,13 @@ export default class Print {
         this.setSheet(this.addSheet())
     }
 
+    openRuler(id) {
+        if (!this.filter[id]) {
+            this.$vue.$set(this.filter, id, { rule: [], ruleType: '1' })
+        }
+        this.curFilter = this.filter[id];
+    }
+
     async setSheet(id) {
         id = id || Object.keys(this.sheets)[0];
         if (this.sheetId && id === this.sheetId) return;
@@ -133,6 +142,6 @@ export default class Print {
     async save() {
         this.page.radio = this.domUnit.radio;
         this.sheets[this.sheetId].template = await this.sheet.export();
-        return { page: this.page, sheets: this.sheets }
+        return { page: this.page, sheets: this.sheets, filter: this.filter }
     }
 }

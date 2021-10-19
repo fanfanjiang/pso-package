@@ -1314,13 +1314,15 @@ export default class FormViewStore {
             const { mode } = template;
 
             if (!this.formProxy) {
-                this.formProxy = new FormProxy({ store: this.store });
+                this.formProxy = new FormProxy({ store: this.store, filter: template.config.filter });
                 await this.formProxy.analyzeAsstable(this.store);
                 this.formProxyMap = this.formProxy.getCpntMap();
             }
 
             const data = await this.formProxy.fetch({ ids, mode });
-            const ret = await API.request("/api/form/data/print", { data: { ...template, data, mainCode: this.store.data_code, map: this.formProxyMap } });
+            const ret = await API.request("/api/form/data/print",
+                { data: { ...template, data, mainCode: this.store.data_code, map: this.formProxyMap } }
+            );
             if (ret.success) {
                 // window.open(`http://127.0.0.1:9002/static/temp/${ret.data.name}.pdf`);
                 window.open(`/pdf?url=/static/temp/${ret.data.name}.pdf`);

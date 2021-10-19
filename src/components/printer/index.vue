@@ -98,7 +98,8 @@ export default {
       this.$nextTick(async () => {
         this.curTemplate = this.curTemplateId ? _.find(this.templates, { id: this.curTemplateId }) : null;
         if (this.curTemplate.type === "1" || (this.curTemplate.type === "2" && this.curTemplate.source === "2")) {
-          this.formProxy = new FormProxy({ code: this.code, source: this.curTemplate.source });
+          const { source, config } = this.curTemplate;
+          this.formProxy = new FormProxy({ code: this.code, source, filter: config.filter });
           await this.formProxy.analyze({ asstable: true });
         }
       });

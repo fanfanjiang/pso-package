@@ -1,6 +1,6 @@
 import FormStore from '../form-designer/model/store';
 import API from '../../service/api'
-import { makeFormByPluginModule } from "../../tool/form";
+import { makeFormByPluginModule, judgeByRules } from "../../tool/form";
 import { genComponentData } from '../form-designer/helper'
 import { SYS_FIELDS } from "../../const/form";
 
@@ -12,6 +12,8 @@ export default class FormProxy {
 
         this.store = null;
         this.assStores = [];
+
+        this.filter = {};
 
         for (let option in options) {
             if (options.hasOwnProperty(option)) {
@@ -91,13 +93,26 @@ export default class FormProxy {
 
         for (let ast of asstables) {
             if (ast._option) {
+                const astStore = _.find(this.assStores, { data_code: ast._option })
                 for (let item of mainList) {
                     if (typeof item['__chd__'] === 'undefined') item['__chd__'] = {};
 
                     if (!item['__chd__'][ast._option]) {
                         item['__chd__'][ast._option] = [];
                         if (item[ast._fieldValue]) {
-                            item['__chd__'][ast._option] = await this.fetchData(ast._option, item[ast._fieldValue]);
+                            const data = await this.fetchData(ast._option, item[ast._fieldValue]);
+
+                            //过滤
+                            if (this.filter && this.filter[ast._option] && this.filter[ast._option].rule.length) {
+                                const ruleOptions = this.filter[ast._option];
+                                for (let i = data.length - 1; i >= 0; i--) {
+                                    const show = judgeByRules({ datas: [data[i]], ruleOptions, store: astStore });
+                                    if (!show) {
+                                        data.splice(i, 1)
+                                    }
+                                }
+                            }
+                            item['__chd__'][ast._option] = data;
                         }
                     }
                 }
@@ -107,7 +122,7 @@ export default class FormProxy {
     }
 
     async fetchData(form_code, value) {
-        const ret = await API.searchForm({ form_code, leaf_auth: 4, keys: { leaf_id: { type: 4, value } } });
+        const ret = await API.searchForm({ form_code, leaf_auth: 4, limit: 9999, keys: { leaf_id: { type: 4, value } } });
         return ret.success ? ret.data : []
     }
 }

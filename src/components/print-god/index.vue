@@ -35,8 +35,11 @@
             <template v-if="mode === '1'">
               <el-divider content-position="left" v-if="print.assStores.length">关联表</el-divider>
               <div class="printgod-fields-section" v-for="(ast, i) in print.assStores" :key="i">
-                <div class="printgod-fields-section-title">
-                  {{ ast.data_name }}
+                <div style="display: flex; align-items: center; justify-content: space-between">
+                  <div class="printgod-fields-section-title" style="margin-bottom: 0px">
+                    {{ ast.data_name }}
+                  </div>
+                  <el-button size="mini" round @click="openRuler(ast)">筛选</el-button>
                 </div>
                 <div class="printgod-fields-section-body">
                   <div class="printgod-fields-item" v-for="(d, i) in ast.search()" :key="i">
@@ -57,6 +60,25 @@
               </div>
             </template>
           </div>
+          <pso-dialog :visible="showRuler" width="40%" @close="showRuler = false">
+            <template #title>
+              <pso-dialog-header>
+                <template #title>
+                  <i class="el-icon-edit-outline"></i>
+                  <span>设置筛选规则</span>
+                </template>
+              </pso-dialog-header>
+            </template>
+            <div class="pso-dialog-content" v-if="curAst">
+              <dynamic-rule
+                :rules="print.curFilter.rule"
+                :type="print.curFilter.ruleType"
+                :options="ruleOptions"
+                :sysable="false"
+                @typechange="rtChangeHandler"
+              ></dynamic-rule>
+            </div>
+          </pso-dialog>
         </div>
       </div>
       <div class="printgod-body-r">
@@ -89,9 +111,10 @@ import PaperH from "./paper-h";
 import PaperV from "./paper-v";
 import Backimg from "./backimg";
 import SheetTab from "./sheet-tab";
+import DynamicRule from "../dynamic-rule";
 
 export default {
-  components: { PsoHeader, PrintMenu, PaperH, PaperV, Backimg, SheetTab },
+  components: { PsoHeader, PrintMenu, PaperH, PaperV, Backimg, SheetTab, DynamicRule },
   props: {
     code: String,
     source: {
@@ -113,6 +136,9 @@ export default {
       initializing: true,
       print: {},
       curTab: "biz",
+      showRuler: false,
+      curAst: null,
+      ruleOptions: [],
     };
   },
   computed: {
@@ -161,6 +187,15 @@ export default {
     },
     async save() {
       return await this.print.save();
+    },
+    openRuler(ast) {
+      this.curAst = ast;
+      this.print.openRuler(ast.data_code);
+      this.ruleOptions = ast.search({ onlyData: true });
+      this.showRuler = true;
+    },
+    rtChangeHandler(type) {
+      this.print.curFilter.ruleType = type;
     },
   },
 };
