@@ -162,6 +162,7 @@ export default {
         },
         method: this.params.id ? "put" : "post",
       });
+      this.ResultNotify(ret);
       if (!ret.success) return (this.saving = false);
       if (!this.params.id) {
         const { node_name } = ret.data;
