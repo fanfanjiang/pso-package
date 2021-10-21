@@ -16,6 +16,9 @@ export default class Sheet {
         this.$sheet = null;
         this.name = '';
         this.extend = {};
+        this.config = {
+            fixCell: false
+        };
 
         for (let op in options) {
             if (options.hasOwnProperty(op) && typeof options[op] !== 'undefined') {
@@ -621,6 +624,7 @@ export default class Sheet {
             },
             styles: {},
             extend: {},
+            config: this.config,
             background: this.background
         }
 
