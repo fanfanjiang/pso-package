@@ -45,6 +45,11 @@ export default class API {
         const _arguments = arguments;
         url = `${this.URL_PREFIX}${url}`;
 
+        const mid = Auth.getId();
+        if (mid) {
+            data.__mid__ = mid;
+        }
+
         if (this.xssFilter) {
             for (let key in data) {
                 if (data[key] && typeof data[key] === 'string') {

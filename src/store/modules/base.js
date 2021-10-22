@@ -36,12 +36,29 @@ export default {
         appAuth: { unapproved: false },
         designedForm: '',
         designedWF: '',
-        userGenFun: '0'
+        userGenFun: '0',
+        menus: []
     },
     mutations: {
         [APP_SET_USER](state, user) {
             state.user = user;
             Storge.set('user', user);
+        },
+        ['APP_UPDATE_USER'](state, user) {
+            if (state.user) {
+                Object.assign(state.user, user);
+                Storge.set('user', state.user);
+            }
+        },
+        ['APP_SET_ATUH'](state, _q_) {
+            this.commit('APP_UPDATE_USER', { _q_ });
+        },
+        ['APP_CHECK_AUTH'](state, menu_path) {
+            const menu = _.find(state.menus, { menu_path });
+            if (menu) {
+                this.commit('APP_SET_ATUH', menu.menu_code);
+            }
+            console.log(menu);
         },
         [APP_GET_USER](state) {
             const user = Storge.get('user');
@@ -107,6 +124,7 @@ export default {
             }
             return true;
         },
+
         ['APP_MAKEMENU']({ state, getters, commit, dispatch }, { menus, callback, auth }) {
             menus.forEach((item) => {
                 const { menu_type, tp_route, menu_code, menu_link } = item;
@@ -130,7 +148,8 @@ export default {
                     pnode.children = _.orderBy(pnode.children, ["node_serial", "create_time"], ["asc", "asc"]);
                 },
             }).filter((item) => auth ? item.node_auth !== "0" : true);
-            return { menus, menuTree }
+            state.menus = menus;
+            return { menus, menuTree };
         },
         async ['APP_ANALYZEMENU']({ dispatch }, params = {}) {
             const { auth = true, callback } = params;
