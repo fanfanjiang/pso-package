@@ -45,6 +45,11 @@ export default class API {
         const _arguments = arguments;
         url = `${this.URL_PREFIX}${url}`;
 
+        const mid = Auth.getId();
+        if (mid) {
+            data.__mid__ = mid;
+        }
+
         if (this.xssFilter) {
             for (let key in data) {
                 if (data[key] && typeof data[key] === 'string') {
@@ -108,15 +113,12 @@ export default class API {
                         return oriRequest;
                     }
                     return this.doAuthError();
-                } else if (error.response.status === 403) {
-                    console.log(403)
                 }
 
                 if (error.response.data && typeof error.response.data === 'object' && typeof error.response.data.success !== 'undefined') {
                     return error.response.data;
                 }
             }
-
             return { success: false, msg: "请求失败，请检查网络或请稍后再试" }
         }
     }
@@ -1120,11 +1122,6 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use((response) => {
     if (response.status === 200) {
-        // if (response.headers['encrypt-required'] === 'required' && response.data.data) {
-        //     console.log(response.data.data);
-        //     const decrypted = sm2.doDecrypt(response.data.data, privateKey, 1);
-        //     response.data = JSON.parse(decrypted);
-        // }
         if (response.data && response.data['__auth__']) {
             API.handleAppAuth && API.handleAppAuth(response.data['__auth__']);
         }

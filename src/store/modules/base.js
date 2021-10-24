@@ -50,6 +50,15 @@ export default {
                 Storge.set('user', state.user);
             }
         },
+        ['APP_SET_ATUH'](state, _q_) {
+            this.commit('APP_UPDATE_USER', { _q_ });
+        },
+        ['APP_CHECK_AUTH'](state, menu_path) {
+            const menu = _.find(state.menus, { menu_path });
+            if (menu) {
+                this.commit('APP_SET_ATUH', menu.menu_code);
+            }
+        },
         [APP_GET_USER](state) {
             const user = Storge.get('user');
             state.user = user ? JSON.parse(user) : null;
