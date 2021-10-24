@@ -25,10 +25,4 @@ export default class Auth {
         Storge.remove('token');
         Storge.remove('refresh_token');
     }
-
-    static getId() {
-        let user = Storge.get('user');
-        user = user ? JSON.parse(user) : null;
-        return user && user._q_ || '';
-    }
 }
