@@ -26,7 +26,7 @@
           <pso-picker-role v-else-if="type === 'menu' && bindType === '3'" pattern="checkbox" @confirm="addAuthHandler">
             <el-button size="mini" type="primary" plain>添加权限</el-button>
           </pso-picker-role>
-          <pso-picker-tree v-else :request-options="treeOptions" pattern="checkbox" @confirm="addAuthHandler">
+          <pso-picker-tree v-else :rootable="true" :request-options="treeOptions" pattern="checkbox" @confirm="addAuthHandler">
             <el-button size="mini" type="primary" plain>添加权限</el-button>
           </pso-picker-tree>
         </template>
