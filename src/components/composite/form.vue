@@ -81,7 +81,7 @@ export default {
       const pubCfg = this.cfg;
       const { __SYSTIME__ } = cfgRet;
 
-      if (pubCfg.authRequired && this.mockSignin) {
+      if (pubCfg.authRequired && (this.mockSignin || this.$store.state.base.user.user_id === "tempuser")) {
         this.$router.replace({
           name: "login",
           query: { redirect: this.$router.currentRoute.fullPath, appid: this.params.appid },
