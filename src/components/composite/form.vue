@@ -84,7 +84,7 @@ export default {
       if (pubCfg.authRequired && this.mockSignin) {
         this.$router.replace({
           name: "login",
-          query: { redirect: this.$router.currentRoute.fullPath },
+          query: { redirect: this.$router.currentRoute.fullPath, appid: this.params.appid },
         });
       }
 
@@ -95,7 +95,7 @@ export default {
       ) {
         this.editable = true;
       }
- 
+
       if (pubCfg.attach) {
         const fileRet = await this.API.file({ data: { ids: pubCfg.attach }, method: "get" });
         if (fileRet.success && fileRet.data.length) {
@@ -126,7 +126,7 @@ export default {
           this.instance[key] = this.params[key];
         }
       }
- 
+
       this.initing = false;
     }
   },
