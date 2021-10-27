@@ -81,7 +81,7 @@ export default {
       const pubCfg = this.cfg;
       const { __SYSTIME__ } = cfgRet;
 
-      if (pubCfg.authRequired && this.mockSignin) {
+      if (pubCfg.authRequired && (this.mockSignin || this.$store.state.base.user.user_id === "tempuser")) {
         this.$router.replace({
           name: "login",
           query: { redirect: this.$router.currentRoute.fullPath },
@@ -95,7 +95,7 @@ export default {
       ) {
         this.editable = true;
       }
- 
+
       if (pubCfg.attach) {
         const fileRet = await this.API.file({ data: { ids: pubCfg.attach }, method: "get" });
         if (fileRet.success && fileRet.data.length) {
@@ -126,7 +126,7 @@ export default {
           this.instance[key] = this.params[key];
         }
       }
- 
+
       this.initing = false;
     }
   },
