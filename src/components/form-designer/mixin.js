@@ -102,13 +102,14 @@ export const formOp = {
                         const exist = _.find(SYS_FIELDS, { _fieldValue: d.field_name })
                         if (exist) {
                             Object.assign(d, exist);
+                            d.fid = d._fieldValue;
                         }
                     }
 
                     const mixedBlood = d.field_name === "d_tag" || d.field_name === "d_name";
                     const noSys = f && !mixedBlood;
 
-                    d.__sys__ = d.is_sys = noSys ? "0" : "1";
+                    d.__sys__ = d.is_sys = noSys ? "0" : "1"; 
                     d._fieldValue = d.field_name;
                     d.fieldDisplay = noSys
                         ? `${f.data._fieldName}[${d.field_name}]${f.CPNT.name}`

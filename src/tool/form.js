@@ -101,7 +101,7 @@ export function makeFormByOther(data, onEach) {
 }
 
 /**
- *生成系统字段组件数据
+ *生成系统字段组件数据，这里以前不小心把const改了，但是先这样，害怕引起其它问题
  *
  * @export
  * @returns
