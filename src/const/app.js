@@ -347,6 +347,11 @@ export const PLUGIN_DEFAULT = [
         ])
     },
     {
+        n: '多表单视图', id: "pso-multifv", path: '/composite/multifv/:menu_code', type: 0, params: [
+            { field: "multifv", value: [], picker: "multifv", name: "表单视图", saveType: "2", relateParam: "", order: 40 },
+        ]
+    },
+    {
         n: '树-表单视图', id: "pso-tree-fv", path: '/form/tree-form/:menu_code', type: 0, params: PLUGIN_PARAMS_FORM.concat([
             { field: "tree_data_type", value: "", picker: "picker-tag", name: "树维度类型", saveType: "1", relateParam: "" },
             { field: "tree_dimen", value: "", picker: "input", name: "树维度", saveType: "1", relateParam: "" },

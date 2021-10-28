@@ -23,6 +23,8 @@ export default {
     if (this.data.componentid === "select") {
       this.data.componentid = "checkbox";
     }
+
+    this.data.fid = this.data.fid || this.data._fieldValue;
     this.store = new FormStore({ designMode: false, data_config: [this.data] });
     this.store.updateInstance({ [this.data._fieldValue]: this.data._val });
     this.cpnt = this.store.search({ options: { fid: this.data.fid } });

@@ -38,7 +38,7 @@
           <div class="pso-view-viewtab" v-if="!params.hideStatusTab">
             <fast-switch :store="store" key="statuses" switch="statuses" model="curStatus" skey="d_status"></fast-switch>
             <fast-switch
-              divider
+              :divider="store.statuses.length"
               :store="store"
               key="stages"
               showtype="select"

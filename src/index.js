@@ -193,6 +193,7 @@ import PsoFormEntry from "./components/composite/form";
 import PsoFvtree from "./components/composite/fvtree";
 import PsoFvSrcv from "./components/composite/fv-srcv";
 import PsoFvMultifv from "./components/composite/fv-multifv";
+import PsoMultifv from "./components/composite/multifv";
 
 //shit
 import PsoBiExcel from "./components/bi/excel";
@@ -360,6 +361,7 @@ const components = {
     PsoFvtree,
     PsoFvSrcv,
     PsoFvMultifv,
+    PsoMultifv,
 
     PsoBiExcel,
     PsoBiDb,

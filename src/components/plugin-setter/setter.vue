@@ -88,6 +88,7 @@
           <el-button v-if="p.picker === 'picker-stats'" size="small" type="primary" plain @click="setStats(p)"> 设置关联统计 </el-button>
           <picker-fmatchup v-if="p.picker === 'picker-fmatchup'" v-bind="getMatchupProps(p)"></picker-fmatchup>
           <formrelate v-if="p.picker === 'formrelate'" v-bind="getRelateFields(p)"></formrelate>
+          <multifv v-if="p.picker === 'multifv'" v-bind="getRelateFields(p)"></multifv>
           <template #label>
             {{ p.name }}
             <el-tooltip v-if="p.tip" effect="dark" placement="top-start">
@@ -125,6 +126,7 @@ import StatsPicker from "./picker/stats-picker";
 import Dfilter from "./picker/filter";
 import PickerFmatchup from "./picker/picker-fmatchup";
 import Formrelate from "./picker/formrelate";
+import Multifv from "./picker/multifv";
 
 const componentsMap = {};
 const requireComponent = require.context("./cpnts", true);
@@ -143,7 +145,7 @@ requireComponent.keys().forEach((fileName) => {
 
 export default {
   mixins: [formOp],
-  components: { ...componentsMap, formulaDesigner, SqlDesigner, StatsPicker, Dfilter, PickerFmatchup, Formrelate },
+  components: { ...componentsMap, formulaDesigner, SqlDesigner, StatsPicker, Dfilter, PickerFmatchup, Formrelate, Multifv },
   props: {
     data: Array,
     code: String,
@@ -353,7 +355,6 @@ export default {
           sources = src.fields;
         }
       }
-      console.log(option);
       return { data: option.value, sources, node: this.node };
     },
   },

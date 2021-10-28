@@ -102,6 +102,7 @@ export const formOp = {
                         const exist = _.find(SYS_FIELDS, { _fieldValue: d.field_name })
                         if (exist) {
                             Object.assign(d, exist);
+                            d.fid = d._fieldValue;
                         }
                     }
 

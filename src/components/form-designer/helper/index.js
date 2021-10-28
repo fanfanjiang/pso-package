@@ -51,7 +51,6 @@ export function genComponentData(target) {
     const explicit = function (v) {
         return typeof v === 'object' ? _.cloneDeep(v) : v;
     }
-
     if (typeof target.fid === 'undefined' || target.fid === '') {
         if (target._fieldValue) {
             target.fid = target._fieldValue;
@@ -66,7 +65,7 @@ export function genComponentData(target) {
             Vue.set(target, '_fieldValue', target.fid);
         }
     }
-
+  
     Vue.set(target, '_fieldName', target._fieldName || target.name || _CPNT.name);
 
     if (_CPNT.data) {
