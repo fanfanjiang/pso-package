@@ -80,8 +80,6 @@ import PsoWfTodo from "./components/workflow-todo";
 import PsoTempleteMgt from "./components/templete-mgt";
 import PsoPluginMgt from "./components/plugin-mgt";
 
-import PsoViewDesigner from "./components/formv-designer";
-
 import PsoScriptOut from "./components/script-designer/output";
 
 import PsoUpload from "./components/upload";
@@ -256,7 +254,6 @@ const components = {
     PsoFormMgt,
     PsoChartDesigner,
     PsoChartInterpreter,
-    PsoViewDesigner,
     PsoScriptOut,
     PsoUpload,
     PsoTitle,

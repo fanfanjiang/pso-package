@@ -25,7 +25,7 @@
           :key="i"
           :prop="f.field_name"
           :label="f.display"
-          :width="f.width"
+          :width="f.fillRemain ? '' : f.width"
           :align="f.align"
           :sortable="f.sortable === '1' ? 'custom' : false"
         >

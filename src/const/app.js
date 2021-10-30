@@ -291,6 +291,7 @@ export const PLUGIN_PARAMS_VIEW = [
     { field: "hideCopyBtn", value: false, picker: "picker-yes", name: "隐藏复制按钮", saveType: "1", relateParam: "", tip: '开启则会强制隐藏复制按钮', order: 17 },
     { field: "hideActions", value: false, picker: "picker-yes", name: "隐藏动作按钮", saveType: "1", relateParam: "", tip: '开启则会强制隐藏动作按钮', order: 18 },
     { field: "hideMoreBtn", value: false, picker: "picker-yes", name: "隐藏更多按钮", saveType: "1", relateParam: "", tip: '开启则会强制隐藏更多按钮', order: 19 },
+    { field: "hideViewTitle", value: false, picker: "picker-yes", name: "隐藏标题按钮", saveType: "1", relateParam: "", tip: '', order: 19 },
     { field: "hideTablefun", value: false, picker: "picker-yes", name: "隐藏功能按钮", saveType: "1", relateParam: "", tip: '开启则会强制隐藏非查询相关按钮', order: 20 },
     { field: "displayRow", value: "", picker: "picker-select", name: "布局", saveType: "1", relateParam: "", options: [{ n: '上下', v: "1" }, { n: '左右', v: "0" }], tip: '选择页面的布局方式', order: 21 },
     { field: "bottomHeight", value: "", picker: "input", name: "页面内容大小", saveType: "1", relateParam: "", tip: '页面主要内容部分所占的宽度或者高度,单位为px或者%!', order: 22 },

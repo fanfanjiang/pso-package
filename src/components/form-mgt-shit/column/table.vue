@@ -69,6 +69,9 @@
         <el-form-item label="显示名称">
           <el-input v-model="curRow.display"></el-input>
         </el-form-item>
+        <el-form-item label="顺序">
+          <el-input-number size="mini" v-model="curRow.number" controls-position="right" :min="0"></el-input-number>
+        </el-form-item>
         <el-form-item label="自适应宽度">
           <el-switch v-model="curRow.widthAuto"></el-switch>
         </el-form-item>
