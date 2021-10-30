@@ -1,5 +1,6 @@
 import shortid from "shortid";
 import { makeDimension } from "../utils/util";
+import Auth from "../tool/auth";
 
 export const CaptchaMixin = {
     data() {
@@ -29,8 +30,10 @@ export const SignInMixin = {
         signIn({ token, user, refresh_token, redirect }, needRedirect = true) {
             this.$store.commit('APP_SIGNIN', { token, user, refresh_token });
             if (needRedirect) {
+                redirect = redirect || Auth.getRedirect();
                 if (redirect) {
                     this.$router.replace(redirect);
+                    Auth.removeRedirect();
                 } else {
                     this.$router.push({ name: "desk" });
                 }

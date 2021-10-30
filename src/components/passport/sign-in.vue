@@ -51,6 +51,7 @@
 import { CaptchaMixin, SignInMixin } from "../../mixin/passport";
 import { md5 } from "../../utils/md5";
 import Social from "./social";
+import Auth from "../../tool/auth";
 
 export default {
   components: { Social },
@@ -113,6 +114,9 @@ export default {
     }
     if (this.modes.length) {
       this.activeTab = this.modes[this.modes.length - 1].v;
+    }
+    if (this.redirect) {
+      Auth.setRedirect(this.redirect);
     }
   },
   methods: {

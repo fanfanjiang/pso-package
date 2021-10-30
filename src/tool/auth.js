@@ -31,4 +31,16 @@ export default class Auth {
         user = user ? JSON.parse(user) : null;
         return user && user._q_ || '';
     }
+
+    static setRedirect(data) {
+        return Storge.set('redirect', data);
+    }
+
+    static getRedirect() {
+        return Storge.get('redirect');
+    }
+
+    static removeRedirect() {
+        return Storge.remove('redirect');
+    }
 }
